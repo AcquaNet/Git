@@ -1,0 +1,57 @@
+20 Aug 2019 17:02:37,585 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Attempting to load the local logic control file 'LocalLogicCatalog.xml' from the classpath. 
+20 Aug 2019 17:02:37,587 [Line -1] [grpc-default-executor-0] [WARN  ]  - [JDBJ]            LocalLogicControl.loadControlFile(): local logic control file not found in classpath: LocalLogicCatalog.xml Corrective Action :Validate that the local logic control file 'LocalLogicCatalog.xml', which is used to determine which logic (NER, BSFN, etc) run locally, properly exists within the classpath, typically in WEB-INF/classes 
+20 Aug 2019 17:25:17,802 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Attempting to load the local logic control file 'LocalLogicCatalog.xml' from the classpath. 
+20 Aug 2019 17:25:17,804 [Line -1] [grpc-default-executor-0] [WARN  ]  - [JDBJ]            LocalLogicControl.loadControlFile(): local logic control file not found in classpath: LocalLogicCatalog.xml Corrective Action :Validate that the local logic control file 'LocalLogicCatalog.xml', which is used to determine which logic (NER, BSFN, etc) run locally, properly exists within the classpath, typically in WEB-INF/classes 
+20 Aug 2019 17:27:02,958 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Attempting to load the local logic control file 'LocalLogicCatalog.xml' from the classpath. 
+20 Aug 2019 17:27:02,960 [Line -1] [grpc-default-executor-0] [WARN  ]  - [JDBJ]            LocalLogicControl.loadControlFile(): local logic control file not found in classpath: LocalLogicCatalog.xml Corrective Action :Validate that the local logic control file 'LocalLogicCatalog.xml', which is used to determine which logic (NER, BSFN, etc) run locally, properly exists within the classpath, typically in WEB-INF/classes 
+20 Aug 2019 17:28:11,685 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Attempting to load the local logic control file 'LocalLogicCatalog.xml' from the classpath. 
+20 Aug 2019 17:28:11,692 [Line -1] [grpc-default-executor-0] [WARN  ]  - [JDBJ]            LocalLogicControl.loadControlFile(): local logic control file not found in classpath: LocalLogicCatalog.xml Corrective Action :Validate that the local logic control file 'LocalLogicCatalog.xml', which is used to determine which logic (NER, BSFN, etc) run locally, properly exists within the classpath, typically in WEB-INF/classes 
+20 Aug 2019 17:30:10,635 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Attempting to load the local logic control file 'LocalLogicCatalog.xml' from the classpath. 
+20 Aug 2019 17:30:10,637 [Line -1] [grpc-default-executor-0] [WARN  ]  - [JDBJ]            LocalLogicControl.loadControlFile(): local logic control file not found in classpath: LocalLogicCatalog.xml Corrective Action :Validate that the local logic control file 'LocalLogicCatalog.xml', which is used to determine which logic (NER, BSFN, etc) run locally, properly exists within the classpath, typically in WEB-INF/classes 
+20 Aug 2019 17:52:04,173 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Attempting to load the local logic control file 'LocalLogicCatalog.xml' from the classpath. 
+20 Aug 2019 17:52:04,175 [Line -1] [grpc-default-executor-0] [WARN  ]  - [JDBJ]            LocalLogicControl.loadControlFile(): local logic control file not found in classpath: LocalLogicCatalog.xml Corrective Action :Validate that the local logic control file 'LocalLogicCatalog.xml', which is used to determine which logic (NER, BSFN, etc) run locally, properly exists within the classpath, typically in WEB-INF/classes 
+20 Aug 2019 17:59:17,952 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Attempting to load the local logic control file 'LocalLogicCatalog.xml' from the classpath. 
+20 Aug 2019 17:59:17,953 [Line -1] [grpc-default-executor-0] [WARN  ]  - [JDBJ]            LocalLogicControl.loadControlFile(): local logic control file not found in classpath: LocalLogicCatalog.xml Corrective Action :Validate that the local logic control file 'LocalLogicCatalog.xml', which is used to determine which logic (NER, BSFN, etc) run locally, properly exists within the classpath, typically in WEB-INF/classes 
+20 Aug 2019 17:59:17,976 [Line -1] [grpc-default-executor-0] [APP   ]  - [BASE]            Loading config from file C:\_work\JDEConnectorCE\Projects\JDEConnectorServer\target\classes\JDV920\jdeinterop.ini per the default_path system property 
+20 Aug 2019 17:59:17,977 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [BASE]            jdeinterop.ini load from C:\_work\JDEConnectorCE\Projects\JDEConnectorServer\target\classes\JDV920\jdeinterop.ini 
+20 Aug 2019 17:59:17,990 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [INTEROP]         Session clearning thread started 
+20 Aug 2019 17:59:17,995 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [INTEROP]         UserSessionListener com.atina.jdeconnector.internal.CurrentUserSessionListener@52851fd3 has been added to the connector 
+20 Aug 2019 17:59:27,702 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JAS]             Creating a JDENET connection pool for host 'null:0'. 
+20 Aug 2019 17:59:27,704 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [NET]             netTrace in [JDENET] read and set to false 
+20 Aug 2019 17:59:30,033 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JAS]             Role Validation for User: JDE Environment: JDV920 returned code: 0 
+20 Aug 2019 17:59:30,049 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            JDBj version information: 
+20 Aug 2019 17:59:30,049 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Specification title: null
+ Specification version: null
+ Specification vendor: null
+ Implementation title: null
+ Implementation version: null
+ Implementation vendor: null 
+20 Aug 2019 17:59:30,057 [Line -1] [grpc-default-executor-0] [APP   ]  - [BASE]            Loading config from file C:\_work\JDEConnectorCE\Projects\JDEConnectorServer\target\classes\JDV920\jdbj.ini per the default_path system property 
+20 Aug 2019 17:59:30,086 [Line -1] [grpc-default-executor-0] [APP   ]  - [BASE]            Loading config from file C:\_work\JDEConnectorCE\Projects\JDEConnectorServer\target\classes\JDV920\tnsnames.ora per the default_path system property 
+20 Aug 2019 17:59:30,091 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Using runtime property AS400 Database ASP default value null. 
+20 Aug 2019 17:59:30,091 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Using runtime property AS400 Package default value JDBj. 
+20 Aug 2019 17:59:30,092 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Using runtime property AS400 Package Library default value null. 
+20 Aug 2019 17:59:30,092 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Using runtime property AS400 Extended Dynamic default value true. 
+20 Aug 2019 17:59:30,092 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Using runtime property AS400 Native JDBC Driver default value false. 
+20 Aug 2019 17:59:30,093 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Attempting to load oracle.jdbc.driver.OracleDriver from ClassPath  
+20 Aug 2019 17:59:30,262 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Found and Successfully loaded oracle.jdbc.driver.OracleDriver from ClassPath  
+20 Aug 2019 17:59:30,269 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            JDBC Driver [oracle.jdbc.driver.OracleDriver] Major Version [12] Minor Version [1] 
+20 Aug 2019 17:59:30,269 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Registered the JDBC Drivers in section JDBj-JDBC DRIVERS without a showstopper exception. Processing can continue provided the Datasources use the loaded JDBC Drivers. 
+20 Aug 2019 17:59:30,332 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            JDBj bootstrap spec map initialized. 
+20 Aug 2019 17:59:30,336 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            JDBj bootstrap data source initialized: System - 920. 
+20 Aug 2019 17:59:30,345 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Using runtime property Transaction Timeout jdbj.ini value 1200000. 
+20 Aug 2019 17:59:30,345 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Transaction 1 state initialized to auto commit. 
+20 Aug 2019 17:59:30,356 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Using runtime property Service Cache Purge default value 600000. 
+20 Aug 2019 17:59:30,360 [Line -1] [CacheMap com.jdedwards.base.util.cache.CacheMap@1f38d431 garbage collector] [DEBUG ]  - [BASE]            CacheMap thread has been started. 
+20 Aug 2019 17:59:30,361 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Using runtime property OCM Cache Purge default value 600000. 
+20 Aug 2019 17:59:30,360 [Line -1] [CacheMap com.jdedwards.base.util.cache.CacheMap@bd4a646 garbage collector] [DEBUG ]  - [BASE]            CacheMap thread has been started. 
+20 Aug 2019 17:59:30,363 [Line -1] [CacheMap com.jdedwards.base.util.cache.CacheMap@2b1c490d garbage collector] [DEBUG ]  - [BASE]            CacheMap thread has been started. 
+20 Aug 2019 17:59:30,363 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Using runtime property Security Cache Purge default value 600000. 
+20 Aug 2019 17:59:30,363 [Line -1] [CacheMap com.jdedwards.base.util.cache.CacheMap@2df758d4 garbage collector] [DEBUG ]  - [BASE]            CacheMap thread has been started. 
+20 Aug 2019 17:59:30,364 [Line -1] [CacheMap com.jdedwards.base.util.cache.CacheMap@4665caa2 garbage collector] [DEBUG ]  - [BASE]            CacheMap thread has been started. 
+20 Aug 2019 17:59:30,364 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [JDBJ]            Using runtime property Spec Cache Purge default value 600000. 
+20 Aug 2019 17:59:30,364 [Line -1] [CacheMap com.jdedwards.base.util.cache.CacheMap@51430b42 garbage collector] [DEBUG ]  - [BASE]            CacheMap thread has been started. 
+20 Aug 2019 17:59:30,368 [Line -1] [CacheMap com.jdedwards.base.util.cache.CacheMap@e3ebf45 garbage collector] [DEBUG ]  - [BASE]            CacheMap thread has been started. 
+20 Aug 2019 17:59:30,369 [Line -1] [CacheMap com.jdedwards.base.util.cache.CacheMap@666654fa garbage collector] [DEBUG ]  - [BASE]            CacheMap thread has been started. 
+20 Aug 2019 17:59:30,374 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [INTEROP]         User session 650350956 for user JDE has been created.  
+20 Aug 2019 17:59:30,374 [Line -1] [grpc-default-executor-0] [DEBUG ]  - [INTEROP]         User JDE has login successfully 

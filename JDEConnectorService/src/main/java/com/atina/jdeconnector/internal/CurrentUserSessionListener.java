@@ -5,6 +5,7 @@
  */
 package com.atina.jdeconnector.internal;
 
+import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.service.JDESingleClient;
 import com.jdedwards.system.connector.dynamic.UserSessionEvent;
 import com.jdedwards.system.connector.dynamic.UserSessionListener;
@@ -18,7 +19,7 @@ import org.slf4j.LoggerFactory;
 public class CurrentUserSessionListener 
   implements UserSessionListener{
 
-    private static final Logger logger = LoggerFactory.getLogger(CurrentUserSessionListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDEConnectorService.class);
     
     private JDESingleClient client;
 

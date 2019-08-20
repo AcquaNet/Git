@@ -62,6 +62,10 @@
     <logger name="com.acqua.dragonfishserver.services.ConvertidorDeDatos">
         <level value="INFO"/>
     </logger> 
+    
+    <logger name="com.atina.jdeconnectorservice.JDEConnectorService" level="DEBUG"/>
+        
+    <logger name="com.atina.jdeconnector.internal.JDEHandler" level="DEBUG"/>
 
     <root level="info">
         <appender-ref ref="STDOUT" />

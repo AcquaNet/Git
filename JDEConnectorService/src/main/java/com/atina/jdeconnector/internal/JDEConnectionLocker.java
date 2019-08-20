@@ -5,6 +5,7 @@
  */
 package com.atina.jdeconnector.internal;
 
+import com.atina.jdeconnectorservice.JDEConnectorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.concurrent.Semaphore;
@@ -15,7 +16,7 @@ import java.util.concurrent.Semaphore;
  */
 public class JDEConnectionLocker {
     
-      private static final Logger logger = LoggerFactory.getLogger(JDEConnectionLocker.class);
+      private static final Logger logger = LoggerFactory.getLogger(JDEConnectorService.class);
 
     private static Semaphore writeLock = new Semaphore(1, false);
 

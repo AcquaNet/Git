@@ -5,6 +5,7 @@
  */
 package com.atina.jdeconnector.internal;
 
+import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.jdedwards.base.datatypes.SqlDate;
 import com.jdedwards.system.connector.dynamic.callmethod.ExecutableMethod;
 import com.jdedwards.system.connector.dynamic.spec.source.BSFNParameter;
@@ -32,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JDEConverter {
      
-    private static final Logger logger = LoggerFactory.getLogger(JDEConverter.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDEConnectorService.class);
     
     public static void convertServiceInputDataToJDEFormatToJDEDate(String entityType, Map<String, Object> entityData, ExecutableMethod callobject, BSFNParameter parameter) {
 

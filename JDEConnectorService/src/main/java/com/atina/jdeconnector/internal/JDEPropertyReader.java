@@ -3,6 +3,7 @@
  */
 package com.atina.jdeconnector.internal;
 
+import com.atina.jdeconnectorservice.JDEConnectorService;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JDEPropertyReader {
 
-    private static final Logger logger = LoggerFactory.getLogger(JDEPropertyReader.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDEConnectorService.class);
     private static final String JDE_INTEROP_INI = "jdeinterop.ini";
     private static final String VALIDATE_SERVICES_BOTH = "BOTH";
     private static final String VALIDATE_SERVICES_UBENAME = "R0008P_XJDE0001";

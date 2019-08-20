@@ -53,6 +53,7 @@ import com.jdedwards.system.security.UserOCMContextSession;
 import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
 import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
 import com.atina.jdeconnector.internal.model.JDEBsfnParametersInputObject;
+import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.exception.JDESingleBSFNException;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -67,7 +68,7 @@ import java.util.logging.Level;
  */
 public class JDEBsfnDriver {
 
-    private static final Logger logger = LoggerFactory.getLogger(JDEBsfnDriver.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDEConnectorService.class);
     
     private static final String FUNTIONS_RANGE_FROM = "                                ";
 

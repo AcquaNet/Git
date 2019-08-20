@@ -3,6 +3,7 @@
  */
 package com.atina.jdeconnector.internal;
 
+import com.atina.jdeconnectorservice.JDEConnectorService;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -18,7 +19,7 @@ import com.jdedwards.system.kernel.LocalLogicControl;
 
 public class JDEBoostrap {
 
-    private static final Logger logger = LoggerFactory.getLogger(JDEBoostrap.class); 
+    private static final Logger logger = LoggerFactory.getLogger(JDEConnectorService.class); 
 
     private static final String JDE_OUT_HANDLER = "JDEOutHandler";
     private static final String JDE_INTEROPINI_FILE = "jdeinterop.ini";

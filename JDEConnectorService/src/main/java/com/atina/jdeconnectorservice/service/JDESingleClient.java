@@ -14,6 +14,7 @@ import com.atina.jdeconnector.internal.JDETransactions;
 import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
 import com.atina.jdeconnector.internal.model.JDEBsfnParametersInputObject;
 import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
+import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException; 
 import com.jdedwards.system.connector.dynamic.Connector;
@@ -30,7 +31,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JDESingleClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(JDESingleClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDEConnectorService.class);
 
     // =========================
     // Login Parameters
@@ -61,7 +62,7 @@ public class JDESingleClient {
         this.role = role;
     }
 
-    public void login() throws JDESingleConnectionException {
+    public int login() throws JDESingleConnectionException {
 
         logger.info("Connecting to JDE ..");
 
@@ -176,6 +177,8 @@ public class JDESingleClient {
 
         }
 
+        return iSessionID;
+        
     }
     
     public void logout() throws JDESingleConnectionException {
@@ -218,7 +221,7 @@ public class JDESingleClient {
     }
     
     
-    public boolean isJDEConnected() {
+    public int isJDEConnected() {
 
         boolean userConnected = false;
 
@@ -263,7 +266,7 @@ public class JDESingleClient {
 
         }
 
-        return userConnected;
+        return (userConnected?iSessionID:0);
     }
     
     

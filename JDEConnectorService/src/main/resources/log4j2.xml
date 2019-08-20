@@ -25,12 +25,11 @@
     
     
     <Loggers>
- 
-        <logger name="com.modus.jdeconnectorjavautilcloudhub" level="INFO"/>
+  
         
-        <logger name="com.modus.jdeconnectorjavautilcloudhub.MuleHandler" level="INFO"/>
+        <logger name="com.atina.jdeconnectorservice.JDEConnectorService" level="DEBUG"/>
         
-         <logger name="com.modus.jdeconnectorjavautilcloudhub.DNSCacheLoader" level="INFO"/>
+         <logger name="com.atina.jdeconnector.internal.JDEHandler" level="DEBUG"/>
 
         <root level="INFO">
             <appender-ref ref="file" />

@@ -5,6 +5,7 @@
  */
 package com.atina.jdeconnector.internal;
 
+import com.atina.jdeconnectorservice.JDEConnectorService;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,7 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JDEJavaDNSCacheLoader {
     
-    private static final Logger logger = LoggerFactory.getLogger(JDEJavaDNSCacheLoader.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDEConnectorService.class);
 
     private static final String cachePolicyProp = "networkaddress.cache.ttl";
     private Map<String, String> ocmServers;

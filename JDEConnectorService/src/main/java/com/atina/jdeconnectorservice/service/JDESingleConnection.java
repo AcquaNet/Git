@@ -5,11 +5,11 @@
  */
 package com.atina.jdeconnectorservice.service;
 
-import com.jdedwards.system.connector.dynamic.spec.SpecFailureException;
 import com.atina.jdeconnector.internal.JDEBoostrap;
 import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
 import com.atina.jdeconnector.internal.model.JDEBsfnParametersInputObject;
 import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
+import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException;
 import java.io.File;
@@ -17,8 +17,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +28,7 @@ import org.apache.commons.io.FileUtils;
  */
 public class JDESingleConnection {
 
-    private static final Logger logger = LoggerFactory.getLogger(JDESingleConnection.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDEConnectorService.class);
 
     private JDESingleClient client;
     
@@ -39,7 +37,7 @@ public class JDESingleConnection {
     private File tmpCache;
     
 
-    public JDESingleConnection(String user, String password, String environment, String role) {
+    public JDESingleConnection(String user, String password, String environment, String role) throws JDESingleConnectionException{
 
         try {
 
@@ -126,13 +124,13 @@ public class JDESingleConnection {
 
     }
     
-    public void connect() throws JDESingleConnectionException {
+    public int connect() throws JDESingleConnectionException {
 
         // ----------------------------------------------
         // Connecting to JDE
         // ----------------------------------------------
  
-        this.client.login();
+        return this.client.login();
  
 
     }
@@ -154,7 +152,7 @@ public class JDESingleConnection {
     }
     
     
-    public boolean isJDEConnected() {
+    public int isJDEConnected() {
 
         // ----------------------------------------------
         // Checking connections
