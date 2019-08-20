@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
+import oracle.e1.bssv.JP430000.ProcurementManager;
 import oracle.e1.bssv.JP430000.valueobject.ConfirmPurchaseOrderApproveReject;
 import oracle.e1.bssv.JP430000.valueobject.GetPurchaseOrderDetailForApprover;
 import oracle.e1.bssv.JP430000.valueobject.GetPurchaseOrdersForApprover;
@@ -123,7 +124,7 @@ public class Main {
         // -----------------------------------------
         
          try { 
-             conadd = new ProcurementManagerCustom().getPurchaseOrdersForApprover(context, defaultConnection, vo); 
+             conadd = new ProcurementManager().getPurchaseOrdersForApprover(context, defaultConnection, vo); 
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             System.out.println(ex.getStackTrace());
@@ -217,7 +218,7 @@ public class Main {
         // -----------------------------------------
         
          try { 
-             outputDetail = new ProcurementManagerCustom().getPurchaseOrderDetailForApprover(context, defaultConnection, voDetail); 
+             outputDetail = new ProcurementManager().getPurchaseOrderDetailForApprover(context, defaultConnection, voDetail); 
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             System.out.println(ex.getStackTrace());
@@ -309,7 +310,7 @@ public class Main {
         // -----------------------------------------
         
          try { 
-             outputArproveReject = new ProcurementManagerCustom().processPurchaseOrderApproveReject(context, defaultConnection, voArproveReject); 
+             outputArproveReject = new ProcurementManager().processPurchaseOrderApproveReject(context, defaultConnection, voArproveReject); 
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             System.out.println(ex.getStackTrace());

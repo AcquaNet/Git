@@ -1,0 +1,12 @@
+target/
+log/
+swagger-files/
+repository/
+work/
+server/
+logs/
+swagger-files-dragon/
+docker/
+docker_jre/
+swagger-files-magento/
+service-files/

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>run</actionName>
+            <packagings>
+                <packaging>jar</packaging>
+            </packagings>
+            <goals>
+                <goal>process-classes</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
+            </goals>
+            <properties>
+                <exec.args>-classpath %classpath com.jde.jdeconnectorserver.Main -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -licencia PdvHmCHV+4Agt8UCyF5zxpKCbs+wNWWGmqPL7aKUUXW2hoo5xKNm2jzX2KWzksyjZJxOxKpgmOUpBvyt5TB09PRHv0Yyr3++hPEh+3lfvnVsnhNgCvA4QVvDkSBsYovq0ZGAIH+CyrXPmw/s0UsDDckhcTnL7ZlzruZowa4eiwY=</exec.args>
+                <exec.executable>java</exec.executable>
+            </properties>
+        </action>
+        <action>
+            <actionName>debug</actionName>
+            <packagings>
+                <packaging>jar</packaging>
+            </packagings>
+            <goals>
+                <goal>process-classes</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
+            </goals>
+            <properties>
+                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath com.jde.jdeconnectorserver.Main -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -licencia PdvHmCHV+4Agt8UCyF5zxpKCbs+wNWWGmqPL7aKUUXW2hoo5xKNm2jzX2KWzksyjZJxOxKpgmOUpBvyt5TB09PRHv0Yyr3++hPEh+3lfvnVsnhNgCvA4QVvDkSBsYovq0ZGAIH+CyrXPmw/s0UsDDckhcTnL7ZlzruZowa4eiwY=</exec.args>
+                <exec.executable>java</exec.executable>
+                <jpda.listen>true</jpda.listen>
+            </properties>
+        </action>
+        <action>
+            <actionName>profile</actionName>
+            <packagings>
+                <packaging>jar</packaging>
+            </packagings>
+            <goals>
+                <goal>process-classes</goal>
+                <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
+            </goals>
+            <properties>
+                <exec.args>-classpath %classpath com.jde.jdeconnectorserver.Main -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -licencia PdvHmCHV+4Agt8UCyF5zxpKCbs+wNWWGmqPL7aKUUXW2hoo5xKNm2jzX2KWzksyjZJxOxKpgmOUpBvyt5TB09PRHv0Yyr3++hPEh+3lfvnVsnhNgCvA4QVvDkSBsYovq0ZGAIH+CyrXPmw/s0UsDDckhcTnL7ZlzruZowa4eiwY=</exec.args>
+                <exec.executable>java</exec.executable>
+            </properties>
+        </action>
+    </actions>

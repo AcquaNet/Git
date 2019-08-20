@@ -39,6 +39,9 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -57,6 +60,8 @@ import java.util.concurrent.Future;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.Resource;
 import org.codehaus.plexus.util.FileUtils;
@@ -452,6 +457,24 @@ public class BuildBundle {
              
             summary.add("WS descomprimidos en " + JAR_SBF );
             
+            // -----------------------------------------------
+            // Remover Protected 
+            // -----------------------------------------------
+            //
+            logger.info("Reemplazando Protected");
+             
+            Stream<Path> walk = Files.walk(Paths.get(JAR_SBF));
+            
+            List<String> resultList = walk.map(x -> x.toString())
+                    .filter(f -> f.endsWith(".java")).collect(Collectors.toList());
+
+            for (String file : resultList) {
+                
+                modifyFile(file,"protected ", "public ");
+
+            }
+
+
             // -----------------------------------------------
             // Prepare Maven 
             // -----------------------------------------------
@@ -1857,60 +1880,40 @@ public class BuildBundle {
         return returnValue;
     }
 
-    static void modifyFile(String filePath, String oldString, String newString)
+    static void modifyFile(String filePath, String oldString, String newString) throws IOException
     {
         File fileToBeModified = new File(filePath);
-         
+
         String oldContent = "";
-         
+
         BufferedReader reader = null;
-         
+
         FileWriter writer = null;
+
+        reader = new BufferedReader(new FileReader(fileToBeModified));
+
+        //Reading all the lines of input text file into oldContent
+        String line = reader.readLine();
+
+        while (line != null) {
+            oldContent = oldContent + line + System.lineSeparator();
+
+            line = reader.readLine();
+        }
+
+        //Replacing oldString with newString in the oldContent
+        String newContent = oldContent.replaceAll(oldString, newString);
+
+        //Rewriting the input text file with newContent
+        writer = new FileWriter(fileToBeModified);
+
+        writer.write(newContent);
+
+        reader.close();
+
+        writer.close();
          
-        try
-        {
-            reader = new BufferedReader(new FileReader(fileToBeModified));
-             
-            //Reading all the lines of input text file into oldContent
-             
-            String line = reader.readLine();
-             
-            while (line != null) 
-            {
-                oldContent = oldContent + line + System.lineSeparator();
-                 
-                line = reader.readLine();
-            }
-             
-            //Replacing oldString with newString in the oldContent
-             
-            String newContent = oldContent.replaceAll(oldString, newString);
-             
-            //Rewriting the input text file with newContent
-             
-            writer = new FileWriter(fileToBeModified);
-             
-            writer.write(newContent);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        finally
-        {
-            try
-            {
-                //Closing the resources
-                 
-                reader.close();
-                 
-                writer.close();
-            } 
-            catch (IOException e) 
-            {
-                e.printStackTrace();
-            }
-        }
+         
     }
 
 }
