@@ -8,11 +8,15 @@ package com.jde.jdeconnector.services;
 
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.service.JDEPoolConnections;
+import com.atina.jdeconnectorservice.service.JDESingleConnection;
 import com.jde.jdeconnectorserver.model.Configuracion;
 import com.jde.jdeserverwp.servicios.JDEServiceGrpc;
+import com.jde.jdeserverwp.servicios.Operacion;
+import com.jde.jdeserverwp.servicios.OperacionesResponse;
 import com.jde.jdeserverwp.servicios.SessionResponse; 
 import io.grpc.Status;
 import java.io.File;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +33,10 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     private static String DIR_INSTALACION = "service-files";
     private static String SERVICES_DIR_SUFFIX = "-files";
     private static String METADATA = "metadata"; 
-
+    
+    private static String TIPO_BSFN = "BSFN"; 
+    private static String TIPO_WS = "WS"; 
+    
     private String userDir;
     private File directorioDeInstalacion; 
 
@@ -63,9 +70,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         // Generar Session
         // -----------------------------------------
         //
-        
-        String token = "";
-
+         
         try {
  
             int sessionID = JDEPoolConnections.getInstance().createConnection(request.getUser(), request.getPassword(), request.getEnvironment(), request.getRole(), (int) request.getSessionId());
@@ -111,5 +116,90 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         logger.info("Swagger Login: End Login");
 
     } 
+    
+    @Override
+    public void operaciones(com.jde.jdeserverwp.servicios.OperacionesRequest request,
+            io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.OperacionesResponse> responseObserver) {
+        
+        logger.info("JDE Connector Server. Getting operations");
+
+        String tipoDeOperacion = request.getConnectorName();   // BSFN or WS
+
+        // ================================================
+        // Get Session ID
+        // ================================================
+        //
+        
+        int sessionID = JDEPoolConnections.getInstance()
+                            .createConnection(  request.getUser(), 
+                                                request.getPassword(), 
+                                                request.getEnvironment(), 
+                                                request.getRole(), 
+                                                (int) request.getSessionId());
+      
+          
+        
+        // ================================================
+        // Get Single Connection
+        // ================================================
+        //
+        JDESingleConnection singleConnection = JDEPoolConnections.getInstance().getSingleConnection(sessionID);
+        
+        if (tipoDeOperacion.equals(TIPO_BSFN)) {
+
+            // ================================================
+            // Get Operations
+            // ================================================
+            // 
+            Set<String> bsfnList = singleConnection.generateBSFNListFromCacheRepository();
+
+            OperacionesResponse.Builder responseBuilder = OperacionesResponse.newBuilder();
+
+            for (String operation : bsfnList) {
+
+                Operacion.Builder operacion = com.jde.jdeserverwp.servicios.Operacion.newBuilder();
+
+                operacion.setIdOperacion(operation);
+
+                operacion.setNombreOperacion(operation);
+
+                responseBuilder.addOperaciones(0, operacion);
+
+            }
+
+            responseBuilder.setSessionId(sessionID);
+
+            OperacionesResponse response = responseBuilder.build();
+
+            responseObserver.onNext(response);
+
+            responseObserver.onCompleted();
+
+        }
+
+
+        
+    }
+    
+    @Override
+    public void getMetadaParaOperacion(com.jde.jdeserverwp.servicios.GetMetadataRequest request,
+            io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.GetMetadataResponse> responseObserver) {
+        
+        
+        
+    }
+    
+    @Override
+    public void ejecutarOperacion(com.jde.jdeserverwp.servicios.EjecutarOperacionRequest request,
+            io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.EjecutarOperacionResponse> responseObserver) {
+        
+        
+        
+        
+        
+        
+    }
+    
+    
 
 }

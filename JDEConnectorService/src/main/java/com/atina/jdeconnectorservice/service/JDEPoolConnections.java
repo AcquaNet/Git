@@ -6,6 +6,7 @@
 package com.atina.jdeconnectorservice.service;
 
 import com.atina.jdeconnectorservice.JDEConnectorService;
+import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ public class JDEPoolConnections {
         
     }
     
-    public int createConnection(String user, String password, String environment, String role, int sessionID) {
+    public int createConnection(String user, String password, String environment, String role, int sessionID) throws JDESingleConnectionException {
         
         logger.info("Creating JDE Connection: ");
         logger.info("      User: " + user);
@@ -76,7 +77,17 @@ public class JDEPoolConnections {
         
     }
     
+    public JDESingleConnection getSingleConnection(int sessionID) throws JDESingleConnectionException{
     
-    
+        if(this.pool.containsKey(sessionID))
+        {
+            return this.pool.get(sessionID);
+        }
+        else
+        {
+            throw new JDESingleConnectionException("There is not a session in poll connections for session id: " +sessionID);
+        }
+         
+    } 
     
 }

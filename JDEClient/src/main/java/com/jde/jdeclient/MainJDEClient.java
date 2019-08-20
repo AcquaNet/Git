@@ -8,6 +8,9 @@ package com.jde.jdeclient;
 import com.jde.jdeclient.configuracion.Configuracion;
 import com.jde.jdeserverwp.servicios.JDEServiceGrpc;
 import com.jde.jdeserverwp.servicios.JDEServiceGrpc.JDEServiceBlockingStub;
+import com.jde.jdeserverwp.servicios.Operacion;
+import com.jde.jdeserverwp.servicios.OperacionesRequest;
+import com.jde.jdeserverwp.servicios.OperacionesResponse;
 import com.jde.jdeserverwp.servicios.SessionRequest;
 import com.jde.jdeserverwp.servicios.SessionResponse;
 import io.grpc.ManagedChannel;
@@ -49,6 +52,8 @@ public class MainJDEClient {
         // ===========================  
         // 
         JDEServiceBlockingStub stub = JDEServiceGrpc.newBlockingStub(channel);
+        
+        int sessionID = 0;
 
         // ===========================  
         // Login                       
@@ -64,7 +69,40 @@ public class MainJDEClient {
                             .setRole(configuracion.getRole())
                             .build());
 
+            sessionID = (int) tokenResponse.getSessionId();
+            
             System.out.println("Logeado con Session [" + tokenResponse.getSessionId() + "]");
+
+        } catch (Exception ex) {
+
+            logger.error("Error ejecutando metodo ");
+
+            throw new RuntimeException("Error Logeando", null);
+
+        }
+        
+        // ===========================  
+        // Get Operations                       
+        // ===========================  
+        //
+        try {
+
+            OperacionesResponse operaciones = stub.operaciones(
+                    OperacionesRequest.newBuilder()
+                            .setConnectorName("BSFN")
+                            .setUser(configuracion.getUser())
+                            .setPassword(configuracion.getPassword())
+                            .setEnvironment(configuracion.getEnvironment())
+                            .setRole(configuracion.getRole())
+                            .setSessionId(sessionID)
+                            .build());
+
+            for(Operacion operacion: operaciones.getOperacionesList())
+            {
+                
+                System.out.println("Operacion [" + operacion.getNombreOperacion() + "]");
+                
+            }
 
         } catch (Exception ex) {
 

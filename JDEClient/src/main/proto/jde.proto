@@ -58,10 +58,16 @@ message SessionResponse {
 
 message OperacionesRequest {
   string connectorName = 2;
+  string user = 3;
+  string password = 4;
+  string environment = 5;
+  string role = 6;
+  int64 sessionId = 7;
 }
 
 message OperacionesResponse {
   repeated Operacion operaciones = 1;
+  int64 sessionId = 2;
 }
  
 // Configuracion del la Conexion a JDE
