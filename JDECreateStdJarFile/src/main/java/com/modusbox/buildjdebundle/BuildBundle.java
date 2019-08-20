@@ -28,8 +28,10 @@ import org.codehaus.plexus.util.IOUtil;
 
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import com.google.devtools.common.options.OptionsParser;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -92,6 +94,7 @@ public class BuildBundle {
      */
     public static void main(String[] args) throws IOException {
 
+        
         // -----------------------------------------------
         // create the command line parser
         // -----------------------------------------------
@@ -121,11 +124,13 @@ public class BuildBundle {
             // -----------------------------------------------
             // Setting Logging 
             // -----------------------------------------------
+            //
             setupLogging(JAR_DESTINATION);
 
             // -----------------------------------------------
             // Setting Environment Variables 
             // -----------------------------------------------
+            //
             setupEnvironmentVariables(JAR_DESTINATION);
 
             try {
@@ -137,9 +142,16 @@ public class BuildBundle {
             } catch (Exception ex) {
                 logger.error("Nothing to clean " + ": " + ex.getMessage());
             }
-
+            
             // -----------------------------------------------
-            // Get JDE Jars
+            // Create 
+            // -----------------------------------------------
+            //
+             
+            ArrayList<String> summary = new ArrayList<String>();
+            
+            // -----------------------------------------------
+            // Obtener Lista de JARs de JDE
             // -----------------------------------------------
             //
             logger.info("Getting JDE Jars...");
@@ -148,8 +160,10 @@ public class BuildBundle {
 
             copyFileFromDeployment(jdeJars, options);
             
+            summary.add("Se copiaron los Jars de JDEdwards");
+            
             // -----------------------------------------------
-            // Get WS Jars
+            // Obtener Lista de WS de JDE
             // -----------------------------------------------
             //
             logger.info("Getting JDE Jars...");
@@ -157,22 +171,26 @@ public class BuildBundle {
             Map<String, String> jdeWSJars = getPackageToShade(WS_JARS);
 
             copyWSFromDeployment(jdeWSJars, options); 
-            // -----------------------------------------------
-            // Get Package To Shade
-            // -----------------------------------------------
-            //
-            logger.info("Getting Package to Shade...");
-
-            Map<String, String> packages = getPackageToShade(PROPERTYFILE);
-
+            
+            summary.add("Se copiaron los WS de JDEdwards");
+             
             // -----------------------------------------------
             // Get Jars File To Shade
             // -----------------------------------------------
             
             HashSet<String> jarsToShade = new HashSet();
+            Map<String, String> packages = new HashMap<String, String> ();
             
             if (SHADE) {
-                
+
+                // -----------------------------------------------
+                // Get Package To Shade
+                // -----------------------------------------------
+                //
+                logger.info("Getting Package to Shade...");
+
+                packages = getPackageToShade(PROPERTYFILE);
+
                 logger.info("Getting JARS Files to Shade...");
 
                 jarsToShade = getJarsToShade(packages.keySet(), JAR_SELECTED);
@@ -183,75 +201,94 @@ public class BuildBundle {
                     logger.info("        " + jarfile);
                 }
 
-            }  
+            }
 
             // -----------------------------------------------
             // Preparing Maven
             // -----------------------------------------------
             
-            logger.info(STEP_1);
-
+            logger.info("Creacion del POM en el directorio: " + JAR_DESTINATION);
+ 
             prepareMvn(jarsToShade, JAR_SELECTED, options.jdbcDriver, JAR_DESTINATION, options.version, options.outputName);
+            
+            summary.add("POM creado en " + JAR_DESTINATION );
+            
 
             // -----------------------------------------------
             // Copy Assembly
             // -----------------------------------------------
-            logger.info(STEP_2);
+            logger.info("Descarga del Assembly en " + JAR_DESTINATION);
 
             copyAssembly(JAR_DESTINATION);
 
+            summary.add("Assembly descargado en " + JAR_DESTINATION );
+            
+            
             // -----------------------------------------------
             // Executing Maven to Assembly Bundle
             // -----------------------------------------------
             //
-            logger.info(STEP_3);
+            logger.info("Creando JAR File con librerias de JDE");
             
             ExecutorService executor = Executors.newSingleThreadExecutor();
             
             Callable<Integer> callableTask = () -> {
                 int result = executeMvnAssembly(JAR_DESTINATION);
+                summary.add("Libreria creada en " + JAR_DESTINATION );
                 return result;
             };
-                
+                 
             Future<Integer> future = executor.submit(callableTask);
 
             int result = future.get();
             
             executor.shutdown();
-             
+            
+            if(result!=0)
+            {
+                throw new Exception("Error creando JAR File con librerias de JDE");
+            }
+            
             // -----------------------------------------------
             // Executing Extra Install
             // -----------------------------------------------
-            if (isSuccessful(result)) {
+            //
+             if (SHADE) {
+                 
+                if (isSuccessful(result)) {
 
-                // Adding Jars Files to Shade to Local Repo
-                for (String fileToRename : jarsToShade) {
-                    executeExtraInstall(JAR_SELECTED, fileToRename.substring(0, fileToRename.lastIndexOf(".")), "1.0.0", options.localRepo);
+                    // Adding Jars Files to Shade to Local Repo
+                    for (String fileToRename : jarsToShade) {
+                        executeExtraInstall(JAR_SELECTED, fileToRename.substring(0, fileToRename.lastIndexOf(".")), "1.0.0", options.localRepo);
+                    }
+
+                    logger.info(STEP_4);
+
+                    ExecutorService executor2 = Executors.newSingleThreadExecutor();
+
+                    Callable<Integer> callableTask2 = () -> {
+                        executeMvnInstall(JAR_DESTINATION, "1.0.0", options.localRepo, options.outputName);
+                        return 0;
+                    };
+
+                    Future<Integer> future2 = executor2.submit(callableTask2);
+
+                    executor2.shutdown();
+
                 }
-
-                logger.info(STEP_4);
-  
-                ExecutorService executor2 = Executors.newSingleThreadExecutor();
-
-                Callable<Integer> callableTask2 = () -> {
-                    executeMvnInstall(JAR_DESTINATION, "1.0.0", options.localRepo, options.outputName);
-                    return 0;
-                };
-
-                Future<Integer> future2 = executor2.submit(callableTask2);
-
-                executor2.shutdown();
-             
 
             }
 
             // -----------------------------------------------
             // Executing Maven to Assembly Bundle
             // -----------------------------------------------
-            logger.info(STEP_5);
+            
+            logger.info("Ejecutando Clean UP");
             
             cleanUp(JAR_DESTINATION, options.outputName);
-
+            
+            summary.add("CleanUp ejecutado en " + JAR_DESTINATION );
+ 
             // -----------------------------------------------
             // Creating Shaded
             // -----------------------------------------------
@@ -271,11 +308,17 @@ public class BuildBundle {
                     logger.info("Java Dummmy has been copied.");
 
                 } catch (IOException ex) {
+                    
                     result = 1;
+                    
                     logger.error("Error Copying Java Dummmy" + ": " + ex.getMessage());
+                    
                 } catch (URISyntaxException ex) {
+                    
                     result = 1;
+                    
                     logger.error("Error Copying Java Dummmy" + ": " + ex.getMessage());
+                    
                 }
 
                 // -----------------------------------------------
@@ -372,6 +415,7 @@ public class BuildBundle {
             // -----------------------------------------------
             // Installing
             // -----------------------------------------------
+            //
             if (isSuccessful(result)) {
 
                 logger.info("Installing JDE Connector Shaded in local repository...");
@@ -383,46 +427,55 @@ public class BuildBundle {
                 if (!isSuccessful(result)) {
 
                     logger.error("Error Installing JDE Connector in Local Repository");
+                    
+                    throw new Exception("Error Installing JDE Connector in Local Repository");
                 }
+                
+                summary.add("Jar Instalado en el Repositorio " + JAR_DESTINATION );
+                
             }
             
-            logger.info("Getting JARS Files to unzip...");
+            logger.info("Descomprimiendo WS..");
 
             JarsClassFile jarsToUnzip = new JarsClassFile();
 
-            try {
+            jarsToUnzip = getJarsToUnzip(JAR_SBF);
 
-                jarsToUnzip = getJarsToUnzip(JAR_SBF);
+            logger.info("JARS Files to unzip...");
 
-                logger.info("JARS Files to unzip...");
+            for (JarClassFile jarfile : jarsToUnzip.getJars()) {
 
-                for (JarClassFile jarfile : jarsToUnzip.getJars()) {
+                UnzipJar.unzipJar(JAR_SBF, jarfile.getJarFile().getAbsolutePath());
 
-                    UnzipJar.unzipJar(JAR_SBF, jarfile.getJarFile().getAbsolutePath());
-
-                    logger.info("        " + jarfile.getNameWithoutExtension());
-                }
-
-            } catch (IOException ex) {
-                logger.error(ex.getMessage(), ex);
-                throw ex;
+                logger.info("        " + jarfile.getNameWithoutExtension() + " descomprimido");
             }
              
+            summary.add("WS descomprimidos en " + JAR_SBF );
             
             // -----------------------------------------------
             // Prepare Maven 
             // -----------------------------------------------
-            logger.info(STEP_1);
+            //
+            logger.info("Preparando POM para compilar WS...");
 
             prepareWSMvn(jarsToUnzip, JAR_SBF, JAR_SBF, options.version);
+            
+            if (!isSuccessful(result)) {
 
-            logger.info("Executing Building with Shaded option");
+                logger.error("Error creando POM para la compilacion de WS");
+
+                throw new Exception("Error creando POM para la compilacion de WS");
+            }
+             
+            summary.add("POM de Ws crado en " + JAR_SBF );
+ 
+            logger.info("Compilando WS..");
 
             ExecutorService executorWS = Executors.newSingleThreadExecutor();
 
             Callable<Integer> callableTaskWS = () -> {
                 int result4 = executeMvnWS(JAR_SBF, options.localRepo);
-                return 1;
+                return result4;
             };
 
             Future<Integer> futureWS = executorWS.submit(callableTaskWS);
@@ -430,13 +483,30 @@ public class BuildBundle {
             result = futureWS.get();
 
             executorWS.shutdown();
-        
+             
+            if (!isSuccessful(result)) {
+
+                logger.error("Error Installing JDE Connector in Local Repository");
+
+                throw new Exception("Error Installing JDE Connector in Local Repository");
+            }
+         
+            summary.add("WS instalado en Repositorio");
+           
+            logger.info("=======================================================");
+            logger.info(" Summary ");
+            logger.info("=======================================================");
+            
+            for (String line : summary) {
+                logger.info(line);
+            }
             
 
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
-
+        
+        
     }
 
     private static void printUsage(OptionsParser parser) {
@@ -558,7 +628,11 @@ public class BuildBundle {
     }
 
     private static int executeMvnAssembly(String destDir) {
+        
         int result = 0;
+        
+        List<String> executionOutput = null;
+                 
         try {
 
             MavenCli cli = new MavenCli();
@@ -570,7 +644,7 @@ public class BuildBundle {
 
             result = cli.doMain(params, destDir, printStream(stdOutStream), printStream(stdErrStream));
 
-            List<String> executionOutput = toString(stdOutStream);
+            executionOutput = toString(stdOutStream);
 
             for (String line : executionOutput) {
                 logger.info(line);
@@ -587,7 +661,15 @@ public class BuildBundle {
             }
 
         } catch (Exception e) {
+
             logger.info(STEP_3 + ": " + e.getMessage());
+
+            if (executionOutput != null) {
+                for (String line : executionOutput) {
+                    logger.info(line);
+                }
+
+            }
         }
         return result;
     }
@@ -722,16 +804,18 @@ public class BuildBundle {
         final ByteArrayOutputStream stdOutStream = new ByteArrayOutputStream();
 
         final ByteArrayOutputStream stdErrStream = new ByteArrayOutputStream();
+        
+        List<String> executionOutput = null;
 
         try {
 
             MavenCli cli = new MavenCli();
 
-            String[] params = new String[]{"clean", "package"};
+            String[] params = new String[]{"clean", "install"};
 
             result = cli.doMain(params, destDir, printStream(stdOutStream), printStream(stdErrStream));
 
-            List<String> executionOutput = toString(stdOutStream);
+            executionOutput = toString(stdOutStream);
 
             for (String line : executionOutput) {
                 logger.info(line);
@@ -745,8 +829,15 @@ public class BuildBundle {
             result = 1;
 
             logger.error("Error Executing Maven Shaded. Message" + ": " + e.getMessage());
+            
+            if (executionOutput != null) {
+                for (String line : executionOutput) {
+                    logger.info(line);
+                }
+            }
 
         }
+        
         return result;
 
     }
@@ -769,9 +860,11 @@ public class BuildBundle {
     }
 
     private static void cleanUp(String destDir, String name) {
+        
         try {
             
             File[] temp = null;
+            
             if(SHADE)
             {
                 temp = new File[]{new File(destDir, "pom.xml"), new File(destDir, "assembly.xml"), new File(destDir, "archive-tmp"), new File(destDir, name + "-1.0.0.jar")};
@@ -789,6 +882,7 @@ public class BuildBundle {
         } catch (Exception e) {
             logger.error(STEP_4 + ": " + e.getMessage());
         }
+        
     }
 
     private static void cleanUpShade(String destDir) {
@@ -1730,7 +1824,9 @@ public class BuildBundle {
 
     }
     
-    private static void prepareWSMvn(JarsClassFile JarsToShade, String libDir, String destDir, String version) {
+    private static int prepareWSMvn(JarsClassFile JarsToShade, String libDir, String destDir, String version) {
+        
+        int returnValue = 0;
         
         try {
 
@@ -1748,16 +1844,73 @@ public class BuildBundle {
             // -----------------------------------------------
             // GENERAR
             // -----------------------------------------------
-            
-           
+             
             m.execute(writer, JarsToShade).flush();
             
             
             
         } catch (Exception e) {
             logger.error(STEP_1 + ": " + e.getMessage());
+            returnValue = 1;
         }
+        
+        return returnValue;
     }
 
+    static void modifyFile(String filePath, String oldString, String newString)
+    {
+        File fileToBeModified = new File(filePath);
+         
+        String oldContent = "";
+         
+        BufferedReader reader = null;
+         
+        FileWriter writer = null;
+         
+        try
+        {
+            reader = new BufferedReader(new FileReader(fileToBeModified));
+             
+            //Reading all the lines of input text file into oldContent
+             
+            String line = reader.readLine();
+             
+            while (line != null) 
+            {
+                oldContent = oldContent + line + System.lineSeparator();
+                 
+                line = reader.readLine();
+            }
+             
+            //Replacing oldString with newString in the oldContent
+             
+            String newContent = oldContent.replaceAll(oldString, newString);
+             
+            //Rewriting the input text file with newContent
+             
+            writer = new FileWriter(fileToBeModified);
+             
+            writer.write(newContent);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            try
+            {
+                //Closing the resources
+                 
+                reader.close();
+                 
+                writer.close();
+            } 
+            catch (IOException e) 
+            {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }
