@@ -1,0 +1,9 @@
+<configuration>
+    <includeGroupIds>com.jdedwards</includeGroupIds>
+    <includeArtifactIds>castor,xalan</includeArtifactIds>
+    <overWrite>true</overWrite>
+    <outputDirectory>${project.build.directory}/castor-resources</outputDirectory>
+    <excludes>types/**,**/*.class,META-INF/**</excludes>
+    <overWriteReleases>true</overWriteReleases>
+    <overWriteSnapshots>true</overWriteSnapshots>
+</configuration>

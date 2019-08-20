@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+
+    <!--These are some of the loggers you can enable. 
+        There are several more you can find in the documentation. 
+    Besides this log4j configuration, you can also use Java VM environment variables
+    to enable other logs like network (-Djavax.net.debug=ssl or all) and 
+    Garbage Collector (-XX:+PrintGC). These will be append to the console, so you will 
+    see them in the mule_ee.log file. -->
+
+
+    <Appenders>
+        
+        <File name="file" fileName="c:/tmp/logs/file.log" append="true">
+        <PatternLayout>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%nw</Pattern>
+        </PatternLayout>
+        </File>
+        
+        <Console name="stdout" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %p %m%n"/>
+        </Console>
+        
+    </Appenders>
+    
+    
+    <Loggers>
+ 
+        <logger name="com.modus.jdeconnectorjavautilcloudhub" level="INFO"/>
+        
+        <logger name="com.modus.jdeconnectorjavautilcloudhub.MuleHandler" level="INFO"/>
+        
+         <logger name="com.modus.jdeconnectorjavautilcloudhub.DNSCacheLoader" level="INFO"/>
+
+        <root level="INFO">
+            <appender-ref ref="file" />
+            <appender-ref ref="stdout" />
+        </root>
+        
+        
+    </Loggers>
+    
+    
+</Configuration>
