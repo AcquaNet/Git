@@ -84,6 +84,8 @@ public class BuildBundle {
     private static final String STEP_4 = "Installing bundle in local repository";
     private static final String STEP_4a = "Building Building shaded";
     private static final String STEP_5 = "Cleaning up";
+    private static final Boolean SHADE = false;
+    
 
     /**
      * @param args the command line arguments
@@ -139,6 +141,7 @@ public class BuildBundle {
             // -----------------------------------------------
             // Get JDE Jars
             // -----------------------------------------------
+            //
             logger.info("Getting JDE Jars...");
 
             Map<String, String> jdeJars = getPackageToShade(JDE_JARS);
@@ -148,6 +151,7 @@ public class BuildBundle {
             // -----------------------------------------------
             // Get WS Jars
             // -----------------------------------------------
+            //
             logger.info("Getting JDE Jars...");
 
             Map<String, String> jdeWSJars = getPackageToShade(WS_JARS);
@@ -156,6 +160,7 @@ public class BuildBundle {
             // -----------------------------------------------
             // Get Package To Shade
             // -----------------------------------------------
+            //
             logger.info("Getting Package to Shade...");
 
             Map<String, String> packages = getPackageToShade(PROPERTYFILE);
@@ -164,24 +169,29 @@ public class BuildBundle {
             // Get Jars File To Shade
             // -----------------------------------------------
             
-            logger.info("Getting JARS Files to Shade...");
+            HashSet<String> jarsToShade = new HashSet();
+            
+            if (SHADE) {
+                
+                logger.info("Getting JARS Files to Shade...");
 
-            Set<String> JarsToShade = null;
+                jarsToShade = getJarsToShade(packages.keySet(), JAR_SELECTED);
 
-            JarsToShade = getJarsToShade(packages.keySet(), JAR_SELECTED);
+                logger.info("JARS Files to Shade...");
 
-            logger.info("JARS Files to Shade...");
+                for (String jarfile : jarsToShade) {
+                    logger.info("        " + jarfile);
+                }
 
-            for (String jarfile : JarsToShade) {
-                logger.info("        " + jarfile);
-            }
-  
+            }  
+
             // -----------------------------------------------
             // Preparing Maven
             // -----------------------------------------------
+            
             logger.info(STEP_1);
 
-            prepareMvn(JarsToShade, JAR_SELECTED, options.jdbcDriver, JAR_DESTINATION, options.version, options.outputName);
+            prepareMvn(jarsToShade, JAR_SELECTED, options.jdbcDriver, JAR_DESTINATION, options.version, options.outputName);
 
             // -----------------------------------------------
             // Copy Assembly
@@ -193,6 +203,7 @@ public class BuildBundle {
             // -----------------------------------------------
             // Executing Maven to Assembly Bundle
             // -----------------------------------------------
+            //
             logger.info(STEP_3);
             
             ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -214,7 +225,7 @@ public class BuildBundle {
             if (isSuccessful(result)) {
 
                 // Adding Jars Files to Shade to Local Repo
-                for (String fileToRename : JarsToShade) {
+                for (String fileToRename : jarsToShade) {
                     executeExtraInstall(JAR_SELECTED, fileToRename.substring(0, fileToRename.lastIndexOf(".")), "1.0.0", options.localRepo);
                 }
 
@@ -238,122 +249,128 @@ public class BuildBundle {
             // Executing Maven to Assembly Bundle
             // -----------------------------------------------
             logger.info(STEP_5);
-
+            
             cleanUp(JAR_DESTINATION, options.outputName);
 
             // -----------------------------------------------
             // Creating Shaded
             // -----------------------------------------------
-            logger.info(STEP_4a);
+            
+            if (SHADE) {
 
-            result = 0;
+                logger.info(STEP_4a);
 
-            try {
-
-                logger.info("Copying Java Dummmy...");
-
-                copyJavaDummy(JAR_DESTINATION);
-
-                logger.info("Java Dummmy has been copied.");
-
-            } catch (IOException ex) {
-                result = 1;
-                logger.error("Error Copying Java Dummmy" + ": " + ex.getMessage());
-            } catch (URISyntaxException ex) {
-                result = 1;
-                logger.error("Error Copying Java Dummmy" + ": " + ex.getMessage());
-            }
-
-            // -----------------------------------------------
-            // Prepare POM to build  Java Dummy
-            // -----------------------------------------------
-            if (isSuccessful(result)) {
-
-                logger.info("Preparing POM to build JDE Connector Shaded");
-
-                result = prepareMvnForDummy(JarsToShade, JAR_SELECTED, options.jdbcDriver, JAR_DESTINATION, options.version, packages, options.outputName);
-
-                logger.info("P POM to build JDE Connector Shaded has been wrote.");
-
-            }
-
-            // -----------------------------------------------
-            // Executing Building with Shaded option
-            // -----------------------------------------------
-            if (isSuccessful(result)) {
-
-                logger.info("Executing Building with Shaded option");
- 
-                ExecutorService executor3 = Executors.newSingleThreadExecutor();
-
-                Callable<Integer> callableTask3 = () -> {
-                    int result2 = executeMvnShade(JAR_DESTINATION, options.version, options.localRepo);
-                    return result2;
-                };
-
-                Future<Integer> future3 = executor3.submit(callableTask3);
-                
-                result = future3.get();
-                
-                executor3.shutdown();
-             
-
-            }
-
-            // -----------------------------------------------
-            // Copying Jar Shaded
-            // -----------------------------------------------
-            if (isSuccessful(result)) {
-
-                File source = new File(JAR_DESTINATION + File.separator + "target/" + options.outputName + "-" + options.version + "-shaded.jar");
-                File dest = new File(JAR_DESTINATION + File.separator + options.outputName + "-" + options.version + ".jar");
-
-                logger.info("Copying Jar File " + source.getName() + " to " + dest.getName());
+                result = 0;
 
                 try {
-                    FileUtils.copyFile(source, dest);
 
-                    logger.info("Jar File " + source.getName() + " to " + dest.getName() + " has been copied.");
+                    logger.info("Copying Java Dummmy...");
+
+                    copyJavaDummy(JAR_DESTINATION);
+
+                    logger.info("Java Dummmy has been copied.");
 
                 } catch (IOException ex) {
                     result = 1;
-                    logger.error("Error copying Jar Shaded. Message" + ": " + ex.getMessage());
+                    logger.error("Error Copying Java Dummmy" + ": " + ex.getMessage());
+                } catch (URISyntaxException ex) {
+                    result = 1;
+                    logger.error("Error Copying Java Dummmy" + ": " + ex.getMessage());
                 }
 
-            }
+                // -----------------------------------------------
+                // Prepare POM to build  Java Dummy
+                // -----------------------------------------------
+                if (isSuccessful(result)) {
 
-            // -----------------------------------------------
-            // Cleanning Shading process
-            // -----------------------------------------------
-            if (isSuccessful(result)) {
+                    logger.info("Preparing POM to build JDE Connector Shaded");
 
-                try {
+                    result = prepareMvnForDummy(jarsToShade, JAR_SELECTED, options.jdbcDriver, JAR_DESTINATION, options.version, packages, options.outputName);
 
-                    executeMvnShadeClean(JAR_DESTINATION, options.localRepo);
+                    logger.info("P POM to build JDE Connector Shaded has been wrote.");
 
-                    logger.info("Cleaning Shading process ... ");
+                }
 
-                    FileUtils.deleteDirectory(JAR_DESTINATION + File.separator + "target");
+                // -----------------------------------------------
+                // Executing Building with Shaded option
+                // -----------------------------------------------
+                if (isSuccessful(result)) {
+
+                    logger.info("Executing Building with Shaded option");
+
+                    ExecutorService executor3 = Executors.newSingleThreadExecutor();
+
+                    Callable<Integer> callableTask3 = () -> {
+                        int result2 = executeMvnShade(JAR_DESTINATION, options.version, options.localRepo);
+                        return result2;
+                    };
+
+                    Future<Integer> future3 = executor3.submit(callableTask3);
+
+                    result = future3.get();
+
+                    executor3.shutdown();
+
+                }
+
+                // -----------------------------------------------
+                // Copying Jar Shaded
+                // -----------------------------------------------
+                if (isSuccessful(result)) {
+
+                    File source = new File(JAR_DESTINATION + File.separator + "target/" + options.outputName + "-" + options.version + "-shaded.jar");
+                    File dest = new File(JAR_DESTINATION + File.separator + options.outputName + "-" + options.version + ".jar");
+
+                    logger.info("Copying Jar File " + source.getAbsolutePath() + " to " + dest.getAbsolutePath());
 
                     try {
-                        Thread.sleep(60000);
-                    } catch (InterruptedException ex) {
-                        java.util.logging.Logger.getLogger(BuildBundle.class.getName()).log(Level.SEVERE, null, ex);
+                        FileUtils.copyFile(source, dest);
+
+                        logger.info("Jar File " + source.getName() + " to " + dest.getName() + " has been copied.");
+
+                    } catch (IOException ex) {
+                        result = 1;
+                        logger.error("Error copying Jar Shaded. Message" + ": " + ex.getMessage());
                     }
 
-                    logger.info("Shading process has been cleaned");
-
-                } catch (IOException ex) {
-                    //result = 1;
-                    logger.error("Error Cleanning Shading process. Message" + ": " + ex.getMessage());
                 }
 
-                cleanUpShade(JAR_DESTINATION);
+                // -----------------------------------------------
+                // Cleanning Shading process
+                // -----------------------------------------------
+                if (isSuccessful(result)) {
+
+                    try {
+
+                        executeMvnShadeClean(JAR_DESTINATION, options.localRepo);
+
+                        logger.info("Cleaning Shading process ... ");
+
+                        FileUtils.deleteDirectory(JAR_DESTINATION + File.separator + "target");
+
+                        try {
+                            Thread.sleep(60000);
+                        } catch (InterruptedException ex) {
+                            java.util.logging.Logger.getLogger(BuildBundle.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                        logger.info("Shading process has been cleaned");
+
+                    } catch (IOException ex) {
+                        //result = 1;
+                        logger.error("Error Cleanning Shading process. Message" + ": " + ex.getMessage());
+                    }
+
+                    cleanUpShade(JAR_DESTINATION);
+
+                }
+
+                
 
             }
-
+            
             // -----------------------------------------------
-            // Cleanning Shading process
+            // Installing
             // -----------------------------------------------
             if (isSuccessful(result)) {
 
@@ -368,8 +385,6 @@ public class BuildBundle {
                     logger.error("Error Installing JDE Connector in Local Repository");
                 }
             }
-            
-            
             
             logger.info("Getting JARS Files to unzip...");
 
@@ -447,8 +462,7 @@ public class BuildBundle {
 
             Model pom = new Model();
             pom.setGroupId("com.jdedwards");
-            pom.setArtifactId(name);
-            // pom.setVersion(version);
+            pom.setArtifactId(name); 
             pom.setVersion("1.0.0");
             pom.setModelVersion("4.0.0");
 
@@ -756,7 +770,17 @@ public class BuildBundle {
 
     private static void cleanUp(String destDir, String name) {
         try {
-            File[] temp = new File[]{new File(destDir, "pom.xml"), new File(destDir, "assembly.xml"), new File(destDir, "archive-tmp"), new File(destDir, name + "-1.0.0.jar")};
+            
+            File[] temp = null;
+            if(SHADE)
+            {
+                temp = new File[]{new File(destDir, "pom.xml"), new File(destDir, "assembly.xml"), new File(destDir, "archive-tmp"), new File(destDir, name + "-1.0.0.jar")};
+            }
+            else
+            {
+                temp = new File[]{new File(destDir, "pom.xml"), new File(destDir, "assembly.xml"), new File(destDir, "archive-tmp")};
+            }
+            
             for (File file : temp) {
                 if (file.exists()) {
                     file.delete();
@@ -882,7 +906,7 @@ public class BuildBundle {
 
     }
 
-    private static Set<String> getJarsToShade(Set packages, String libDir) throws IOException {
+    private static HashSet<String> getJarsToShade(Set packages, String libDir) throws IOException {
 
         HashSet<String> jarsToShade = new HashSet();
 

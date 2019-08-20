@@ -3,7 +3,7 @@
                     <replacements>
                         <replacement>
                             <token>org.apache.xerces</token>
-                            <value>org.apache.xerces</value>
+                            <value>org.apache.shade.xerces</value>
                         </replacement>
                     </replacements>
                 </configuration> 
