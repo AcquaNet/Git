@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.modusbox.buildjdebundle;
+package com.atina.buildjdebundle;
 
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
@@ -83,7 +83,7 @@ public class BuildBundle {
     private static final String JDE_JARS = "JarsToCopy.properties";
     private static final String WS_JARS = "WSToCopy.properties";
     private static final String JAR_SELECTED = "/tmp/jarselected";
-    private static final String JAR_DESTINATION = "/tmp/wrapped"; 
+        private static final String JAR_DESTINATION = "/tmp/wrapped"; 
     private static final String JAR_SBF = "/tmp/sbfjars";
     private static final String STEP_1 = "Defining bundle descriptor";
     private static final String STEP_2 = "Defining bundle assembly";
