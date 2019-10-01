@@ -18,10 +18,12 @@ import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException; 
 import com.jdedwards.system.connector.dynamic.Connector;
+import com.jdedwards.system.security.SecurityToken;
 import java.io.File;
 import java.util.Iterator; 
 import java.util.Map;
 import java.util.Set; 
+import oracle.e1.bssvfoundation.impl.security.E1Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +38,7 @@ public class JDESingleWSClient {
     // =========================
     // Login Parameters
     // =========================
+    //
     private String user;
     private String password;
     private String environment;
@@ -44,17 +47,20 @@ public class JDESingleWSClient {
     // =========================
     // Cache
     // =========================
+    //
     private File tmpFolder;
     
     private File tmpFolderCache;
      
     // =========================
-    // Session ID
+    // Session Parameters
     // =========================
-    private int iSessionID = 0;
-    
-    private CurrentUserSessionListener ul;
-
+    //
+    private int iSessionID = 0; 
+    UserSession userSession;
+    SecurityToken secToken;
+    E1Principal e1ppal; 
+      
     public JDESingleWSClient(String user, String password, String environment, String role) {
         this.user = user;
         this.password = password;
@@ -69,10 +75,10 @@ public class JDESingleWSClient {
         boolean userConnected = false;
 
         try {
-            
+
             JDEConnectionLocker.getInstance()
-                .getWriteLock();
-            
+                    .getWriteLock();
+
             if (iSessionID != 0) {
 
                 logger.info("MULESOFT - JDEConnectorService:  Previously connected to JDE. Id:" + Integer.toString(iSessionID));
@@ -97,10 +103,8 @@ public class JDESingleWSClient {
             if (iSessionID == 0) {
 
                 Connector connector = com.jdedwards.system.connector.dynamic.Connector.getInstance();
-                 
-                connector.addUserSessionListener(ul);
-                
-                iSessionID = connector.login(this.user, this.password, this.environment, this.role);
+ 
+                iSessionID = connector.loginBase(this.user, this.password, this.environment, this.role, true, true);
 
                 logger.info("      User Connected with Id: " + Integer.toString(iSessionID));
 
@@ -157,9 +161,32 @@ public class JDESingleWSClient {
                     logger.info("Connecting to JDE ..");
 
                     iSessionID = com.jdedwards.system.connector.dynamic.Connector.getInstance()
-                            .login(user, password, environment, role);
+                            .loginBase(this.user, this.password, this.environment, this.role, true, true);
 
                     logger.info("      User Connected with Id: " + Integer.toString(iSessionID));
+                }
+
+                // ==============================================================
+                // Get UserSession
+                // ==============================================================
+                //
+                if (userConnected) {
+
+                    userSession = Connector.getInstance().getUserSession(iSessionID);
+                    userSession.setSbfConnectorMode(true);
+
+                    // -----------------------------------------
+                    // GET Token
+                    // -----------------------------------------
+                    //
+                    secToken = userSession.getSecurityToken();
+
+                    // -----------------------------------------
+                    // GET E1Principal
+                    // -----------------------------------------
+                    //
+                    e1ppal = new E1Principal("JDE", secToken, "JDV920", "*ALL", iSessionID);
+
                 }
 
             }
@@ -191,12 +218,7 @@ public class JDESingleWSClient {
             logger.debug("MULESOFT - JDEConnectorService:  Disconnecting from JDE. Id: " + Integer.toString(iSessionID));
 
             Connector connector = com.jdedwards.system.connector.dynamic.Connector.getInstance();
-            
-            if(ul!=null)
-            {
-                connector.removeUserSessionListener(ul);
-            }
-            
+ 
             connector.logoff(iSessionID);
 
             connector.shutDown();
@@ -212,8 +234,7 @@ public class JDESingleWSClient {
             logger.debug("MULESOFT - JDEConnectorService:  Previously disconnected from JDE. Id:" + Integer.toString(iSessionID));
 
         }
-        
-        
+         
     }
     
     
@@ -272,7 +293,7 @@ public class JDESingleWSClient {
     
     
     
-    public Set<String> getBSFNList() throws JDESingleConnectorException{
+    public Set<String> getWSList() throws JDESingleConnectorException{
           
         if(iSessionID==0 || tmpFolder == null )
         { 

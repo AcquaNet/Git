@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.atina.buildjdebundle;
+package com.atila.metadata.utils;
 
+import com.atila.metadata.utils.ArchiveUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.jar.JarFile;

@@ -5,11 +5,14 @@
  */
 package com.atina.jdeconnectorservice;
  
+import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
 import com.jdedwards.system.connector.dynamic.ServerFailureException; 
 import com.atina.jdeconnector.internal.model.JDEBsfnParametersInputObject;
 import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException;
 import com.atina.jdeconnectorservice.service.JDESingleConnection;
+import com.atina.jdeconnectorservice.wsservice.JDESingleWSConnection;
+import java.util.Set;
 import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,19 +40,19 @@ public class JDEConnectorService {
         
         jdeConnection.connect();
         
-//        // Call BSFBN
-//        Set<String> bsfnlist = jdeConnection.generateBSFNListFromCacheRepository();
-//        for(String bsfnName:bsfnlist)
-//        {
-//            logger.debug(bsfnName);
-//        }
-//        
-//        Set<JDEBsfnParameter> parameterList = jdeConnection.getBSFNParameter("AddressBookMasterMBF");
-//        
-//        for(JDEBsfnParameter parameter:parameterList)
-//        {
-//            logger.debug(parameter.toString());
-//        }
+        // Call BSFBN
+        Set<String> bsfnlist = jdeConnection.generateBSFNListFromCacheRepository();
+        for(String bsfnName:bsfnlist)
+        {
+            logger.debug(bsfnName);
+        }
+        
+        Set<JDEBsfnParameter> parameterList = jdeConnection.getBSFNParameter("AddressBookMasterMBF");
+        
+        for(JDEBsfnParameter parameter:parameterList)
+        {
+            logger.debug(parameter.toString());
+        }
         
         // Calling BSFN
         JDEBsfnParametersInputObject inputObject = new JDEBsfnParametersInputObject();
@@ -65,7 +68,7 @@ public class JDEConnectorService {
         logger.debug("Output: " + outputObject.toString());
         
         
-        Thread.sleep(1200000);
+        Thread.sleep(30000);
         
         outputObject = jdeConnection.callJDEBsfn("AddressBookMasterMBF", inputObject);
          
@@ -73,6 +76,21 @@ public class JDEConnectorService {
          
         jdeConnection.disconnect();
          
+        return "";
+    }
+    
+    public String testWSConnection(String user, String pwd, String environment, String role) throws ServerFailureException, InterruptedException, JDESingleConnectorException  {
+        
+        logger.info("Testign Connections...");
+        
+        JDESingleWSConnection jdeConnection = new JDESingleWSConnection(user,pwd,environment,role);
+        
+        jdeConnection.connect();
+        
+        Thread.sleep(30000);
+         
+        jdeConnection.disconnect();
+          
         return "";
     }
     
@@ -113,7 +131,8 @@ public class JDEConnectorService {
                     
                     try {
                         
-                        util.testConnection( line.getOptionValue("jde_user"), line.getOptionValue("jde_pwd"), line.getOptionValue("jde_environment"), line.getOptionValue("jde_role"));
+                        //util.testConnection( line.getOptionValue("jde_user"), line.getOptionValue("jde_pwd"), line.getOptionValue("jde_environment"), line.getOptionValue("jde_role"));
+                        util.testWSConnection( line.getOptionValue("jde_user"), line.getOptionValue("jde_pwd"), line.getOptionValue("jde_environment"), line.getOptionValue("jde_role"));
                    
                     } catch (ServerFailureException ex) {
                         java.util.logging.Logger.getLogger(JDEConnectorService.class.getName()).log(Level.SEVERE, null, ex);

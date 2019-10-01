@@ -166,9 +166,9 @@ public class JDESingleWSConnection {
     // JDE Bsfn operations
     // ====================================================================================
   
-    public Set<String> generateBSFNListFromCacheRepository() throws JDESingleConnectorException {
+    public Set<String> generateWSListFromCacheRepository() throws JDESingleConnectorException {
 
-        return client.getBSFNList();
+        return client.getWSList();
 
     } 
     

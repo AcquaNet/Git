@@ -6,6 +6,8 @@
 package com.jde.jdeclient;
 
 import com.jde.jdeclient.configuracion.Configuracion;
+import com.jde.jdeserverwp.servicios.GetMetadataRequest;
+import com.jde.jdeserverwp.servicios.GetMetadataResponse;
 import com.jde.jdeserverwp.servicios.JDEServiceGrpc;
 import com.jde.jdeserverwp.servicios.JDEServiceGrpc.JDEServiceBlockingStub;
 import com.jde.jdeserverwp.servicios.Operacion;
@@ -13,6 +15,7 @@ import com.jde.jdeserverwp.servicios.OperacionesRequest;
 import com.jde.jdeserverwp.servicios.OperacionesResponse;
 import com.jde.jdeserverwp.servicios.SessionRequest;
 import com.jde.jdeserverwp.servicios.SessionResponse;
+import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.slf4j.Logger;
@@ -81,27 +84,61 @@ public class MainJDEClient {
 
         }
         
+//        // ===========================  
+//        // Get Operations                       
+//        // ===========================  
+//        //
+//        try {
+//
+//            OperacionesResponse operaciones = stub.operaciones(
+//                    OperacionesRequest.newBuilder()
+//                            .setConnectorName("BSFN")
+//                            .setUser(configuracion.getUser())
+//                            .setPassword(configuracion.getPassword())
+//                            .setEnvironment(configuracion.getEnvironment())
+//                            .setRole(configuracion.getRole())
+//                            .setSessionId(sessionID)
+//                            .build());
+//
+//            for(Operacion operacion: operaciones.getOperacionesList())
+//            {
+//                
+//                System.out.println("Operacion [" + operacion.getNombreOperacion() + "]");
+//                
+//            }
+//
+//        } catch (Exception ex) {
+//
+//            logger.error("Error ejecutando metodo ");
+//
+//            throw new RuntimeException("Error Logeando", null);
+//
+//        }
+//        
         // ===========================  
-        // Get Operations                       
+        // Get Metadata                       
         // ===========================  
         //
         try {
 
-            OperacionesResponse operaciones = stub.operaciones(
-                    OperacionesRequest.newBuilder()
+            GetMetadataResponse operaciones = stub.getMetadaParaOperacion(
+                    GetMetadataRequest.newBuilder()
                             .setConnectorName("BSFN")
                             .setUser(configuracion.getUser())
                             .setPassword(configuracion.getPassword())
                             .setEnvironment(configuracion.getEnvironment())
                             .setRole(configuracion.getRole())
                             .setSessionId(sessionID)
+                            .setOperacionKey("AddressBookMasterMBF")
                             .build());
 
-            for(Operacion operacion: operaciones.getOperacionesList())
-            {
-                
-                System.out.println("Operacion [" + operacion.getNombreOperacion() + "]");
-                
+            for (TipoDelParametroInput parameter : operaciones.getListaDeParametrosInputList()) {
+
+                System.out.println("Operacion [" + parameter.getNombreDelParametro() + "]");
+                System.out.println("Operacion [" + parameter.getSecuencia() + "]"); 
+                System.out.println("Operacion [" + parameter.getTipoDelParametroJava() + "]"); 
+                System.out.println("Operacion [" + parameter.getTipoDelParametroMule() + "]");
+
             }
 
         } catch (Exception ex) {

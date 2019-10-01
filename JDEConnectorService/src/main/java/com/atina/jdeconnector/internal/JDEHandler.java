@@ -39,6 +39,7 @@ public class JDEHandler extends StreamHandler implements LogOutputHandler {
             break;
         case "DEBUG":
             logger.debug(paramLogRecord.getMessage()); 
+            break;
         case "MANDATORY":
             logger.error(paramLogRecord.getMessage());
             break;

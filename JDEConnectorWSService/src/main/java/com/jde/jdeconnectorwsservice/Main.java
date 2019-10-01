@@ -6,8 +6,6 @@
 package com.jde.jdeconnectorwsservice;
 
 import com.jdedwards.database.base.JDBException;
-import oracle.e1.bssv.JPR01000.valueobject.RI_ConfirmAddAddressBook;
-import oracle.e1.bssvfoundation.base.TestBusinessService;
 import oracle.e1.bssvfoundation.exception.BusinessServiceException;
 
 import com.jdedwards.system.connector.dynamic.Connector;
@@ -16,9 +14,8 @@ import com.jdedwards.system.connector.dynamic.UserSession;
 import com.jdedwards.system.security.SecurityToken;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.Locale;
 import oracle.e1.bssv.JP430000.ProcurementManager;
 import oracle.e1.bssv.JP430000.valueobject.ConfirmPurchaseOrderApproveReject;
 import oracle.e1.bssv.JP430000.valueobject.GetPurchaseOrderDetailForApprover;
@@ -86,9 +83,9 @@ public class Main {
         // -----------------------------------------
         
         SBFConnectionManager valor = SBFConnectionManager.getInstance();
+         
         SBFConnection defaultConnection = valor.getDefaultConnection((Context) context, true);
-        
-       
+          
         // =====================================================
         // Recuperar Ordenes Pendientes de Aprobacion
         // =====================================================
@@ -125,9 +122,9 @@ public class Main {
         
          try { 
              conadd = new ProcurementManager().getPurchaseOrdersForApprover(context, defaultConnection, vo); 
-        } catch (Exception ex) {
+        } catch (BusinessServiceException ex) {
             System.out.println(ex.getMessage());
-            System.out.println(ex.getStackTrace());
+            System.out.println(Arrays.toString(ex.getStackTrace()));
         }
           
          
@@ -135,9 +132,7 @@ public class Main {
         // -----------------------------------------
         // Mostrar Valores
         // ----------------------------------------- 
-        
          
-        
         for(PurchaseOrdersForApproverResults value:conadd.getPurchaseOrdersForApproverResults())
         {
             
@@ -315,13 +310,11 @@ public class Main {
             System.out.println(ex.getMessage());
             System.out.println(ex.getStackTrace());
         }
-         
-         
-        
-         
+           
         // -----------------------------------------
         // Cerrar conexion
         // -----------------------------------------
+         
         
           Connector.getInstance().logoff(sessionId);
           Connector.getInstance().shutDown();

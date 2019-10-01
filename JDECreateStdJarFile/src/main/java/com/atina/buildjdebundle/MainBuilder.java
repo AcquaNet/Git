@@ -5,6 +5,11 @@
  */
 package com.atina.buildjdebundle;
 
+import com.atila.metadata.utils.UnzipJar;
+import com.atina.metadata.models.JarsClassFile;
+import com.atina.metadata.models.JarClassFile;
+import com.atina.buildjdebundle.exceptions.MetadataServerException;
+import com.atina.buildjdebundle.metadata.MetadataWSGenerator;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
@@ -75,16 +80,17 @@ import org.slf4j.MDC;
  *
  * @author jgodi
  */
-public class BuildBundle {
+public class MainBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(BuildBundle.class);
+    private static final Logger logger = LoggerFactory.getLogger(MainBuilder.class);
 
     private static final String PROPERTYFILE = "packageToShade.properties";
     private static final String JDE_JARS = "JarsToCopy.properties";
     private static final String WS_JARS = "WSToCopy.properties";
     private static final String JAR_SELECTED = "/tmp/jarselected";
-        private static final String JAR_DESTINATION = "/tmp/wrapped"; 
+    private static final String JAR_DESTINATION = "/tmp/wrapped"; 
     private static final String JAR_SBF = "/tmp/sbfjars";
+    private static final String JAR_METADATA = "/tmp/metadata";
     private static final String STEP_1 = "Defining bundle descriptor";
     private static final String STEP_2 = "Defining bundle assembly";
     private static final String STEP_3 = "Performing bundle creation";
@@ -99,6 +105,17 @@ public class BuildBundle {
      */
     public static void main(String[] args) throws IOException {
 
+//        MetadataWSGenerator mt = new MetadataWSGenerator();
+//        
+//        try {
+//            mt.loadMetadata(new File("/tmp"));
+//        } catch (MetadataServerException ex) {
+//            java.util.logging.Logger.getLogger(BuildBundle.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        
+//        
+//        
+//        
         
         // -----------------------------------------------
         // create the command line parser
@@ -399,7 +416,7 @@ public class BuildBundle {
                         try {
                             Thread.sleep(60000);
                         } catch (InterruptedException ex) {
-                            java.util.logging.Logger.getLogger(BuildBundle.class.getName()).log(Level.SEVERE, null, ex);
+                            java.util.logging.Logger.getLogger(MainBuilder.class.getName()).log(Level.SEVERE, null, ex);
                         }
 
                         logger.info("Shading process has been cleaned");
@@ -440,8 +457,15 @@ public class BuildBundle {
                 
             }
             
+            // -----------------------------------------------
+            // Unzipping WS and Creating Metadata
+            // -----------------------------------------------
+            //
+            
             logger.info("Descomprimiendo WS..");
 
+            MetadataWSGenerator mt = new MetadataWSGenerator();
+            
             JarsClassFile jarsToUnzip = new JarsClassFile();
 
             jarsToUnzip = getJarsToUnzip(JAR_SBF);
@@ -451,7 +475,7 @@ public class BuildBundle {
             for (JarClassFile jarfile : jarsToUnzip.getJars()) {
 
                 UnzipJar.unzipJar(JAR_SBF, jarfile.getJarFile().getAbsolutePath());
-
+                
                 logger.info("        " + jarfile.getNameWithoutExtension() + " descomprimido");
             }
              
@@ -470,10 +494,26 @@ public class BuildBundle {
 
             for (String file : resultList) {
                 
+                try {
+                    mt.generateMetadata(file);
+                } catch (MetadataServerException ex) {
+                    logger.error(ex.getMessage(), ex);
+                }
+
                 modifyFile(file,"protected ", "public ");
 
             }
-
+            
+            // -----------------------------------------------
+            // Persist Metadata
+            // -----------------------------------------------
+            //
+             
+            try {
+                mt.saveMetadata(new File(JAR_METADATA));
+            } catch (MetadataServerException ex) {
+                logger.error(ex.getMessage(), ex);
+            } 
 
             // -----------------------------------------------
             // Prepare Maven 
@@ -481,7 +521,7 @@ public class BuildBundle {
             //
             logger.info("Preparando POM para compilar WS...");
 
-            prepareWSMvn(jarsToUnzip, JAR_SBF, JAR_SBF, options.version);
+            prepareWSMvn(JAR_METADATA, jarsToUnzip, JAR_SBF, JAR_SBF, options.version);
             
             if (!isSuccessful(result)) {
 
@@ -1545,7 +1585,7 @@ public class BuildBundle {
         execution.setGoals(goals);
 
         // Begin <configuration>
-        InputStream input = BuildBundle.class.getClassLoader().getResourceAsStream("unpack-configuration.xml");
+        InputStream input = MainBuilder.class.getClassLoader().getResourceAsStream("unpack-configuration.xml");
 
         Reader reader = new InputStreamReader(input);
 
@@ -1847,9 +1887,11 @@ public class BuildBundle {
 
     }
     
-    private static int prepareWSMvn(JarsClassFile JarsToShade, String libDir, String destDir, String version) {
+    private static int prepareWSMvn(String jarMetadata, JarsClassFile JarsToShade, String libDir, String destDir, String version) {
         
         int returnValue = 0;
+        
+        JarsToShade.setMetadataFolder(jarMetadata);
         
         try {
 

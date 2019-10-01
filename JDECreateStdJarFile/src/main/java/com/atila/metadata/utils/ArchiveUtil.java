@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.atina.buildjdebundle;
+package com.atila.metadata.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
