@@ -222,15 +222,7 @@
                 </exclusion>
             </exclusions> 
         </dependency>
-        
-        <!-- https://github.com/javaparser/javaparser -->
-        <dependency>
-            <groupId>com.github.javaparser</groupId>
-            <artifactId>javaparser-core</artifactId>
-            <version>2.1.0</version>
-            <type>jar</type>
-        </dependency>
-        
+    
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>

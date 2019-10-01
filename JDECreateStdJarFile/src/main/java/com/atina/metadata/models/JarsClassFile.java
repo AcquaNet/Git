@@ -17,6 +17,7 @@ public class JarsClassFile {
     
     private ArrayList<JarClassFile> jars = new ArrayList<JarClassFile>();
     private String metadataFolder;
+    private String metadataDriver;
 
     public JarsClassFile() {
     }
@@ -40,6 +41,14 @@ public class JarsClassFile {
     public void setMetadataFolder(String metadataFolder) {
         this.metadataFolder = metadataFolder;
     }
+
+    public String getMetadataDriver() {
+        return metadataDriver;
+    }
+
+    public void setMetadataDriver(String metadataDriver) {
+        this.metadataDriver = metadataDriver;
+    } 
      
     @Override
     public String toString() {

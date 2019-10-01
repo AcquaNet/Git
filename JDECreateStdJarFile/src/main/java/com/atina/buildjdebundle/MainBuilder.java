@@ -91,6 +91,9 @@ public class MainBuilder {
     private static final String JAR_DESTINATION = "/tmp/wrapped"; 
     private static final String JAR_SBF = "/tmp/sbfjars";
     private static final String JAR_METADATA = "/tmp/metadata";
+    private static final String METADATA_DRIVER_TXT = "MetadataWSDriver.txt";
+    private static final String METADATA_DRIVER_JAVA = "/tmp/metadata/MetadataWSDriver.java";
+    
     private static final String STEP_1 = "Defining bundle descriptor";
     private static final String STEP_2 = "Defining bundle assembly";
     private static final String STEP_3 = "Performing bundle creation";
@@ -514,6 +517,18 @@ public class MainBuilder {
             } catch (MetadataServerException ex) {
                 logger.error(ex.getMessage(), ex);
             } 
+            
+            // -----------------------------------------------
+            // Copiar Clase de Metadata de Resource a /tmp
+            // -----------------------------------------------
+            //
+            
+            URL url = Thread.currentThread().getContextClassLoader().getResource(METADATA_DRIVER_TXT);
+
+            InputStream inputStream = url.openConnection().getInputStream();
+
+            IOUtil.copy(inputStream, new FileOutputStream(new File(METADATA_DRIVER_JAVA)));
+            
 
             // -----------------------------------------------
             // Prepare Maven 
@@ -521,7 +536,7 @@ public class MainBuilder {
             //
             logger.info("Preparando POM para compilar WS...");
 
-            prepareWSMvn(JAR_METADATA, jarsToUnzip, JAR_SBF, JAR_SBF, options.version);
+            prepareWSMvn(JAR_METADATA, JAR_METADATA, jarsToUnzip, JAR_SBF, JAR_SBF, options.version);
             
             if (!isSuccessful(result)) {
 
@@ -1887,11 +1902,12 @@ public class MainBuilder {
 
     }
     
-    private static int prepareWSMvn(String jarMetadata, JarsClassFile JarsToShade, String libDir, String destDir, String version) {
+    private static int prepareWSMvn(String jarMetadata, String metadataDriver, JarsClassFile JarsToShade, String libDir, String destDir, String version) {
         
         int returnValue = 0;
         
         JarsToShade.setMetadataFolder(jarMetadata);
+        JarsToShade.setMetadataDriver(metadataDriver);
         
         try {
 

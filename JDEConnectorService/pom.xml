@@ -111,7 +111,15 @@
             <artifactId>jde-lib-wrapped</artifactId>
             <version>1.0.0</version>
         </dependency>
+        
+        <dependency>
+            <groupId>com.jdedwards</groupId>
+            <artifactId>StdWebService</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
+        <!-- Ant -->
+    
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
@@ -176,6 +184,19 @@
             <groupId>com.github.jsqlparser</groupId>
             <artifactId>jsqlparser</artifactId>
             <version>0.9.4</version>
+        </dependency>
+        
+        <!-- https://mvnrepository.com/artifact/org.mule/mule-core -->
+        <dependency>
+            <groupId>org.mule</groupId>
+            <artifactId>mule-core</artifactId>
+            <version>3.9.0</version>
+            <exclusions>
+                <exclusion>  <!-- declare the exclusion here -->
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+            </exclusions> 
         </dependency>
              
     </dependencies> 
