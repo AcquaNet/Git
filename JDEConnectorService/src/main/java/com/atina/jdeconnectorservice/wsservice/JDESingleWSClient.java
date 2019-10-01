@@ -12,6 +12,7 @@ import com.jdedwards.system.connector.dynamic.UserSession;
 import com.atina.jdeconnector.internal.JDEBsfnDriver;
 import com.atina.jdeconnector.internal.JDEConnectionLocker;
 import com.atina.jdeconnector.internal.JDETransactions; 
+import com.atina.jdeconnector.internal.JDEWSDriver;
 import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
 import com.atina.jdeconnector.internal.model.JDEBsfnParametersInputObject;
 import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
@@ -300,7 +301,7 @@ public class JDESingleWSClient {
             throw new JDESingleConnectorException("Error getting BSFN List");
             
         } 
-        return JDEBsfnDriver.getInstance().getBSFNListFromEnterpriseServer(iSessionID, tmpFolder);
+        return JDEWSDriver.getInstance().getWSList(tmpFolder);
     }
     
     public Set<JDEBsfnParameter> getBSFNParameter(String bsfnName) throws JDESingleConnectorException{

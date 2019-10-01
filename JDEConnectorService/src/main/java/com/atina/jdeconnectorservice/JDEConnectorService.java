@@ -87,6 +87,8 @@ public class JDEConnectorService {
         
         jdeConnection.connect();
         
+        Set<String> operation = jdeConnection.generateWSListFromCacheRepository();
+        
         Thread.sleep(30000);
          
         jdeConnection.disconnect();
