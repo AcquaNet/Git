@@ -176,7 +176,7 @@ public class JDESingleWSConnection {
 
         logger.info("MULESOFT - JDEClient - Getting BSFN Parameters");
 
-        return client.getBSFNParameter(bsfnName);
+        return client.getWSParameter(bsfnName);
         
     }
     
@@ -184,7 +184,7 @@ public class JDESingleWSConnection {
 
         logger.info("MULESOFT - JDEClient - Calling BSFN"); 
      
-        return client.callJDEBsfn(bsfnName, inputObject);
+        return client.callJDEWS(bsfnName, inputObject);
         
     }
      

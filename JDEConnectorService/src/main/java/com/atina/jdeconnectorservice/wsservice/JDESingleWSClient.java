@@ -12,7 +12,7 @@ import com.jdedwards.system.connector.dynamic.UserSession;
 import com.atina.jdeconnector.internal.JDEBsfnDriver;
 import com.atina.jdeconnector.internal.JDEConnectionLocker;
 import com.atina.jdeconnector.internal.JDETransactions; 
-import com.atina.jdeconnector.internal.JDEWSDriver;
+import com.atina.jdeconnector.internal.ws.JDEWSDriver;
 import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
 import com.atina.jdeconnector.internal.model.JDEBsfnParametersInputObject;
 import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
@@ -304,15 +304,15 @@ public class JDESingleWSClient {
         return JDEWSDriver.getInstance().getWSList(tmpFolder);
     }
     
-    public Set<JDEBsfnParameter> getBSFNParameter(String bsfnName) throws JDESingleConnectorException{
+    public Set<JDEBsfnParameter> getWSParameter(String bsfnName) throws JDESingleConnectorException{
            
-        return JDEBsfnDriver.getInstance().getBSFNParameter(iSessionID,bsfnName,tmpFolderCache);
+        return JDEWSDriver.getInstance().getWSParameter(iSessionID,bsfnName,tmpFolderCache);
     }
     
-    public JDEBsfnParametersOutputObject callJDEBsfn(String bsfnName, JDEBsfnParametersInputObject inputObject) throws JDESingleConnectorException{
+    public JDEBsfnParametersOutputObject callJDEWS(String bsfnName, JDEBsfnParametersInputObject inputObject) throws JDESingleConnectorException{
     
-       // login();
-        return JDEBsfnDriver.getInstance().callJDEBsfn(iSessionID,bsfnName, inputObject,tmpFolderCache);
+        
+        return JDEWSDriver.getInstance().callJDEWS(iSessionID,bsfnName, inputObject,tmpFolderCache);
     }
           
     //************************************************************************

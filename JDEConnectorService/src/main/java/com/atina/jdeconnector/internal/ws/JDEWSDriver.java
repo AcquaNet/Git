@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.atina.jdeconnector.internal;
+package com.atina.jdeconnector.internal.ws;
 
 import com.atila.metadata.metadata.driver.MetadataWSDriver;
 import org.slf4j.Logger;
@@ -207,6 +207,19 @@ public class JDEWSDriver {
         }
  
         return returnValue;
+    }
+    
+      public Set<JDEBsfnParameter> getWSParameter(int session, String bsfnName,  File tmpFolderCache) throws JDESingleBSFNException {
+          
+          
+          return null;
+      }
+    
+    public synchronized JDEBsfnParametersOutputObject callJDEWS(int session, String bsfnName, JDEBsfnParametersInputObject inputObject,File tmpFolderCache)
+    {
+        
+        
+        return null;
     }
     
 
