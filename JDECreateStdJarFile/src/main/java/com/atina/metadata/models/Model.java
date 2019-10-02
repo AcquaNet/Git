@@ -12,33 +12,33 @@ import java.util.Iterator;
  *
  * @author jgodi
  */
-public class Modelo {
+public class Model {
 
     private String modelPackage;
-    private String nombreDelModelo;
-    private ArrayList<TipoDelModelo> tipos; 
+    private String modelName;
+    private ArrayList<ModelType> parametersType; 
  
-    public Modelo() {
+    public Model() {
 
-        this.nombreDelModelo = "";
-        this.tipos = new ArrayList<TipoDelModelo>();
+        this.modelName = "";
+        this.parametersType = new ArrayList<ModelType>();
 
     }
 
-    public String getNombreDelModelo() {
-        return nombreDelModelo;
+    public String getModelName() {
+        return modelName;
     }
 
-    public void setNombreDelModelo(String nombreDelModelo) {
-        this.nombreDelModelo = nombreDelModelo;
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
     }
 
-    public ArrayList<TipoDelModelo> getTipos() {
-        return tipos;
+    public ArrayList<ModelType> getParametersType() {
+        return parametersType;
     }
 
-    public void addTipoDelModelo(TipoDelModelo tipo) {
-        this.tipos.add(tipo);
+    public void addTipoDelModelo(ModelType tipo) {
+        this.parametersType.add(tipo);
     }
 
     public String getModelPackage() {
@@ -53,9 +53,9 @@ public class Modelo {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        Iterator<TipoDelModelo> it = this.tipos.iterator();
+        Iterator<ModelType> it = this.parametersType.iterator();
 
-        sb.append("Modelo:" + modelPackage + "." + nombreDelModelo);
+        sb.append("Modelo:" + modelPackage + "." + modelName);
          
         while (it.hasNext()) {
             sb.append("\n").append(it.next().toString());

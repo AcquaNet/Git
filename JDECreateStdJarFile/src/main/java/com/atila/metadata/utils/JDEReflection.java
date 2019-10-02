@@ -4,8 +4,7 @@
  * and open the template in the editor.
  */
 package com.atila.metadata.utils;
-
-import com.atina.metadata.models.Transaccion;
+ 
 import java.io.File; 
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;

@@ -11,15 +11,15 @@ import java.util.ArrayList;
  *
  * @author jgodi
  */
-public class Parametros {
+public class Parameters {
     
-    private ArrayList<Parametro> parameters;
+    private ArrayList<Parameter> parameters;
     
-     public Parametros() {
-        this.parameters = new ArrayList<Parametro>();
+     public Parameters() {
+        this.parameters = new ArrayList<Parameter>();
     }
 
-    public ArrayList<Parametro> getParameters() {
+    public ArrayList<Parameter> getParameters() {
         return parameters;
     }
     

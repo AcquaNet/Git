@@ -6,14 +6,12 @@
 package com.atina.buildjdebundle.metadata;
 
 import com.atina.buildjdebundle.exceptions.MetadataServerException;
-import com.atina.metadata.models.Modelo;
-import com.atina.metadata.models.Modelos;
-import com.atina.metadata.models.Operacion;
-import com.atina.metadata.models.Operaciones;
-import com.atina.metadata.models.Parametro;
-import com.atina.metadata.models.TipoDelModelo;
-import com.atina.metadata.models.Transaccion;
-import com.atina.metadata.models.Transacciones;
+import com.atina.metadata.models.Model;
+import com.atina.metadata.models.Models;
+import com.atina.metadata.models.Operation;
+import com.atina.metadata.models.Operations;
+import com.atina.metadata.models.Parameter;
+import com.atina.metadata.models.ModelType; 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,10 +50,10 @@ public class MetadataWSGenerator {
     
     private boolean bPublishedBusinessService;
     private boolean bValueObject;
-    private static Operaciones operaciones;
-    private static Modelos modelos;
-    private Transaccion transaction;
-    private Modelo modelo;
+    private static Operations operaciones;
+    private static Models modelos;
+    private String transaction;
+    private Model modelo;
     private File srcFile; 
     private String packageName; 
     private List<ImportDeclaration> imports;
@@ -84,9 +82,9 @@ public class MetadataWSGenerator {
 
     public MetadataWSGenerator() {
         
-        operaciones = new Operaciones();
+        operaciones = new Operations();
         
-         modelos = new Modelos(); 
+         modelos = new Models(); 
         
     }
       
@@ -118,7 +116,7 @@ public class MetadataWSGenerator {
         
     }
     
-    public void processJDESrcFile(File srcFile, Operaciones operaciones, Modelos modelos) throws MetadataServerException {
+    public void processJDESrcFile(File srcFile, Operations operaciones, Models modelos) throws MetadataServerException {
 
         logger.info("****************************************************************");
         logger.info("* PROCESSING SOURCE FILE                                       *");
@@ -223,15 +221,14 @@ public class MetadataWSGenerator {
             
             if(bPublishedBusinessService)
             {
-                transaction = new Transaccion(n.getName());
-                
+                transaction = n.getName().toString(); 
             }
             
             if(bValueObject)
             {
-                modelo = new Modelo();
+                modelo = new Model();
                 modelo.setModelPackage(packageName);
-                modelo.setNombreDelModelo(n.getName());
+                modelo.setModelName(n.getName());
                 
             }
             
@@ -257,12 +254,12 @@ public class MetadataWSGenerator {
                     logger.info("     Return Value: " + n.getType());
                     logger.info("     Modiffiers: " + ModifierSet.getAccessSpecifier(n.getModifiers()).getCodeRepresenation());
 
-                    Operacion operacion = new Operacion();
+                    Operation operacion = new Operation();
  
-                    operacion.setModelPackage(packageName);
-                    operacion.setClase(transaction.getNombre());
-                    operacion.setMetodo(n.getName());
-                    operacion.setReturnType(n.getType().toString());
+                    operacion.setOperationModelPackage(packageName);
+                    operacion.setOperationClass(transaction);
+                    operacion.setOperationMethod(n.getName());
+                    operacion.setOperationReturnType(n.getType().toString());
                     
 
                     if (n.getParameters() != null) {
@@ -275,10 +272,10 @@ public class MetadataWSGenerator {
 
                             logger.info("                          Parametro: (" + secuencia + ") " + p.getId() + " Type: " + p.getType());
 
-                            Parametro parametro = new Parametro();
+                            Parameter parametro = new Parameter();
 
-                            parametro.setNombre(p.getId().getName());
-                            parametro.setSecuencia(secuencia);
+                            parametro.setParameterName(p.getId().getName());
+                            parametro.setParameterSequence(secuencia);
                             
                             String fqName = getQuantified(imports,p.getType().toString()); 
                             if(fqName.isEmpty())
@@ -288,7 +285,7 @@ public class MetadataWSGenerator {
                             
                             parametro.setJavaClass(checkJavaClass(fqName));
                             
-                            parametro.setType(fqName);  
+                            parametro.setParameterType(fqName);  
                             operacion.getParameters().getParameters().add(parametro);
 
                             secuencia++;
@@ -321,7 +318,7 @@ public class MetadataWSGenerator {
 
                                 logger.info("                          Parametro: (" + secuencia + ") " + p.getId() + " Type: " + p.getType());
                                 
-                                TipoDelModelo tipoDelModelo = new TipoDelModelo();
+                                ModelType tipoDelModelo = new ModelType();
                                   
                                 String fqName = getQuantified(imports,p.getType().toString());
                                  
@@ -332,11 +329,11 @@ public class MetadataWSGenerator {
                                 
                                 tipoDelModelo.setJavaClass(checkJavaClass(fqName));
                                  
-                                tipoDelModelo.setTipoDeVariable(fqName);
+                                tipoDelModelo.setModelType(fqName);
                                 
-                                tipoDelModelo.setNombreDeLaVariable(p.getId().toString());
+                                tipoDelModelo.setVariableName(p.getId().toString());
   
-                                modelo.getTipos().add(tipoDelModelo);
+                                modelo.getParametersType().add(tipoDelModelo);
 
                                 secuencia++;
 
@@ -399,7 +396,7 @@ public class MetadataWSGenerator {
         
         try {
 
-            this.operaciones = objectMapper.readValue(new File(metadataDir + File.separator + WS_JSON), Operaciones.class);
+            this.operaciones = objectMapper.readValue(new File(metadataDir + File.separator + WS_JSON), Operations.class);
 
         } catch (IOException ex) {
 
@@ -417,7 +414,7 @@ public class MetadataWSGenerator {
         
         try {
 
-            this.modelos = objectMapper.readValue(new File(metadataDir + File.separator + VO_JSON), Modelos.class);
+            this.modelos = objectMapper.readValue(new File(metadataDir + File.separator + VO_JSON), Models.class);
 
         } catch (IOException ex) {
 

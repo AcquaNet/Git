@@ -14,24 +14,24 @@ import java.util.Map;
  *
  * @author jgodi
  */
-public class Modelos {
+public class Models {
     
-    private Map<String, Modelo> modelos;
+    private Map<String, Model> models;
 
-    public Modelos() {
-        modelos = new HashMap<String, Modelo>();    
+    public Models() {
+        models = new HashMap<String, Model>();    
     }
     
-     public void AddModelo(Modelo modelo) {
-        modelos.put(modelo.getNombreDelModelo(), modelo);
+     public void AddModelo(Model modelo) {
+        models.put(modelo.getModelName(), modelo);
     }
 
-    public Modelo getModelo(String nombreDelModelo) {
-        return modelos.get(nombreDelModelo);
+    public Model getModelo(String nombreDelModelo) {
+        return models.get(nombreDelModelo);
     }
 
-    public Map<String, Modelo> getModelos() {
-        return modelos;
+    public Map<String, Model> getModels() {
+        return models;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class Modelos {
         StringBuilder sb = new StringBuilder();
         
         
-        Iterator<Modelo> it = this.modelos.values().iterator();
+        Iterator<Model> it = this.models.values().iterator();
   
         while (it.hasNext()) {
             sb.append(it.next().toString());
