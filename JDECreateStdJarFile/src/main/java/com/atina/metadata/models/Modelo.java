@@ -14,9 +14,9 @@ import java.util.Iterator;
  */
 public class Modelo {
 
+    private String modelPackage;
     private String nombreDelModelo;
-    private ArrayList<TipoDelModelo> tipos;
-    private boolean errorGettingMetadata;
+    private ArrayList<TipoDelModelo> tipos; 
  
     public Modelo() {
 
@@ -41,21 +41,21 @@ public class Modelo {
         this.tipos.add(tipo);
     }
 
-    public boolean isErrorGettingMetadata() {
-        return errorGettingMetadata;
+    public String getModelPackage() {
+        return modelPackage;
     }
 
-    public void setErrorGettingMetadata(boolean errorGettingMetadata) {
-        this.errorGettingMetadata = errorGettingMetadata;
-    } 
-
+    public void setModelPackage(String modelPackage) {
+        this.modelPackage = modelPackage;
+    }
+  
     @Override
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
         Iterator<TipoDelModelo> it = this.tipos.iterator();
 
-        sb.append("Modelo:" + nombreDelModelo);
+        sb.append("Modelo:" + modelPackage + "." + nombreDelModelo);
          
         while (it.hasNext()) {
             sb.append("\n").append(it.next().toString());

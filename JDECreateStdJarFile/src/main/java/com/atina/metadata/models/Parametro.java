@@ -15,6 +15,7 @@ public class Parametro implements Comparable<Parametro>{
     private String nombre;   
     private String Type; 
     private int secuencia;
+    private Boolean javaClass; 
 
     public Parametro() {
     } 
@@ -44,6 +45,14 @@ public class Parametro implements Comparable<Parametro>{
         this.secuencia = secuencia;
     }
 
+    public Boolean getJavaClass() {
+        return javaClass;
+    }
+
+    public void setJavaClass(Boolean javaClass) {
+        this.javaClass = javaClass;
+    }
+     
     @Override
     public String toString() {
         return "Parametro{" + "nombre=" + nombre + ", Type=" + Type + ", secuencia=" + secuencia + '}';

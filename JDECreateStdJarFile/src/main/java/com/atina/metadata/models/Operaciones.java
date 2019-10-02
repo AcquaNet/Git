@@ -37,7 +37,7 @@ public class Operaciones {
         ArrayList<Operacion> returnValue = new ArrayList<Operacion>();
 
         for (Operacion operacion : operaciones) {
-            if (operacion.getClase().getNombre().equals(transaccion.getNombre())) {
+            if (operacion.getClase().equals(transaccion.getNombre())) {
                 returnValue.add(operacion);
             }
         }

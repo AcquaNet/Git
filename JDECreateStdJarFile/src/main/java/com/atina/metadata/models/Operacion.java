@@ -7,7 +7,8 @@ package com.atina.metadata.models;
  */
 public class Operacion {
 
-    private Transaccion Clase; 
+    private String modelPackage;
+    private String Clase; 
     private String metodo;
     private String returnType;
     private Parametros parameters;
@@ -17,11 +18,11 @@ public class Operacion {
         parameters = new Parametros();
     }
 
-    public Transaccion getClase() {
+    public String getClase() {
         return Clase;
     }
 
-    public void setClase(Transaccion Clase) {
+    public void setClase(String Clase) {
         this.Clase = Clase;
     }
  
@@ -44,7 +45,15 @@ public class Operacion {
     public void setReturnType(String returnType) {
         this.returnType = returnType;
     }
-    
+
+    public String getModelPackage() {
+        return modelPackage;
+    }
+
+    public void setModelPackage(String modelPackage) {
+        this.modelPackage = modelPackage;
+    }
+     
     
     public Parametro obtenerParametro(String idParametro)
     {
@@ -61,7 +70,7 @@ public class Operacion {
 
     @Override
     public String toString() {
-        return "Operacion{" + "Clase=" + Clase + ", metodo=" + metodo + ", returnType=" + returnType + ", parameters=" + parameters + '}';
+        return "Operacion{" + "Clase=" + modelPackage + "." + Clase + ", metodo=" + metodo + ", returnType=" + returnType + ", parameters=" + parameters + '}';
     } 
 
 }

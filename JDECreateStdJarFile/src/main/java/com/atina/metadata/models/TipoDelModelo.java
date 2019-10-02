@@ -9,7 +9,8 @@ public class TipoDelModelo {
 
     private String tipoDeVariable; 
     private String nombreDeLaVariable; 
-
+    private Boolean javaClass; 
+    
     public TipoDelModelo() {
     }
 
@@ -29,6 +30,14 @@ public class TipoDelModelo {
         this.nombreDeLaVariable = nombreDeLaVariable;
     }
 
+    public Boolean getJavaClass() {
+        return javaClass;
+    }
+
+    public void setJavaClass(Boolean javaClass) {
+        this.javaClass = javaClass;
+    }
+      
     @Override
     public String toString() {
         return "TipoDelModelo{" + "tipoDeVariable=" + tipoDeVariable + ", nombreDeLaVariable=" + nombreDeLaVariable + '}';

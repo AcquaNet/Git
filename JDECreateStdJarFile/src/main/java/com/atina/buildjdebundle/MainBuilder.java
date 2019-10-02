@@ -101,24 +101,28 @@ public class MainBuilder {
     private static final String STEP_4a = "Building Building shaded";
     private static final String STEP_5 = "Cleaning up";
     private static final Boolean SHADE = false;
-    
+     private static final Boolean DEBUG = false;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
 
-//        MetadataWSGenerator mt = new MetadataWSGenerator();
-//        
-//        try {
-//            mt.loadMetadata(new File("/tmp"));
-//        } catch (MetadataServerException ex) {
-//            java.util.logging.Logger.getLogger(BuildBundle.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        
-//        
-//        
-//        
+        
+        if(DEBUG)
+        {
+            MetadataWSGenerator mt = new MetadataWSGenerator();
+
+            try {
+                
+                mt.generateMetadata("C:\\tmp\\sbfjars\\JP430000\\valueobject\\GetPurchaseOrdersForApprover.java");
+            
+            } catch (MetadataServerException ex) {
+                logger.error("DEBUG " + ": " + ex.getMessage());
+            }
+ 
+
+        }
         
         // -----------------------------------------------
         // create the command line parser
