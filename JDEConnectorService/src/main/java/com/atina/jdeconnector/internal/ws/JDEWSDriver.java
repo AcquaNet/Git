@@ -54,8 +54,8 @@ import com.jdedwards.system.security.UserOCMContextSession;
 import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
 import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
 import com.atina.jdeconnector.internal.model.JDEBsfnParametersInputObject;
-import com.atina.jdeconnector.internal.model.metadata.Operacion;
-import com.atina.jdeconnector.internal.model.metadata.Operaciones;
+import com.atina.jdeconnector.internal.model.metadata.Operation;
+import com.atina.jdeconnector.internal.model.metadata.Operations;
 import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.exception.JDESingleBSFNException;
 import java.util.HashMap;
@@ -143,12 +143,12 @@ public class JDEWSDriver {
 
                 MetadataWSDriver.saveMetadataLocallyFromResource(cacheFolder.getAbsolutePath());
                 
-                Operaciones operaciones = loadOperacionesMetadata(cacheFolder);
+                Operations operaciones = loadOperacionesMetadata(cacheFolder);
                 
-                for(Operacion oper: operaciones.getOperaciones())
+                for(Operation oper: operaciones.getOperations())
                 {
                     
-                    wsList.add(oper.getClase().getNombre() + "_" + oper.getMetodo());
+                    wsList.add(oper.getOperationClass() + "_" + oper.getOperationMethod());
                     
                 }
                 
@@ -188,15 +188,15 @@ public class JDEWSDriver {
 
     }
     
-    public Operaciones loadOperacionesMetadata(File metadataDir) throws JDESingleBSFNException {
+    public Operations loadOperacionesMetadata(File metadataDir) throws JDESingleBSFNException {
 
-        Operaciones returnValue = null;
+        Operations returnValue = null;
         
         ObjectMapper objectMapper = new ObjectMapper();
         
         try {
 
-            returnValue= objectMapper.readValue(new File(metadataDir + File.separator + WS_JSON), Operaciones.class);
+            returnValue= objectMapper.readValue(new File(metadataDir + File.separator + WS_JSON), Operations.class);
 
         } catch (IOException ex) {
 
