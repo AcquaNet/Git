@@ -4,44 +4,37 @@
  * and open the template in the editor.
  */
 package com.atina.metadata.models;
-
-import java.util.ArrayList; 
+ 
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author jgodi
  */
 public class Operations {
-
-    private ArrayList<Operation> operations;
+  
+    
+    private Map<String, Operation> operations;
 
     public Operations() {
-        this.operations = new ArrayList<Operation>();
+        this.operations = new HashMap<String, Operation>();
     }
 
-    public ArrayList<Operation> getOperations() {
+    public Map<String, Operation> getOperations() {
         return operations;
     }
 
-    public void setOperations(ArrayList<Operation> operations) {
+    public void setOperations(Map<String, Operation> operations) {
         this.operations = operations;
     }
 
     public void addOperacion(Operation operacion) {
-        operations.add(operacion);
+        operations.put(operacion.getOperationModelPackage() + "_" + operacion.getOperationClass() + "_" + operacion.getOperationMethod(), operacion);
     }
  
-    public boolean contieneMetodo(String operacionInput) {
-
-        boolean returnValue = false;
-
-        for (Operation operacion : operations) {
-            if (operacion.getOperationMethod().compareTo(operacionInput) == 0) {
-                return true;
-            }
-        }
-
-        return returnValue;
+    public boolean isOperation(String operacion) {
+        return operations.containsKey(operacion);
     }
       
 }

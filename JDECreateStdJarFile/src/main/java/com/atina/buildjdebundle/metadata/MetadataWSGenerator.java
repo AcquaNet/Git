@@ -261,7 +261,14 @@ public class MetadataWSGenerator {
                     operacion.setOperationModelPackage(packageName);
                     operacion.setOperationClass(transaction);
                     operacion.setOperationMethod(n.getName());
-                    operacion.setOperationReturnType(n.getType().toString());
+                    
+                    String fqName = getQuantified(imports,n.getType().toString()); 
+                    if(fqName.isEmpty())
+                    {
+                                fqName = primtiveLookup.getOrDefault(n.getType().toString(), n.getType().toString());
+                     }
+                     
+                    operacion.setOperationReturnType(fqName);
                     
 
                     if (n.getParameters() != null) {
@@ -279,7 +286,7 @@ public class MetadataWSGenerator {
                             parametro.setParameterName(p.getId().getName());
                             parametro.setParameterSequence(secuencia);
                             
-                            String fqName = getQuantified(imports,p.getType().toString()); 
+                            fqName = getQuantified(imports,p.getType().toString()); 
                             if(fqName.isEmpty())
                             {
                                 fqName = primtiveLookup.getOrDefault(p.getType().toString(), p.getType().toString());
