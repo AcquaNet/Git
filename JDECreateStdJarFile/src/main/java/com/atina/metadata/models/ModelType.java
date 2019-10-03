@@ -7,27 +7,28 @@ package com.atina.metadata.models;
  */
 public class ModelType {
 
-    private String modelType; 
-    private String variableName; 
+    private String parameterType; 
+    private String parameterName; 
     private Boolean javaClass; 
+    private int parameterSequence;
     
     public ModelType() {
     }
 
-    public String getModelType() {
-        return modelType;
+    public String getParameterType() {
+        return parameterType;
     }
 
-    public void setModelType(String modelType) {
-        this.modelType = modelType;
+    public void setParameterType(String parameterType) {
+        this.parameterType = parameterType;
     }
  
-    public String getVariableName() {
-        return variableName;
+    public String getParameterName() {
+        return parameterName;
     }
 
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
+    public void setParameterName(String parameterName) {
+        this.parameterName = parameterName;
     }
 
     public Boolean getJavaClass() {
@@ -37,10 +38,18 @@ public class ModelType {
     public void setJavaClass(Boolean javaClass) {
         this.javaClass = javaClass;
     }
+
+    public int getParameterSequence() {
+        return parameterSequence;
+    }
+
+    public void setParameterSequence(int parameterSequence) {
+        this.parameterSequence = parameterSequence;
+    } 
       
     @Override
     public String toString() {
-        return "TipoDelModelo{" + "tipoDeVariable=" + modelType + ", nombreDeLaVariable=" + variableName + '}';
+        return "TipoDelModelo{" + "tipoDeVariable=" + parameterType + ", nombreDeLaVariable=" + parameterName + '}';
     }
    
 }

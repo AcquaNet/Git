@@ -57,6 +57,7 @@ public class MetadataWSGenerator {
     private File srcFile; 
     private String packageName; 
     private List<ImportDeclaration> imports;
+    private int parameterSequence;
     
     static {
         // Hack for including primtive arrays but I'm lazy and this should work fine.
@@ -104,6 +105,7 @@ public class MetadataWSGenerator {
         bPublishedBusinessService = false;
         bValueObject = false;
         packageName = "";
+        parameterSequence = 0;
         
         // -------------------------------
         // Process File
@@ -310,13 +312,11 @@ public class MetadataWSGenerator {
                         
                         if (n.getParameters() != null) {
 
-                            int secuencia = 0;
-
                             for (final Iterator<com.github.javaparser.ast.body.Parameter> i = n.getParameters().iterator(); i.hasNext();) {
 
                                 final com.github.javaparser.ast.body.Parameter p = i.next();
 
-                                logger.info("                          Parametro: (" + secuencia + ") " + p.getId() + " Type: " + p.getType());
+                                logger.info("                          Parameters: (" + parameterSequence + ") " + p.getId() + " Type: " + p.getType());
                                 
                                 ModelType tipoDelModelo = new ModelType();
                                   
@@ -329,13 +329,15 @@ public class MetadataWSGenerator {
                                 
                                 tipoDelModelo.setJavaClass(checkJavaClass(fqName));
                                  
-                                tipoDelModelo.setModelType(fqName);
+                                tipoDelModelo.setParameterType(fqName);
                                 
-                                tipoDelModelo.setVariableName(p.getId().toString());
+                                tipoDelModelo.setParameterName(p.getId().toString());
+                                
+                                tipoDelModelo.setParameterSequence(parameterSequence);
   
                                 modelo.getParametersType().add(tipoDelModelo);
 
-                                secuencia++;
+                                parameterSequence++;
 
                             }
 
