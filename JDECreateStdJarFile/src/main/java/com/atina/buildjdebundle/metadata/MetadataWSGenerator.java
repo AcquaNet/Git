@@ -284,9 +284,7 @@ public class MetadataWSGenerator {
                             {
                                 fqName = primtiveLookup.getOrDefault(p.getType().toString(), p.getType().toString());
                             }
-                            
-                            parametro.setJavaClass(checkJavaClass(fqName));
-                            
+                             
                             parametro.setParameterType(fqName);  
                             operacion.getParameters().getParameters().add(parametro);
 
@@ -326,9 +324,7 @@ public class MetadataWSGenerator {
                                 {
                                     fqName = primtiveLookup.getOrDefault(p.getType().toString(), p.getType().toString());
                                 }
-                                
-                                tipoDelModelo.setJavaClass(checkJavaClass(fqName));
-                                 
+                                  
                                 tipoDelModelo.setParameterType(fqName);
                                 
                                 tipoDelModelo.setParameterName(p.getId().toString());

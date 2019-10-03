@@ -11,58 +11,26 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
 import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.jdedwards.database.base.JDBComparisonOp;
-import com.jdedwards.database.base.JDBCompositeSelection;
-import com.jdedwards.database.base.JDBDatabaseAccess;
-import com.jdedwards.database.base.JDBException;
-import com.jdedwards.database.base.JDBField;
-import com.jdedwards.database.base.JDBFieldComparison;
-import com.jdedwards.database.base.JDBFieldMap;
-import com.jdedwards.database.base.JDBResultSet;
-import com.jdedwards.database.jdb.JDBSystem;
-import com.jdedwards.database.services.serviceobj.F9862;
-import com.jdedwards.services.ServiceException;
-import com.jdedwards.services.objectlookup.ObjectLookupService;
-import com.jdedwards.services.objectlookup.ObjectLookupServiceLoader;
-import com.jdedwards.system.connector.dynamic.Connector;
-import com.jdedwards.system.connector.dynamic.OneworldTransaction;
-import com.jdedwards.system.connector.dynamic.UserSession;
-import com.jdedwards.system.connector.dynamic.callmethod.ExecutableMethod;
-import com.jdedwards.system.connector.dynamic.spec.SpecFailureException;
-import com.jdedwards.system.connector.dynamic.spec.dbservices.BSFNLookupFailureException;
-import com.jdedwards.system.connector.dynamic.spec.dictionary.OneworldSpecDictionary;
-import com.jdedwards.system.connector.dynamic.spec.dictionary.SpecDictionary;
-import com.jdedwards.system.connector.dynamic.spec.source.BSFNMethod;
-import com.jdedwards.system.connector.dynamic.spec.source.BSFNParameter;
-import com.jdedwards.system.connector.dynamic.spec.source.BSFNSpecSource;
-import com.jdedwards.system.connector.dynamic.spec.source.ImageBSFNSpecSource;
-import com.jdedwards.system.connector.dynamic.spec.source.OneworldBSFNSpecSource;
-import com.jdedwards.system.connector.dynamic.util.SpecImageGenerator;
-import com.jdedwards.system.connector.dynamic.util.SpecImageValidator;
-import com.jdedwards.system.connector.dynamic.util.SpecImageValidator.ValidationResultSet;
-import com.jdedwards.system.kernel.CallObjectErrorList;
-import com.jdedwards.system.security.UserOCMContextSession;
-import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
-import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
-import com.atina.jdeconnector.internal.model.JDEBsfnParametersInputObject;
+import com.atina.jdeconnector.internal.model.JDEOperation;
+import com.atina.jdeconnector.internal.model.metadata.Model;
+import com.atina.jdeconnector.internal.model.metadata.ModelType;
+import com.atina.jdeconnector.internal.model.metadata.Models;
 import com.atina.jdeconnector.internal.model.metadata.Operation;
 import com.atina.jdeconnector.internal.model.metadata.Operations;
+import com.atina.jdeconnector.internal.model.metadata.SimpleParameterType;
 import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.exception.JDESingleBSFNException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.TreeSet;
-import java.util.logging.Level;
 
 /**
  *
@@ -75,6 +43,7 @@ public class JDEWSDriver {
     private static final String WS_LIST = "wslist.json";
     private static String WS_JSON = "ws.json";
     private static String VO_JSON = "vo.json"; 
+    private static String SEPARADOR_CLASE_OPERACION = "_";
 
     public static JDEWSDriver getInstance() {
         return JDEBsfnDriverHolder.INSTANCE;
@@ -187,8 +156,137 @@ public class JDEWSDriver {
         return wsList;
 
     }
+   
+    public HashMap<String, Object> getWSInputParameter(String operation, File cacheFolder) throws JDESingleBSFNException {
+
+        HashMap<String, Object> returnValue = null;
+
+        // ================================================
+        // Getting Class and Method
+        // ================================================
+        //
+        JDEOperation jdeOperation = obtenerClaseYMetodoDeLaOperacion(operation);
+
+        // ================================================
+        // Load Operations and Value Objects
+        // ================================================
+        // 
+        Operations operaciones = loadOperacionesMetadata(cacheFolder);
+
+        Models models = loadValueObjectsMetadata(cacheFolder);
+
+        // ================================================
+        // Get Input Parameter Type
+        // ================================================
+        // 
+        String inputModel = operaciones.getInputValueObject(jdeOperation.getOperationClass(), jdeOperation.getOperationMethod());
+
+        if (!inputModel.isEmpty()) {
+
+            returnValue = processModel(models, models.getModelo(inputModel));
+
+        }
+        else
+        {
+            throw new JDESingleBSFNException("Operation without Input Parameter");
+        }
+
+        return returnValue;
+    }
     
-    public Operations loadOperacionesMetadata(File metadataDir) throws JDESingleBSFNException {
+    public HashMap<String, Object> getWSOutputParameter(String operation, File cacheFolder) throws JDESingleBSFNException {
+
+        HashMap<String, Object> returnValue = null;
+
+        // ================================================
+        // Getting Class and Method
+        // ================================================
+        //
+        JDEOperation jdeOperation = obtenerClaseYMetodoDeLaOperacion(operation);
+
+        // ================================================
+        // Load Operations and Value Objects
+        // ================================================
+        //
+        Operations operations = loadOperacionesMetadata(cacheFolder);
+
+        Models models = loadValueObjectsMetadata(cacheFolder);
+
+        // ================================================
+        // Get Input Parameter Type
+        // ================================================
+        // 
+        String inputModel = operations.getOutputValueObject(jdeOperation.getOperationClass(), jdeOperation.getOperationMethod());
+
+        if (!inputModel.isEmpty()) {
+
+            returnValue = processModel(models, models.getModelo(inputModel));
+
+        }
+        else
+        {
+            throw new JDESingleBSFNException("Operation without Output Parameter");
+        }
+
+        return returnValue;
+    }
+    
+      
+      public HashMap<String, Object> processModel(Models models, Model parameters) throws JDESingleBSFNException {
+      
+          HashMap<String, Object> returnValue = new HashMap<String, Object>();
+
+           logger.info("Process Model "
+                            + parameters.toString());
+           
+           ArrayList<ModelType> param = parameters.getParametersType();
+           
+          
+         
+            for(ModelType modelType:  param)
+            { 
+                if(!models.isModel(modelType.getParameterType()))
+                { 
+                    if(modelType.getParameterType().equals("oracle.e1.bssvfoundation.util.MathNumeric"))
+                    {
+                        returnValue.put(modelType.getParameterName(), new SimpleParameterType("java.math.BigDecimal",modelType.getParameterSequence()));
+                    } 
+                    else
+                    { 
+                        returnValue.put(modelType.getParameterName(), new SimpleParameterType(modelType.getParameterType(),modelType.getParameterSequence()));
+                    } 
+                }
+                else
+                {
+                    
+                     returnValue.put(modelType.getParameterName(), processModel(models, models.getModelo(modelType.getParameterType())));
+                    
+                }
+                 
+            }
+          
+          return returnValue;
+      }
+      
+    
+    public synchronized Object callJDEWS(int session, String operation, Object inputObject,File tmpFolderCache)
+    {
+        
+        // ================================================
+        // Leyendo Metadata
+        // ================================================
+        //
+        
+        
+        
+        
+        
+        
+        
+        return null;
+    }
+    
+    private Operations loadOperacionesMetadata(File metadataDir) throws JDESingleBSFNException {
 
         Operations returnValue = null;
         
@@ -209,21 +307,56 @@ public class JDEWSDriver {
         return returnValue;
     }
     
-      public Set<JDEBsfnParameter> getWSParameter(int session, String bsfnName,  File tmpFolderCache) throws JDESingleBSFNException {
-          
-          
-          return null;
-      }
+    private Models loadValueObjectsMetadata(File metadataDir) throws JDESingleBSFNException {
+
+        Models returnValue = null;
+        
+        ObjectMapper objectMapper = new ObjectMapper();
+        
+        try {
+
+            returnValue= objectMapper.readValue(new File(metadataDir + File.separator + VO_JSON), Models.class);
+
+        } catch (IOException ex) {
+
+            logger.error("Error leyendo metadata de transacciones: " + ex.getMessage());
+
+            throw new JDESingleBSFNException("Error reading operation metadata: " + ex.getMessage(), ex);
+
+        }
+ 
+        return returnValue;
+    }
     
-    public synchronized JDEBsfnParametersOutputObject callJDEWS(int session, String bsfnName, JDEBsfnParametersInputObject inputObject,File tmpFolderCache)
-    {
+    
+    private JDEOperation obtenerClaseYMetodoDeLaOperacion(String operacion)  {
+
+        StringTokenizer valores = new StringTokenizer(operacion, SEPARADOR_CLASE_OPERACION);
+
+       String  claseDeLaOperacion = "";
+       String  metodoDeLaOperacion = "";
+
+        int i = 0;
+
+        while (valores.hasMoreElements()) {
+
+            switch (i) {
+                case 0:
+                    claseDeLaOperacion = (String) valores.nextElement();
+                    logger.info("      Clase de la Operacion: " + claseDeLaOperacion);
+                    break;
+                case 1:
+                    metodoDeLaOperacion = (String) valores.nextElement();
+                    logger.info("      Metodo de la Operacion: " + metodoDeLaOperacion);
+                    break;
+            }
+
+            i++;
+
+        }
         
-        
-        
-        
-        
-        
-        return null;
+        return new JDEOperation(claseDeLaOperacion,metodoDeLaOperacion);
+
     }
     
 
