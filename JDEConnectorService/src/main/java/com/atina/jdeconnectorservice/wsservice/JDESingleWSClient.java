@@ -21,7 +21,6 @@ import com.atina.jdeconnectorservice.exception.JDESingleConnectorException;
 import com.jdedwards.system.connector.dynamic.Connector;
 import com.jdedwards.system.security.SecurityToken;
 import java.io.File;
-import java.util.HashMap;
 import java.util.Iterator; 
 import java.util.Map;
 import java.util.Set; 
@@ -305,21 +304,16 @@ public class JDESingleWSClient {
         return JDEWSDriver.getInstance().getWSList(tmpFolder);
     }
     
-    public HashMap<String, Object> getWSInputParameter(String operation) {
+    public Set<JDEBsfnParameter> getWSParameter(String bsfnName) throws JDESingleConnectorException{
            
-        return JDEWSDriver.getInstance().getWSInputParameter(operation,tmpFolder);
+        return JDEWSDriver.getInstance().getWSParameter(iSessionID,bsfnName,tmpFolderCache);
     }
     
-    public HashMap<String, Object> getWSOutputParameter(String operation) {
-           
-        return JDEWSDriver.getInstance().getWSOutputParameter(operation,tmpFolder);
-    }
+    public JDEBsfnParametersOutputObject callJDEWS(String bsfnName, JDEBsfnParametersInputObject inputObject) throws JDESingleConnectorException{
     
-//    public JDEBsfnParametersOutputObject callJDEWS(String bsfnName, JDEBsfnParametersInputObject inputObject) throws JDESingleConnectorException{
-//    
-//        
-//        return JDEWSDriver.getInstance().callJDEWS(iSessionID,bsfnName, inputObject,tmpFolderCache);
-//    }
+        
+        return JDEWSDriver.getInstance().callJDEWS(iSessionID,bsfnName, inputObject,tmpFolderCache);
+    }
           
     //************************************************************************
     // Setters and Getters
