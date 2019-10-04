@@ -15,17 +15,30 @@ import org.slf4j.LoggerFactory;
 
 import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.exception.JDESingleBSFNException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.introspect.AnnotatedField;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import oracle.e1.bssvfoundation.base.IContext;
 import oracle.e1.bssvfoundation.connection.IConnection;
 import oracle.e1.bssvfoundation.impl.base.Context;
 import oracle.e1.bssvfoundation.impl.connection.SBFConnection;
 import oracle.e1.bssvfoundation.impl.connection.SBFConnectionManager;
-import oracle.e1.bssvfoundation.impl.security.E1Principal;
+import oracle.e1.bssvfoundation.impl.security.E1Principal; 
+import org.apache.commons.lang.reflect.FieldUtils;
 import org.mule.util.ClassUtils;
+
 
 /**
  *
@@ -148,7 +161,18 @@ public class JDEWSCreateAndInvokeWS {
             throw new JDESingleBSFNException("Error invoking WS " + operation + " Error: " + ex.getMessage());
 
         }
-         
+        
+        // ================================================
+        // Convert Output Object to HashMap
+        // ================================================
+        //
+        
+        ObjectMapper mapper = new ObjectMapper();
+
+        mapper.setPropertyNamingStrategy(new MyNamingStrategy());
+        
+        
+
         return returnValue;
     }
     
@@ -234,5 +258,37 @@ public class JDEWSCreateAndInvokeWS {
         return instance;
     }
  
+    
+    public class MyNamingStrategy extends PropertyNamingStrategy {
+
+        @Override
+        public String nameForField(MapperConfig<?> config, AnnotatedField field, String defaultName) {
+            return field.getName();
+        }
+
+        @Override
+        public String nameForGetterMethod(MapperConfig<?> config, AnnotatedMethod method, String defaultName) {
+            return convert(method, defaultName);
+        }
+
+        @Override
+        public String nameForSetterMethod(MapperConfig<?> config, AnnotatedMethod method, String defaultName) {
+            return convert(method, defaultName);
+        }
+
+        private String convert(AnnotatedMethod method, String defaultName) {
+
+            Class<?> clazz = method.getDeclaringClass();
+            List<Field> flds = FieldUtils.getAllFieldsList(clazz);
+            for (Field fld : flds) {
+                if (fld.getName().equalsIgnoreCase(defaultName)) {
+                    return fld.getName();
+                }
+            }
+
+            return defaultName;
+        }
+    }
+    
 
 }
