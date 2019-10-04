@@ -10,6 +10,8 @@ import com.atina.jdeconnector.internal.JDEBoostrap;
 import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
 import com.atina.jdeconnector.internal.model.JDEBsfnParametersInputObject;
 import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
+import com.atina.jdeconnector.internal.ws.JDEWSDriver;
+import com.atina.jdeconnectorservice.exception.JDESingleBSFNException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException;
 import java.io.File;
@@ -17,7 +19,9 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Enumeration; 
+import java.util.HashMap;
 import java.util.Set;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.io.FileUtils;
@@ -120,7 +124,11 @@ public class JDESingleWSConnection {
         
         this.client.setTmpFolderCache(tmpCache);
         
-        
+        try {
+            this.client.bootstrap();
+        } catch (IOException ex) {
+            throw new JDESingleConnectionException("Error starting client: " + ex.getMessage(), ex);
+        }
 
     }
     
@@ -172,21 +180,23 @@ public class JDESingleWSConnection {
 
     } 
     
-    public Set<JDEBsfnParameter> getBSFNParameter(String bsfnName) throws JDESingleConnectorException {
-
-        logger.info("MULESOFT - JDEClient - Getting BSFN Parameters");
-
-        return client.getWSParameter(bsfnName);
-        
+    public HashMap<String, Object> getWSInputParameter(String operation) throws JDESingleBSFNException {
+           
+        return client.getWSInputParameter(operation);
     }
     
-    public JDEBsfnParametersOutputObject callJDEBsfn(String bsfnName, JDEBsfnParametersInputObject inputObject) throws JDESingleConnectorException {
-
-        logger.info("MULESOFT - JDEClient - Calling BSFN"); 
-     
-        return client.callJDEWS(bsfnName, inputObject);
-        
+    public HashMap<String, Object> getWSOutputParameter(String operation) throws JDESingleBSFNException {
+           
+        return client.getWSOutputParameter(operation);
     }
+    
+//    public JDEBsfnParametersOutputObject callJDEBsfn(String bsfnName, JDEBsfnParametersInputObject inputObject) throws JDESingleConnectorException {
+//
+//        logger.info("MULESOFT - JDEClient - Calling BSFN"); 
+//     
+//        return client.callJDEWS(bsfnName, inputObject);
+//        
+//    }
      
     // ====================================================================================
     // PRIVATE operations

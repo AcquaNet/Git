@@ -14,8 +14,7 @@ public class Parameter implements Comparable<Parameter>{
     
     private String parameterName;   
     private String parameterType; 
-    private int parameterSequence;
-    private Boolean javaClass; 
+    private int parameterSequence; 
 
     public Parameter() {
     } 
@@ -43,15 +42,7 @@ public class Parameter implements Comparable<Parameter>{
 
     public void setParameterSequence(int parameterSequence) {
         this.parameterSequence = parameterSequence;
-    }
-
-    public Boolean getJavaClass() {
-        return javaClass;
-    }
-
-    public void setJavaClass(Boolean javaClass) {
-        this.javaClass = javaClass;
-    }
+    } 
      
     @Override
     public String toString() {

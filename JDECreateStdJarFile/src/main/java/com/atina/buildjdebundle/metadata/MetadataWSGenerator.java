@@ -22,11 +22,14 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.ModifierSet;
+import com.github.javaparser.ast.body.VariableDeclarator;
 import static com.github.javaparser.ast.internal.Utils.isNullOrEmpty;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +45,9 @@ public class MetadataWSGenerator {
     
     private static String PUBLISHED_WS = "PublishedBusinessService";
     private static String VALUE_OBJECT = "ValueObject"; 
+    private static String MSG_VALUE_OBJECT = "MessageValueObject"; 
+    private static String SERIALIZABLE = "Serializable"; 
+     private static String PACKAGE_VALUE_OBJECT = "valueobject"; 
     
     private static String WS_JSON = "ws.json";
     private static String VO_JSON = "vo.json"; 
@@ -58,6 +64,8 @@ public class MetadataWSGenerator {
     private String packageName; 
     private List<ImportDeclaration> imports;
     private int parameterSequence;
+    
+    private ArrayList<String> invalidModels;
     
     static {
         // Hack for including primtive arrays but I'm lazy and this should work fine.
@@ -78,6 +86,7 @@ public class MetadataWSGenerator {
         primtiveLookup.put("Character"  , Character.class.getName());
         primtiveLookup.put("Byte"  , Byte.class.getName());
         primtiveLookup.put("String" , String.class.getName());
+        primtiveLookup.put("ArrayList" , ArrayList.class.getName());
         
     }
 
@@ -98,7 +107,7 @@ public class MetadataWSGenerator {
         // Reset variables
         // ------------------------------- 
         
-        imports = null;
+        imports = new ArrayList();
         transaction = null;
         modelo = null;
         srcFile = new File(classFile);
@@ -106,6 +115,7 @@ public class MetadataWSGenerator {
         bValueObject = false;
         packageName = "";
         parameterSequence = 0;
+        invalidModels = new ArrayList();
         
         // -------------------------------
         // Process File
@@ -142,6 +152,9 @@ public class MetadataWSGenerator {
             // visit methods names
             cu.accept(new MethodVisitor(), null);
             
+            // parameters for ValueObjects
+            cu.accept(new FieldVisitor(), null);
+            
             if(modelo != null)
             {
                 modelos.AddModelo(modelo);
@@ -170,6 +183,11 @@ public class MetadataWSGenerator {
  
             packageName = n.getPackage().getName().toString();
             
+            if(!bValueObject)
+            {
+                bValueObject = packageName.contains(PACKAGE_VALUE_OBJECT);
+            } 
+            
             logger.info("Package: " + packageName);
             
             if (n.getImports() != null) {
@@ -194,8 +212,7 @@ public class MetadataWSGenerator {
             logger.info("Processing Class: " + n.getName());
 
             bPublishedBusinessService = false;
-            bValueObject = false;
-                    
+             
             if (!isNullOrEmpty(n.getExtends())) {
                 
                 logger.info(" extends ");
@@ -210,16 +227,11 @@ public class MetadataWSGenerator {
                     {
                         bPublishedBusinessService = c.getName().equals(PUBLISHED_WS);
                     } 
-                    
-                    if(!bValueObject)
-                    {
-                        bValueObject = c.getName().equals(VALUE_OBJECT);
-                    } 
-                    
+                     
                    c.accept(this, arg);
                     
                 }
-            }
+            } 
             
             if(bPublishedBusinessService)
             {
@@ -289,11 +301,9 @@ public class MetadataWSGenerator {
                             fqName = getQuantified(imports,p.getType().toString()); 
                             if(fqName.isEmpty())
                             {
-                                fqName = primtiveLookup.getOrDefault(p.getType().toString(), p.getType().toString());
+                                fqName = getJAVAClassName(p.getType().toString());
                             }
-                            
-                            parametro.setJavaClass(checkJavaClass(fqName));
-                            
+                              
                             parametro.setParameterType(fqName);  
                             operacion.getParameters().getParameters().add(parametro);
 
@@ -309,50 +319,60 @@ public class MetadataWSGenerator {
 
             }
             
+
+        }
+
+    }
+    
+    private class FieldVisitor extends DFDumpVisitor {
+
+        private FieldVisitor() {
+            super(false); 
+        } 
+        
+        @Override
+        public void visit(final FieldDeclaration n, final Object arg) {
+   
             if (bValueObject) {
                 
-                if (ModifierSet.isPublic(n.getModifiers())) {
+                if (ModifierSet.isPrivate(n.getModifiers()) && !ModifierSet.isStatic(n.getModifiers())) {
+                     
+                    ModelType tipoDelModelo = new ModelType();
                     
-                    if (n.getName().startsWith("set")) {
-                        
-                        logger.info("Processing Method: " + srcFile.getName() + "_" + n.getName());
-                        
-                        if (n.getParameters() != null) {
-
-                            for (final Iterator<com.github.javaparser.ast.body.Parameter> i = n.getParameters().iterator(); i.hasNext();) {
-
-                                final com.github.javaparser.ast.body.Parameter p = i.next();
-
-                                logger.info("                          Parameters: (" + parameterSequence + ") " + p.getId() + " Type: " + p.getType());
-                                
-                                ModelType tipoDelModelo = new ModelType();
-                                  
-                                String fqName = getQuantified(imports,p.getType().toString());
-                                 
-                                if(fqName.isEmpty())
-                                {
-                                    fqName = primtiveLookup.getOrDefault(p.getType().toString(), p.getType().toString());
-                                }
-                                
-                                tipoDelModelo.setJavaClass(checkJavaClass(fqName));
-                                 
-                                tipoDelModelo.setParameterType(fqName);
-                                
-                                tipoDelModelo.setParameterName(p.getId().toString());
-                                
-                                tipoDelModelo.setParameterSequence(parameterSequence);
-  
-                                modelo.getParametersType().add(tipoDelModelo);
-
-                                parameterSequence++;
-
-                            }
-
-                        }
-                         
-                        
+                    
+                    String varType = n.getType().toString();
+                    
+                    if(varType.contains("[]"))
+                    {
+                        varType = varType.substring(0, varType.length() - 2);
+                        tipoDelModelo.setRepetead(true);
+                    } else if (varType.contains("<"))
+                    {
+                        varType = varType.substring(varType.indexOf("<") + 1, varType.indexOf(">"));
+                        tipoDelModelo.setRepetead(true);
+                    }
+                    else
+                    {
+                        tipoDelModelo.setRepetead(false);
                     }
                     
+                    String fqName = getQuantified(imports,varType);
+                    
+                    if(fqName.isEmpty())
+                    {
+                        fqName = getJAVAClassName(varType);
+                          
+                    }
+                    
+                    tipoDelModelo.setParameterType(fqName);
+                    
+                    tipoDelModelo.setParameterName(((List<VariableDeclarator>) n.getVariables()).get(0).getId().getName().toString());
+                     
+                    tipoDelModelo.setParameterSequence(parameterSequence);
+
+                    modelo.getParametersType().add(tipoDelModelo);
+                    
+                    parameterSequence++;
                     
                 }
                  
@@ -365,8 +385,21 @@ public class MetadataWSGenerator {
     
     public void saveMetadata(File metadataDir) throws MetadataServerException {
 
-        logger.info("Serializing Metadata:");
+        
+        logger.info("Validating Metadata:");
+        
+        validateModels();
+        
+        if(this.invalidModels.size()>0)
+        {
+            for(String classModel: this.invalidModels)
+            {
+                logger.info("       Invalid Model:" + classModel);
+            }
+        }
  
+        logger.info("Serializing Metadata:");
+        
         try {
 
             if (!metadataDir.exists()) {
@@ -378,7 +411,7 @@ public class MetadataWSGenerator {
             objectMapper.writeValue(new File(metadataDir.getAbsolutePath() + File.separator + WS_JSON), this.operaciones);
 
             objectMapper.writeValue(new File(metadataDir.getAbsolutePath() + File.separator + VO_JSON), this.modelos); 
-
+            
             logger.info("Serializado");
 
         } catch (Exception ex) {
@@ -451,21 +484,78 @@ public class MetadataWSGenerator {
         return "";
     }
     
-    private Boolean checkJavaClass(String simple) {
-        
-        Boolean returnValue = Boolean.FALSE;
-        try
-        {
-            Class.forName(simple);
-            returnValue = Boolean.TRUE;
-        }
-        catch(ClassNotFoundException ex)
-        {
-            logger.info("Not Java Class");
-        }
+    
+    private boolean validateModels() {
          
-        return returnValue;
-    }
+        Iterator it = this.modelos.getModels().entrySet().iterator();
 
+        while (it.hasNext()) {
+            
+            Map.Entry pair = (Map.Entry) it.next();
+            
+            Model model = (Model) pair.getValue();
+            
+            ArrayList<ModelType> parameters = model.getParametersType();
+            
+            for(ModelType mdType:parameters)
+            {
+                if(mdType.getParameterType().endsWith("%"))
+                {
+                    try
+                    {
+                        mdType.setParameterType(getFQN(mdType.getParameterType()));
+                        
+                    } catch (MetadataServerException e)
+                    {
+                        this.invalidModels.add(mdType.getParameterType());
+                    }
+                    
+                }
+            }
+             
+        }
+
+        return true;
+         
+    }
+    
+    private String getFQN(String simple) throws MetadataServerException {
+        
+        String findObject = simple.substring(0, simple.length() - 1);
+        
+        Iterator it = this.modelos.getModels().entrySet().iterator();
+        
+        while (it.hasNext()) {
+            
+            Map.Entry pair = (Map.Entry) it.next();
+            
+            Model model = (Model) pair.getValue();
+            
+            if(model.getModelName().equals(findObject))
+            {
+                return (String) pair.getKey();
+            }
+            
+        }
+        
+        throw new MetadataServerException("Missing Type: " + simple);
+ 
+    }
+    
+     
+
+    private String getJAVAClassName(String simple) {
+         
+        if(primtiveLookup.containsKey(simple))
+        {
+            return primtiveLookup.get(simple);
+        }
+        else
+        {
+            logger.error("Java Class Name not found: " + simple);
+            return simple + "%";
+        } 
+         
+    }
 
 }

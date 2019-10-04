@@ -12,6 +12,7 @@ import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException;
 import com.atina.jdeconnectorservice.service.JDESingleConnection;
 import com.atina.jdeconnectorservice.wsservice.JDESingleWSConnection;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.logging.Level;
 import org.slf4j.Logger;
@@ -88,6 +89,10 @@ public class JDEConnectorService {
         jdeConnection.connect();
         
         Set<String> operation = jdeConnection.generateWSListFromCacheRepository();
+        
+        HashMap<String, Object> input = jdeConnection.getWSInputParameter("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
+        
+        HashMap<String, Object> output = jdeConnection.getWSOutputParameter("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
         
         Thread.sleep(30000);
          

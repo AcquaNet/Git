@@ -101,7 +101,7 @@ public class MainBuilder {
     private static final String STEP_4a = "Building Building shaded";
     private static final String STEP_5 = "Cleaning up";
     private static final Boolean SHADE = false;
-     private static final Boolean DEBUG = true;
+     private static final Boolean DEBUG = false;
 
     /**
      * @param args the command line arguments
@@ -115,7 +115,27 @@ public class MainBuilder {
 
             try {
                 
+                mt.generateMetadata("C:\\tmp\\sbfjars\\JP010000\\valueobject\\ProcessAddressBookV3.java");
+                 
+                mt.generateMetadata("C:\\tmp\\sbfjars\\JH90I01\\valueobject\\InternalGetTaskMaster.java");
+                
+                mt.generateMetadata("C:\\tmp\\sbfjars\\JP03B000\\valueobject\\ShowInvoiceCurrency.java");
+                
+                mt.generateMetadata("C:\\tmp\\sbfjars\\JP03B000\\valueobject\\GLPurchaseOrderData.java");
+                
+                mt.generateMetadata("C:\\tmp\\sbfjars\\JP03B000\\valueobject\\ConfirmARInvoiceCurrency.java"); 
+                
+                mt.generateMetadata("C:\\tmp\\sbfjars\\JP03B000\\valueobject\\GetInvoiceKey.java");
+                
+                mt.generateMetadata("C:\\tmp\\sbfjars\\JP420000\\valueobject\\ShowPriceHistoryDetail.java");
+                
+                mt.generateMetadata("C:\\tmp\\sbfjars\\JP430000\\valueobject\\PurchaseOrdersForApproverResults.java");
+                
+                mt.generateMetadata("C:\\tmp\\sbfjars\\JP430000\\valueobject\\ShowPurchaseOrdersForApprover.java");
+                
                 mt.generateMetadata("C:\\tmp\\sbfjars\\JP430000\\valueobject\\GetPurchaseOrdersForApprover.java");
+                 
+                mt.saveMetadata(new File("C:\\tmp\\merge"));
             
             } catch (MetadataServerException ex) {
                 logger.error("DEBUG " + ": " + ex.getMessage());

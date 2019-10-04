@@ -23,7 +23,7 @@ public class Models {
     }
     
      public void AddModelo(Model modelo) {
-        models.put(modelo.getModelPackage() + "_" + modelo.getModelName(), modelo);
+        models.put(modelo.getModelPackage() + "." + modelo.getModelName(), modelo);
     }
 
     public Model getModelo(String nombreDelModelo) {

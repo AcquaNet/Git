@@ -34,6 +34,10 @@ public class Models {
         return models;
     }
 
+    public boolean isModel(String nombreDelModelo) {
+        return models.containsKey(nombreDelModelo);
+    }
+
     @Override
     public String toString() {
         

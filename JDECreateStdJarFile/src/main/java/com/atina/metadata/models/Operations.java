@@ -30,7 +30,7 @@ public class Operations {
     }
 
     public void addOperacion(Operation operacion) {
-        operations.put(operacion.getOperationModelPackage() + "_" + operacion.getOperationClass() + "_" + operacion.getOperationMethod(), operacion);
+        operations.put(operacion.getOperationModelPackage() + "." + operacion.getOperationClass() + "." + operacion.getOperationMethod(), operacion);
     }
  
     public boolean isOperation(String operacion) {

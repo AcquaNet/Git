@@ -6,6 +6,8 @@
 package com.atina.jdeconnector.internal.model.metadata;
 
 import java.util.ArrayList; 
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -13,35 +15,55 @@ import java.util.ArrayList;
  */
 public class Operations {
 
-    private ArrayList<Operation> operations;
+   private Map<String, Operation> operations;
 
     public Operations() {
-        this.operations = new ArrayList<Operation>();
+        this.operations = new HashMap<String, Operation>();
     }
 
-    public ArrayList<Operation> getOperations() {
+    public Map<String, Operation> getOperations() {
         return operations;
     }
 
-    public void setOperations(ArrayList<Operation> operations) {
+    public void setOperations(Map<String, Operation> operations) {
         this.operations = operations;
     }
 
     public void addOperacion(Operation operacion) {
-        operations.add(operacion);
+        operations.put(operacion.getOperationModelPackage() + "." + operacion.getOperationClass(), operacion);
     }
  
-    public boolean contieneMetodo(String operacionInput) {
+    public String getInputValueObject(String operation) {
 
-        boolean returnValue = false;
+        String returnValue = "";
 
-        for (Operation operacion : operations) {
-            if (operacion.getOperationMethod().compareTo(operacionInput) == 0) {
-                return true;
+        Operation operacion = operations.get(operation);
+
+        if (operacion != null) {
+
+            for (Parameter parameter : operacion.getParameters().getParameters()) {
+
+                if (parameter.getParameterName().equals("vo")) {
+                    return parameter.getParameterType();
+                }
+
             }
+
         }
 
         return returnValue;
+
+    }
+
+    public String getOutputValueObject(String operation) {
+  
+        Operation operacion = operations.get(operation);
+         
+        return operacion.getOperationReturnType();
+    }
+    
+    public boolean isOperation(String operacion) {
+        return operations.containsKey(operacion);
     }
       
 }

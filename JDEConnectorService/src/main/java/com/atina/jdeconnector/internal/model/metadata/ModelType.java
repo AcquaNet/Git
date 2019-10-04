@@ -7,40 +7,49 @@ package com.atina.jdeconnector.internal.model.metadata;
  */
 public class ModelType {
 
-    private String modelType; 
-    private String variableName; 
-    private Boolean javaClass; 
+    private String parameterType; 
+    private String parameterName;  
+    private int parameterSequence;
+    private boolean repetead;
     
     public ModelType() {
     }
 
-    public String getModelType() {
-        return modelType;
+    public String getParameterType() {
+        return parameterType;
     }
 
-    public void setModelType(String modelType) {
-        this.modelType = modelType;
+    public void setParameterType(String parameterType) {
+        this.parameterType = parameterType;
     }
  
-    public String getVariableName() {
-        return variableName;
+    public String getParameterName() {
+        return parameterName;
     }
 
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
+    public void setParameterName(String parameterName) {
+        this.parameterName = parameterName;
+    }
+  
+    public int getParameterSequence() {
+        return parameterSequence;
     }
 
-    public Boolean getJavaClass() {
-        return javaClass;
+    public void setParameterSequence(int parameterSequence) {
+        this.parameterSequence = parameterSequence;
+    } 
+
+    public boolean isRepetead() {
+        return repetead;
     }
 
-    public void setJavaClass(Boolean javaClass) {
-        this.javaClass = javaClass;
+    public void setRepetead(boolean repetead) {
+        this.repetead = repetead;
     }
-      
+     
     @Override
     public String toString() {
-        return "TipoDelModelo{" + "tipoDeVariable=" + modelType + ", nombreDeLaVariable=" + variableName + '}';
+        return "TipoDelModelo{" + "tipoDeVariable=" + parameterType + ", nombreDeLaVariable=" + parameterName + '}';
     }
    
 }

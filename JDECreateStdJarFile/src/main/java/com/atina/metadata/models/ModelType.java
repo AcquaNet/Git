@@ -8,9 +8,9 @@ package com.atina.metadata.models;
 public class ModelType {
 
     private String parameterType; 
-    private String parameterName; 
-    private Boolean javaClass; 
+    private String parameterName;  
     private int parameterSequence;
+    private boolean repetead;
     
     public ModelType() {
     }
@@ -29,15 +29,7 @@ public class ModelType {
 
     public void setParameterName(String parameterName) {
         this.parameterName = parameterName;
-    }
-
-    public Boolean getJavaClass() {
-        return javaClass;
-    }
-
-    public void setJavaClass(Boolean javaClass) {
-        this.javaClass = javaClass;
-    }
+    } 
 
     public int getParameterSequence() {
         return parameterSequence;
@@ -46,7 +38,15 @@ public class ModelType {
     public void setParameterSequence(int parameterSequence) {
         this.parameterSequence = parameterSequence;
     } 
-      
+
+    public boolean isRepetead() {
+        return repetead;
+    }
+
+    public void setRepetead(boolean repetead) {
+        this.repetead = repetead;
+    }
+     
     @Override
     public String toString() {
         return "TipoDelModelo{" + "tipoDeVariable=" + parameterType + ", nombreDeLaVariable=" + parameterName + '}';
