@@ -8,7 +8,6 @@ package com.atina.jdeconnector.internal.ws;
 import com.atina.jdeconnector.internal.model.metadata.Model;
 import com.atina.jdeconnector.internal.model.metadata.ModelType;
 import com.atina.jdeconnector.internal.model.metadata.Models;
-import com.atina.jdeconnector.internal.model.metadata.SimpleParameterType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import org.mule.util.ClassUtils;
 
 /**
@@ -102,11 +100,7 @@ public class JDEWSCreateObjectUtil {
         return instanceLoaded;
 
     }
-
-    private static void setValues(Object instanceLoaded, Map.Entry<String, Object> inputParameter) throws JDESingleBSFNException {
-
-    }
-
+ 
     private static Class loadClass(String className) throws JDESingleBSFNException {
 
         Class cls = null;

@@ -5,17 +5,11 @@
  */
 package com.atina.jdeconnectorservice.wsservice;
 
-import com.atina.jdeconnectorservice.service.*;
-import com.atina.jdeconnector.internal.CurrentUserSessionListener;
 import com.jdedwards.system.connector.dynamic.ServerFailureException;
 import com.jdedwards.system.connector.dynamic.UserSession;
-import com.atina.jdeconnector.internal.JDEBsfnDriver;
 import com.atina.jdeconnector.internal.JDEConnectionLocker;
 import com.atina.jdeconnector.internal.JDETransactions; 
 import com.atina.jdeconnector.internal.ws.JDEWSDriver;
-import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
-import com.atina.jdeconnector.internal.model.JDEBsfnParametersInputObject;
-import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException; 
 import com.jdedwards.system.connector.dynamic.Connector;
@@ -26,6 +20,7 @@ import java.util.HashMap;
 import java.util.Iterator; 
 import java.util.Map;
 import java.util.Set; 
+import oracle.e1.bssvfoundation.base.IContext;
 import oracle.e1.bssvfoundation.impl.security.E1Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -318,8 +313,8 @@ public class JDESingleWSClient {
     
     public HashMap<String, Object> callJDEWS(String operation, HashMap<String, Object> inputValues) throws JDESingleConnectorException{
     
-        
-        return JDEWSDriver.getInstance().callJDEWS(iSessionID,operation, inputValues,tmpFolderCache);
+         
+        return JDEWSDriver.getInstance().callJDEWS(this.e1ppal, iSessionID,operation, inputValues,tmpFolderCache);
     } 
           
     //************************************************************************

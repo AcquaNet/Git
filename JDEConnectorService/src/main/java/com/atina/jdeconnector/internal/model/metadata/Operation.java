@@ -57,14 +57,12 @@ public class Operation {
     
     public Parameter obtenerParametro(String idParametro)
     {
-         for (Parameter parametro : parameters.getParameters()) {
-             
-             if(parametro.getParameterName().compareTo(idParametro) == 0)
-             {
-                 return parametro;
-             }
-        }
         
+        if(parameters.getParameters().containsKey(idParametro))
+        {
+            return parameters.getParameters().get(idParametro);
+        }
+         
         return null;
     }
 

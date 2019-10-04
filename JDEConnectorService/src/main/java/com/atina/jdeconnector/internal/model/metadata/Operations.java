@@ -4,8 +4,7 @@
  * and open the template in the editor.
  */
 package com.atina.jdeconnector.internal.model.metadata;
-
-import java.util.ArrayList; 
+ 
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,13 +40,9 @@ public class Operations {
 
         if (operacion != null) {
 
-            for (Parameter parameter : operacion.getParameters().getParameters()) {
+            Parameter parameter = operacion.getParameters().getParameters().get("vo");
 
-                if (parameter.getParameterName().equals("vo")) {
-                    return parameter.getParameterType();
-                }
-
-            }
+            return parameter.getParameterType();
 
         }
 

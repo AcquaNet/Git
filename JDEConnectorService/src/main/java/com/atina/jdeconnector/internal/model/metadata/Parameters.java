@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 package com.atina.jdeconnector.internal.model.metadata;
-
-import java.util.ArrayList;
+ 
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -13,16 +14,19 @@ import java.util.ArrayList;
  */
 public class Parameters {
     
-    private ArrayList<Parameter> parameters;
-    
-     public Parameters() {
-        this.parameters = new ArrayList<Parameter>();
-    }
+    Map<String, Parameter> parameters;
 
-    public ArrayList<Parameter> getParameters() {
+    public Parameters() {
+        
+        parameters = new HashMap<String, Parameter>();
+    }
+    
+    public Map<String, Parameter> getParameters() {
         return parameters;
     }
-    
-    
+
+    public void setParameters(Map<String, Parameter> parameters) {
+        this.parameters = parameters;
+    } 
      
 }

@@ -306,7 +306,7 @@ public class MetadataWSGenerator {
                             }
                               
                             parametro.setParameterType(fqName);  
-                            operacion.getParameters().getParameters().add(parametro);
+                            operacion.getParameters().getParameters().put(p.getId().getName(),parametro);
 
                             secuencia++;
 

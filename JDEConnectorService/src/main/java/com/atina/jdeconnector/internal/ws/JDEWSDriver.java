@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
+import oracle.e1.bssvfoundation.impl.security.E1Principal;
 
 /**
  *
@@ -252,7 +253,7 @@ public class JDEWSDriver {
     }
       
     
-    public synchronized HashMap<String, Object> callJDEWS(int session, String operation, HashMap<String, Object> inputValues,File cacheFolder)
+    public synchronized HashMap<String, Object> callJDEWS(E1Principal e1ppal, int session, String operation, HashMap<String, Object> inputValues,File cacheFolder)
     {
         
         // ================================================
@@ -264,18 +265,17 @@ public class JDEWSDriver {
         Model inputModelMetadata = models.getModelo(inputModelClass);
         
         Object inputObject = JDEWSCreateObjectUtil.generateObject(inputModelClass, models, inputModelMetadata,inputValues);
-        
-        
+         
         // ================================================
-        // Get Output Object
-        // ================================================
-        //
-        
-        
-        // ================================================
-        // Instance Input Object
+        // Invoke Method
         // ================================================
         //
+        
+        Object outputObject = JDEWSCreateAndInvokeWS.invokeObject(e1ppal,this.operaciones,operation,inputObject);
+        
+        
+        
+        
         
         
         
@@ -283,16 +283,7 @@ public class JDEWSDriver {
         
         return null;
     }
-    
-    private Object createInputObject(Object inputObject) {
-        
-        
-        
-        
-        return null;
-        
-        
-    }
+     
     
     private Operations loadOperacionesMetadata(File metadataDir) throws JDESingleBSFNException {
 

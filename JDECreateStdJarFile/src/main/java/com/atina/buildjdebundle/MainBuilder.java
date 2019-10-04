@@ -101,7 +101,7 @@ public class MainBuilder {
     private static final String STEP_4a = "Building Building shaded";
     private static final String STEP_5 = "Cleaning up";
     private static final Boolean SHADE = false;
-     private static final Boolean DEBUG = false;
+     private static final Boolean DEBUG = true;
 
     /**
      * @param args the command line arguments
@@ -114,6 +114,8 @@ public class MainBuilder {
             MetadataWSGenerator mt = new MetadataWSGenerator();
 
             try {
+                
+                mt.generateMetadata("C:\\tmp\\sbfjars\\JP430000\\ProcurementManager.java");
                 
                 mt.generateMetadata("C:\\tmp\\sbfjars\\JP010000\\valueobject\\ProcessAddressBookV3.java");
                  
