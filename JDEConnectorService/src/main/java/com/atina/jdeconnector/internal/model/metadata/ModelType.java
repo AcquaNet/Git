@@ -29,8 +29,8 @@ public class ModelType {
 
     public void setParameterName(String parameterName) {
         this.parameterName = parameterName;
-    }
-  
+    } 
+
     public int getParameterSequence() {
         return parameterSequence;
     }
@@ -46,10 +46,10 @@ public class ModelType {
     public void setRepetead(boolean repetead) {
         this.repetead = repetead;
     }
-     
+
     @Override
     public String toString() {
-        return "TipoDelModelo{" + "tipoDeVariable=" + parameterType + ", nombreDeLaVariable=" + parameterName + '}';
+        return "ModelType{" + "parameterType=" + parameterType + ", parameterName=" + parameterName + ", parameterSequence=" + parameterSequence + ", repetead=" + repetead + '}';
     }
-   
+      
 }

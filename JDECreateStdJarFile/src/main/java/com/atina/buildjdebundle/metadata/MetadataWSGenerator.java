@@ -30,6 +30,7 @@ import static com.github.javaparser.ast.internal.Utils.isNullOrEmpty;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -370,7 +371,7 @@ public class MetadataWSGenerator {
                      
                     tipoDelModelo.setParameterSequence(parameterSequence);
 
-                    modelo.getParametersType().add(tipoDelModelo);
+                    modelo.getParametersType().put(tipoDelModelo.getParameterName(),tipoDelModelo);
                     
                     parameterSequence++;
                     
@@ -495,7 +496,7 @@ public class MetadataWSGenerator {
             
             Model model = (Model) pair.getValue();
             
-            ArrayList<ModelType> parameters = model.getParametersType();
+            Collection<ModelType> parameters = model.getParametersType().values();
             
             for(ModelType mdType:parameters)
             {

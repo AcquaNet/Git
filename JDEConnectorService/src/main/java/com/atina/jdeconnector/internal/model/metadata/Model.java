@@ -6,6 +6,7 @@
 package com.atina.jdeconnector.internal.model.metadata;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -16,12 +17,12 @@ public class Model {
 
     private String modelPackage;
     private String modelName;
-    private ArrayList<ModelType> parametersType; 
+    private HashMap<String,ModelType> parametersType; 
  
     public Model() {
 
         this.modelName = "";
-        this.parametersType = new ArrayList<ModelType>();
+        this.parametersType = new HashMap<String,ModelType>();
 
     }
 
@@ -33,12 +34,12 @@ public class Model {
         this.modelName = modelName;
     }
 
-    public ArrayList<ModelType> getParametersType() {
+    public HashMap<String,ModelType> getParametersType() {
         return parametersType;
     }
 
     public void addTipoDelModelo(ModelType tipo) {
-        this.parametersType.add(tipo);
+        this.parametersType.put(tipo.getParameterName(),tipo);
     }
 
     public String getModelPackage() {
@@ -53,9 +54,9 @@ public class Model {
     public String toString() {
 
         StringBuilder sb = new StringBuilder();
-        Iterator<ModelType> it = this.parametersType.iterator();
+        Iterator<ModelType> it = this.parametersType.values().iterator();
 
-        sb.append("Modelo:" + modelPackage + "." + modelName);
+        sb.append("Model:" + modelPackage + "." + modelName);
          
         while (it.hasNext()) {
             sb.append("\n").append(it.next().toString());

@@ -94,6 +94,25 @@ public class JDEConnectorService {
         
         HashMap<String, Object> output = jdeConnection.getWSOutputParameter("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
         
+        
+        // ----------------------------------------------
+        // Passing Parameters
+        // ----------------------------------------------
+        
+        HashMap<String, Object> approver = new HashMap<String, Object>();
+        approver.put("entityId", new Integer(533095));
+        
+        
+        HashMap<String, Object> inputValue = new HashMap<String, Object>();
+        
+        inputValue.put("orderTypeCode", "OP");
+        inputValue.put("businessUnitCode", "          30");
+        inputValue.put("statusCodeNext", "230");
+        inputValue.put("statusApproval", "2N");
+        inputValue.put("approver", approver);
+         
+        HashMap<String, Object> outputValue = jdeConnection.callJDEWS("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover",inputValue);
+        
         Thread.sleep(30000);
          
         jdeConnection.disconnect();

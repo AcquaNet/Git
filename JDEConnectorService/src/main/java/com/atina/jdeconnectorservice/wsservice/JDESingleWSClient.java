@@ -316,11 +316,11 @@ public class JDESingleWSClient {
         return JDEWSDriver.getInstance().getWSOutputParameter(operation,tmpFolder);
     }
     
-//    public JDEBsfnParametersOutputObject callJDEWS(String bsfnName, JDEBsfnParametersInputObject inputObject) throws JDESingleConnectorException{
-//    
-//        
-//        return JDEWSDriver.getInstance().callJDEWS(iSessionID,bsfnName, inputObject,tmpFolderCache);
-//    }
+    public HashMap<String, Object> callJDEWS(String operation, HashMap<String, Object> inputValues) throws JDESingleConnectorException{
+    
+        
+        return JDEWSDriver.getInstance().callJDEWS(iSessionID,operation, inputValues,tmpFolderCache);
+    } 
           
     //************************************************************************
     // Setters and Getters

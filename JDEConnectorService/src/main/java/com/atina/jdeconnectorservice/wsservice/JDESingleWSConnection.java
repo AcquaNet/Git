@@ -190,13 +190,13 @@ public class JDESingleWSConnection {
         return client.getWSOutputParameter(operation);
     }
     
-//    public JDEBsfnParametersOutputObject callJDEBsfn(String bsfnName, JDEBsfnParametersInputObject inputObject) throws JDESingleConnectorException {
-//
-//        logger.info("MULESOFT - JDEClient - Calling BSFN"); 
-//     
-//        return client.callJDEWS(bsfnName, inputObject);
-//        
-//    }
+    public HashMap<String, Object> callJDEWS(String operation, HashMap<String, Object> inputValues) throws JDESingleConnectorException {
+
+        logger.info("MULESOFT - JDEClient - Calling BSFN"); 
+     
+        return client.callJDEWS(operation, inputValues);
+        
+    }
      
     // ====================================================================================
     // PRIVATE operations

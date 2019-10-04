@@ -27,6 +27,7 @@ import com.atina.jdeconnector.internal.model.metadata.SimpleParameterType;
 import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.exception.JDESingleBSFNException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -199,9 +200,7 @@ public class JDEWSDriver {
     public HashMap<String, Object> getWSOutputParameter(String operation, File cacheFolder) throws JDESingleBSFNException {
 
         HashMap<String, Object> returnValue = null;
- 
- 
-
+  
         // ================================================
         // Get Input Parameter Type
         // ================================================
@@ -230,7 +229,7 @@ public class JDEWSDriver {
             
             logger.info("Process Model " + parameters.toString());
 
-            ArrayList<ModelType> param = parameters.getParametersType();
+            Collection<ModelType> param = parameters.getParametersType().values();
 
             for (ModelType modelType : param) {
                 if (!models.isModel(modelType.getParameterType())) {
@@ -253,13 +252,18 @@ public class JDEWSDriver {
     }
       
     
-    public synchronized Object callJDEWS(int session, String operation, Object inputObject,File cacheFolder)
+    public synchronized HashMap<String, Object> callJDEWS(int session, String operation, HashMap<String, Object> inputValues,File cacheFolder)
     {
         
         // ================================================
         // Get Input Object
         // ================================================
         //
+        String inputModelClass = this.operaciones.getInputValueObject(operation);
+        
+        Model inputModelMetadata = models.getModelo(inputModelClass);
+        
+        Object inputObject = JDEWSCreateObjectUtil.generateObject(inputModelClass, models, inputModelMetadata,inputValues);
         
         
         // ================================================
