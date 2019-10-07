@@ -26,6 +26,7 @@ import com.atina.jdeconnector.internal.model.metadata.Operations;
 import com.atina.jdeconnector.internal.model.metadata.SimpleParameterType;
 import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.exception.JDESingleBSFNException;
+import com.fasterxml.jackson.databind.MapperFeature;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -271,17 +272,10 @@ public class JDEWSDriver {
         // ================================================
         //
         
-        Object outputObject = JDEWSCreateAndInvokeWS.invokeObject(e1ppal,this.operaciones,operation,inputObject);
+        HashMap<String, Object> outputObject = JDEWSCreateAndInvokeWS.invokeObject(e1ppal,this.operaciones,this.models,operation,inputObject);
+         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        return null;
+        return outputObject;
     }
      
     

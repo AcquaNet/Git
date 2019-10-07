@@ -391,6 +391,8 @@ public class MetadataWSGenerator {
         
         validateModels();
         
+        addingE1MessageList();
+        
         if(this.invalidModels.size()>0)
         {
             for(String classModel: this.invalidModels)
@@ -483,6 +485,59 @@ public class MetadataWSGenerator {
         }
 
         return "";
+    }
+    
+    private void addingE1MessageList() {
+         
+        
+        // ------------------------------------------------
+        // Replacing operation ReturnValues for new Model
+        // ------------------------------------------------
+          
+        
+        Iterator it = this.operaciones.getOperations().entrySet().iterator();
+        
+        while (it.hasNext()) {
+            
+            Map.Entry pair = (Map.Entry) it.next();
+            
+            Operation operation = (Operation) pair.getValue();
+            
+            logger.error("Adding E1MessaList to operation: " + pair.getKey());
+             
+            String returnModelV = operation.getOperationReturnType();
+            
+            if (!returnModelV.isEmpty()) {
+
+                if(returnModelV.equals("void"))
+                {
+                    logger.error("Void");
+                }
+                else
+                {
+                Model currentReturnModel = this.modelos.getModelo(returnModelV);
+
+                if (currentReturnModel != null) {
+                    
+                    ModelType errorList = new ModelType();
+                    errorList.setParameterName("e1MessageList");
+                    errorList.setParameterSequence(1);
+                    errorList.setParameterType("oracle.e1.bssvfoundation.util.E1MessageList");
+                    errorList.setRepetead(false);
+
+                    currentReturnModel.addTipoDelModelo(errorList);
+
+                } else {
+                        logger.error("Error getting model: " + returnModelV);
+                }
+                
+                }
+
+            }
+             
+        }
+         
+        
     }
     
     

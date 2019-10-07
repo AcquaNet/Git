@@ -100,13 +100,13 @@ public class JDEConnectorService {
         // ----------------------------------------------
         
         HashMap<String, Object> approver = new HashMap<String, Object>();
-        approver.put("entityId", new Integer(533095));
+        approver.put("entityId", new Integer(533095888));
         
         
         HashMap<String, Object> inputValue = new HashMap<String, Object>();
         
         inputValue.put("orderTypeCode", "OP");
-        inputValue.put("businessUnitCode", "          30");
+        inputValue.put("businessUnitCode", "         30");
         inputValue.put("statusCodeNext", "230");
         inputValue.put("statusApproval", "2N");
         inputValue.put("approver", approver);
