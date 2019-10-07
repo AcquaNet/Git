@@ -49,17 +49,28 @@ import com.jdedwards.system.connector.dynamic.util.SpecImageGenerator;
 import com.jdedwards.system.connector.dynamic.util.SpecImageValidator;
 import com.jdedwards.system.connector.dynamic.util.SpecImageValidator.ValidationResultSet;
 import com.jdedwards.system.kernel.CallObjectErrorList;
-import com.jdedwards.system.security.UserOCMContextSession;
-import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
-import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
-import com.atina.jdeconnector.internal.model.JDEBsfnParametersInputObject;
+import com.jdedwards.system.security.UserOCMContextSession; 
+import com.atina.jdeconnector.internal.model.JDEBsfnParameter; 
+import com.atina.jdeconnector.internal.model.metadata.E1ReturnBSFNValue;
+import com.atina.jdeconnector.internal.model.metadata.E1ReturnWSValue;
+import com.atina.jdeconnector.internal.ws.JDEWSCreateAndInvokeWS;
 import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.exception.JDESingleBSFNException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.introspect.AnnotatedField;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;  
 import java.util.logging.Level;
+import oracle.e1.bssvfoundation.base.MessageValueObject;
+import org.apache.commons.lang3.reflect.FieldUtils;
 
 
 /**
@@ -480,7 +491,7 @@ public class JDEBsfnDriver {
  
     } 
      
-    public synchronized JDEBsfnParametersOutputObject callJDEBsfn(int session, String bsfnName, JDEBsfnParametersInputObject inputObject,File tmpFolderCache)
+    public synchronized HashMap<String, Object> callJDEBsfn(int session, String bsfnName, Map<String, Object> inputObject, Integer transactionID, File tmpFolderCache)
     {
         // ===================================================
         // Log Parameters Received
@@ -488,10 +499,11 @@ public class JDEBsfnDriver {
 
         logger.debug("callJDEBsfn() function: " + bsfnName);
         logger.debug("              input   : " + inputObject.toString());
-        inputObject.logParameters();
+        logParameters(inputObject);
         
         
-        JDEBsfnParametersOutputObject outputParameters = new JDEBsfnParametersOutputObject();
+        Map<String, Object> outputParameters = new HashMap<String, Object>();
+        HashMap<String, Object> valorAsHashMap = new HashMap();
  
         // ===================================================
         // Get JDE Transaction
@@ -499,13 +511,11 @@ public class JDEBsfnDriver {
          
         OneworldTransaction transaction = null;
          
-        if(inputObject.hasTransactionID())
-        {
-            
+        if(transactionID > 0)
+        { 
             transaction = JDETransactionPool.getInstance()
-                .getTransaction(inputObject.getTransactionID());
-            
-            
+                .getTransaction(transactionID);
+             
         }
         
         // ===================================================
@@ -585,11 +595,11 @@ public class JDEBsfnDriver {
                  if (parameter != null) {
                      
                      
-                     if (inputObject.getParameters().get(parameter.getName()) != null) {
+                     if (inputObject.get(parameter.getName()) != null) {
                           
                         logger.debug("MULESOFT - JDEConnectorService:  - callBSFN() Preparing Parameter: " + parameter.getName() + " value: "
-                                     + inputObject.getParameters().get(parameter.getName()) + " JDE Type: " + inputObject.getParameters().get(parameter.getName()) + " Java Class: "
-                                     + (inputObject.getParameters().get(parameter.getName())
+                                     + inputObject.get(parameter.getName()) + " JDE Type: " + inputObject.get(parameter.getName()) + " Java Class: "
+                                     + (inputObject.get(parameter.getName())
                                          .getClass()
                                          .getName()));
                          
@@ -597,31 +607,31 @@ public class JDEBsfnDriver {
 
                         case "DATE":
 
-                            JDEConverter.convertServiceInputDataToJDEFormatToJDEDate(bsfnName, inputObject.getParameters(), callobject, parameter);
+                            JDEConverter.convertServiceInputDataToJDEFormatToJDEDate(bsfnName, inputObject, callobject, parameter);
 
                             break;
 
                         case "UTIME":
 
-                            JDEConverter.convertServiceInputDataToJDEUtime(bsfnName, inputObject.getParameters(), callobject, parameter);
+                            JDEConverter.convertServiceInputDataToJDEUtime(bsfnName, inputObject, callobject, parameter);
 
                             break;
 
                         case "MATH_NUMERIC":
 
-                            JDEConverter.convertServiceInputDataToJDEFormatToMathNumeric(bsfnName, inputObject.getParameters(), callobject, parameter);
+                            JDEConverter.convertServiceInputDataToJDEFormatToMathNumeric(bsfnName, inputObject, callobject, parameter);
 
                             break;
 
                         case "INT":
 
-                            JDEConverter.convertServiceInputDataToJDEFormatToJDEInt(bsfnName, inputObject.getParameters(), callobject, parameter);
+                            JDEConverter.convertServiceInputDataToJDEFormatToJDEInt(bsfnName, inputObject, callobject, parameter);
 
                             break;
 
                         default:
 
-                            callobject.setValue(parameter.getName(), String.valueOf(inputObject.getParameters().get(parameter.getName())));
+                            callobject.setValue(parameter.getName(), String.valueOf(inputObject.get(parameter.getName())));
 
                             break;
 
@@ -667,7 +677,7 @@ public class JDEBsfnDriver {
                 logger.error("MULESOFT - JDEConnectorService: callBSFN() Error calling BSFN: " + bsfnName);
                 logger.error("MULESOFT - JDEConnectorService: callBSFN() Error: " + e.getMessage(), e);
          
-                throw new JDESingleBSFNException(getBSFNErrorMessage(bsfnName, inputObject.getParameters(), e.getMessage()), e);
+                throw new JDESingleBSFNException(getBSFNErrorMessage(bsfnName, inputObject, e.getMessage()), e);
 
             }
 
@@ -675,140 +685,158 @@ public class JDEBsfnDriver {
             // Send Exception
             // ------------------------------
 
-            boolean sendException = false;
-
-            if (inputObject.isThrowExceptionWithError()) {
-
-                sendException = bsfnListError.getBSFNErrorCode() == 2;
-
-            }
-
-            // ------------------------------
-            // Return Errors
-            // ------------------------------
-            outputParameters.setReturnValue(bsfnListError.getBSFNErrorCode());
-
-            if (bsfnListError.getBSFNErrorCode() > 0) {
-
-                outputParameters.setNoErrors(bsfnListError.length());
-                
-                try {
-                    
-                    outputParameters.setErrorsDetail(bsfnListError);
-
-                } catch (JsonProcessingException e) {
-
-                    logger.error("MULESOFT - JDEConnectorService: callBSFN() Error calling BSFN: " + bsfnName);
-                    logger.error("MULESOFT - JDEConnectorService: callBSFN() Error: " + e.getMessage(), e);
-
-                    throw new JDESingleBSFNException(getBSFNErrorMessage(bsfnName, inputObject.getParameters(), e.getMessage()), e);
-                }
-
-            }
-
+            boolean sendException =  bsfnListError.getBSFNErrorCode() == 2;
+  
             // ------------------------------
             // Return Parameters
             // ------------------------------
             
             
-            for (BSFNParameter parameter : method.getParameters()) {
+            if(!sendException)
+            {
+                for (BSFNParameter parameter : method.getParameters()) {
 
-                    Object value = callobject.getValue(parameter.getName());
+                        Object value = callobject.getValue(parameter.getName());
 
-                    if (value != null) {
+                        if (value != null) {
 
-                        String parameterValue = parameter.getDataType()
-                            .getTypeName();
+                            String parameterValue = parameter.getDataType()
+                                .getTypeName();
 
-                        String classNameForParameter = value.getClass()
-                            .getName();
+                            String classNameForParameter = value.getClass()
+                                .getName();
 
-                        logger.debug("   Parameter Key: " + parameter.getName() + " Parameter Value: "
-                                     + value.toString() + " JDE Parameter Type: " + parameterValue
-                                     + " Java Class: "
-                                     + classNameForParameter);
+                            logger.debug("   Parameter Key: " + parameter.getName() + " Parameter Value: "
+                                         + value.toString() + " JDE Parameter Type: " + parameterValue
+                                         + " Java Class: "
+                                         + classNameForParameter);
 
-                        switch (parameterValue) {
+                            switch (parameterValue) {
 
-                        case "CHAR":
+                            case "CHAR":
 
-                            outputParameters.getParameters().put(parameter.getName(), JDEConverter.convertJDEDataToMUleFormatFromChar(value));
+                                outputParameters.put(parameter.getName(), JDEConverter.convertJDEDataToMUleFormatFromChar(value));
 
-                            break;
+                                break;
 
-                        case "STRING":
+                            case "STRING":
 
-                            String strValue = (String)value;
+                                String strValue = (String)value;
 
-                            outputParameters.getParameters().put(parameter.getName(), strValue);
+                                outputParameters.put(parameter.getName(), strValue);
 
-                            break;
+                                break;
 
-                        case "MATH_NUMERIC":
+                            case "MATH_NUMERIC":
 
-                            outputParameters.getParameters().put(parameter.getName(), JDEConverter.convertJDEDataToMUleFormatFromMathNumeric(value));
+                                outputParameters.put(parameter.getName(), JDEConverter.convertJDEDataToMUleFormatFromMathNumeric(value));
 
-                            break;
+                                break;
 
-                        case "DATE":
+                            case "DATE":
 
-                            outputParameters.getParameters().put(parameter.getName(), JDEConverter.convertJDEDataToMUleFormatFromJDEDate(value));
+                                outputParameters.put(parameter.getName(), JDEConverter.convertJDEDataToMUleFormatFromJDEDate(value));
 
-                            if (outputParameters.getParameters().get(parameter.getName()) == null) {
+                                if (outputParameters.get(parameter.getName()) == null) {
 
-                                throw new JDESingleBSFNException(getBSFNErrorMessage(bsfnName, outputParameters.getParameters(), "Missing convertion for JDE DATE type from :" + classNameForParameter),
-                                                            bsfnListError);
+                                    throw new JDESingleBSFNException(getBSFNErrorMessage(bsfnName, outputParameters, "Missing convertion for JDE DATE type from :" + classNameForParameter),
+                                                                bsfnListError);
+
+                                }
+
+                                break;
+
+                            case "UTIME":
+
+                                outputParameters.put(parameter.getName(), JDEConverter.convertJDEDataToMUleFormatFromJDEUTime(value));
+
+                                if (outputParameters.get(parameter.getName()) == null) {
+                                    throw new JDESingleBSFNException(
+                                                                getBSFNErrorMessage(bsfnName, outputParameters,
+                                                                                    "Missing convertion for JDE UTIME type from :" + classNameForParameter),
+                                                                bsfnListError);
+                                }
+
+                                break;
+
+                            case "SHORT":
+                            case "INT":
+                            case "UNSIGNED_INT":
+                            case "UTIMESBF":
+                            case "CHARSBF":
+                            case "MATH_NUMERICSBF":
+
+                                break;
+
+                            default:
+
+                                throw new JDESingleBSFNException(getBSFNErrorMessage(bsfnName, outputParameters, "Invalid JDE Type"), bsfnListError);
 
                             }
 
-                            break;
+                        } else {
 
-                        case "UTIME":
-
-                            outputParameters.getParameters().put(parameter.getName(), JDEConverter.convertJDEDataToMUleFormatFromJDEUTime(value));
-
-                            if (outputParameters.getParameters().get(parameter.getName()) == null) {
-                                throw new JDESingleBSFNException(
-                                                            getBSFNErrorMessage(bsfnName, outputParameters.getParameters(),
-                                                                                "Missing convertion for JDE UTIME type from :" + classNameForParameter),
-                                                            bsfnListError);
-                            }
-
-                            break;
-
-                        case "SHORT":
-                        case "INT":
-                        case "UNSIGNED_INT":
-                        case "UTIMESBF":
-                        case "CHARSBF":
-                        case "MATH_NUMERICSBF":
-
-                            break;
-
-                        default:
-
-                            throw new JDESingleBSFNException(getBSFNErrorMessage(bsfnName, outputParameters.getParameters(), "Invalid JDE Type"), bsfnListError);
+                            logger.debug("MULESOFT - JDEConnectorService:  - callBSFN() Returning Parameter: " + parameter.getName() + " value: [NULL]");
+                            outputParameters.put(parameter.getName(), null);
 
                         }
 
-                    } else {
-
-                        logger.debug("MULESOFT - JDEConnectorService:  - callBSFN() Returning Parameter: " + parameter.getName() + " value: [NULL]");
-                        outputParameters.getParameters().put(parameter.getName(), null);
-
-                    }
-
                 }
 
-                // ------------------------------
-                // Send Exception
-                // ------------------------------
+            }
+            
+            
+            // ================================================
+            // Convert Output Object to HashMap
+            // ================================================
+            //
+            ObjectMapper mapper = new ObjectMapper();
 
-                if (sendException) {
+            mapper.setPropertyNamingStrategy(new JDEWSCreateAndInvokeWS.MyNamingStrategy());
 
-                    throw new JDESingleBSFNException(getBSFNErrorMessage(bsfnName, outputParameters.getParameters(), "Error calling BSFN"), bsfnListError);
+            mapper.configure(MapperFeature.USE_ANNOTATIONS, false);
+         
+            String jsonInString = "";
+            
+            E1ReturnBSFNValue returnBSFNOutputValue = new E1ReturnBSFNValue();
+            
+            returnBSFNOutputValue.setMessageValueObject(outputParameters);
+                 
+            returnBSFNOutputValue.setE1MessagesList(bsfnListError);
+         
+         
+            try {
 
-                }
+                 jsonInString = mapper.writeValueAsString(returnBSFNOutputValue);
+
+             } catch (JsonProcessingException ex) {
+
+                 logger.error("Error generating output json " + ex.getMessage());
+
+                 throw new JDESingleBSFNException("Error generating output json " + ex.getMessage(), ex);
+
+             } 
+
+            try {
+
+                valorAsHashMap = mapper.readValue(jsonInString, new TypeReference<Map<String, Object>>() {
+                });
+
+            } catch (IOException ex) {
+
+                logger.error("Error generating output json " + ex.getMessage());
+
+                throw new JDESingleBSFNException("Error generating output hashmap " + ex.getMessage(), ex);
+            }
+
+            // ------------------------------
+            // Send Exception
+            // ------------------------------
+            if (sendException) {
+
+                throw new JDESingleBSFNException(getBSFNErrorMessage(bsfnName, outputParameters, "Error calling BSFN"), bsfnListError);
+
+            }
              
             
         } else
@@ -817,7 +845,7 @@ public class JDEBsfnDriver {
             
         }
          
-        return outputParameters;
+        return valorAsHashMap;
     }
      
      
@@ -944,6 +972,38 @@ public class JDEBsfnDriver {
         }
 
     }
+    
+    public static class MyNamingStrategy extends PropertyNamingStrategy {
+
+        @Override
+        public String nameForField(MapperConfig<?> config, AnnotatedField field, String defaultName) {
+            return field.getName();
+        }
+
+        @Override
+        public String nameForGetterMethod(MapperConfig<?> config, AnnotatedMethod method, String defaultName) {
+            return convert(method, defaultName);
+        }
+
+        @Override
+        public String nameForSetterMethod(MapperConfig<?> config, AnnotatedMethod method, String defaultName) {
+            return convert(method, defaultName);
+        }
+
+        private String convert(AnnotatedMethod method, String defaultName) {
+ 
+            Class<?> clazz = method.getDeclaringClass();
+            List<Field> flds = FieldUtils.getAllFieldsList(clazz);
+            for (Field fld : flds) {
+                if (fld.getName().equalsIgnoreCase(defaultName)) {
+                    return fld.getName();
+                }
+            }
+
+            return defaultName;
+        }
+    }
+    
     
     
 }

@@ -6,9 +6,7 @@
 package com.atina.jdeconnectorservice;
  
 import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
-import com.jdedwards.system.connector.dynamic.ServerFailureException; 
-import com.atina.jdeconnector.internal.model.JDEBsfnParametersInputObject;
-import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
+import com.jdedwards.system.connector.dynamic.ServerFailureException;   
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException;
 import com.atina.jdeconnectorservice.service.JDESingleConnection;
 import com.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
@@ -58,25 +56,20 @@ public class JDEConnectorService {
         }
         
         // Calling BSFN
-        JDEBsfnParametersInputObject inputObject = new JDEBsfnParametersInputObject();
         
-        inputObject.setTransactionID(0);
-        inputObject.getParameters().put("cActionCode", "I");
-        inputObject.getParameters().put("mnAddressBookNumber", 28);
+        HashMap<String, Object> inputObject = new HashMap<String, Object>();
+         
+        inputObject.put("cActionCode", "I");
+        inputObject.put("mnAddressBookNumber", 28);
         
-        JDEBsfnParametersOutputObject outputObject = jdeConnection.callJDEBsfn("AddressBookMasterMBF", inputObject);
-        
-        outputObject.logParameters();
-        
+        HashMap<String, Object> outputObject = jdeConnection.callJDEBsfn("AddressBookMasterMBF", inputObject, new Integer(0));
+          
         logger.debug("Output: " + outputObject.toString());
-        
-        
+         
         Thread.sleep(30000);
         
-        outputObject = jdeConnection.callJDEBsfn("AddressBookMasterMBF", inputObject);
-         
-        outputObject.logParameters();
-         
+        outputObject = jdeConnection.callJDEBsfn("AddressBookMasterMBF", inputObject, new Integer(0));
+          
         jdeConnection.disconnect();
          
         return "";
@@ -169,15 +162,12 @@ public class JDEConnectorService {
         // Call BSFN
         // ======================================================
         // 
-        JDEBsfnParametersInputObject inputObject = new JDEBsfnParametersInputObject();
+        HashMap<String, Object> inputObject = new HashMap<String, Object>();
+     
+        inputObject.put("cActionCode", "I");
+        inputObject.put("mnAddressBookNumber", 28);
         
-        inputObject.setTransactionID(0);
-        inputObject.getParameters().put("cActionCode", "I");
-        inputObject.getParameters().put("mnAddressBookNumber", 28);
-        
-        JDEBsfnParametersOutputObject outputObject = bsfnConnection.callJDEBsfn("AddressBookMasterMBF", inputObject);
-        
-        outputObject.logParameters();
+        HashMap<String, Object>  outputObject = bsfnConnection.callJDEBsfn("AddressBookMasterMBF", inputObject, new Integer(0));
         
         logger.debug("Output: " + outputObject.toString());
         

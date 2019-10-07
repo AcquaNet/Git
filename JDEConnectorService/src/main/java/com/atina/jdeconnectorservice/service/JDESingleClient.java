@@ -11,15 +11,14 @@ import com.jdedwards.system.connector.dynamic.UserSession;
 import com.atina.jdeconnector.internal.JDEBsfnDriver;
 import com.atina.jdeconnector.internal.JDEConnectionLocker;
 import com.atina.jdeconnector.internal.JDETransactions; 
-import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
-import com.atina.jdeconnector.internal.model.JDEBsfnParametersInputObject;
-import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
+import com.atina.jdeconnector.internal.model.JDEBsfnParameter;  
 import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException; 
 import com.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
 import com.jdedwards.system.connector.dynamic.Connector;
 import java.io.File;
+import java.util.HashMap;
 import java.util.Iterator; 
 import java.util.Map;
 import java.util.Set; 
@@ -301,10 +300,10 @@ public class JDESingleClient {
         return JDEBsfnDriver.getInstance().getBSFNParameter(iSessionID,bsfnName,tmpFolderCache);
     }
     
-    public JDEBsfnParametersOutputObject callJDEBsfn(String bsfnName, JDEBsfnParametersInputObject inputObject) throws JDESingleConnectorException{
+    public HashMap<String, Object> callJDEBsfn(String bsfnName, Map<String, Object>  inputObject, Integer transactionID) throws JDESingleConnectorException{
     
        // login();
-        return JDEBsfnDriver.getInstance().callJDEBsfn(iSessionID,bsfnName, inputObject,tmpFolderCache);
+        return JDEBsfnDriver.getInstance().callJDEBsfn(iSessionID,bsfnName, inputObject, transactionID, tmpFolderCache);
     }
           
     //************************************************************************

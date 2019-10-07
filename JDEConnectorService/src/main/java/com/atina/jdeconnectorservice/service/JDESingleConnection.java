@@ -6,9 +6,7 @@
 package com.atina.jdeconnectorservice.service;
 
 import com.atina.jdeconnector.internal.JDEBoostrap;
-import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
-import com.atina.jdeconnector.internal.model.JDEBsfnParametersInputObject;
-import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
+import com.atina.jdeconnector.internal.model.JDEBsfnParameter; 
 import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException;
@@ -18,6 +16,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -181,11 +181,11 @@ public class JDESingleConnection implements JDEConnection{
         
     }
     
-    public JDEBsfnParametersOutputObject callJDEBsfn(String bsfnName, JDEBsfnParametersInputObject inputObject) throws JDESingleConnectorException {
+    public HashMap<String, Object> callJDEBsfn(String bsfnName, Map<String, Object> inputObject, Integer transactionID) throws JDESingleConnectorException {
 
         logger.info("MULESOFT - JDEClient - Calling BSFN"); 
      
-        return client.callJDEBsfn(bsfnName, inputObject);
+        return client.callJDEBsfn(bsfnName, inputObject, transactionID);
         
     }
      
