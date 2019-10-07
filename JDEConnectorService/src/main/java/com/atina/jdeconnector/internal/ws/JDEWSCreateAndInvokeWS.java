@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.atina.jdeconnectorservice.JDEConnectorService;
-import com.atina.jdeconnectorservice.exception.JDESingleBSFNException;
+import com.atina.jdeconnectorservice.exception.JDESingleException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -131,7 +131,7 @@ public class JDEWSCreateAndInvokeWS {
             
            logger.error("Error invoking WS " + operation + " Error: " + ex.getMessage(), ex);
            
-           throw new JDESingleBSFNException("Error invoking WS " + operation + " Error: " + ex.getMessage());
+           throw new JDESingleException("Error invoking WS " + operation + " Error: " + ex.getMessage());
            
            
         }
@@ -236,7 +236,7 @@ public class JDEWSCreateAndInvokeWS {
 
                  logger.error("Error generating output json " + ex.getMessage());
 
-                 throw new JDESingleBSFNException("Error generating output json " + ex.getMessage(), ex);
+                 throw new JDESingleException("Error generating output json " + ex.getMessage(), ex);
 
              }
              
@@ -251,7 +251,7 @@ public class JDEWSCreateAndInvokeWS {
 
                  logger.error("Error generating output json " + ex.getMessage());
 
-                 throw new JDESingleBSFNException("Error generating output json " + ex.getMessage(), ex);
+                 throw new JDESingleException("Error generating output json " + ex.getMessage(), ex);
 
              }
              
@@ -271,13 +271,13 @@ public class JDEWSCreateAndInvokeWS {
 
              logger.error("Error generating output json " + ex.getMessage());
              
-            throw new JDESingleBSFNException("Error generating output hashmap " + ex.getMessage(),ex);
+            throw new JDESingleException("Error generating output hashmap " + ex.getMessage(),ex);
         } 
 
         return valorAsHashMap;
     }
     
-    private static Class loadClass(String className) throws JDESingleBSFNException {
+    private static Class loadClass(String className) throws JDESingleException {
 
         Class cls = null;
 
@@ -289,7 +289,7 @@ public class JDEWSCreateAndInvokeWS {
 
             logger.error("Error getting class " + className + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Error getting class : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error getting class : " + ex.getMessage(), ex);
 
         }
 
@@ -297,14 +297,14 @@ public class JDEWSCreateAndInvokeWS {
 
             logger.error("Class cannot be loaded " + className, null, null);
 
-            throw new JDESingleBSFNException("Class cannot be loaded");
+            throw new JDESingleException("Class cannot be loaded");
 
         }
 
         return cls;
     }
     
-    private static Object instanceClass(String className) throws JDESingleBSFNException {
+    private static Object instanceClass(String className) throws JDESingleException {
 
         Object instance = null;
 
@@ -316,43 +316,43 @@ public class JDEWSCreateAndInvokeWS {
 
             logger.error("Error Loading Class  " + className + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
 
         } catch (SecurityException ex) {
 
             logger.error("Error Loading Class  " + className + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
 
         } catch (NoSuchMethodException ex) {
 
             logger.error("Error Loading Class  " + className + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
 
         } catch (IllegalArgumentException ex) {
 
             logger.error("Error Loading Class  " + className + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
 
         } catch (InstantiationException ex) {
 
             logger.error("Error Loading Class  " + className + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
 
         } catch (IllegalAccessException ex) {
 
             logger.error("Error Loading Class  " + className + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
 
         } catch (InvocationTargetException ex) {
 
             logger.error("Error Loading Class  " + className + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
 
         }
 

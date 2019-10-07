@@ -6,7 +6,7 @@
 package com.atina.jdeconnectorservice.wsservice;
 
 import com.atina.jdeconnector.internal.JDEBoostrap;
-import com.atina.jdeconnectorservice.exception.JDESingleBSFNException;
+import com.atina.jdeconnectorservice.exception.JDESingleException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException;
 import com.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
@@ -180,12 +180,12 @@ public class JDESingleWSConnection implements JDEConnection {
 
     } 
     
-    public HashMap<String, Object> getWSInputParameter(String operation) throws JDESingleBSFNException {
+    public HashMap<String, Object> getWSInputParameter(String operation) throws JDESingleException {
            
         return client.getWSInputParameter(operation);
     }
     
-    public HashMap<String, Object> getWSOutputParameter(String operation) throws JDESingleBSFNException {
+    public HashMap<String, Object> getWSOutputParameter(String operation) throws JDESingleException {
            
         return client.getWSOutputParameter(operation);
     }

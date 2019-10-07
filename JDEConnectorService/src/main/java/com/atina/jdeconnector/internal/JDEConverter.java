@@ -9,7 +9,7 @@ import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.jdedwards.base.datatypes.SqlDate;
 import com.jdedwards.system.connector.dynamic.callmethod.ExecutableMethod;
 import com.jdedwards.system.connector.dynamic.spec.source.BSFNParameter;
-import com.atina.jdeconnectorservice.exception.JDESingleBSFNException;
+import com.atina.jdeconnectorservice.exception.JDESingleException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
@@ -93,7 +93,7 @@ public class JDEConverter {
 
             logger.error(msg);
 
-            throw new JDESingleBSFNException(formatBSFNErrorMessage(entityType, entityData, msg));
+            throw new JDESingleException(formatBSFNErrorMessage(entityType, entityData, msg));
 
         }
 
@@ -179,7 +179,7 @@ public class JDEConverter {
 
             } catch (ParseException e) {
 
-                throw new JDESingleBSFNException(formatBSFNErrorMessage(entityType, entityData, e.getMessage()), e);
+                throw new JDESingleException(formatBSFNErrorMessage(entityType, entityData, e.getMessage()), e);
 
             }
 
@@ -195,7 +195,7 @@ public class JDEConverter {
 
             logger.error(msg);
 
-            throw new JDESingleBSFNException(formatBSFNErrorMessage(entityType, entityData, msg));
+            throw new JDESingleException(formatBSFNErrorMessage(entityType, entityData, msg));
 
         }
 
@@ -275,7 +275,7 @@ public class JDEConverter {
 
             logger.error(msg);
 
-            throw new JDESingleBSFNException(formatBSFNErrorMessage(entityType, entityData, msg));
+            throw new JDESingleException(formatBSFNErrorMessage(entityType, entityData, msg));
 
         }
 
@@ -337,7 +337,7 @@ public class JDEConverter {
 
             logger.error(msg);
 
-            throw new JDESingleBSFNException(formatBSFNErrorMessage(entityType, entityData, msg));
+            throw new JDESingleException(formatBSFNErrorMessage(entityType, entityData, msg));
 
         }
 

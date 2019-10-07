@@ -55,7 +55,7 @@ import com.atina.jdeconnector.internal.model.metadata.E1ReturnBSFNValue;
 import com.atina.jdeconnector.internal.model.metadata.E1ReturnWSValue;
 import com.atina.jdeconnector.internal.ws.JDEWSCreateAndInvokeWS;
 import com.atina.jdeconnectorservice.JDEConnectorService;
-import com.atina.jdeconnectorservice.exception.JDESingleBSFNException;
+import com.atina.jdeconnectorservice.exception.JDESingleException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -104,7 +104,7 @@ public class JDEBsfnDriver {
         private static final JDEBsfnDriver INSTANCE = new JDEBsfnDriver();
     }
 
-    public Set<String> getBSFNListFromEnterpriseServer(int session, File cacheFolder) throws JDESingleBSFNException {
+    public Set<String> getBSFNListFromEnterpriseServer(int session, File cacheFolder) throws JDESingleException {
 
         Set<String> bsfnList = new TreeSet<String>();
         
@@ -130,25 +130,25 @@ public class JDEBsfnDriver {
                 
                 logger.error("MULESOFT - SpecsGenerator: Error parsing file", e);
                 
-                throw new JDESingleBSFNException("Fail to read functions: " + e.getMessage(), e);
+                throw new JDESingleException("Fail to read functions: " + e.getMessage(), e);
                 
             } catch (JsonMappingException e) {
                 
                 logger.error("MULESOFT - SpecsGenerator: Error Mapping JSON file", e);
                 
-                throw new JDESingleBSFNException("Fail to read functions: " + e.getMessage(), e);
+                throw new JDESingleException("Fail to read functions: " + e.getMessage(), e);
                 
             } catch (IOException e) {
                 
                 logger.error("MULESOFT - SpecsGenerator: Error reading functions file", e);
                 
-                throw new JDESingleBSFNException("Fail to read functions: " + e.getMessage(), e);
+                throw new JDESingleException("Fail to read functions: " + e.getMessage(), e);
 
             } catch (Exception ex) {
 
                 logger.error("MULESOFT - SpecsGenerator: Error reading functions file", ex);
                  
-                throw new  JDESingleBSFNException("Fail to connect to Oneworld Database " + ex.getMessage(), ex);
+                throw new  JDESingleException("Fail to connect to Oneworld Database " + ex.getMessage(), ex);
 
             }
 
@@ -209,25 +209,25 @@ public class JDEBsfnDriver {
                                 + functionsFile.getAbsoluteFile());
  
 
-                        throw new JDESingleBSFNException("Fail to save functions " + e.getMessage(), e);
+                        throw new JDESingleException("Fail to save functions " + e.getMessage(), e);
 
                     }
 
                 } catch (ServiceException ex) {
 
-                    throw new JDESingleBSFNException("Fail to initialize Object Lookup service" + ex.getMessage(), ex);
+                    throw new JDESingleException("Fail to initialize Object Lookup service" + ex.getMessage(), ex);
 
                 } catch (JDBException ex) {
 
-                    throw new JDESingleBSFNException("Fail to connect to Oneworld Database " + ex.getMessage(), ex);
+                    throw new JDESingleException("Fail to connect to Oneworld Database " + ex.getMessage(), ex);
 
                 } catch (BSFNLookupFailureException ex) {
                     
-                   throw new JDESingleBSFNException("Fail to connect to Oneworld Database " + ex.getMessage(), ex);
+                   throw new JDESingleException("Fail to connect to Oneworld Database " + ex.getMessage(), ex);
                    
                 } catch (Exception ex) {
                     
-                   throw new JDESingleBSFNException("Fail to connect to Oneworld Database " + ex.getMessage(), ex);
+                   throw new JDESingleException("Fail to connect to Oneworld Database " + ex.getMessage(), ex);
                    
                 }
             }
@@ -239,7 +239,7 @@ public class JDEBsfnDriver {
 
     }
     
-     public Set<JDEBsfnParameter> getBSFNParameter(int session, String bsfnName,  File tmpFolderCache) throws JDESingleBSFNException {
+     public Set<JDEBsfnParameter> getBSFNParameter(int session, String bsfnName,  File tmpFolderCache) throws JDESingleException {
        
         // ===================================================
         // Initizialize Method
@@ -279,7 +279,7 @@ public class JDEBsfnDriver {
             
          } catch (Exception e) {
 
-             throw new JDESingleBSFNException(e.getMessage(),e);
+             throw new JDESingleException(e.getMessage(),e);
              
         }
    
@@ -357,7 +357,7 @@ public class JDEBsfnDriver {
 
                      logger.error("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Error reading database specs. Error: " + e.getMessage());
 
-                     throw new JDESingleBSFNException(e.getMessage(), e);
+                     throw new JDESingleException(e.getMessage(), e);
 
                  }
 
@@ -367,7 +367,7 @@ public class JDEBsfnDriver {
 
                  logger.error("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Error reading xml from database.");
 
-                 throw new JDESingleBSFNException("There is not connection to read database specs. ");
+                 throw new JDESingleException("There is not connection to read database specs. ");
 
              }
 
@@ -387,7 +387,7 @@ public class JDEBsfnDriver {
 
              logger.error("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Error reading specs from source.");
 
-             throw new JDESingleBSFNException("Error reading specs from source", e);
+             throw new JDESingleException("Error reading specs from source", e);
 
          }
 
@@ -429,7 +429,7 @@ public class JDEBsfnDriver {
 
                      logger.error("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Error deleting specs into cache directory.");
 
-                     throw new JDESingleBSFNException("Error deleting specs into cache directory", e);
+                     throw new JDESingleException("Error deleting specs into cache directory", e);
 
                  }
 
@@ -445,7 +445,7 @@ public class JDEBsfnDriver {
                 
             } catch (SpecFailureException ex) {
                 
-                throw new JDESingleBSFNException(ex.getMessage(), ex);
+                throw new JDESingleException(ex.getMessage(), ex);
                 
             }
 
@@ -457,7 +457,7 @@ public class JDEBsfnDriver {
                 
             } catch (SpecFailureException ex) {
                 
-                throw new JDESingleBSFNException(ex.getMessage(), ex);
+                throw new JDESingleException(ex.getMessage(), ex);
                 
             }
 
@@ -469,7 +469,7 @@ public class JDEBsfnDriver {
                 
             } catch (SpecFailureException ex) {
                 
-                throw new JDESingleBSFNException(ex.getMessage(), ex);
+                throw new JDESingleException(ex.getMessage(), ex);
                 
             }
 
@@ -482,7 +482,7 @@ public class JDEBsfnDriver {
 
                  logger.error("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Error saving specs into cache directory.");
 
-                 throw new JDESingleBSFNException("Error saving specs into cache directory", e);
+                 throw new JDESingleException("Error saving specs into cache directory", e);
 
              }
 
@@ -548,7 +548,7 @@ public class JDEBsfnDriver {
             
         } catch (SpecFailureException e) {
             
-            throw new JDESingleBSFNException(e.getMessage(), e);
+            throw new JDESingleException(e.getMessage(), e);
             
         }
 
@@ -574,7 +574,7 @@ public class JDEBsfnDriver {
                 
             } catch (SpecFailureException e) {
                 
-                throw new JDESingleBSFNException(e.getMessage(), e);
+                throw new JDESingleException(e.getMessage(), e);
             
             }
              
@@ -679,7 +679,7 @@ public class JDEBsfnDriver {
                 logger.error("MULESOFT - JDEConnectorService: callBSFN() Error calling BSFN: " + bsfnName);
                 logger.error("MULESOFT - JDEConnectorService: callBSFN() Error: " + e.getMessage(), e);
          
-                throw new JDESingleBSFNException(getBSFNErrorMessage(bsfnName, inputObject, e.getMessage()), e);
+                throw new JDESingleException(getBSFNErrorMessage(bsfnName, inputObject, e.getMessage()), e);
 
             }
 
@@ -741,7 +741,7 @@ public class JDEBsfnDriver {
 
                                 if (outputParameters.get(parameter.getName()) == null) {
 
-                                    throw new JDESingleBSFNException(getBSFNErrorMessage(bsfnName, outputParameters, "Missing convertion for JDE DATE type from :" + classNameForParameter),
+                                    throw new JDESingleException(getBSFNErrorMessage(bsfnName, outputParameters, "Missing convertion for JDE DATE type from :" + classNameForParameter),
                                                                 bsfnListError);
 
                                 }
@@ -753,7 +753,7 @@ public class JDEBsfnDriver {
                                 outputParameters.put(parameter.getName(), JDEConverter.convertJDEDataToMUleFormatFromJDEUTime(value));
 
                                 if (outputParameters.get(parameter.getName()) == null) {
-                                    throw new JDESingleBSFNException(
+                                    throw new JDESingleException(
                                                                 getBSFNErrorMessage(bsfnName, outputParameters,
                                                                                     "Missing convertion for JDE UTIME type from :" + classNameForParameter),
                                                                 bsfnListError);
@@ -772,7 +772,7 @@ public class JDEBsfnDriver {
 
                             default:
 
-                                throw new JDESingleBSFNException(getBSFNErrorMessage(bsfnName, outputParameters, "Invalid JDE Type"), bsfnListError);
+                                throw new JDESingleException(getBSFNErrorMessage(bsfnName, outputParameters, "Invalid JDE Type"), bsfnListError);
 
                             }
 
@@ -821,7 +821,7 @@ public class JDEBsfnDriver {
 
                     logger.error("Error generating output json " + ex.getMessage());
 
-                    throw new JDESingleBSFNException("Error generating output json " + ex.getMessage(), ex);
+                    throw new JDESingleException("Error generating output json " + ex.getMessage(), ex);
 
                 }
                 
@@ -834,7 +834,7 @@ public class JDEBsfnDriver {
 
                     logger.error("Error generating output json " + ex.getMessage());
 
-                    throw new JDESingleBSFNException("Error generating output hashmap " + ex.getMessage(), ex);
+                    throw new JDESingleException("Error generating output hashmap " + ex.getMessage(), ex);
                 }
                 
                 outputParameters.put("_ErrorList", valorAsHashMap);
@@ -856,7 +856,7 @@ public class JDEBsfnDriver {
             
         } else
         {
-            throw new JDESingleBSFNException("Invalid Specs");
+            throw new JDESingleException("Invalid Specs");
             
         }
          
@@ -906,7 +906,7 @@ public class JDEBsfnDriver {
                     "MULESOFT - ERROR SpecsGenerator: BussinessFunctionList() Error Reading Functions from F9862",
                     e);
 
-            throw new JDESingleBSFNException("Fail to fetch functions " + e.getMessage(),
+            throw new JDESingleException("Fail to fetch functions " + e.getMessage(),
                     e);
 
         } finally {

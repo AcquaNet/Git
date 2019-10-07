@@ -25,7 +25,7 @@ import com.atina.jdeconnector.internal.model.metadata.Operation;
 import com.atina.jdeconnector.internal.model.metadata.Operations;
 import com.atina.jdeconnector.internal.model.metadata.SimpleParameterType;
 import com.atina.jdeconnectorservice.JDEConnectorService;
-import com.atina.jdeconnectorservice.exception.JDESingleBSFNException;
+import com.atina.jdeconnectorservice.exception.JDESingleException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -77,7 +77,7 @@ public class JDEWSDriver {
         private static final JDEWSDriver INSTANCE = new JDEWSDriver();
     }
     
-    public Set<String> getWSList(File cacheFolder) throws JDESingleBSFNException {
+    public Set<String> getWSList(File cacheFolder) throws JDESingleException {
 
         Set<String> wsList = new TreeSet<String>();
 
@@ -103,25 +103,25 @@ public class JDEWSDriver {
 
                 logger.error("MULESOFT - SpecsGenerator: Error parsing file", e);
 
-                throw new JDESingleBSFNException("Fail to read functions: " + e.getMessage(), e);
+                throw new JDESingleException("Fail to read functions: " + e.getMessage(), e);
 
             } catch (JsonMappingException e) {
 
                 logger.error("MULESOFT - SpecsGenerator: Error Mapping JSON file", e);
 
-                throw new JDESingleBSFNException("Fail to read functions: " + e.getMessage(), e);
+                throw new JDESingleException("Fail to read functions: " + e.getMessage(), e);
 
             } catch (IOException e) {
 
                 logger.error("MULESOFT - SpecsGenerator: Error reading functions file", e);
 
-                throw new JDESingleBSFNException("Fail to read functions: " + e.getMessage(), e);
+                throw new JDESingleException("Fail to read functions: " + e.getMessage(), e);
 
             } catch (Exception ex) {
 
                 logger.error("MULESOFT - SpecsGenerator: Error reading functions file", ex);
 
-                throw new JDESingleBSFNException("Fail to connect to Oneworld Database " + ex.getMessage(), ex);
+                throw new JDESingleException("Fail to connect to Oneworld Database " + ex.getMessage(), ex);
 
             }
 
@@ -159,13 +159,13 @@ public class JDEWSDriver {
                     logger.error("MULESOFT - SpecsGenerator: BussinessFunctionList() Error saving functions on "
                             + functionsFile.getAbsoluteFile());
 
-                    throw new JDESingleBSFNException("Fail to save functions " + e.getMessage(), e);
+                    throw new JDESingleException("Fail to save functions " + e.getMessage(), e);
 
                 }
  
             } catch (Exception ex) {
 
-                throw new JDESingleBSFNException("Fail to connect to Oneworld Database " + ex.getMessage(), ex);
+                throw new JDESingleException("Fail to connect to Oneworld Database " + ex.getMessage(), ex);
 
             }
 
@@ -175,7 +175,7 @@ public class JDEWSDriver {
 
     }
    
-    public HashMap<String, Object> getWSInputParameter(String operation, File cacheFolder) throws JDESingleBSFNException {
+    public HashMap<String, Object> getWSInputParameter(String operation, File cacheFolder) throws JDESingleException {
 
         HashMap<String, Object> returnValue = null;
  
@@ -193,13 +193,13 @@ public class JDEWSDriver {
         }
         else
         {
-            throw new JDESingleBSFNException("Operation without Input Parameter");
+            throw new JDESingleException("Operation without Input Parameter");
         }
 
         return returnValue;
     }
     
-    public HashMap<String, Object> getWSOutputParameter(String operation, File cacheFolder) throws JDESingleBSFNException {
+    public HashMap<String, Object> getWSOutputParameter(String operation, File cacheFolder) throws JDESingleException {
 
         HashMap<String, Object> returnValue = null;
   
@@ -216,14 +216,14 @@ public class JDEWSDriver {
         }
         else
         {
-            throw new JDESingleBSFNException("Operation without Output Parameter");
+            throw new JDESingleException("Operation without Output Parameter");
         }
 
         return returnValue;
     }
     
       
-      private HashMap<String, Object> processModel(Models models, Model parameters) throws JDESingleBSFNException {
+      private HashMap<String, Object> processModel(Models models, Model parameters) throws JDESingleException {
       
         HashMap<String, Object> returnValue = new HashMap<String, Object>();
 
@@ -279,7 +279,7 @@ public class JDEWSDriver {
     }
      
     
-    private Operations loadOperacionesMetadata(File metadataDir) throws JDESingleBSFNException {
+    private Operations loadOperacionesMetadata(File metadataDir) throws JDESingleException {
 
         Operations returnValue = null;
         
@@ -293,14 +293,14 @@ public class JDEWSDriver {
 
             logger.error("Error leyendo metadata de transacciones: " + ex.getMessage());
 
-            throw new JDESingleBSFNException("Error reading operation metadata: " + ex.getMessage(), ex);
+            throw new JDESingleException("Error reading operation metadata: " + ex.getMessage(), ex);
 
         }
  
         return returnValue;
     }
     
-    private Models loadValueObjectsMetadata(File metadataDir) throws JDESingleBSFNException {
+    private Models loadValueObjectsMetadata(File metadataDir) throws JDESingleException {
 
         Models returnValue = null;
         
@@ -314,7 +314,7 @@ public class JDEWSDriver {
 
             logger.error("Error leyendo metadata de transacciones: " + ex.getMessage());
 
-            throw new JDESingleBSFNException("Error reading operation metadata: " + ex.getMessage(), ex);
+            throw new JDESingleException("Error reading operation metadata: " + ex.getMessage(), ex);
 
         }
  

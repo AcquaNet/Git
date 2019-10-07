@@ -11,21 +11,21 @@ import com.jdedwards.system.kernel.CallObjectErrorList;
  *
  * @author franciscogodinoconte
  */
-public class JDESingleBSFNException extends JDESingleConnectorException{
+public class JDESingleException extends JDESingleConnectorException{
      
     private static final long serialVersionUID = 1997753363232807011L;
     
     private final CallObjectErrorList bsfnListError = new CallObjectErrorList();
 
-    public JDESingleBSFNException(String message) {
+    public JDESingleException(String message) {
         super(message);
     }
 
-    public JDESingleBSFNException(String message, Throwable cause) {
+    public JDESingleException(String message, Throwable cause) {
         super(message, cause);
     }
     
-    public JDESingleBSFNException(String message, CallObjectErrorList bsfnListError) {
+    public JDESingleException(String message, CallObjectErrorList bsfnListError) {
 
         super(message);
 

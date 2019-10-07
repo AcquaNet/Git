@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.atina.jdeconnectorservice.JDEConnectorService;
-import com.atina.jdeconnectorservice.exception.JDESingleBSFNException;
+import com.atina.jdeconnectorservice.exception.JDESingleException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -101,7 +101,7 @@ public class JDEWSCreateObjectUtil {
 
     }
  
-    private static Class loadClass(String className) throws JDESingleBSFNException {
+    private static Class loadClass(String className) throws JDESingleException {
 
         Class cls = null;
 
@@ -113,7 +113,7 @@ public class JDEWSCreateObjectUtil {
 
             logger.error("Error getting class " + className + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Error getting class : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error getting class : " + ex.getMessage(), ex);
 
         }
 
@@ -121,14 +121,14 @@ public class JDEWSCreateObjectUtil {
 
             logger.error("Class cannot be loaded " + className, null, null);
 
-            throw new JDESingleBSFNException("Class cannot be loaded");
+            throw new JDESingleException("Class cannot be loaded");
 
         }
 
         return cls;
     }
 
-    private static Object instanceClass(String className) throws JDESingleBSFNException {
+    private static Object instanceClass(String className) throws JDESingleException {
 
         Object instance = null;
 
@@ -140,43 +140,43 @@ public class JDEWSCreateObjectUtil {
 
             logger.error("Error Loading Class  " + className + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
 
         } catch (SecurityException ex) {
 
             logger.error("Error Loading Class  " + className + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
 
         } catch (NoSuchMethodException ex) {
 
             logger.error("Error Loading Class  " + className + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
 
         } catch (IllegalArgumentException ex) {
 
             logger.error("Error Loading Class  " + className + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
 
         } catch (InstantiationException ex) {
 
             logger.error("Error Loading Class  " + className + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
 
         } catch (IllegalAccessException ex) {
 
             logger.error("Error Loading Class  " + className + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
 
         } catch (InvocationTargetException ex) {
 
             logger.error("Error Loading Class  " + className + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error Cargando Clase de la Operacion : " + ex.getMessage(), ex);
 
         }
 
@@ -203,7 +203,7 @@ public class JDEWSCreateObjectUtil {
 
                 logger.error("Error getting method: " + cls.getName() + "." + setterName);
 
-                throw new JDESingleBSFNException("Error getting method: " + cls.getName() + "." + setterName);
+                throw new JDESingleException("Error getting method: " + cls.getName() + "." + setterName);
             }
 
             Object[] parametrosDeInputDelMetodo = new Object[1];
@@ -216,25 +216,25 @@ public class JDEWSCreateObjectUtil {
 
             logger.error("Class not found " + variableClass + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Class not found : " + ex.getMessage(), ex);
+            throw new JDESingleException("Class not found : " + ex.getMessage(), ex);
 
         } catch (IllegalAccessException ex) {
 
             logger.error("Class not found " + variableClass + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Class not found : " + ex.getMessage(), ex);
+            throw new JDESingleException("Class not found : " + ex.getMessage(), ex);
 
         } catch (IllegalArgumentException ex) {
 
             logger.error("Class not found " + variableClass + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Class not found : " + ex.getMessage(), ex);
+            throw new JDESingleException("Class not found : " + ex.getMessage(), ex);
 
         } catch (InvocationTargetException ex) {
 
             logger.error("Class not found " + variableClass + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleBSFNException("Class not found : " + ex.getMessage(), ex);
+            throw new JDESingleException("Class not found : " + ex.getMessage(), ex);
 
         }
 
