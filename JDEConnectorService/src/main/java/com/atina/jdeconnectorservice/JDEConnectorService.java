@@ -100,7 +100,7 @@ public class JDEConnectorService {
         // ----------------------------------------------
         
         HashMap<String, Object> approver = new HashMap<String, Object>();
-        approver.put("entityId", new Integer(533095888));
+        approver.put("entityId", new Integer(533095));
         
         
         HashMap<String, Object> inputValue = new HashMap<String, Object>();
