@@ -181,7 +181,7 @@ public class JDESingleConnection implements JDEConnection{
         
     }
     
-    public HashMap<String, Object> callJDEBsfn(String bsfnName, Map<String, Object> inputObject, Integer transactionID) throws JDESingleConnectorException {
+    public HashMap<String, Object> callJDEOperation(String bsfnName, Map<String, Object> inputObject, Integer transactionID) throws JDESingleConnectorException {
 
         logger.info("MULESOFT - JDEClient - Calling BSFN"); 
      

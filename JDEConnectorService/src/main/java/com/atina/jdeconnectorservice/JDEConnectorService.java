@@ -62,13 +62,13 @@ public class JDEConnectorService {
         inputObject.put("cActionCode", "I");
         inputObject.put("mnAddressBookNumber", 233338);
         
-        HashMap<String, Object> outputObject = jdeConnection.callJDEBsfn("AddressBookMasterMBF", inputObject, new Integer(0));
+        HashMap<String, Object> outputObject = jdeConnection.callJDEOperation("AddressBookMasterMBF", inputObject, new Integer(0));
           
         logger.debug("Output: " + outputObject.toString());
          
         Thread.sleep(30000);
         
-        outputObject = jdeConnection.callJDEBsfn("AddressBookMasterMBF", inputObject, new Integer(0));
+        outputObject = jdeConnection.callJDEOperation("AddressBookMasterMBF", inputObject, new Integer(0));
           
         jdeConnection.disconnect();
          
@@ -106,7 +106,7 @@ public class JDEConnectorService {
         inputValue.put("statusApproval", "2N");
         inputValue.put("approver", approver);
          
-        HashMap<String, Object> outputValue = jdeConnection.callJDEWS("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover",inputValue);
+        HashMap<String, Object> outputValue = jdeConnection.callJDEOperation("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover",inputValue);
         
         Thread.sleep(30000);
          
@@ -167,7 +167,7 @@ public class JDEConnectorService {
         inputObject.put("cActionCode", "I");
         inputObject.put("mnAddressBookNumber", 28);
         
-        HashMap<String, Object>  outputObject = bsfnConnection.callJDEBsfn("AddressBookMasterMBF", inputObject, new Integer(0));
+        HashMap<String, Object>  outputObject = bsfnConnection.callJDEOperation("AddressBookMasterMBF", inputObject, new Integer(0));
         
         logger.debug("Output: " + outputObject.toString());
         
@@ -201,7 +201,7 @@ public class JDEConnectorService {
         inputValue.put("statusApproval", "2N");
         inputValue.put("approver", approver);
          
-        HashMap<String, Object> outputValue = wsConnection.callJDEWS("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover",inputValue);
+        HashMap<String, Object> outputValue = wsConnection.callJDEOperation("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover",inputValue);
         
         // ======================================================
         // Disconnect

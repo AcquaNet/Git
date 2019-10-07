@@ -190,7 +190,7 @@ public class JDESingleWSConnection implements JDEConnection {
         return client.getWSOutputParameter(operation);
     }
     
-    public HashMap<String, Object> callJDEWS(String operation, HashMap<String, Object> inputValues) throws JDESingleConnectorException {
+    public HashMap<String, Object> callJDEOperation(String operation, HashMap<String, Object> inputValues) throws JDESingleConnectorException {
 
         logger.info("MULESOFT - JDEClient - Calling BSFN"); 
      
