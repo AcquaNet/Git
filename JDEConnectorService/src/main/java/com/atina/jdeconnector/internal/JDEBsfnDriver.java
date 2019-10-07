@@ -62,6 +62,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.cfg.MapperConfig;
 import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+import com.jdedwards.system.kernel.CallObjectErrorItem;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -70,6 +71,8 @@ import java.util.Map;
 import java.util.TreeSet;  
 import java.util.logging.Level;
 import oracle.e1.bssvfoundation.base.MessageValueObject;
+import oracle.e1.bssvfoundation.util.E1Message;
+import oracle.e1.bssvfoundation.util.E1MessageList;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 
@@ -502,9 +505,8 @@ public class JDEBsfnDriver {
         logParameters(inputObject);
         
         
-        Map<String, Object> outputParameters = new HashMap<String, Object>();
-        HashMap<String, Object> valorAsHashMap = new HashMap();
- 
+        HashMap<String, Object> outputParameters = new HashMap<String, Object>();
+         
         // ===================================================
         // Get JDE Transaction
         // ===================================================
@@ -785,58 +787,71 @@ public class JDEBsfnDriver {
 
             }
             
+            // Convert Error List to HashMap
             
-            // ================================================
-            // Convert Output Object to HashMap
-            // ================================================
-            //
-            ObjectMapper mapper = new ObjectMapper();
-
-            mapper.setPropertyNamingStrategy(new JDEWSCreateAndInvokeWS.MyNamingStrategy());
-
-            mapper.configure(MapperFeature.USE_ANNOTATIONS, false);
-         
-            String jsonInString = "";
-            
-            E1ReturnBSFNValue returnBSFNOutputValue = new E1ReturnBSFNValue();
-            
-            returnBSFNOutputValue.setMessageValueObject(outputParameters);
-                 
-            returnBSFNOutputValue.setE1MessagesList(bsfnListError);
-         
-         
-            try {
-
-                 jsonInString = mapper.writeValueAsString(returnBSFNOutputValue);
-
-             } catch (JsonProcessingException ex) {
-
-                 logger.error("Error generating output json " + ex.getMessage());
-
-                 throw new JDESingleBSFNException("Error generating output json " + ex.getMessage(), ex);
-
-             } 
-
-            try {
-
-                valorAsHashMap = mapper.readValue(jsonInString, new TypeReference<Map<String, Object>>() {
-                });
-
-            } catch (IOException ex) {
-
-                logger.error("Error generating output json " + ex.getMessage());
-
-                throw new JDESingleBSFNException("Error generating output hashmap " + ex.getMessage(), ex);
-            }
-
-            // ------------------------------
-            // Send Exception
-            // ------------------------------
             if (sendException) {
+                
+                HashMap<String, Object> valorAsHashMap = new HashMap();
+                 
+                E1MessageList errorList = new E1MessageList();
+                
+                for (int i = 0; i < bsfnListError.length(); i++) { 
+                    
+                    CallObjectErrorItem errorItemValue = bsfnListError.getItem(i);
+                     
+                    E1Message e1Msg = new E1Message(errorItemValue);
+                    
+                    errorList.addMessage(e1Msg);
+                    
+                }
+                 
+                ObjectMapper mapper = new ObjectMapper();
 
-                throw new JDESingleBSFNException(getBSFNErrorMessage(bsfnName, outputParameters, "Error calling BSFN"), bsfnListError);
+                mapper.setPropertyNamingStrategy(new JDEWSCreateAndInvokeWS.MyNamingStrategy());
+
+                mapper.configure(MapperFeature.USE_ANNOTATIONS, false);
+
+                String jsonInString = "";
+
+                try {
+
+                    jsonInString = mapper.writeValueAsString(errorList);
+
+                } catch (JsonProcessingException ex) {
+
+                    logger.error("Error generating output json " + ex.getMessage());
+
+                    throw new JDESingleBSFNException("Error generating output json " + ex.getMessage(), ex);
+
+                }
+                
+                try {
+
+                    valorAsHashMap = mapper.readValue(jsonInString, new TypeReference<Map<String, Object>>() {
+                    });
+
+                } catch (IOException ex) {
+
+                    logger.error("Error generating output json " + ex.getMessage());
+
+                    throw new JDESingleBSFNException("Error generating output hashmap " + ex.getMessage(), ex);
+                }
+                
+                outputParameters.put("_ErrorList", valorAsHashMap);
+                
+                outputParameters.put("_ErrorCode", bsfnListError.getBSFNErrorCode());
 
             }
+             
+
+//            // ------------------------------
+//            // Send Exception
+//            // ------------------------------
+//            if (sendException) {
+//
+//                throw new JDESingleBSFNException(getBSFNErrorMessage(bsfnName, outputParameters, "Error calling BSFN"), bsfnListError);
+//
+//            }
              
             
         } else
@@ -845,7 +860,7 @@ public class JDEBsfnDriver {
             
         }
          
-        return valorAsHashMap;
+        return outputParameters;
     }
      
      

@@ -60,7 +60,7 @@ public class JDEConnectorService {
         HashMap<String, Object> inputObject = new HashMap<String, Object>();
          
         inputObject.put("cActionCode", "I");
-        inputObject.put("mnAddressBookNumber", 28);
+        inputObject.put("mnAddressBookNumber", 233338);
         
         HashMap<String, Object> outputObject = jdeConnection.callJDEBsfn("AddressBookMasterMBF", inputObject, new Integer(0));
           
@@ -255,9 +255,9 @@ public class JDEConnectorService {
                     
                     try {
                         
-                        //util.testConnection( line.getOptionValue("jde_user"), line.getOptionValue("jde_pwd"), line.getOptionValue("jde_environment"), line.getOptionValue("jde_role"));
+                        util.testConnection( line.getOptionValue("jde_user"), line.getOptionValue("jde_pwd"), line.getOptionValue("jde_environment"), line.getOptionValue("jde_role"));
                         //util.testWSConnection( line.getOptionValue("jde_user"), line.getOptionValue("jde_pwd"), line.getOptionValue("jde_environment"), line.getOptionValue("jde_role"));
-                        util.testBSFNAndWSConnection( line.getOptionValue("jde_user"), line.getOptionValue("jde_pwd"), line.getOptionValue("jde_environment"), line.getOptionValue("jde_role"));
+                        //util.testBSFNAndWSConnection( line.getOptionValue("jde_user"), line.getOptionValue("jde_pwd"), line.getOptionValue("jde_environment"), line.getOptionValue("jde_role"));
                    
                     } catch (ServerFailureException ex) {
                         java.util.logging.Logger.getLogger(JDEConnectorService.class.getName()).log(Level.SEVERE, null, ex);
