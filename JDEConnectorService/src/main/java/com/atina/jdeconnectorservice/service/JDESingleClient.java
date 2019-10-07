@@ -17,6 +17,7 @@ import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
 import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException; 
+import com.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
 import com.jdedwards.system.connector.dynamic.Connector;
 import java.io.File;
 import java.util.Iterator; 
@@ -90,6 +91,14 @@ public class JDESingleClient {
 
                 } else {
                     logger.info("Current user is connected");
+                    
+                    if(com.jdedwards.system.connector.dynamic.Connector.getInstance().getUserSession(iSessionID).isSbfConnectorMode())
+                    {
+                        iSessionID = 0;
+                        
+                        logger.info("Current user is as SBF Connector Mode");
+                    }
+                    
                 }
 
             }
@@ -130,7 +139,8 @@ public class JDESingleClient {
                             .compareTo(user) == 0 && sessionOpen.getUserRole()
                             .compareTo(role) == 0
                             && sessionOpen.getUserEnvironment()
-                                    .compareTo(environment) == 0) {
+                                    .compareTo(environment) == 0 &&
+                            !sessionOpen.isSbfConnectorMode()) {
 
                         iSessionID = (int) sessionOpen.getSessionID();
 
@@ -276,7 +286,7 @@ public class JDESingleClient {
     
     
     
-    public Set<String> getBSFNList() throws JDESingleConnectorException{
+    public Set<String> getOperationList() throws JDESingleConnectorException{
           
         if(iSessionID==0 || tmpFolder == null )
         { 

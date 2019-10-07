@@ -11,6 +11,8 @@ import com.atina.jdeconnector.internal.model.JDEBsfnParametersInputObject;
 import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException;
 import com.atina.jdeconnectorservice.service.JDESingleConnection;
+import com.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
+import com.atina.jdeconnectorservice.service.poolconnection.JDEPoolConnections;
 import com.atina.jdeconnectorservice.wsservice.JDESingleWSConnection;
 import java.util.HashMap;
 import java.util.Set;
@@ -120,6 +122,112 @@ public class JDEConnectorService {
         return "";
     }
     
+    public String testBSFNAndWSConnection(String user, String pwd, String environment, String role) throws ServerFailureException, InterruptedException, JDESingleConnectorException 
+    {
+        
+        
+        // ======================================================
+        // Get Session ID and Login 
+        // ======================================================
+        //
+        int sessionIDBSFN = JDEPoolConnections.getInstance().createConnection(user, pwd, environment, role, 0, false);
+        
+        int sessionIDWS = JDEPoolConnections.getInstance().createConnection(user, pwd, environment, role, 0, true);
+        
+        // ======================================================
+        // Get Connection Instance
+        // ======================================================
+        //
+        
+        JDESingleConnection bsfnConnection = (JDESingleConnection) JDEPoolConnections.getInstance().getSingleConnection(sessionIDBSFN);
+        
+        JDESingleWSConnection wsConnection = (JDESingleWSConnection) JDEPoolConnections.getInstance().getSingleConnection(sessionIDWS);
+        
+        // ======================================================
+        // Get BSFN List
+        // ======================================================
+        //         
+        Set<String> bsfnlist = bsfnConnection.generateBSFNListFromCacheRepository();
+        
+        for(String bsfnName:bsfnlist)
+        {
+            logger.debug(bsfnName);
+        }
+        
+        // ======================================================
+        // Get BSFN Parameters
+        // ======================================================
+        // 
+        Set<JDEBsfnParameter> parameterList = bsfnConnection.getBSFNParameter("AddressBookMasterMBF");
+        
+        for(JDEBsfnParameter parameter:parameterList)
+        {
+            logger.debug(parameter.toString());
+        }
+        
+        // ======================================================
+        // Call BSFN
+        // ======================================================
+        // 
+        JDEBsfnParametersInputObject inputObject = new JDEBsfnParametersInputObject();
+        
+        inputObject.setTransactionID(0);
+        inputObject.getParameters().put("cActionCode", "I");
+        inputObject.getParameters().put("mnAddressBookNumber", 28);
+        
+        JDEBsfnParametersOutputObject outputObject = bsfnConnection.callJDEBsfn("AddressBookMasterMBF", inputObject);
+        
+        outputObject.logParameters();
+        
+        logger.debug("Output: " + outputObject.toString());
+        
+        // ======================================================
+        // Get WS List
+        // ======================================================
+        // 
+        Set<String> operation = wsConnection.generateWSListFromCacheRepository();
+        
+        // ======================================================
+        // Get WS Parameters
+        // ======================================================
+        // 
+        HashMap<String, Object> input = wsConnection.getWSInputParameter("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
+        
+        HashMap<String, Object> output = wsConnection.getWSOutputParameter("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
+        
+        // ======================================================
+        // Call WS
+        // ======================================================
+        // 
+        HashMap<String, Object> approver = new HashMap<String, Object>();
+        approver.put("entityId", new Integer(533095));
+        
+        
+        HashMap<String, Object> inputValue = new HashMap<String, Object>();
+        
+        inputValue.put("orderTypeCode", "OP");
+        inputValue.put("businessUnitCode", "         30");
+        inputValue.put("statusCodeNext", "230");
+        inputValue.put("statusApproval", "2N");
+        inputValue.put("approver", approver);
+         
+        HashMap<String, Object> outputValue = wsConnection.callJDEWS("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover",inputValue);
+        
+        // ======================================================
+        // Disconnect
+        // ======================================================
+        // 
+        
+        JDEPoolConnections.getInstance().disconnect(sessionIDBSFN);
+        
+        JDEPoolConnections.getInstance().disconnect(sessionIDWS);
+         
+            
+        return "";
+        
+    }
+        
+    
     /**
      * @param args the command line arguments
      */
@@ -158,7 +266,8 @@ public class JDEConnectorService {
                     try {
                         
                         //util.testConnection( line.getOptionValue("jde_user"), line.getOptionValue("jde_pwd"), line.getOptionValue("jde_environment"), line.getOptionValue("jde_role"));
-                        util.testWSConnection( line.getOptionValue("jde_user"), line.getOptionValue("jde_pwd"), line.getOptionValue("jde_environment"), line.getOptionValue("jde_role"));
+                        //util.testWSConnection( line.getOptionValue("jde_user"), line.getOptionValue("jde_pwd"), line.getOptionValue("jde_environment"), line.getOptionValue("jde_role"));
+                        util.testBSFNAndWSConnection( line.getOptionValue("jde_user"), line.getOptionValue("jde_pwd"), line.getOptionValue("jde_environment"), line.getOptionValue("jde_role"));
                    
                     } catch (ServerFailureException ex) {
                         java.util.logging.Logger.getLogger(JDEConnectorService.class.getName()).log(Level.SEVERE, null, ex);

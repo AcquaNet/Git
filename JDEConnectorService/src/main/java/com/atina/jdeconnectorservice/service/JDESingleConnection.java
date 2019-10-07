@@ -12,6 +12,7 @@ import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
 import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException;
+import com.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -26,7 +27,7 @@ import org.apache.commons.io.FileUtils;
  *
  * @author jgodi
  */
-public class JDESingleConnection {
+public class JDESingleConnection implements JDEConnection{
 
     private static final Logger logger = LoggerFactory.getLogger(JDEConnectorService.class);
 
@@ -168,7 +169,7 @@ public class JDESingleConnection {
   
     public Set<String> generateBSFNListFromCacheRepository() throws JDESingleConnectorException {
 
-        return client.getBSFNList();
+        return client.getOperationList();
 
     } 
     
@@ -263,6 +264,11 @@ public class JDESingleConnection {
 
         return fwEnv;
 
+    }
+
+    @Override
+    public boolean isWSConnection() {
+        return false;
     }
     
       

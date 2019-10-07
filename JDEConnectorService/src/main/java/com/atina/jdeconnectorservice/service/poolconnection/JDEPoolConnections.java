@@ -3,10 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.atina.jdeconnectorservice.service;
+package com.atina.jdeconnectorservice.service.poolconnection;
 
 import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
+import com.atina.jdeconnectorservice.service.JDESingleConnection;
+import com.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
+import com.atina.jdeconnectorservice.wsservice.JDESingleWSConnection;
 import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +22,7 @@ public class JDEPoolConnections {
     
     private static final Logger logger = LoggerFactory.getLogger(JDEConnectorService.class);
     
-    HashMap<Integer,JDESingleConnection> pool = new HashMap<Integer, JDESingleConnection>();
+    HashMap<Integer, JDEConnection> pool = new HashMap<Integer, JDEConnection>();
      
     private JDEPoolConnections() {
     }
@@ -34,7 +37,7 @@ public class JDEPoolConnections {
         
     }
     
-    public int createConnection(String user, String password, String environment, String role, int sessionID) throws JDESingleConnectionException {
+    public int createConnection(String user, String password, String environment, String role, int sessionID, boolean wsConnection) throws JDESingleConnectionException {
         
         logger.info("Creating JDE Connection: ");
         logger.info("      User: " + user);
@@ -45,7 +48,7 @@ public class JDEPoolConnections {
         
         if(sessionID > 0 && pool.containsKey(sessionID))
         {
-            JDESingleConnection jdeConnection = pool.get(sessionID);
+            JDEConnection jdeConnection = pool.get(sessionID);
             
             currentSessionId = jdeConnection.isJDEConnected();
             
@@ -62,7 +65,17 @@ public class JDEPoolConnections {
                 
             }
             
-            JDESingleConnection jdeConnection = new JDESingleConnection(user,password,environment,role);
+            JDEConnection jdeConnection = null;
+            
+            if(wsConnection)
+            {
+                jdeConnection = new JDESingleWSConnection(user,password,environment,role);
+            }
+            else
+            {
+                jdeConnection = new JDESingleConnection(user,password,environment,role);
+            }
+            
             
             currentSessionId = jdeConnection.connect();
             
@@ -77,11 +90,24 @@ public class JDEPoolConnections {
         
     }
     
-    public JDESingleConnection getSingleConnection(int sessionID) throws JDESingleConnectionException{
+    public JDEConnection getSingleConnection(int sessionID) throws JDESingleConnectionException{
     
         if(this.pool.containsKey(sessionID))
         {
             return this.pool.get(sessionID);
+        }
+        else
+        {
+            throw new JDESingleConnectionException("There is not a session in poll connections for session id: " +sessionID);
+        }
+         
+    } 
+    
+    public void disconnect(int sessionID) {
+    
+        if(this.pool.containsKey(sessionID))
+        {
+           this.pool.get(sessionID).disconnect();
         }
         else
         {

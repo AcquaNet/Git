@@ -8,7 +8,7 @@ package com.jde.jdeconnector.services;
 
 import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
-import com.atina.jdeconnectorservice.service.JDEPoolConnections;
+import com.atina.jdeconnectorservice.service.poolconnection.JDEPoolConnections;
 import com.atina.jdeconnectorservice.service.JDESingleConnection;
 import com.jde.jdeconnectorserver.model.Configuracion;
 import com.jde.jdeserverwp.servicios.GetMetadataResponse;

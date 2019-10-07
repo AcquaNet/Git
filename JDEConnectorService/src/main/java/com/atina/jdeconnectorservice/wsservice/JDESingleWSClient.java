@@ -12,6 +12,7 @@ import com.atina.jdeconnector.internal.JDETransactions;
 import com.atina.jdeconnector.internal.ws.JDEWSDriver;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException; 
+import com.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
 import com.jdedwards.system.connector.dynamic.Connector;
 import com.jdedwards.system.security.SecurityToken;
 import java.io.File;
@@ -66,7 +67,7 @@ public class JDESingleWSClient {
         this.role = role;
     }
 
-    public void login() throws JDESingleConnectionException {
+    public int login() throws JDESingleConnectionException {
 
         logger.info("Connecting to JDE ..");
 
@@ -85,7 +86,7 @@ public class JDESingleWSClient {
                         .isLoggedIn(iSessionID);
 
                 logger.info("MULESOFT - JDEConnectorService:  is connected to JDE? = " + userConnected);
-
+            
                 if (!userConnected) {
 
                     iSessionID = 0;
@@ -93,7 +94,16 @@ public class JDESingleWSClient {
                     logger.info("The connections has been reseted");
 
                 } else {
+                    
                     logger.info("Current user is connected");
+                    
+                    if(!com.jdedwards.system.connector.dynamic.Connector.getInstance().getUserSession(iSessionID).isSbfConnectorMode())
+                    {
+                        iSessionID = 0;
+                        
+                        logger.info("Current user is as SBF Connector Mode");
+                    }
+                     
                 }
 
             }
@@ -130,7 +140,8 @@ public class JDESingleWSClient {
                             .compareTo(user) == 0 && sessionOpen.getUserRole()
                             .compareTo(role) == 0
                             && sessionOpen.getUserEnvironment()
-                                    .compareTo(environment) == 0) {
+                                    .compareTo(environment) == 0 &&
+                            sessionOpen.isSbfConnectorMode()) {
 
                         iSessionID = (int) sessionOpen.getSessionID();
 
@@ -199,6 +210,8 @@ public class JDESingleWSClient {
                     .releaseWriteLock();
 
         }
+        
+        return iSessionID;
 
     }
     
@@ -236,7 +249,7 @@ public class JDESingleWSClient {
     }
     
     
-    public boolean isJDEConnected() {
+    public int isJDEConnected() {
 
         boolean userConnected = false;
 
@@ -281,7 +294,8 @@ public class JDESingleWSClient {
 
         }
 
-        return userConnected;
+        return (userConnected?iSessionID:0); 
+        
     }
     
     
@@ -291,7 +305,7 @@ public class JDESingleWSClient {
     
     
     
-    public Set<String> getWSList() throws JDESingleConnectorException{
+    public Set<String> getOperationList() throws JDESingleConnectorException{
           
         if(iSessionID==0 || tmpFolder == null )
         { 

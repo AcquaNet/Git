@@ -5,15 +5,11 @@
  */
 package com.atina.jdeconnectorservice.wsservice;
 
-import com.atina.jdeconnectorservice.service.*; 
 import com.atina.jdeconnector.internal.JDEBoostrap;
-import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
-import com.atina.jdeconnector.internal.model.JDEBsfnParametersInputObject;
-import com.atina.jdeconnector.internal.model.JDEBsfnParametersOutputObject;
-import com.atina.jdeconnector.internal.ws.JDEWSDriver;
 import com.atina.jdeconnectorservice.exception.JDESingleBSFNException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException;
+import com.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -21,7 +17,6 @@ import java.net.URL;
 import java.util.Enumeration; 
 import java.util.HashMap;
 import java.util.Set;
-import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.io.FileUtils;
@@ -30,7 +25,7 @@ import org.apache.commons.io.FileUtils;
  *
  * @author jgodi
  */
-public class JDESingleWSConnection {
+public class JDESingleWSConnection implements JDEConnection {
 
     private static final Logger logger = LoggerFactory.getLogger(JDESingleWSConnection.class);
 
@@ -41,7 +36,7 @@ public class JDESingleWSConnection {
     private File tmpCache;
     
 
-    public JDESingleWSConnection(String user, String password, String environment, String role) {
+    public JDESingleWSConnection(String user, String password, String environment, String role) throws JDESingleConnectionException {
 
         try {
 
@@ -132,13 +127,13 @@ public class JDESingleWSConnection {
 
     }
     
-    public void connect() throws JDESingleConnectionException {
+    public int connect() throws JDESingleConnectionException {
 
         // ----------------------------------------------
         // Connecting to JDE
         // ----------------------------------------------
  
-        this.client.login();
+        return this.client.login();
  
 
     }
@@ -160,7 +155,7 @@ public class JDESingleWSConnection {
     }
     
     
-    public boolean isJDEConnected() {
+    public int isJDEConnected() {
 
         // ----------------------------------------------
         // Checking connections
@@ -170,13 +165,18 @@ public class JDESingleWSConnection {
 
     }
     
+    @Override
+    public boolean isWSConnection() {
+        return true;
+    }
+    
     // ====================================================================================
     // JDE Bsfn operations
     // ====================================================================================
   
     public Set<String> generateWSListFromCacheRepository() throws JDESingleConnectorException {
 
-        return client.getWSList();
+        return client.getOperationList();
 
     } 
     
