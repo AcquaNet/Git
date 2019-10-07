@@ -157,21 +157,25 @@ public class JDEWSCreateAndInvokeWS {
 
         } catch (IllegalAccessException ex) {
 
-            logger.error("Error invoking WS " + operation + " Error: " + ex.getMessage(), ex);
+            String errorMessage = ((BusinessServiceException) ex.getCause()).getMessage();
 
-            throw new JDESingleBSFNException("Error invoking WS " + operation + " Error: " + ex.getMessage());
+            logger.error("Error invoking WS IllegalAccessException " + operation + " Error: " + errorMessage, ex);
+             
+            returnMessages.addMessage(new E1Message(context, "019FIS", errorMessage));
 
         } catch (IllegalArgumentException ex) {
 
-            logger.error("Error invoking WS " + operation + " Error: " + ex.getMessage(), ex);
+            String errorMessage = ((BusinessServiceException) ex.getCause()).getMessage();
 
-            throw new JDESingleBSFNException("Error invoking WS " + operation + " Error: " + ex.getMessage());
+            logger.error("Error invoking WS IllegalArgumentException " + operation + " Error: " + errorMessage, ex);
+             
+            returnMessages.addMessage(new E1Message(context, "019FIS", errorMessage));
 
         } catch (InvocationTargetException ex) {
             
             String errorMessage = ((BusinessServiceException) ex.getCause()).getMessage();
 
-            logger.error("Error invoking WS " + operation + " Error: " + errorMessage, ex);
+            logger.error("Error invoking WS InvocationTargetException " + operation + " Error: " + errorMessage, ex);
              
             returnMessages.addMessage(new E1Message(context, "019FIS", errorMessage));
  
