@@ -6,6 +6,8 @@
 package com.atina.jdeconnectorservice.service.poolconnection;
 
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
+import com.atina.jdeconnectorservice.exception.JDESingleConnectorException;
+import java.util.Set;
 
 /**
  *
@@ -17,5 +19,6 @@ public interface JDEConnection {
     public int connect() throws JDESingleConnectionException;
     public void disconnect();
     public boolean isWSConnection();
+    public Set<String> getOperationList() throws JDESingleConnectorException;
     
 }

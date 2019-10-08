@@ -42,7 +42,7 @@ public class JDEConnectorService {
         jdeConnection.connect();
         
         // Call BSFBN
-        Set<String> bsfnlist = jdeConnection.generateBSFNListFromCacheRepository();
+        Set<String> bsfnlist = jdeConnection.getOperationList();
         for(String bsfnName:bsfnlist)
         {
             logger.debug(bsfnName);
@@ -83,7 +83,7 @@ public class JDEConnectorService {
         
         jdeConnection.connect();
         
-        Set<String> operation = jdeConnection.generateWSListFromCacheRepository();
+        Set<String> operation = jdeConnection.getOperationList();
         
         HashMap<String, Object> input = jdeConnection.getWSInputParameter("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
         
@@ -140,7 +140,7 @@ public class JDEConnectorService {
         // Get BSFN List
         // ======================================================
         //         
-        Set<String> bsfnlist = bsfnConnection.generateBSFNListFromCacheRepository();
+        Set<String> bsfnlist = bsfnConnection.getOperationList();
         
         for(String bsfnName:bsfnlist)
         {
@@ -175,7 +175,7 @@ public class JDEConnectorService {
         // Get WS List
         // ======================================================
         // 
-        Set<String> operation = wsConnection.generateWSListFromCacheRepository();
+        Set<String> operation = wsConnection.getOperationList();
         
         // ======================================================
         // Get WS Parameters

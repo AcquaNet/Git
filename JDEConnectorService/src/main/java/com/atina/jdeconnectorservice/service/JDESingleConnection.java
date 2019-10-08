@@ -167,7 +167,7 @@ public class JDESingleConnection implements JDEConnection{
     // JDE Bsfn operations
     // ====================================================================================
   
-    public Set<String> generateBSFNListFromCacheRepository() throws JDESingleConnectorException {
+    public Set<String> getOperationList() throws JDESingleConnectorException {
 
         return client.getOperationList();
 
