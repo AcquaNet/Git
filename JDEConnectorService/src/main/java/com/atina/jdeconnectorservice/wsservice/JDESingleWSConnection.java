@@ -190,14 +190,14 @@ public class JDESingleWSConnection implements JDEConnection {
         return client.getWSOutputParameter(operation);
     }
     
-    public HashMap<String, Object> callJDEOperation(String operation, HashMap<String, Object> inputValues) throws JDESingleConnectorException {
+    public HashMap<String, Object> callJDEOperation(String operation, HashMap<String, Object> inputValues, Integer transactionID) throws JDESingleConnectorException {
 
         logger.info("MULESOFT - JDEClient - Calling BSFN"); 
      
         return client.callJDEWS(operation, inputValues);
         
-    }
-     
+    } 
+    
     // ====================================================================================
     // PRIVATE operations
     // ====================================================================================
@@ -274,6 +274,7 @@ public class JDESingleWSConnection implements JDEConnection {
         return fwEnv;
 
     }
+
     
       
 }

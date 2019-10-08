@@ -7,6 +7,7 @@ package com.atina.jdeconnectorservice.service.poolconnection;
 
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException;
+import java.util.HashMap; 
 import java.util.Set;
 
 /**
@@ -20,5 +21,6 @@ public interface JDEConnection {
     public void disconnect();
     public boolean isWSConnection();
     public Set<String> getOperationList() throws JDESingleConnectorException;
+    public HashMap<String, Object> callJDEOperation(String bsfnName, HashMap<String, Object> inputObject, Integer transactionID) throws JDESingleConnectorException;
     
 }

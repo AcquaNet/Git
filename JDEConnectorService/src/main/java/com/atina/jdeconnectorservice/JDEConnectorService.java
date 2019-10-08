@@ -106,7 +106,7 @@ public class JDEConnectorService {
         inputValue.put("statusApproval", "2N");
         inputValue.put("approver", approver);
          
-        HashMap<String, Object> outputValue = jdeConnection.callJDEOperation("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover",inputValue);
+        HashMap<String, Object> outputValue = jdeConnection.callJDEOperation("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover",inputValue,null);
         
         Thread.sleep(30000);
          
@@ -201,7 +201,7 @@ public class JDEConnectorService {
         inputValue.put("statusApproval", "2N");
         inputValue.put("approver", approver);
          
-        HashMap<String, Object> outputValue = wsConnection.callJDEOperation("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover",inputValue);
+        HashMap<String, Object> outputValue = wsConnection.callJDEOperation("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover",inputValue,null);
         
         // ======================================================
         // Disconnect
