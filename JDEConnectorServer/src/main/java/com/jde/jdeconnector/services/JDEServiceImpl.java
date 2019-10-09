@@ -7,6 +7,7 @@ package com.jde.jdeconnector.services;
 
 
 import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
+import com.atina.jdeconnector.internal.model.metadata.ParameterTypeObject;
 import com.atina.jdeconnector.internal.model.metadata.ParameterTypeSimple;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.service.poolconnection.JDEPoolConnections;
@@ -324,9 +325,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 // Get Operations
                 // ================================================
                 //
-                HashMap<String, Object> inputParameters = singleConnection.getWSInputParameter(request.getOperacionKey());
+                HashMap<String, ParameterTypeSimple> inputParameters = singleConnection.getWSInputParameter(request.getOperacionKey());
                 
-                HashMap<String, Object> outputParameters = singleConnection.getWSOutputParameter(request.getOperacionKey());
+                HashMap<String, ParameterTypeSimple> outputParameters = singleConnection.getWSOutputParameter(request.getOperacionKey());
                 
                 // --------------------------------------------------
                 // Crear el Objeto Mensaje de GetMetadataResponse
@@ -399,11 +400,11 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         
     }
     
-     private void generateInputTreeMetadata(GetMetadataResponse.Builder responseBuilder, HashMap<String, Object> parameters) {
+     private void generateInputTreeMetadata(GetMetadataResponse.Builder responseBuilder, HashMap<String, ParameterTypeSimple> parameters) {
  
          logger.info("Input Parameter");
  
-         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+         for (Map.Entry<String, ParameterTypeSimple> entry : parameters.entrySet()) {
 
              TipoDelParametroInput.Builder parametrosInputN = TipoDelParametroInput.newBuilder();
 
@@ -417,11 +418,11 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
              parametrosInputN.setNombreDelParametro(parameterName);
 
-             if (parameterValue instanceof ParameterTypeSimple) {
+             if (!(parameterValue instanceof ParameterTypeObject)) {
 
                  ParameterTypeSimple simpleParameterType = (ParameterTypeSimple) parameterValue;
                  
-                 parametrosInputN.setRepeatedParameter(Boolean.TRUE);
+                 parametrosInputN.setRepeatedParameter(Boolean.valueOf(simpleParameterType.isRepeated()));
                  
                  parametrosInputN.setTipoDelParametroJava(simpleParameterType.getModelType()); 
                  
@@ -429,10 +430,14 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                  
              } else // Another HashMap
              {
-                   
-                 parametrosInputN.setTipoDelParametroJava("");
+                
+                 ParameterTypeObject objectParameterType = (ParameterTypeObject) parameterValue;
+                 
+                 parametrosInputN.setTipoDelParametroJava(objectParameterType.getModelType());
+                 
+                  parametrosInputN.setRepeatedParameter(objectParameterType.isRepeated());
                   
-                 generateInputSubParameter(parametrosInputN, (HashMap<String, Object>) parameterValue);
+                 generateInputSubParameter(parametrosInputN, (HashMap<String, ParameterTypeSimple>) objectParameterType.getSubParameters());
                   
              } 
              
@@ -443,9 +448,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     }
      
      
-     private void generateInputSubParameter(TipoDelParametroInput.Builder source, HashMap<String, Object> inputParameters) {
+     private void generateInputSubParameter(TipoDelParametroInput.Builder source, HashMap<String, ParameterTypeSimple> inputParameters) {
          
-         for (Map.Entry<String, Object> entry : inputParameters.entrySet()) {
+         for (Map.Entry<String, ParameterTypeSimple> entry : inputParameters.entrySet()) {
              
              TipoDelParametroInput.Builder parametrosInputN = TipoDelParametroInput.newBuilder();
              
@@ -459,9 +464,11 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
              parametrosInputN.setNombreDelParametro(parameterName);
 
-             if (parameterValue instanceof ParameterTypeSimple) {
+             if (!(parameterValue instanceof ParameterTypeObject)) {
 
                  ParameterTypeSimple simpleParameterType = (ParameterTypeSimple) parameterValue;
+                 
+                 parametrosInputN.setRepeatedParameter(Boolean.valueOf(simpleParameterType.isRepeated()));
   
                  parametrosInputN.setTipoDelParametroJava(simpleParameterType.getModelType()); 
                  
@@ -470,26 +477,27 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              } else // Another HashMap
              {
                    
-                 parametrosInputN.setTipoDelParametroJava(""); 
+                 ParameterTypeObject objectParameterType = (ParameterTypeObject) parameterValue;
                  
-                 TipoDelParametroInput.Builder subParametrosInputNew = TipoDelParametroInput.newBuilder();
+                 parametrosInputN.setTipoDelParametroJava(objectParameterType.getModelType());
                  
-                 generateInputSubParameter(parametrosInputN,(HashMap<String, Object>) parameterValue);
+                 parametrosInputN.setRepeatedParameter(objectParameterType.isRepeated());
+                   
+                 generateInputSubParameter(parametrosInputN,(HashMap<String, ParameterTypeSimple>) objectParameterType.getSubParameters());
                  
              } 
                
              source.addSubParametro(parametrosInputN.build());
-              
-          
+               
          } 
          
      }
      
-     private void generateOutputTreeMetadata(GetMetadataResponse.Builder responseBuilder, HashMap<String, Object> parameters) {
+     private void generateOutputTreeMetadata(GetMetadataResponse.Builder responseBuilder, HashMap<String, ParameterTypeSimple> parameters) {
  
          logger.info("Output Parameter");
  
-         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+         for (Map.Entry<String, ParameterTypeSimple> entry : parameters.entrySet()) {
 
              TipoDelParametroOutput.Builder parametrosOutputN = TipoDelParametroOutput.newBuilder();
 
@@ -503,20 +511,26 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
              parametrosOutputN.setNombreDelParametro(parameterName);
 
-             if (parameterValue instanceof ParameterTypeSimple) {
+             if (!(parameterValue instanceof ParameterTypeObject)) {
 
                  ParameterTypeSimple simpleParameterType = (ParameterTypeSimple) parameterValue;
-  
+                 
+                 parametrosOutputN.setRepeatedParameter(Boolean.valueOf(simpleParameterType.isRepeated()));
+                 
                  parametrosOutputN.setTipoDelParametroJava(simpleParameterType.getModelType()); 
                  
                  parametrosOutputN.addSubParametro(TipoDelParametroOutput.newBuilder().build());
                  
              } else // Another HashMap
              {
-                   
-                 parametrosOutputN.setTipoDelParametroJava("");
+                
+                 ParameterTypeObject objectParameterType = (ParameterTypeObject) parameterValue;
+                 
+                 parametrosOutputN.setTipoDelParametroJava(objectParameterType.getModelType());
+                 
+                  parametrosOutputN.setRepeatedParameter(objectParameterType.isRepeated());
                   
-                 generateOutputSubParameter(parametrosOutputN, (HashMap<String, Object>) parameterValue);
+                 generateOutputSubParameter(parametrosOutputN, (HashMap<String, ParameterTypeSimple>) objectParameterType.getSubParameters());
                   
              } 
              
@@ -527,9 +541,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     }
      
      
-     private void generateOutputSubParameter(TipoDelParametroOutput.Builder source, HashMap<String, Object> inputParameters) {
+     private void generateOutputSubParameter(TipoDelParametroOutput.Builder source, HashMap<String, ParameterTypeSimple> inputParameters) {
          
-         for (Map.Entry<String, Object> entry : inputParameters.entrySet()) {
+         for (Map.Entry<String, ParameterTypeSimple> entry : inputParameters.entrySet()) {
              
              TipoDelParametroOutput.Builder parametrosOutputN = TipoDelParametroOutput.newBuilder();
              
@@ -543,9 +557,11 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
              parametrosOutputN.setNombreDelParametro(parameterName);
 
-             if (parameterValue instanceof ParameterTypeSimple) {
+             if (!(parameterValue instanceof ParameterTypeObject)) {
 
                  ParameterTypeSimple simpleParameterType = (ParameterTypeSimple) parameterValue;
+                 
+                 parametrosOutputN.setRepeatedParameter(Boolean.valueOf(simpleParameterType.isRepeated()));
   
                  parametrosOutputN.setTipoDelParametroJava(simpleParameterType.getModelType()); 
                  
@@ -554,21 +570,21 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              } else // Another HashMap
              {
                    
-                 parametrosOutputN.setTipoDelParametroJava(""); 
+                 ParameterTypeObject objectParameterType = (ParameterTypeObject) parameterValue;
                  
-                 TipoDelParametroOutput.Builder subParametrosOutputNew = TipoDelParametroOutput.newBuilder();
+                 parametrosOutputN.setTipoDelParametroJava(objectParameterType.getModelType());
                  
-                 generateOutputSubParameter(parametrosOutputN,(HashMap<String, Object>) parameterValue);
+                 parametrosOutputN.setRepeatedParameter(objectParameterType.isRepeated());
+                   
+                 generateOutputSubParameter(parametrosOutputN,(HashMap<String, ParameterTypeSimple>) objectParameterType.getSubParameters());
                  
              } 
                
              source.addSubParametro(parametrosOutputN.build());
-              
-          
+               
          } 
          
-     }
-     
+     } 
      
     @Override
     public void ejecutarOperacion(com.jde.jdeserverwp.servicios.EjecutarOperacionRequest request,

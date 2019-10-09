@@ -6,6 +6,7 @@
 package com.atina.jdeconnectorservice;
  
 import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
+import com.atina.jdeconnector.internal.model.metadata.ParameterTypeSimple;
 import com.jdedwards.system.connector.dynamic.ServerFailureException;   
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException;
 import com.atina.jdeconnectorservice.service.JDESingleConnection;
@@ -85,9 +86,9 @@ public class JDEConnectorService {
         
         Set<String> operation = jdeConnection.getOperationList();
         
-        HashMap<String, Object> input = jdeConnection.getWSInputParameter("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
+        HashMap<String, ParameterTypeSimple> input = jdeConnection.getWSInputParameter("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
         
-        HashMap<String, Object> output = jdeConnection.getWSOutputParameter("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
+        HashMap<String, ParameterTypeSimple> output = jdeConnection.getWSOutputParameter("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
         
         
         // ----------------------------------------------
@@ -181,9 +182,9 @@ public class JDEConnectorService {
         // Get WS Parameters
         // ======================================================
         // 
-        HashMap<String, Object> input = wsConnection.getWSInputParameter("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
+        HashMap<String, ParameterTypeSimple> input = wsConnection.getWSInputParameter("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
         
-        HashMap<String, Object> output = wsConnection.getWSOutputParameter("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
+        HashMap<String, ParameterTypeSimple> output = wsConnection.getWSOutputParameter("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
         
         // ======================================================
         // Call WS

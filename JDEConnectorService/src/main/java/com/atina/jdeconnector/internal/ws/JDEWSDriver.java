@@ -23,6 +23,7 @@ import com.atina.jdeconnector.internal.model.metadata.ModelType;
 import com.atina.jdeconnector.internal.model.metadata.Models;
 import com.atina.jdeconnector.internal.model.metadata.Operation;
 import com.atina.jdeconnector.internal.model.metadata.Operations;
+import com.atina.jdeconnector.internal.model.metadata.ParameterTypeObject;
 import com.atina.jdeconnector.internal.model.metadata.ParameterTypeSimple;
 import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.exception.JDESingleException;
@@ -175,9 +176,9 @@ public class JDEWSDriver {
 
     }
    
-    public HashMap<String, Object> getWSInputParameter(String operation, File cacheFolder) throws JDESingleException {
+    public HashMap<String, ParameterTypeSimple> getWSInputParameter(String operation, File cacheFolder) throws JDESingleException {
 
-        HashMap<String, Object> returnValue = null;
+        HashMap<String, ParameterTypeSimple> returnValue = null;
  
 
         // ================================================
@@ -199,9 +200,9 @@ public class JDEWSDriver {
         return returnValue;
     }
     
-    public HashMap<String, Object> getWSOutputParameter(String operation, File cacheFolder) throws JDESingleException {
+    public HashMap<String, ParameterTypeSimple> getWSOutputParameter(String operation, File cacheFolder) throws JDESingleException {
 
-        HashMap<String, Object> returnValue = null;
+        HashMap<String, ParameterTypeSimple> returnValue = null;
   
         // ================================================
         // Get Input Parameter Type
@@ -223,9 +224,9 @@ public class JDEWSDriver {
     }
     
       
-      private HashMap<String, Object> processModel(Models models, Model parameters) throws JDESingleException {
+      private HashMap<String, ParameterTypeSimple> processModel(Models models, Model parameters) throws JDESingleException {
       
-        HashMap<String, Object> returnValue = new HashMap<String, Object>();
+        HashMap<String, ParameterTypeSimple> returnValue = new HashMap<String, ParameterTypeSimple>();
 
         if (parameters != null) {
             
@@ -248,8 +249,12 @@ public class JDEWSDriver {
                     }
                     
                 } else {
+                    
+                    ParameterTypeObject parameterObject = new ParameterTypeObject(modelType.getParameterType(),modelType.getParameterSequence(),modelType.isRepetead());
 
-                    returnValue.put(modelType.getParameterName(), processModel(models, models.getModelo(modelType.getParameterType())));
+                    parameterObject.addParameterType(modelType.getParameterName(), processModel(models, models.getModelo(modelType.getParameterType())));
+                
+                    returnValue.put(modelType.getParameterName(), parameterObject);
 
                 }
 

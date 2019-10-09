@@ -9,6 +9,7 @@ import com.jdedwards.system.connector.dynamic.ServerFailureException;
 import com.jdedwards.system.connector.dynamic.UserSession;
 import com.atina.jdeconnector.internal.JDEConnectionLocker;
 import com.atina.jdeconnector.internal.JDETransactions; 
+import com.atina.jdeconnector.internal.model.metadata.ParameterTypeSimple;
 import com.atina.jdeconnector.internal.ws.JDEWSDriver;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException; 
@@ -315,12 +316,12 @@ public class JDESingleWSClient {
         return JDEWSDriver.getInstance().getWSList(tmpFolder);
     }
     
-    public HashMap<String, Object> getWSInputParameter(String operation) {
+    public HashMap<String, ParameterTypeSimple> getWSInputParameter(String operation) {
            
         return JDEWSDriver.getInstance().getWSInputParameter(operation,tmpFolder);
     }
     
-    public HashMap<String, Object> getWSOutputParameter(String operation) {
+    public HashMap<String, ParameterTypeSimple> getWSOutputParameter(String operation) {
            
         return JDEWSDriver.getInstance().getWSOutputParameter(operation,tmpFolder);
     }
