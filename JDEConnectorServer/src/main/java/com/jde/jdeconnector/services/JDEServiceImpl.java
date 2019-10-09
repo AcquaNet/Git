@@ -429,12 +429,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              {
                    
                  parametrosInputN.setTipoDelParametroJava("");
-                 
-                 TipoDelParametroInput.Builder subParametrosInput = TipoDelParametroInput.newBuilder();
-                 
-                 generateInputSubParameter(subParametrosInput, (HashMap<String, Object>) parameterValue);
                   
-                 parametrosInputN.addSubParametro(subParametrosInput.build());
+                 generateInputSubParameter(parametrosInputN, (HashMap<String, Object>) parameterValue);
                   
              } 
              
@@ -445,7 +441,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     }
      
      
-     private void generateInputSubParameter(TipoDelParametroInput.Builder subParametrosInput, HashMap<String, Object> inputParameters) {
+     private void generateInputSubParameter(TipoDelParametroInput.Builder source, HashMap<String, Object> inputParameters) {
          
          for (Map.Entry<String, Object> entry : inputParameters.entrySet()) {
              
@@ -476,11 +472,11 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                  
                  TipoDelParametroInput.Builder subParametrosInputNew = TipoDelParametroInput.newBuilder();
                  
-                 generateInputSubParameter(subParametrosInputNew,(HashMap<String, Object>) parameterValue);
+                 generateInputSubParameter(parametrosInputN,(HashMap<String, Object>) parameterValue);
                  
              } 
-             
-             subParametrosInput.addSubParametro(parametrosInputN.build());
+               
+             source.addSubParametro(parametrosInputN.build());
               
           
          } 
