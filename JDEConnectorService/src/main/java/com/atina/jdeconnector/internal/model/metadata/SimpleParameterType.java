@@ -9,14 +9,25 @@ public class SimpleParameterType {
 
     private String modelType;  
     private int parameterSequence;
+    private boolean repeated;
     
     public SimpleParameterType() {
     }
 
-    public SimpleParameterType(String modelType, int parameterSequence) {
+    public SimpleParameterType(String modelType, int parameterSequence, boolean repeated) {
         this.modelType = modelType;
         this.parameterSequence = parameterSequence;
+        this.repeated = repeated;
+    } 
+
+    public boolean isRepeated() {
+        return repeated;
     }
+
+    public void setRepeated(boolean repeated) {
+        this.repeated = repeated;
+    }
+ 
      
     public String getModelType() {
         return modelType;

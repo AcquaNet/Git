@@ -346,7 +346,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 // Generar Parametro de Output
                 // ==================================================
                 // 
-                //generateOutputTreeMetadata(responseBuilder, outputParameters);      
+                generateOutputTreeMetadata(responseBuilder, outputParameters);      
                 
                 // --------------------------------------------------
                 // Generar Objecto Metadata
@@ -420,7 +420,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              if (parameterValue instanceof SimpleParameterType) {
 
                  SimpleParameterType simpleParameterType = (SimpleParameterType) parameterValue;
-  
+                 
+                 parametrosInputN.setRepeatedParameter(Boolean.TRUE);
+                 
                  parametrosInputN.setTipoDelParametroJava(simpleParameterType.getModelType()); 
                  
                  parametrosInputN.addSubParametro(TipoDelParametroInput.newBuilder().build());
@@ -482,7 +484,91 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
          } 
          
      }
-        
+     
+     private void generateOutputTreeMetadata(GetMetadataResponse.Builder responseBuilder, HashMap<String, Object> parameters) {
+ 
+         logger.info("Output Parameter");
+ 
+         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+
+             TipoDelParametroOutput.Builder parametrosOutputN = TipoDelParametroOutput.newBuilder();
+
+             // ---------------------------------------------------------
+             // Inicio los valores
+             // ---------------------------------------------------------
+             //
+             Object parameterValue = entry.getValue();
+             
+             String parameterName = entry.getKey();
+             
+             parametrosOutputN.setNombreDelParametro(parameterName);
+
+             if (parameterValue instanceof SimpleParameterType) {
+
+                 SimpleParameterType simpleParameterType = (SimpleParameterType) parameterValue;
+  
+                 parametrosOutputN.setTipoDelParametroJava(simpleParameterType.getModelType()); 
+                 
+                 parametrosOutputN.addSubParametro(TipoDelParametroOutput.newBuilder().build());
+                 
+             } else // Another HashMap
+             {
+                   
+                 parametrosOutputN.setTipoDelParametroJava("");
+                  
+                 generateOutputSubParameter(parametrosOutputN, (HashMap<String, Object>) parameterValue);
+                  
+             } 
+             
+             responseBuilder.addListaDeParametrosOutput(parametrosOutputN.build());
+
+         }
+ 
+    }
+     
+     
+     private void generateOutputSubParameter(TipoDelParametroOutput.Builder source, HashMap<String, Object> inputParameters) {
+         
+         for (Map.Entry<String, Object> entry : inputParameters.entrySet()) {
+             
+             TipoDelParametroOutput.Builder parametrosOutputN = TipoDelParametroOutput.newBuilder();
+             
+             // ---------------------------------------------------------
+             // Inicio los valores
+             // ---------------------------------------------------------
+             //
+             Object parameterValue = entry.getValue();
+             
+             String parameterName = entry.getKey();
+             
+             parametrosOutputN.setNombreDelParametro(parameterName);
+
+             if (parameterValue instanceof SimpleParameterType) {
+
+                 SimpleParameterType simpleParameterType = (SimpleParameterType) parameterValue;
+  
+                 parametrosOutputN.setTipoDelParametroJava(simpleParameterType.getModelType()); 
+                 
+                 parametrosOutputN.addSubParametro(TipoDelParametroOutput.newBuilder().build());
+                 
+             } else // Another HashMap
+             {
+                   
+                 parametrosOutputN.setTipoDelParametroJava(""); 
+                 
+                 TipoDelParametroOutput.Builder subParametrosOutputNew = TipoDelParametroOutput.newBuilder();
+                 
+                 generateOutputSubParameter(parametrosOutputN,(HashMap<String, Object>) parameterValue);
+                 
+             } 
+               
+             source.addSubParametro(parametrosOutputN.build());
+              
+          
+         } 
+         
+     }
+     
      
     @Override
     public void ejecutarOperacion(com.jde.jdeserverwp.servicios.EjecutarOperacionRequest request,

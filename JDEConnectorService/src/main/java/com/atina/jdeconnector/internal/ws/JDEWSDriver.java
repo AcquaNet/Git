@@ -234,12 +234,19 @@ public class JDEWSDriver {
             Collection<ModelType> param = parameters.getParametersType().values();
 
             for (ModelType modelType : param) {
+                
                 if (!models.isModel(modelType.getParameterType())) {
+                    
                     if (modelType.getParameterType().equals("oracle.e1.bssvfoundation.util.MathNumeric")) {
-                        returnValue.put(modelType.getParameterName(), new SimpleParameterType("java.math.BigDecimal", modelType.getParameterSequence()));
+                        
+                        returnValue.put(modelType.getParameterName(), new SimpleParameterType("java.math.BigDecimal", modelType.getParameterSequence(),modelType.isRepetead()));
+                        
                     } else {
-                        returnValue.put(modelType.getParameterName(), new SimpleParameterType(modelType.getParameterType(), modelType.getParameterSequence()));
+                        
+                        returnValue.put(modelType.getParameterName(), new SimpleParameterType(modelType.getParameterType(), modelType.getParameterSequence(),modelType.isRepetead()));
+                        
                     }
+                    
                 } else {
 
                     returnValue.put(modelType.getParameterName(), processModel(models, models.getModelo(modelType.getParameterType())));
