@@ -23,7 +23,7 @@ import com.atina.jdeconnector.internal.model.metadata.ModelType;
 import com.atina.jdeconnector.internal.model.metadata.Models;
 import com.atina.jdeconnector.internal.model.metadata.Operation;
 import com.atina.jdeconnector.internal.model.metadata.Operations;
-import com.atina.jdeconnector.internal.model.metadata.SimpleParameterType;
+import com.atina.jdeconnector.internal.model.metadata.ParameterTypeSimple;
 import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.exception.JDESingleException;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -239,11 +239,11 @@ public class JDEWSDriver {
                     
                     if (modelType.getParameterType().equals("oracle.e1.bssvfoundation.util.MathNumeric")) {
                         
-                        returnValue.put(modelType.getParameterName(), new SimpleParameterType("java.math.BigDecimal", modelType.getParameterSequence(),modelType.isRepetead()));
+                        returnValue.put(modelType.getParameterName(), new ParameterTypeSimple("java.math.BigDecimal", modelType.getParameterSequence(),modelType.isRepetead()));
                         
                     } else {
                         
-                        returnValue.put(modelType.getParameterName(), new SimpleParameterType(modelType.getParameterType(), modelType.getParameterSequence(),modelType.isRepetead()));
+                        returnValue.put(modelType.getParameterName(), new ParameterTypeSimple(modelType.getParameterType(), modelType.getParameterSequence(),modelType.isRepetead()));
                         
                     }
                     

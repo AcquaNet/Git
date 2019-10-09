@@ -5,16 +5,16 @@ package com.atina.jdeconnector.internal.model.metadata;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-public class SimpleParameterType {
+public class ParameterTypeSimple {
 
-    private String modelType;  
-    private int parameterSequence;
-    private boolean repeated;
+    String modelType;  
+    int parameterSequence;
+    boolean repeated;
     
-    public SimpleParameterType() {
+    public ParameterTypeSimple() {
     }
 
-    public SimpleParameterType(String modelType, int parameterSequence, boolean repeated) {
+    public ParameterTypeSimple(String modelType, int parameterSequence, boolean repeated) {
         this.modelType = modelType;
         this.parameterSequence = parameterSequence;
         this.repeated = repeated;
@@ -47,8 +47,7 @@ public class SimpleParameterType {
 
     @Override
     public String toString() {
-        return "SimpleParameterType{" + "modelType=" + modelType + ", parameterSequence=" + parameterSequence + '}';
-    }
-       
+        return "ParameterTypeSimple{" + "modelType=" + modelType + ", parameterSequence=" + parameterSequence + ", repeated=" + repeated + '}';
+    } 
    
 }

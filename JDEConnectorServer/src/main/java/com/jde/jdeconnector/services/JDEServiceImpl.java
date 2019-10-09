@@ -7,7 +7,7 @@ package com.jde.jdeconnector.services;
 
 
 import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
-import com.atina.jdeconnector.internal.model.metadata.SimpleParameterType;
+import com.atina.jdeconnector.internal.model.metadata.ParameterTypeSimple;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.service.poolconnection.JDEPoolConnections;
 import com.atina.jdeconnectorservice.service.JDESingleConnection;
@@ -417,9 +417,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
              parametrosInputN.setNombreDelParametro(parameterName);
 
-             if (parameterValue instanceof SimpleParameterType) {
+             if (parameterValue instanceof ParameterTypeSimple) {
 
-                 SimpleParameterType simpleParameterType = (SimpleParameterType) parameterValue;
+                 ParameterTypeSimple simpleParameterType = (ParameterTypeSimple) parameterValue;
                  
                  parametrosInputN.setRepeatedParameter(Boolean.TRUE);
                  
@@ -459,9 +459,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
              parametrosInputN.setNombreDelParametro(parameterName);
 
-             if (parameterValue instanceof SimpleParameterType) {
+             if (parameterValue instanceof ParameterTypeSimple) {
 
-                 SimpleParameterType simpleParameterType = (SimpleParameterType) parameterValue;
+                 ParameterTypeSimple simpleParameterType = (ParameterTypeSimple) parameterValue;
   
                  parametrosInputN.setTipoDelParametroJava(simpleParameterType.getModelType()); 
                  
@@ -503,9 +503,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
              parametrosOutputN.setNombreDelParametro(parameterName);
 
-             if (parameterValue instanceof SimpleParameterType) {
+             if (parameterValue instanceof ParameterTypeSimple) {
 
-                 SimpleParameterType simpleParameterType = (SimpleParameterType) parameterValue;
+                 ParameterTypeSimple simpleParameterType = (ParameterTypeSimple) parameterValue;
   
                  parametrosOutputN.setTipoDelParametroJava(simpleParameterType.getModelType()); 
                  
@@ -543,9 +543,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
              parametrosOutputN.setNombreDelParametro(parameterName);
 
-             if (parameterValue instanceof SimpleParameterType) {
+             if (parameterValue instanceof ParameterTypeSimple) {
 
-                 SimpleParameterType simpleParameterType = (SimpleParameterType) parameterValue;
+                 ParameterTypeSimple simpleParameterType = (ParameterTypeSimple) parameterValue;
   
                  parametrosOutputN.setTipoDelParametroJava(simpleParameterType.getModelType()); 
                  
