@@ -14,12 +14,13 @@ public class Configuracion {
     private String environment;
     private String role;
     private Integer session;
+    private Boolean wsConnection;
 
     public Configuracion() {
         super();
     }
 
-    public Configuracion(String servidorServicio, Integer puertoServicio, String user, String password, String environment, String role, Integer session) {
+    public Configuracion(String servidorServicio, Integer puertoServicio, String user, String password, String environment, String role, Integer session, Boolean wsConnection) {
         this.servidorServicio = servidorServicio;
         this.puertoServicio = puertoServicio;
         this.user = user;
@@ -27,6 +28,7 @@ public class Configuracion {
         this.environment = environment;
         this.role = role;
         this.session = session;
+        this.wsConnection = wsConnection;
     }
 
     public String getServidorServicio() {
@@ -85,9 +87,17 @@ public class Configuracion {
         this.session = session;
     }
 
-    @Override
-    public String toString() {
-        return "Configuracion{" + "servidorServicio=" + servidorServicio + ", puertoServicio=" + puertoServicio + ", user=" + user + ", password=" + password + ", environment=" + environment + ", role=" + role + ", session=" + session + '}';
+    public Boolean getWsConnection() {
+        return wsConnection;
     }
 
+    public void setWsConnection(Boolean wsConnection) {
+        this.wsConnection = wsConnection;
+    }
+
+    @Override
+    public String toString() {
+        return "Configuracion{" + "servidorServicio=" + servidorServicio + ", puertoServicio=" + puertoServicio + ", user=" + user + ", password=" + password + ", environment=" + environment + ", role=" + role + ", session=" + session + ", wsConnection=" + wsConnection + '}';
+    }
+    
 }

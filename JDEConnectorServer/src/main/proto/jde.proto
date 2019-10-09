@@ -49,6 +49,7 @@ message SessionRequest {
   string environment = 3;
   string role = 4;
   int64 sessionId = 5;
+  bool  wsconnection = 6;
 }
 
 // Configuracion del la Conexion a JDE
@@ -63,6 +64,7 @@ message OperacionesRequest {
   string environment = 5;
   string role = 6;
   int64 sessionId = 7;
+  bool  wsconnection = 8;
 }
 
 message OperacionesResponse {
@@ -84,6 +86,7 @@ message GetMetadataRequest {
   string environment = 5;
   string role = 6;
   int64 sessionId = 7;
+  bool  wsconnection = 8;
 }
 
 message GetMetadataResponse {
@@ -93,18 +96,16 @@ message GetMetadataResponse {
 
 message TipoDelParametroInput {
   string nombreDelParametro = 1;
-  string tipoDelParametroMule = 2; 
-  string secuencia = 3; 
   repeated TipoDelParametroInput subParametro = 4;
   string tipoDelParametroJava = 5;
+  bool repeatedParameter = 6;
 }
  
 message TipoDelParametroOutput {
   string nombreDelParametro = 1;
-  string tipoDelParametroMule = 2;
-  string secuencia = 3; 
   repeated TipoDelParametroOutput subParametro = 4;
   string tipoDelParametroJava = 5;
+  bool repeatedParameter = 6;
 }
 
 message EjecutarOperacionRequest {

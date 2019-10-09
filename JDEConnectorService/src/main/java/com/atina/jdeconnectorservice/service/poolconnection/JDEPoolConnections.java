@@ -46,7 +46,7 @@ public class JDEPoolConnections {
                     
         int currentSessionId = 0;
         
-        if(sessionID > 0 && pool.containsKey(sessionID))
+        if(sessionID != 0 && pool.containsKey(sessionID))
         {
             JDEConnection jdeConnection = pool.get(sessionID);
             

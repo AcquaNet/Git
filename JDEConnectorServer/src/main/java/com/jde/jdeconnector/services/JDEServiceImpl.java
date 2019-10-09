@@ -7,9 +7,12 @@ package com.jde.jdeconnector.services;
 
 
 import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
+import com.atina.jdeconnector.internal.model.metadata.SimpleParameterType;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.service.poolconnection.JDEPoolConnections;
 import com.atina.jdeconnectorservice.service.JDESingleConnection;
+import com.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
+import com.atina.jdeconnectorservice.wsservice.JDESingleWSConnection;
 import com.jde.jdeconnectorserver.model.Configuracion;
 import com.jde.jdeserverwp.servicios.GetMetadataResponse;
 import com.jde.jdeserverwp.servicios.JDEServiceGrpc;
@@ -17,6 +20,7 @@ import com.jde.jdeserverwp.servicios.Operacion;
 import com.jde.jdeserverwp.servicios.OperacionesResponse;
 import com.jde.jdeserverwp.servicios.SessionResponse; 
 import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
+import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
 import io.grpc.Status;
 import java.io.File;
 import java.util.ArrayList;
@@ -81,7 +85,12 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
          
         try {
  
-            int sessionID = JDEPoolConnections.getInstance().createConnection(request.getUser(), request.getPassword(), request.getEnvironment(), request.getRole(), (int) request.getSessionId());
+            int sessionID = JDEPoolConnections.getInstance().createConnection(  request.getUser(), 
+                                                                                request.getPassword(), 
+                                                                                request.getEnvironment(), 
+                                                                                request.getRole(), 
+                                                                                (int) request.getSessionId(),
+                                                                                request.getWsconnection());
            
             SessionResponse response = SessionResponse.newBuilder().setSessionId(sessionID).build();
    
@@ -92,7 +101,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         } catch (JDESingleConnectionException ex) {
              
             StringBuilder sb = new StringBuilder();
-            sb.append("Error Autenticando Usuario");
+            sb.append("Error Creating Connection");
             sb.append("|");
             sb.append(ex.getMessage());
             sb.append("|%ExternalServiceException%");
@@ -105,11 +114,11 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
       
         } catch (Exception ex) {
             
-            String msg = "Error Swagger Server: " + ex.getMessage();
+            String msg = "Error WS Server: " + ex.getMessage();
             logger.error(msg, ex);
             
             StringBuilder sb = new StringBuilder();
-            sb.append("Error Autenticando Usuario");
+            sb.append("Error Creating Connection");
             sb.append("|");
             sb.append(ex.getMessage());
             sb.append("|%ServiceServerException%");
@@ -140,12 +149,12 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         
         try {
         
-            int sessionID = JDEPoolConnections.getInstance()
-                                .createConnection(  request.getUser(), 
-                                                    request.getPassword(), 
-                                                    request.getEnvironment(), 
-                                                    request.getRole(), 
-                                                    (int) request.getSessionId());
+            int sessionID = JDEPoolConnections.getInstance().createConnection(  request.getUser(), 
+                                                                                request.getPassword(), 
+                                                                                request.getEnvironment(), 
+                                                                                request.getRole(), 
+                                                                                (int) request.getSessionId(),
+                                                                                request.getWsconnection());
       
           
         
@@ -153,15 +162,15 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             // Get Single Connection
             // ================================================
             //
-            JDESingleConnection singleConnection = JDEPoolConnections.getInstance().getSingleConnection(sessionID);
+            JDEConnection singleConnection = JDEPoolConnections.getInstance().getSingleConnection(sessionID);
 
-            if (tipoDeOperacion.equals(TIPO_BSFN)) {
+            if (tipoDeOperacion.equals(TIPO_BSFN) || tipoDeOperacion.equals(TIPO_WS)) {
 
                 // ================================================
                 // Get Operations
                 // ================================================
                 // 
-                Set<String> bsfnList = singleConnection.generateBSFNListFromCacheRepository();
+                Set<String> bsfnList = singleConnection.getOperationList();
 
                 OperacionesResponse.Builder responseBuilder = OperacionesResponse.newBuilder();
 
@@ -238,22 +247,23 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
            // ================================================
            //
 
-            int sessionID = JDEPoolConnections.getInstance()
-                               .createConnection(  request.getUser(), 
-                                                   request.getPassword(), 
-                                                   request.getEnvironment(), 
-                                                   request.getRole(), 
-                                                   (int) request.getSessionId());
+            int sessionID = JDEPoolConnections.getInstance().createConnection(  request.getUser(), 
+                                                                                request.getPassword(), 
+                                                                                request.getEnvironment(), 
+                                                                                request.getRole(), 
+                                                                                (int) request.getSessionId(),
+                                                                                request.getWsconnection());
          
         
             // ================================================
             // Get Single Connection
             // ================================================
-            //
-            JDESingleConnection singleConnection = JDEPoolConnections.getInstance().getSingleConnection(sessionID);
+            // 
 
             if (tipoDeOperacion.equals(TIPO_BSFN)) {
 
+                JDESingleConnection singleConnection = (JDESingleConnection) JDEPoolConnections.getInstance().getSingleConnection(sessionID);
+                
                 // ================================================
                 // Get Operations
                 // ================================================
@@ -282,14 +292,61 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                     // Inicio los valores 
                     // ---------------------------------------------------------
                     //
-                    parametrosInputN.setNombreDelParametro(parametro.getName());
-                    parametrosInputN.setTipoDelParametroMule(parametro.getDataType());
-                    parametrosInputN.setTipoDelParametroJava(parametro.getDataType());
-                    parametrosInputN.setSecuencia(Integer.toString(x++));
+                    parametrosInputN.setNombreDelParametro(parametro.getName()); 
+                    parametrosInputN.setTipoDelParametroJava(parametro.getDataType()); 
                     parametrosInputN.addSubParametro(TipoDelParametroInput.newBuilder().build());
                      
                     responseBuilder.addListaDeParametrosInput(parametrosInputN.build());
                 }
+                
+                // --------------------------------------------------
+                // Generar Objecto Metadata
+                // --------------------------------------------------
+                // 
+                GetMetadataResponse metadataResponse = responseBuilder.build();
+
+                // --------------------------------------------------
+                // Crear el Objeto Mensaje de GetMetadataResponse
+                // --------------------------------------------------
+                //  
+                responseObserver.onNext(metadataResponse);
+
+                responseObserver.onCompleted();
+                
+
+            }
+            
+            if (tipoDeOperacion.equals(TIPO_WS)) {
+
+                JDESingleWSConnection singleConnection = (JDESingleWSConnection) JDEPoolConnections.getInstance().getSingleConnection(sessionID);
+                
+                // ================================================
+                // Get Operations
+                // ================================================
+                //
+                HashMap<String, Object> inputParameters = singleConnection.getWSInputParameter(request.getOperacionKey());
+                
+                HashMap<String, Object> outputParameters = singleConnection.getWSOutputParameter(request.getOperacionKey());
+                
+                // --------------------------------------------------
+                // Crear el Objeto Mensaje de GetMetadataResponse
+                // --------------------------------------------------
+                //
+                GetMetadataResponse.Builder responseBuilder = GetMetadataResponse.newBuilder();
+
+                // ==================================================
+                // Generar Parametro de Input
+                // ==================================================
+                // 
+                 
+                generateInputTreeMetadata(responseBuilder, inputParameters);
+                 
+                
+                // ==================================================
+                // Generar Parametro de Output
+                // ==================================================
+                // 
+                //generateOutputTreeMetadata(responseBuilder, outputParameters);      
                 
                 // --------------------------------------------------
                 // Generar Objecto Metadata
@@ -342,6 +399,95 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         
     }
     
+     private void generateInputTreeMetadata(GetMetadataResponse.Builder responseBuilder, HashMap<String, Object> parameters) {
+ 
+         logger.info("Input Parameter");
+ 
+         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+
+             TipoDelParametroInput.Builder parametrosInputN = TipoDelParametroInput.newBuilder();
+
+             // ---------------------------------------------------------
+             // Inicio los valores
+             // ---------------------------------------------------------
+             //
+             Object parameterValue = entry.getValue();
+             
+             String parameterName = entry.getKey();
+             
+             parametrosInputN.setNombreDelParametro(parameterName);
+
+             if (parameterValue instanceof SimpleParameterType) {
+
+                 SimpleParameterType simpleParameterType = (SimpleParameterType) parameterValue;
+  
+                 parametrosInputN.setTipoDelParametroJava(simpleParameterType.getModelType()); 
+                 
+                 parametrosInputN.addSubParametro(TipoDelParametroInput.newBuilder().build());
+                 
+             } else // Another HashMap
+             {
+                   
+                 parametrosInputN.setTipoDelParametroJava("");
+                 
+                 TipoDelParametroInput.Builder subParametrosInput = TipoDelParametroInput.newBuilder();
+                 
+                 generateInputSubParameter(subParametrosInput, (HashMap<String, Object>) parameterValue);
+                  
+                 parametrosInputN.addSubParametro(subParametrosInput.build());
+                  
+             } 
+             
+             responseBuilder.addListaDeParametrosInput(parametrosInputN.build());
+
+         }
+ 
+    }
+     
+     
+     private void generateInputSubParameter(TipoDelParametroInput.Builder subParametrosInput, HashMap<String, Object> inputParameters) {
+         
+         for (Map.Entry<String, Object> entry : inputParameters.entrySet()) {
+             
+             TipoDelParametroInput.Builder parametrosInputN = TipoDelParametroInput.newBuilder();
+             
+             // ---------------------------------------------------------
+             // Inicio los valores
+             // ---------------------------------------------------------
+             //
+             Object parameterValue = entry.getValue();
+             
+             String parameterName = entry.getKey();
+             
+             parametrosInputN.setNombreDelParametro(parameterName);
+
+             if (parameterValue instanceof SimpleParameterType) {
+
+                 SimpleParameterType simpleParameterType = (SimpleParameterType) parameterValue;
+  
+                 parametrosInputN.setTipoDelParametroJava(simpleParameterType.getModelType()); 
+                 
+                 parametrosInputN.addSubParametro(TipoDelParametroInput.newBuilder().build());
+                 
+             } else // Another HashMap
+             {
+                   
+                 parametrosInputN.setTipoDelParametroJava(""); 
+                 
+                 TipoDelParametroInput.Builder subParametrosInputNew = TipoDelParametroInput.newBuilder();
+                 
+                 generateInputSubParameter(subParametrosInputNew,(HashMap<String, Object>) parameterValue);
+                 
+             } 
+             
+             subParametrosInput.addSubParametro(parametrosInputN.build());
+              
+          
+         } 
+         
+     }
+        
+     
     @Override
     public void ejecutarOperacion(com.jde.jdeserverwp.servicios.EjecutarOperacionRequest request,
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.EjecutarOperacionResponse> responseObserver) {
@@ -406,10 +552,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                     // Inicio los valores 
                     // ---------------------------------------------------------
                     //
-                    parametrosInputN.setNombreDelParametro(key);
-                    parametrosInputN.setTipoDelParametroMule(tipoParametroMule);
-                    parametrosInputN.setTipoDelParametroJava(tipoParametroJava);
-                    parametrosInputN.setSecuencia(secuencia);
+                    parametrosInputN.setNombreDelParametro(key); 
+                    parametrosInputN.setTipoDelParametroJava(tipoParametroJava); 
                     parametrosInputN.addSubParametro(TipoDelParametroInput.newBuilder().build());
 
                     // ---------------------------------------------------------
@@ -426,10 +570,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                     //
                     TipoDelParametroInput.Builder parametrosInputN = TipoDelParametroInput.newBuilder();
 
-                    parametrosInputN.setNombreDelParametro(key);
-                    parametrosInputN.setTipoDelParametroMule(tipoParametroMule);
-                    parametrosInputN.setTipoDelParametroJava(tipoParametroJava);
-                    parametrosInputN.setSecuencia(secuencia);
+                    parametrosInputN.setNombreDelParametro(key); 
+                    parametrosInputN.setTipoDelParametroJava(tipoParametroJava); 
 
                     ArrayList<TipoDelParametroInput.Builder> subParametros = generarParametrosDeInput(parametros, nivelRequerido + 1);
 
@@ -455,5 +597,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
         return elementos.nextToken();
     }
+    
+   
 
 }

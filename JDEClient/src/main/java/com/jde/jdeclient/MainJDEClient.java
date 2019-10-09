@@ -16,8 +16,11 @@ import com.jde.jdeserverwp.servicios.OperacionesResponse;
 import com.jde.jdeserverwp.servicios.SessionRequest;
 import com.jde.jdeserverwp.servicios.SessionResponse;
 import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
+import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +31,9 @@ import org.slf4j.LoggerFactory;
 public class MainJDEClient {
 
     private static final Logger logger = LoggerFactory.getLogger(MainJDEClient.class);
+    
+    private static final Boolean testWS = Boolean.TRUE;
+    private static final Boolean testBSFN = Boolean.FALSE;
 
     public void iniciarAplicacion(String[] args) throws Exception {
 
@@ -41,114 +47,297 @@ public class MainJDEClient {
         configuracion.setEnvironment("JDV920");
         configuracion.setRole("*ALL");
         configuracion.setSession(new Integer(0));
-
-        // ===========================  
-        // Crear Canal de Comunicacion  
-        // ===========================  
-        //
-        ManagedChannel channel = ManagedChannelBuilder.forAddress(configuracion.getServidorServicio(), configuracion.getPuertoServicio())
-                .usePlaintext()
-                .build();
-
-        // =========================== 
-        // Creacion del Stub           
-        // ===========================  
-        // 
-        JDEServiceBlockingStub stub = JDEServiceGrpc.newBlockingStub(channel);
         
-        int sessionID = 0;
+        if(testBSFN)
+        {
+         
+            configuracion.setWsConnection(Boolean.FALSE);
 
-        // ===========================  
-        // Login                       
-        // ===========================  
-        //
-        try {
+            // ===========================  
+            // Crear Canal de Comunicacion  
+            // ===========================  
+            //
+            ManagedChannel channel = ManagedChannelBuilder.forAddress(configuracion.getServidorServicio(), configuracion.getPuertoServicio())
+                    .usePlaintext()
+                    .build();
 
-            SessionResponse tokenResponse = stub.login(
-                    SessionRequest.newBuilder()
-                            .setUser(configuracion.getUser())
-                            .setPassword(configuracion.getPassword())
-                            .setEnvironment(configuracion.getEnvironment())
-                            .setRole(configuracion.getRole())
-                            .build());
+            // =========================== 
+            // Creacion del Stub           
+            // ===========================  
+            // 
+            JDEServiceBlockingStub stub = JDEServiceGrpc.newBlockingStub(channel);
 
-            sessionID = (int) tokenResponse.getSessionId();
-            
-            System.out.println("Logeado con Session [" + tokenResponse.getSessionId() + "]");
+            int sessionID = 0;
 
-        } catch (Exception ex) {
+            // ===========================  
+            // Login                       
+            // ===========================  
+            //
+            try {
 
-            logger.error("Error ejecutando metodo ");
+                SessionResponse tokenResponse = stub.login(
+                        SessionRequest.newBuilder()
+                                .setUser(configuracion.getUser())
+                                .setPassword(configuracion.getPassword())
+                                .setEnvironment(configuracion.getEnvironment())
+                                .setRole(configuracion.getRole())
+                                .setWsconnection(configuracion.getWsConnection())
+                                .build());
 
-            throw new RuntimeException("Error Logeando", null);
+                sessionID = (int) tokenResponse.getSessionId();
 
-        }
-        
-//        // ===========================  
-//        // Get Operations                       
-//        // ===========================  
-//        //
-//        try {
-//
-//            OperacionesResponse operaciones = stub.operaciones(
-//                    OperacionesRequest.newBuilder()
-//                            .setConnectorName("BSFN")
-//                            .setUser(configuracion.getUser())
-//                            .setPassword(configuracion.getPassword())
-//                            .setEnvironment(configuracion.getEnvironment())
-//                            .setRole(configuracion.getRole())
-//                            .setSessionId(sessionID)
-//                            .build());
-//
-//            for(Operacion operacion: operaciones.getOperacionesList())
-//            {
-//                
-//                System.out.println("Operacion [" + operacion.getNombreOperacion() + "]");
-//                
-//            }
-//
-//        } catch (Exception ex) {
-//
-//            logger.error("Error ejecutando metodo ");
-//
-//            throw new RuntimeException("Error Logeando", null);
-//
-//        }
-//        
-        // ===========================  
-        // Get Metadata                       
-        // ===========================  
-        //
-        try {
+                System.out.println("Logeado con Session [" + tokenResponse.getSessionId() + "]");
 
-            GetMetadataResponse operaciones = stub.getMetadaParaOperacion(
-                    GetMetadataRequest.newBuilder()
-                            .setConnectorName("BSFN")
-                            .setUser(configuracion.getUser())
-                            .setPassword(configuracion.getPassword())
-                            .setEnvironment(configuracion.getEnvironment())
-                            .setRole(configuracion.getRole())
-                            .setSessionId(sessionID)
-                            .setOperacionKey("AddressBookMasterMBF")
-                            .build());
+            } catch (Exception ex) {
 
-            for (TipoDelParametroInput parameter : operaciones.getListaDeParametrosInputList()) {
+                logger.error("Error ejecutando metodo ");
 
-                System.out.println("Operacion [" + parameter.getNombreDelParametro() + "]");
-                System.out.println("Operacion [" + parameter.getSecuencia() + "]"); 
-                System.out.println("Operacion [" + parameter.getTipoDelParametroJava() + "]"); 
-                System.out.println("Operacion [" + parameter.getTipoDelParametroMule() + "]");
+                throw new RuntimeException("Error Logeando", null);
 
             }
 
-        } catch (Exception ex) {
+            // ===========================  
+            // Get Operations                       
+            // ===========================  
+            //
+            try {
 
-            logger.error("Error ejecutando metodo ");
+                OperacionesResponse operaciones = stub.operaciones(
+                        OperacionesRequest.newBuilder()
+                                .setConnectorName("BSFN")
+                                .setUser(configuracion.getUser())
+                                .setPassword(configuracion.getPassword())
+                                .setEnvironment(configuracion.getEnvironment())
+                                .setRole(configuracion.getRole())
+                                .setSessionId(sessionID)
+                                .setWsconnection(configuracion.getWsConnection())
+                                .build());
 
-            throw new RuntimeException("Error Logeando", null);
+                for(Operacion operacion: operaciones.getOperacionesList())
+                {
+ 
+                    logger.info("Operacion [" + operacion.getNombreOperacion() + "]");
 
+                }
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo ");
+
+                throw new RuntimeException("Error Logeando", null);
+
+            }
+
+            // ===========================  
+            // Get Metadata                       
+            // ===========================  
+            //
+            try {
+
+                GetMetadataResponse operaciones = stub.getMetadaParaOperacion(
+                        GetMetadataRequest.newBuilder()
+                                .setConnectorName("BSFN")
+                                .setUser(configuracion.getUser())
+                                .setPassword(configuracion.getPassword())
+                                .setEnvironment(configuracion.getEnvironment())
+                                .setRole(configuracion.getRole())
+                                .setSessionId(sessionID)
+                                .setWsconnection(configuracion.getWsConnection())
+                                .setOperacionKey("AddressBookMasterMBF")
+                                .build());
+
+                for (TipoDelParametroInput parameter : operaciones.getListaDeParametrosInputList()) {
+
+                    logger.info("Operacion [" + parameter.getNombreDelParametro() + "]");
+                    logger.info("Operacion [" + parameter.getSecuencia() + "]");
+                    logger.info("Operacion [" + parameter.getTipoDelParametroJava() + "]");
+                    logger.info("Operacion [" + parameter.getTipoDelParametroMule() + "]");
+                    
+                     
+                }
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo ");
+
+                throw new RuntimeException("Error Logeando", ex);
+
+            }
+        
+        }
+        
+        if(testWS)
+        {
+            configuracion.setWsConnection(Boolean.TRUE);
+
+            // ===========================  
+            // Crear Canal de Comunicacion  
+            // ===========================  
+            //
+            ManagedChannel channel = ManagedChannelBuilder.forAddress(configuracion.getServidorServicio(), configuracion.getPuertoServicio())
+                    .usePlaintext()
+                    .build();
+
+            // =========================== 
+            // Creacion del Stub           
+            // ===========================  
+            // 
+            JDEServiceBlockingStub stub = JDEServiceGrpc.newBlockingStub(channel);
+
+            int sessionID = 0;
+
+            // ===========================  
+            // Login                       
+            // ===========================  
+            //
+            try {
+
+                SessionResponse tokenResponse = stub.login(
+                        SessionRequest.newBuilder()
+                                .setUser(configuracion.getUser())
+                                .setPassword(configuracion.getPassword())
+                                .setEnvironment(configuracion.getEnvironment())
+                                .setRole(configuracion.getRole())
+                                .setWsconnection(configuracion.getWsConnection())
+                                .build());
+
+                sessionID = (int) tokenResponse.getSessionId();
+
+                System.out.println("Logeado con Session [" + tokenResponse.getSessionId() + "]");
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo ");
+
+                throw new RuntimeException("Error Logeando", null);
+
+            }
+
+            // ===========================  
+            // Get Operations                       
+            // ===========================  
+            //
+            try {
+
+                OperacionesResponse operaciones = stub.operaciones(
+                        OperacionesRequest.newBuilder()
+                                .setConnectorName("WS")
+                                .setUser(configuracion.getUser())
+                                .setPassword(configuracion.getPassword())
+                                .setEnvironment(configuracion.getEnvironment())
+                                .setRole(configuracion.getRole())
+                                .setSessionId(sessionID)
+                                .setWsconnection(configuracion.getWsConnection())
+                                .build());
+
+                for(Operacion operacion: operaciones.getOperacionesList())
+                {
+
+                    System.out.println("Operacion [" + operacion.getNombreOperacion() + "]");
+
+                }
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo ");
+
+                throw new RuntimeException("Error Logeando", null);
+
+            }
+
+            // ===========================  
+            // Get Metadata                       
+            // ===========================  
+            //
+            try {
+
+                GetMetadataResponse operaciones = stub.getMetadaParaOperacion(
+                        GetMetadataRequest.newBuilder()
+                                .setConnectorName("WS")
+                                .setUser(configuracion.getUser())
+                                .setPassword(configuracion.getPassword())
+                                .setEnvironment(configuracion.getEnvironment())
+                                .setRole(configuracion.getRole())
+                                .setSessionId(sessionID)
+                                .setWsconnection(configuracion.getWsConnection())
+                                .setOperacionKey("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover")
+                                .build());
+
+                 logger.info("Input  ");
+                 
+                for (TipoDelParametroInput parameter : operaciones.getListaDeParametrosInputList()) {
+                    
+                    int level = 0;
+
+                     printParameter(parameter, level);
+                     
+                       
+                }
+                
+                 logger.info("Output  ");
+                
+                for (TipoDelParametroOutput parameter : operaciones.getListaDeParametrosOutputList()) {
+
+                    int level = 0;
+
+                     printParameterOutput(parameter, level);
+
+                }
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo ");
+
+                throw new RuntimeException("Error Logeando", ex);
+
+            }
+            
         }
 
+    }
+    
+    private void printParameter(TipoDelParametroInput parameter, int level)
+    {
+        level++;
+        
+        String space = StringUtils.repeat(".", level * 2);
+         
+        logger.info(space + "Parameter Name: [" + parameter.getNombreDelParametro() + "]" + " Type [" + parameter.getTipoDelParametroJava() + "]");
+        
+         
+                
+            for(TipoDelParametroInput input:parameter.getSubParametroList())
+            {
+                if(!input.getNombreDelParametro().isEmpty())
+                {
+                    printParameter(input, level);
+                }
+                
+            }
+          
+        
+    }
+    
+    private void printParameterOutput(TipoDelParametroOutput parameter, int level)
+    {
+        level++;
+        
+        String space = StringUtils.repeat(".", level * 2);
+         
+        logger.info(space + "Parameter Name: [" + parameter.getNombreDelParametro() + "]" + " Type [" + parameter.getTipoDelParametroJava() + "]");
+        
+        
+            
+              
+            for(TipoDelParametroOutput input:parameter.getSubParametroList())
+            {
+                if(!input.getNombreDelParametro().isEmpty())
+                {
+                printParameterOutput(input, level);
+                }
+            }
+          
+        
     }
 
     public static void main(String[] args) {
