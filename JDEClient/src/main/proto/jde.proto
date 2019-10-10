@@ -111,10 +111,13 @@ message TipoDelParametroOutput {
 message EjecutarOperacionRequest {
   string operacionKey = 1; 
   repeated EjecutarOperacionValores listaDeValores =2;
-  string serverName = 3;
-  string portNumber = 4;      
-  string baseUrl = 5; 
-  string connectorName = 6;
+  string connectorName = 6; 
+  string user = 13;
+  string password = 8;
+  string environment = 9;
+  string role = 10;
+  int64 sessionId = 11;
+  bool  wsconnection = 12;
 }
 
 message EjecutarOperacionValores {

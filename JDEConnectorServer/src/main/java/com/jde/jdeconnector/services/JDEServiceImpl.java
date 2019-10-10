@@ -15,6 +15,8 @@ import com.atina.jdeconnectorservice.service.JDESingleConnection;
 import com.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
 import com.atina.jdeconnectorservice.wsservice.JDESingleWSConnection;
 import com.jde.jdeconnectorserver.model.Configuracion;
+import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
+import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
 import com.jde.jdeserverwp.servicios.GetMetadataResponse;
 import com.jde.jdeserverwp.servicios.JDEServiceGrpc;
 import com.jde.jdeserverwp.servicios.Operacion;
@@ -24,8 +26,13 @@ import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
 import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
 import io.grpc.Status;
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -243,7 +250,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
          
         try {
         
-            // ================================================
+           // ================================================
            // Get Session ID
            // ================================================
            //
@@ -369,7 +376,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         } catch (JDESingleConnectionException ex) {
 
             StringBuilder sb = new StringBuilder();
-            sb.append("Error getting operations");
+            sb.append("Error getting metadata operations");
             sb.append("|");
             sb.append(ex.getMessage());
             sb.append("|%ExternalServiceException%");
@@ -385,7 +392,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             logger.error(msg, ex);
 
             StringBuilder sb = new StringBuilder();
-            sb.append("Error getting operations");
+            sb.append("Error getting metadata operations");
             sb.append("|");
             sb.append(ex.getMessage());
             sb.append("|%ServiceServerException%");
@@ -591,11 +598,250 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.EjecutarOperacionResponse> responseObserver) {
         
         
+        logger.info("JDE Connector Server. Get Metadata for Operation");
         
+        String tipoDeOperacion = request.getConnectorName();   // BSFN or WS
+         
+        try {
         
+           // ================================================
+           // Get Session ID
+           // ================================================
+           //
+
+            int sessionID = JDEPoolConnections.getInstance().createConnection(  request.getUser(), 
+                                                                                request.getPassword(), 
+                                                                                request.getEnvironment(), 
+                                                                                request.getRole(), 
+                                                                                (int) request.getSessionId(),
+                                                                                request.getWsconnection());
+         
         
-        
+            // ================================================
+            // Get Single Connection
+            // ================================================
+            // 
+
+            if (tipoDeOperacion.equals(TIPO_BSFN)) {
+
+                JDESingleConnection singleConnection = (JDESingleConnection) JDEPoolConnections.getInstance().getSingleConnection(sessionID);
+                
+                 
+                
+
+            }
+            
+            if (tipoDeOperacion.equals(TIPO_WS)) {
+
+                JDESingleWSConnection singleConnection = (JDESingleWSConnection) JDEPoolConnections.getInstance().getSingleConnection(sessionID);
+                
+                // ================================================
+                // Get Operations
+                // ================================================
+                //
+                HashMap<String, ParameterTypeSimple> inputParameters = singleConnection.getWSInputParameter(request.getOperacionKey());
+                
+                HashMap<String, ParameterTypeSimple> outputParameters = singleConnection.getWSOutputParameter(request.getOperacionKey());
+                
+                
+                // =========================================================
+                // Obtenere la Lista de Valores Enviado por el Conector
+                // =========================================================
+                //
+                List<EjecutarOperacionValores> valoresEnviadosPorElConectorParaInvocacion = request.getListaDeValoresList();
+                
+                // -----------------------------------------------------
+                // Convert Input Value as Hash Map
+                // -----------------------------------------------------
+                //
+                HashMap<String, Object> inputValues = convertirInputEnHashMap(valoresEnviadosPorElConectorParaInvocacion, inputParameters, 0);
+                 
+                HashMap<String, Object> returnValues = singleConnection.callJDEOperation(request.getOperacionKey(), inputValues, sessionID);
+                
+                logger.info("Converting Input into HashMap. Parameter Name: ");
+                
+                // =========================================================
+                // Preparar Response
+                // =========================================================
+                //
+                
+                EjecutarOperacionResponse responseBuilded = createOperationResponse(returnValues,0);
+                
+                
+                
+                
+                // --------------------------------------------------
+                // Crear el Objeto Mensaje de GetMetadataResponse
+                // --------------------------------------------------
+                //  
+                responseObserver.onNext(responseBuilded);
+
+                responseObserver.onCompleted();
+
+            }
+
+        } catch (JDESingleConnectionException ex) {
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("Error getting metadata operations");
+            sb.append("|");
+            sb.append(ex.getMessage());
+            sb.append("|%ExternalServiceException%");
+
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(sb.toString())
+                    .withCause(ex)
+                    .asRuntimeException());
+
+        } catch (Exception ex) {
+
+            String msg = "Error JDE Server: " + ex.getMessage();
+            logger.error(msg, ex);
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("Error getting metadata operations");
+            sb.append("|");
+            sb.append(ex.getMessage());
+            sb.append("|%ServiceServerException%");
+
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(sb.toString())
+                    .withCause(ex)
+                    .asRuntimeException());
+
+        }
+         
+         
     }
+    
+    private EjecutarOperacionResponse createOperationResponse(HashMap<String, Object> valuesReturned , int level) {
+    
+        
+        EjecutarOperacionResponse.Builder responseBuilder = EjecutarOperacionResponse.newBuilder();
+        
+        
+        
+        
+        
+        return responseBuilder.build();
+    }
+    
+    private HashMap<String, Object> convertirInputEnHashMap(List<EjecutarOperacionValores> values, HashMap<String, ParameterTypeSimple> metadataFromInput , int level) {
+        
+        HashMap<String, Object> returnValue = new HashMap<String, Object>();
+        
+        for (EjecutarOperacionValores valor : values) {
+
+            // Nombre del Parametro
+            //
+            String nombreDelParametro = valor.getNombreDelParametro();
+ 
+            logger.info("Converting Input into HashMap. Parameter Name: " + nombreDelParametro);
+            
+            // Get Metadata
+  
+            ParameterTypeSimple parameterMetadata = metadataFromInput.get(nombreDelParametro);
+            
+            logger.info("    Type: " + parameterMetadata.getModelType());
+            logger.info("    Repeated: " + parameterMetadata.isRepeated());  
+            
+            if (parameterMetadata instanceof ParameterTypeObject) {
+                 
+                
+                if(parameterMetadata.isRepeated())
+                {
+                    
+                    ArrayList<Object> listaDeValores = new ArrayList();
+                    
+                    List<EjecutarOperacionValores> valores = valor.getListaDeValoresList();
+                    
+                    for (EjecutarOperacionValores valorLista : valores) {
+                        
+                        
+                        // listaDeValores.add(convertirInputEnHashMap(valorLista.getListaDeValoresList(), metadataFromInput));
+                        
+                    }
+                    
+                    //inputValues.put(nombreDelParametro, listaDeValores);
+                    
+                }
+                else
+                {
+                    // The value is an Object
+                    
+                    returnValue.put(nombreDelParametro, convertirInputEnHashMap(valor.getListaDeValoresList(), ((ParameterTypeObject) parameterMetadata).getSubParameters(), level+1));
+                
+                    
+                }
+                 
+
+            } else {
+
+                if (parameterMetadata.isRepeated()) {
+
+                    
+                    
+                } else {
+
+                    Object valorActual = null;
+
+                    switch (parameterMetadata.getModelType()) {
+
+                        case "java.lang.String":
+                            valorActual = valor.getValueAsString();
+                            break;
+                        case "java.lang.Integer":
+                            valorActual = valor.getValueAsInteger();
+                            break;
+                        case "java.lang.Boolean":
+                            valorActual = valor.getValueAsBoolean();
+                            break;
+                        case "java.lang.Long":
+                            valorActual = valor.getValueAsLong();
+                            break;
+                        case "java.lang.Double":
+                            valorActual = valor.getValueAsDouble();
+                            break;
+                        case "java.lang.Float":
+                            valorActual = valor.getValueAsFloat();
+                            break;
+                        case "java.util.Date":
+                            // Convertir de TimeStamp to Date
+                            com.google.protobuf.Timestamp ts = valor.getValueAsDate();
+                            Instant valorTM = Instant.ofEpochSecond(ts.getSeconds(), ts.getNanos());
+                            valorActual = Date.from(valorTM);
+                            break;
+                        case "java.lang.Byte":
+                            valorActual = valor.getValuesAsByteString();
+                            break;
+                        case "BDecimal":
+                            Double valueDouble = new Double(valor.getValueAsDouble());
+                            String strValueD = valueDouble.toString();
+                            valorActual = new BigDecimal(strValueD);
+                            break;
+                        case "BInteger":
+                            Long valueLong = new Long(valor.getValueAsLong());
+                            String strValueL = valueLong.toString();
+                            valorActual = new BigInteger(strValueL);
+                            break;
+                        default:
+                            logger.info("Error convirtiendo tipoDelParametroDeInput: " + parameterMetadata.getModelType());
+                            break;
+
+                    }
+
+                    returnValue.put(nombreDelParametro, valorActual);
+
+                }
+            }
+
+        }
+        
+        return returnValue;
+ 
+    }
+    
+    
     
     private ArrayList<TipoDelParametroInput.Builder> generarParametrosDeInput(HashMap<String, Object> parametrosInput, int nivelRequerido) {
 

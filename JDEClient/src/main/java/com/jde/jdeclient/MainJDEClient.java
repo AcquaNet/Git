@@ -6,6 +6,9 @@
 package com.jde.jdeclient;
 
 import com.jde.jdeclient.configuracion.Configuracion;
+import com.jde.jdeserverwp.servicios.EjecutarOperacionRequest;
+import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
+import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
 import com.jde.jdeserverwp.servicios.GetMetadataRequest;
 import com.jde.jdeserverwp.servicios.GetMetadataResponse;
 import com.jde.jdeserverwp.servicios.JDEServiceGrpc;
@@ -148,11 +151,8 @@ public class MainJDEClient {
 
                 for (TipoDelParametroInput parameter : operaciones.getListaDeParametrosInputList()) {
 
-                    logger.info("Operacion [" + parameter.getNombreDelParametro() + "]");
-                    logger.info("Operacion [" + parameter.getSecuencia() + "]");
-                    logger.info("Operacion [" + parameter.getTipoDelParametroJava() + "]");
-                    logger.info("Operacion [" + parameter.getTipoDelParametroMule() + "]");
-                    
+                    logger.info("Operacion [" + parameter.getNombreDelParametro() + "]");  
+                    logger.info("Operacion [" + parameter.getTipoDelParametroJava() + "]");  
                      
                 }
 
@@ -291,6 +291,54 @@ public class MainJDEClient {
                 throw new RuntimeException("Error Logeando", ex);
 
             }
+            
+            // ===========================  
+            // Invoke WS              
+            // ===========================  
+            // 
+            
+            EjecutarOperacionValores.Builder entityId = EjecutarOperacionValores.newBuilder();
+            entityId.setNombreDelParametro("entityId");
+            entityId.setValueAsInteger(533095);
+
+            EjecutarOperacionValores.Builder approver = EjecutarOperacionValores.newBuilder();
+            approver.setNombreDelParametro("approver");
+            approver.addListaDeValores(entityId);
+            
+            EjecutarOperacionValores.Builder orderTypeCode = EjecutarOperacionValores.newBuilder();
+            orderTypeCode.setNombreDelParametro("orderTypeCode");
+            orderTypeCode.setValueAsString("OP");
+            
+            EjecutarOperacionValores.Builder businessUnitCode = EjecutarOperacionValores.newBuilder();
+            businessUnitCode.setNombreDelParametro("businessUnitCode");
+            businessUnitCode.setValueAsString("         30");
+            
+            EjecutarOperacionValores.Builder statusCodeNext = EjecutarOperacionValores.newBuilder();
+            statusCodeNext.setNombreDelParametro("statusCodeNext");
+            statusCodeNext.setValueAsString("230");
+            
+            EjecutarOperacionValores.Builder statusApproval = EjecutarOperacionValores.newBuilder();
+            statusApproval.setNombreDelParametro("statusApproval");
+            statusApproval.setValueAsString("2N");
+             
+            EjecutarOperacionResponse ejecutarOperacionesResponse = stub.ejecutarOperacion(
+                    EjecutarOperacionRequest.newBuilder()
+                            .setConnectorName("WS")
+                            .setOperacionKey("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover")
+                            .setUser(configuracion.getUser())
+                            .setPassword(configuracion.getPassword())
+                            .setEnvironment(configuracion.getEnvironment())
+                            .setRole(configuracion.getRole())
+                            .setWsconnection(configuracion.getWsConnection())
+                            .setSessionId(sessionID)
+                            .addListaDeValores(approver.build())
+                            .addListaDeValores(orderTypeCode.build())
+                            .addListaDeValores(businessUnitCode.build())
+                            .addListaDeValores(statusCodeNext.build())
+                            .addListaDeValores(statusApproval.build())
+                            .build());
+
+            ejecutarOperacionesResponse.toString();
             
         }
 
