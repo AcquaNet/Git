@@ -611,6 +611,13 @@ public class MainBuilder {
 
             }
             
+            // -------------------------------------------------------------------
+            // Generate Metadata For oracle.e1.bssvfoundation.util.E1MessageList
+            // -------------------------------------------------------------------
+            //
+            
+            mt.generateMetadataE1MessageList();
+             
             // -----------------------------------------------
             // Persist Metadata
             // -----------------------------------------------

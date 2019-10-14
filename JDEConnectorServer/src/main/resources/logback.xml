@@ -64,6 +64,8 @@
     </logger> 
     
     <logger name="com.atina.jdeconnectorservice.JDEConnectorService" level="DEBUG"/>
+    
+    <logger name="com.jde.jdeconnector.services.JDEServiceImpl" level="DEBUG"/>
         
     <logger name="com.atina.jdeconnector.internal.JDEHandler" level="DEBUG"/>
 

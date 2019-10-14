@@ -99,6 +99,176 @@ public class MetadataWSGenerator {
         
     }
       
+    public void generateMetadataE1MessageList() throws MetadataServerException {
+        
+        
+        // ----------------------------------------
+        // Creata CallObjectErrorItem
+        // ----------------------------------------
+        
+        Model modelCallObjectErrorItem = new Model();
+        modelCallObjectErrorItem.setModelName("CallObjectErrorItem");
+        modelCallObjectErrorItem.setModelPackage("com.jdedwards.system.kernel");
+          
+        /*  
+                private int mErrorId;
+                private String mDDItem;
+                private int mLineNumber;
+                private String mFileName;
+                private String mSubText;
+                private String mAlphaDescription;
+                private String mGlossaryText;
+                private int mErrorLevel;
+        
+        */
+        
+        ModelType mtCallObjectErrorItemmErrorId = new ModelType();
+        mtCallObjectErrorItemmErrorId.setParameterName("mErrorId");
+        mtCallObjectErrorItemmErrorId.setParameterSequence(0);
+        mtCallObjectErrorItemmErrorId.setParameterType("java.lang.Integer");
+        mtCallObjectErrorItemmErrorId.setRepetead(false);
+        
+        modelCallObjectErrorItem.addTipoDelModelo(mtCallObjectErrorItemmErrorId);
+        
+        ModelType mtCallObjectErrorItemmDDItem = new ModelType();
+        mtCallObjectErrorItemmDDItem.setParameterName("mDDItem");
+        mtCallObjectErrorItemmDDItem.setParameterSequence(0);
+        mtCallObjectErrorItemmDDItem.setParameterType("java.lang.String");
+        mtCallObjectErrorItemmDDItem.setRepetead(false);
+        
+        modelCallObjectErrorItem.addTipoDelModelo(mtCallObjectErrorItemmDDItem);
+        
+        ModelType mtCallObjectErrorItemmLineNumber = new ModelType();
+        mtCallObjectErrorItemmLineNumber.setParameterName("mLineNumber");
+        mtCallObjectErrorItemmLineNumber.setParameterSequence(0);
+        mtCallObjectErrorItemmLineNumber.setParameterType("java.lang.Integer");
+        mtCallObjectErrorItemmLineNumber.setRepetead(false);
+        
+        modelCallObjectErrorItem.addTipoDelModelo(mtCallObjectErrorItemmLineNumber);
+        
+        ModelType mtCallObjectErrorItemmFileName = new ModelType();
+        mtCallObjectErrorItemmFileName.setParameterName("mFileName");
+        mtCallObjectErrorItemmFileName.setParameterSequence(0);
+        mtCallObjectErrorItemmFileName.setParameterType("java.lang.String");
+        mtCallObjectErrorItemmFileName.setRepetead(false);
+        
+        modelCallObjectErrorItem.addTipoDelModelo(mtCallObjectErrorItemmFileName);
+        
+        ModelType mtCallObjectErrorItem = new ModelType();
+        mtCallObjectErrorItem.setParameterName("mErrorId");
+        mtCallObjectErrorItem.setParameterSequence(0);
+        mtCallObjectErrorItem.setParameterType("java.lang.Integer");
+        mtCallObjectErrorItem.setRepetead(false);
+        
+        modelCallObjectErrorItem.addTipoDelModelo(mtCallObjectErrorItem);
+        
+        ModelType mtCallObjectErrorItemmSubText = new ModelType();
+        mtCallObjectErrorItemmSubText.setParameterName("mSubText");
+        mtCallObjectErrorItemmSubText.setParameterSequence(0);
+        mtCallObjectErrorItemmSubText.setParameterType("java.lang.String");
+        mtCallObjectErrorItemmSubText.setRepetead(false);
+        
+        modelCallObjectErrorItem.addTipoDelModelo(mtCallObjectErrorItemmSubText);
+        
+        ModelType mtCallObjectErrorItemmAlphaDescription = new ModelType();
+        mtCallObjectErrorItemmAlphaDescription.setParameterName("mAlphaDescription");
+        mtCallObjectErrorItemmAlphaDescription.setParameterSequence(0);
+        mtCallObjectErrorItemmAlphaDescription.setParameterType("java.lang.String");
+        mtCallObjectErrorItemmAlphaDescription.setRepetead(false);
+        
+        modelCallObjectErrorItem.addTipoDelModelo(mtCallObjectErrorItemmAlphaDescription);
+        
+        ModelType mtCallObjectErrorItemmGlossaryText = new ModelType();
+        mtCallObjectErrorItemmGlossaryText.setParameterName("mGlossaryText");
+        mtCallObjectErrorItemmGlossaryText.setParameterSequence(0);
+        mtCallObjectErrorItemmGlossaryText.setParameterType("java.lang.String");
+        mtCallObjectErrorItemmGlossaryText.setRepetead(false);
+        
+        modelCallObjectErrorItem.addTipoDelModelo(mtCallObjectErrorItemmGlossaryText);
+        
+        ModelType mtCallObjectErrorItemmErrorLevel = new ModelType();
+        mtCallObjectErrorItemmErrorLevel.setParameterName("mErrorLevel");
+        mtCallObjectErrorItemmErrorLevel.setParameterSequence(0);
+        mtCallObjectErrorItemmErrorLevel.setParameterType("java.lang.Integer");
+        mtCallObjectErrorItemmErrorLevel.setRepetead(false);
+        
+        modelCallObjectErrorItem.addTipoDelModelo(mtCallObjectErrorItemmErrorLevel);
+        
+        
+        modelos.AddModelo(modelCallObjectErrorItem);
+         
+        
+        // ----------------------------------------
+        // Creata E1Message
+        // ----------------------------------------
+        
+        Model modelE1Message = new Model();
+        modelE1Message.setModelName("E1Message");
+        modelE1Message.setModelPackage("oracle.e1.bssvfoundation.util");
+        
+        /*
+        
+            private String mMessagePrefix;
+            private CallObjectErrorItem mCallObjError;
+        
+        */
+        
+        ModelType mtCallObjectErrorItemmMessagePrefix = new ModelType();
+        mtCallObjectErrorItemmMessagePrefix.setParameterName("mMessagePrefix");
+        mtCallObjectErrorItemmMessagePrefix.setParameterSequence(0);
+        mtCallObjectErrorItemmMessagePrefix.setParameterType("java.lang.String");
+        mtCallObjectErrorItemmMessagePrefix.setRepetead(false);
+        
+        modelE1Message.addTipoDelModelo(mtCallObjectErrorItemmMessagePrefix);
+        
+        ModelType mtCallObjectErrorItemmCallObjError = new ModelType();
+        mtCallObjectErrorItemmCallObjError.setParameterName("mCallObjError");
+        mtCallObjectErrorItemmCallObjError.setParameterSequence(0);
+        mtCallObjectErrorItemmCallObjError.setParameterType("com.jdedwards.system.kernel.CallObjectErrorItem");
+        mtCallObjectErrorItemmCallObjError.setRepetead(false);
+        
+        modelE1Message.addTipoDelModelo(mtCallObjectErrorItemmCallObjError);
+        
+        modelos.AddModelo(modelE1Message);
+        
+        // ----------------------------------------
+        // Creata E1MessageList
+        // ----------------------------------------
+        
+        Model modelE1MessageList = new Model();
+        modelE1MessageList.setModelName("E1MessageList");
+        modelE1MessageList.setModelPackage("oracle.e1.bssvfoundation.util");
+        
+        /*
+        
+            private ArrayList E1Messages = new ArrayList(); 
+        
+        */
+        
+        ModelType modelE1MessageListE1Messages = new ModelType();
+        modelE1MessageListE1Messages.setParameterName("E1Messages");
+        modelE1MessageListE1Messages.setParameterSequence(0);
+        modelE1MessageListE1Messages.setParameterType("oracle.e1.bssvfoundation.util.E1Message");
+        modelE1MessageListE1Messages.setRepetead(true); 
+        
+        modelE1MessageList.addTipoDelModelo(modelE1MessageListE1Messages);
+        
+        ModelType modelE1MessageListmessagesAsString = new ModelType();
+        modelE1MessageListmessagesAsString.setParameterName("messagesAsString");
+        modelE1MessageListmessagesAsString.setParameterSequence(0);
+        modelE1MessageListmessagesAsString.setParameterType("java.lang.String");
+        modelE1MessageListmessagesAsString.setRepetead(false); 
+        
+        modelE1MessageList.addTipoDelModelo(modelE1MessageListmessagesAsString);
+          
+        // ----------------------------------------
+        // Adding new Model
+        // ----------------------------------------
+        //
+        modelos.AddModelo(modelE1MessageList);
+        
+    }
+    
     public void generateMetadata(String classFile) throws MetadataServerException {
         
         
@@ -503,7 +673,7 @@ public class MetadataWSGenerator {
             
             Operation operation = (Operation) pair.getValue();
             
-            logger.error("Adding E1MessaList to operation: " + pair.getKey());
+            logger.info("Adding E1MessaList to operation: " + pair.getKey());
              
             String returnModelV = operation.getOperationReturnType();
             

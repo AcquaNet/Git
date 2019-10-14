@@ -14,6 +14,8 @@ import com.atina.jdeconnectorservice.service.poolconnection.JDEPoolConnections;
 import com.atina.jdeconnectorservice.service.JDESingleConnection;
 import com.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
 import com.atina.jdeconnectorservice.wsservice.JDESingleWSConnection;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.Timestamp;
 import com.jde.jdeconnectorserver.model.Configuracion;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
@@ -26,12 +28,19 @@ import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
 import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
 import io.grpc.Status;
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -665,16 +674,22 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 // =========================================================
                 //
                 
-                EjecutarOperacionResponse responseBuilded = createOperationResponse(returnValues,0);
+                EjecutarOperacionResponse.Builder responseBuilder = EjecutarOperacionResponse.newBuilder();
                 
-                
+                responseBuilder.setNombreDelParametro("response");
+                responseBuilder.setTipoDelParametro("Object");
+                responseBuilder.setRepeatedParameter(false);
+                responseBuilder.setNullValue(false);
+                 
+                createOperationResponse(responseBuilder, outputParameters,returnValues,0);
+                 
                 
                 
                 // --------------------------------------------------
                 // Crear el Objeto Mensaje de GetMetadataResponse
                 // --------------------------------------------------
                 //  
-                responseObserver.onNext(responseBuilded);
+                responseObserver.onNext(responseBuilder.build());
 
                 responseObserver.onCompleted();
 
@@ -714,17 +729,186 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
          
     }
     
-    private EjecutarOperacionResponse createOperationResponse(HashMap<String, Object> valuesReturned , int level) {
-    
+    private void createOperationResponse(EjecutarOperacionResponse.Builder response, HashMap<String, ParameterTypeSimple> metadataParameters, HashMap<String, Object> valuesReturned, int level) throws IOException {
+
+           
+        String levelLog = StringUtils.repeat(" > ", level);
         
-        EjecutarOperacionResponse.Builder responseBuilder = EjecutarOperacionResponse.newBuilder();
+        logger.info(levelLog + "createOperationResponse - Level:" + level);
         
-        
-        
-        
-        
-        return responseBuilder.build();
+        if (valuesReturned != null && !valuesReturned.isEmpty()) {
+
+            // ---------------------------------------------
+            // For each value returned
+            // ---------------------------------------------
+            for (Map.Entry<String, Object> valueReturned : valuesReturned.entrySet()) {
+                
+                // --------------------------------------------
+                // Greate Response Object
+                // --------------------------------------------                
+                //  
+                EjecutarOperacionResponse.Builder newOperationResponse = EjecutarOperacionResponse.newBuilder();
+
+                // --------------------------------------------
+                // Get Parameter Name
+                // --------------------------------------------                
+                // 
+                String nombreDelParametro = valueReturned.getKey();
+                
+                // --------------------------------------------
+                // Get Value
+                // --------------------------------------------                
+                // 
+                Object value = valueReturned.getValue();
+                 
+                logger.info(levelLog + "Converting Input into HashMap. Parameter Name: " + nombreDelParametro +  " Level:" + level);
+                
+                // Get Metadata
+                
+                ParameterTypeSimple parameterMetadata = metadataParameters.get(nombreDelParametro);
+                
+                if(value != null)
+                { 
+
+                    logger.info(levelLog + "    Type: " + parameterMetadata.getModelType());
+                    logger.info(levelLog + "    Repeated: " + parameterMetadata.isRepeated());
+
+                    if (parameterMetadata instanceof ParameterTypeObject) {
+                         
+                        if (parameterMetadata.isRepeated()) {
+                                  
+                            newOperationResponse.setNombreDelParametro(nombreDelParametro);
+                            newOperationResponse.setTipoDelParametro(parameterMetadata.getModelType());
+                            newOperationResponse.setRepeatedParameter(parameterMetadata.isRepeated());
+                             
+                            ArrayList<LinkedHashMap> values = (ArrayList<LinkedHashMap>) value;
+                            
+                            newOperationResponse.setNullValue(values.isEmpty());
+
+                            for(LinkedHashMap eachValue:values)
+                            {
+                                EjecutarOperacionResponse.Builder operacionResponseObject = EjecutarOperacionResponse.newBuilder();
+                        
+                                operacionResponseObject.setNombreDelParametro(nombreDelParametro);
+                                operacionResponseObject.setTipoDelParametro(parameterMetadata.getModelType());
+                                operacionResponseObject.setRepeatedParameter(false);
+                                operacionResponseObject.setNullValue(false);
+                                
+                                parameterMetadata.setRepeated(false);
+                                
+                                level++;
+                                
+                                createOperationResponse(operacionResponseObject, ((ParameterTypeObject) parameterMetadata).getSubParameters(), (HashMap<String, Object>) eachValue,level);
+
+                                level--;
+                                
+                                parameterMetadata.setRepeated(true);
+                                  
+                                newOperationResponse.addListaDeValores(operacionResponseObject.build());
+
+                            }
+
+
+                        } else {
+                                
+                            
+                            newOperationResponse.setNombreDelParametro(nombreDelParametro);
+                            newOperationResponse.setTipoDelParametro(parameterMetadata.getModelType());
+                            newOperationResponse.setRepeatedParameter(false);
+                            newOperationResponse.setNullValue(false);
+ 
+                            level++;
+                            
+                            createOperationResponse(newOperationResponse,((ParameterTypeObject) parameterMetadata).getSubParameters(), (HashMap<String, Object>) value,level);
+                            
+                            level-- ;
+                             
+                        }
+
+                    } else {
+
+                        if (parameterMetadata.isRepeated()) {
+
+
+
+
+                        } else {
+  
+                            
+                            newOperationResponse.setNombreDelParametro(nombreDelParametro);
+
+                            newOperationResponse.setTipoDelParametro(parameterMetadata.getModelType());
+                            
+                            newOperationResponse.setNullValue(false);
+
+                            switch (parameterMetadata.getModelType()) {
+
+                                case "java.lang.String":
+                                    newOperationResponse.setValueAsString((String) value);
+                                    break;
+                                case "java.lang.Integer":
+                                    newOperationResponse.setValueAsInteger((int) value);
+                                    break;
+                                case "java.lang.Boolean":
+                                    newOperationResponse.setValueAsBoolean((boolean) value);
+                                    break;
+                                case "java.lang.Long":
+                                    newOperationResponse.setValueAsLong((long) value);
+                                    break;
+                                case "java.lang.Float":
+                                    newOperationResponse.setValueAsFloat((float) value);
+                                    break;
+                                case "java.util.Date":
+                                    newOperationResponse.setValueAsDate((Timestamp) value);
+                                    break;
+                                case "java.lang.Byte":
+                                    newOperationResponse.setValueAsStringBytes((ByteString) value);
+                                    break;
+                                case "java.io.File":
+
+                                    Map.Entry primerValorX = (Map.Entry) value;
+                                    java.io.File obj = (java.io.File) primerValorX.getValue();
+                                    Path path1 = obj.toPath();
+                                    byte[] valor1 = Files.readAllBytes(path1);
+                                    String encoded = Base64.getEncoder().encodeToString(valor1);
+                                    ByteString byteString = (ByteString) ByteString.copyFrom(encoded, Charset.forName("UTF-8"));
+                                    newOperationResponse.setValueAsStringBytes(byteString);
+                                    break;
+
+                                default:
+                                    newOperationResponse.setValueAsString("");
+                            }
+ 
+
+                        }
+
+                    }
+
+                }
+                else
+                {
+                    logger.info(levelLog + "Parameter has value in null");
+                    
+                    newOperationResponse.setNombreDelParametro(nombreDelParametro);
+
+                    newOperationResponse.setTipoDelParametro(parameterMetadata.getModelType());
+                    
+                    newOperationResponse.setNullValue(true); 
+                    
+                }
+                
+                // ---------------------------------------------------
+                // Return New Parameter
+                // ---------------------------------------------------
+                //
+                response.addListaDeValores(newOperationResponse.build());
+
+            }
+            
+        }
+         
     }
+     
     
     private HashMap<String, Object> convertirInputEnHashMap(List<EjecutarOperacionValores> values, HashMap<String, ParameterTypeSimple> metadataFromInput , int level) {
         
