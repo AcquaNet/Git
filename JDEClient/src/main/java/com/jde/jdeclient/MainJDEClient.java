@@ -35,7 +35,8 @@ public class MainJDEClient {
 
     private static final Logger logger = LoggerFactory.getLogger(MainJDEClient.class);
     
-    private static final Boolean testWS = Boolean.TRUE;
+    private static final Boolean testWS_ItemPrice = Boolean.TRUE;
+    private static final Boolean testWS_PurchaseOrdersForApprover = Boolean.FALSE;
     private static final Boolean testBSFN = Boolean.FALSE;
 
     public void iniciarAplicacion(String[] args) throws Exception {
@@ -166,7 +167,7 @@ public class MainJDEClient {
         
         }
         
-        if(testWS)
+        if(testWS_PurchaseOrdersForApprover)
         {
             configuracion.setWsConnection(Boolean.TRUE);
 
@@ -344,6 +345,171 @@ public class MainJDEClient {
             
             
         }
+        
+        if(testWS_ItemPrice)
+        {
+            
+            String operationKey = "oracle.e1.bssv.JP410000.InventoryManager.getItemPrice";
+            
+            configuracion.setWsConnection(Boolean.TRUE);
+
+            // ===========================  
+            // Crear Canal de Comunicacion  
+            // ===========================  
+            //
+            ManagedChannel channel = ManagedChannelBuilder.forAddress(configuracion.getServidorServicio(), configuracion.getPuertoServicio())
+                    .usePlaintext()
+                    .build();
+
+            // =========================== 
+            // Creacion del Stub           
+            // ===========================  
+            // 
+            JDEServiceBlockingStub stub = JDEServiceGrpc.newBlockingStub(channel);
+
+            int sessionID = 0;
+
+            // ===========================  
+            // Login                       
+            // ===========================  
+            //
+            try {
+
+                SessionResponse tokenResponse = stub.login(
+                        SessionRequest.newBuilder()
+                                .setUser(configuracion.getUser())
+                                .setPassword(configuracion.getPassword())
+                                .setEnvironment(configuracion.getEnvironment())
+                                .setRole(configuracion.getRole())
+                                .setWsconnection(configuracion.getWsConnection())
+                                .build());
+
+                sessionID = (int) tokenResponse.getSessionId();
+
+                System.out.println("Logeado con Session [" + tokenResponse.getSessionId() + "]");
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo ");
+
+                throw new RuntimeException("Error Logeando", null);
+
+            }
+
+            // ===========================  
+            // Get Operations                       
+            // ===========================  
+            //
+            try {
+
+                OperacionesResponse operaciones = stub.operaciones(
+                        OperacionesRequest.newBuilder()
+                                .setConnectorName("WS")
+                                .setUser(configuracion.getUser())
+                                .setPassword(configuracion.getPassword())
+                                .setEnvironment(configuracion.getEnvironment())
+                                .setRole(configuracion.getRole())
+                                .setSessionId(sessionID)
+                                .setWsconnection(configuracion.getWsConnection())
+                                .build());
+
+                for(Operacion operacion: operaciones.getOperacionesList())
+                {
+
+                    System.out.println("Operacion [" + operacion.getNombreOperacion() + "]");
+
+                }
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo ");
+
+                throw new RuntimeException("Error Logeando", null);
+
+            }
+
+            // ===========================  
+            // Get Metadata                       
+            // ===========================  
+            //
+            try {
+
+                GetMetadataResponse operaciones = stub.getMetadaParaOperacion(
+                        GetMetadataRequest.newBuilder()
+                                .setConnectorName("WS")
+                                .setUser(configuracion.getUser())
+                                .setPassword(configuracion.getPassword())
+                                .setEnvironment(configuracion.getEnvironment())
+                                .setRole(configuracion.getRole())
+                                .setSessionId(sessionID)
+                                .setWsconnection(configuracion.getWsConnection())
+                                .setOperacionKey(operationKey)
+                                .build());
+
+                 logger.info("Input  ");
+                 
+                for (TipoDelParametroInput parameter : operaciones.getListaDeParametrosInputList()) {
+                    
+                    int level = 0;
+
+                     printParameter(parameter, level);
+                     
+                       
+                }
+                
+                 logger.info("Output  ");
+                
+                for (TipoDelParametroOutput parameter : operaciones.getListaDeParametrosOutputList()) {
+
+                    int level = 0;
+
+                     printParameterOutput(parameter, level);
+
+                }
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo ");
+
+                throw new RuntimeException("Error Logeando", ex);
+
+            }
+            
+            // ===========================  
+            // Invoke WS              
+            // ===========================  
+            // 
+            
+            EjecutarOperacionValores.Builder itemId = EjecutarOperacionValores.newBuilder();
+            itemId.setNombreDelParametro("itemId");
+            itemId.setValueAsInteger(60003);
+
+            EjecutarOperacionValores.Builder item = EjecutarOperacionValores.newBuilder();
+            item.setNombreDelParametro("item");
+            item.addListaDeValores(itemId);
+            
+            EjecutarOperacionValores.Builder branchPlantList = EjecutarOperacionValores.newBuilder();
+            branchPlantList.setNombreDelParametro("branchPlantList");
+            branchPlantList.setValueAsString("          10");
+             
+            EjecutarOperacionResponse ejecutarOperacionesResponse = stub.ejecutarOperacion(
+                    EjecutarOperacionRequest.newBuilder()
+                            .setConnectorName("WS")
+                            .setOperacionKey(operationKey)
+                            .setUser(configuracion.getUser())
+                            .setPassword(configuracion.getPassword())
+                            .setEnvironment(configuracion.getEnvironment())
+                            .setRole(configuracion.getRole())
+                            .setWsconnection(configuracion.getWsConnection())
+                            .setSessionId(sessionID)
+                            .addListaDeValores(item.build())
+                            .addListaDeValores(branchPlantList.build())
+                            .build()); 
+            
+            logger.info("Resonpse  ");
+            logger.info(ejecutarOperacionesResponse.toString());
+             
+        }
 
     }
     
@@ -353,7 +519,7 @@ public class MainJDEClient {
         
         String space = StringUtils.repeat(".", level * 2);
          
-        logger.info(space + "Parameter Name: [" + parameter.getNombreDelParametro() + "]" + " Type [" + parameter.getTipoDelParametroJava() + "]");
+        logger.info(space + "Parameter Name: [" + parameter.getNombreDelParametro() + "]" + " Type [" + parameter.getTipoDelParametroJava() + "] Repeated: " + parameter.getRepeatedParameter());
         
          
                 
@@ -369,26 +535,19 @@ public class MainJDEClient {
         
     }
     
-    private void printParameterOutput(TipoDelParametroOutput parameter, int level)
-    {
+    private void printParameterOutput(TipoDelParametroOutput parameter, int level) {
         level++;
-        
+
         String space = StringUtils.repeat(".", level * 2);
-         
-        logger.info(space + "Parameter Name: [" + parameter.getNombreDelParametro() + "]" + " Type [" + parameter.getTipoDelParametroJava() + "]");
-        
-        
-            
-              
-            for(TipoDelParametroOutput input:parameter.getSubParametroList())
-            {
-                if(!input.getNombreDelParametro().isEmpty())
-                {
+
+        logger.info(space + "Parameter Name: [" + parameter.getNombreDelParametro() + "]" + " Type [" + parameter.getTipoDelParametroJava() + "] Repeated: " + parameter.getRepeatedParameter());
+
+        for (TipoDelParametroOutput input : parameter.getSubParametroList()) {
+            if (!input.getNombreDelParametro().isEmpty()) {
                 printParameterOutput(input, level);
-                }
             }
-          
-        
+        }
+
     }
 
     public static void main(String[] args) {

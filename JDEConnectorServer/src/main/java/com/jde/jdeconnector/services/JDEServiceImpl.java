@@ -26,6 +26,7 @@ import com.jde.jdeserverwp.servicios.OperacionesResponse;
 import com.jde.jdeserverwp.servicios.SessionResponse; 
 import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
 import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
+import com.jdedwards.base.datatypes.SqlDate;
 import io.grpc.Status;
 import java.io.File;
 import java.io.IOException;
@@ -890,8 +891,14 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                                     newOperationResponse.setValueAsFloat((float) value);
                                     break;
                                 case "java.util.Date":
-                                    newOperationResponse.setValueAsDate((Timestamp) value);
+                                    SqlDate jdeDate = new SqlDate((long) value);
+                         
+                                    Timestamp.Builder tmpBuilder = Timestamp.newBuilder();
+                                    tmpBuilder.setNanos(1000);
+                                    tmpBuilder.setSeconds(jdeDate.getCalendar().getTimeInMillis()/1000);                                    
+                                    newOperationResponse.setValueAsDate(tmpBuilder.build());
                                     break;
+
                                 case "java.lang.Byte":
                                     newOperationResponse.setValueAsStringBytes((ByteString) value);
                                     break;
