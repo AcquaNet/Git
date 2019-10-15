@@ -123,7 +123,7 @@ public class MetadataWSGenerator {
         */
         
         ModelType mtCallObjectErrorItemmErrorId = new ModelType();
-        mtCallObjectErrorItemmErrorId.setParameterName("mErrorId");
+        mtCallObjectErrorItemmErrorId.setParameterName("errorId");
         mtCallObjectErrorItemmErrorId.setParameterSequence(0);
         mtCallObjectErrorItemmErrorId.setParameterType("java.lang.Integer");
         mtCallObjectErrorItemmErrorId.setRepetead(false);
@@ -131,7 +131,7 @@ public class MetadataWSGenerator {
         modelCallObjectErrorItem.addTipoDelModelo(mtCallObjectErrorItemmErrorId);
         
         ModelType mtCallObjectErrorItemmDDItem = new ModelType();
-        mtCallObjectErrorItemmDDItem.setParameterName("mDDItem");
+        mtCallObjectErrorItemmDDItem.setParameterName("dditem");
         mtCallObjectErrorItemmDDItem.setParameterSequence(0);
         mtCallObjectErrorItemmDDItem.setParameterType("java.lang.String");
         mtCallObjectErrorItemmDDItem.setRepetead(false);
@@ -139,7 +139,7 @@ public class MetadataWSGenerator {
         modelCallObjectErrorItem.addTipoDelModelo(mtCallObjectErrorItemmDDItem);
         
         ModelType mtCallObjectErrorItemmLineNumber = new ModelType();
-        mtCallObjectErrorItemmLineNumber.setParameterName("mLineNumber");
+        mtCallObjectErrorItemmLineNumber.setParameterName("lineNumber");
         mtCallObjectErrorItemmLineNumber.setParameterSequence(0);
         mtCallObjectErrorItemmLineNumber.setParameterType("java.lang.Integer");
         mtCallObjectErrorItemmLineNumber.setRepetead(false);
@@ -147,7 +147,7 @@ public class MetadataWSGenerator {
         modelCallObjectErrorItem.addTipoDelModelo(mtCallObjectErrorItemmLineNumber);
         
         ModelType mtCallObjectErrorItemmFileName = new ModelType();
-        mtCallObjectErrorItemmFileName.setParameterName("mFileName");
+        mtCallObjectErrorItemmFileName.setParameterName("fileName");
         mtCallObjectErrorItemmFileName.setParameterSequence(0);
         mtCallObjectErrorItemmFileName.setParameterType("java.lang.String");
         mtCallObjectErrorItemmFileName.setRepetead(false);
@@ -155,7 +155,7 @@ public class MetadataWSGenerator {
         modelCallObjectErrorItem.addTipoDelModelo(mtCallObjectErrorItemmFileName);
         
         ModelType mtCallObjectErrorItem = new ModelType();
-        mtCallObjectErrorItem.setParameterName("mErrorId");
+        mtCallObjectErrorItem.setParameterName("errorID");
         mtCallObjectErrorItem.setParameterSequence(0);
         mtCallObjectErrorItem.setParameterType("java.lang.Integer");
         mtCallObjectErrorItem.setRepetead(false);
@@ -163,7 +163,7 @@ public class MetadataWSGenerator {
         modelCallObjectErrorItem.addTipoDelModelo(mtCallObjectErrorItem);
         
         ModelType mtCallObjectErrorItemmSubText = new ModelType();
-        mtCallObjectErrorItemmSubText.setParameterName("mSubText");
+        mtCallObjectErrorItemmSubText.setParameterName("subText");
         mtCallObjectErrorItemmSubText.setParameterSequence(0);
         mtCallObjectErrorItemmSubText.setParameterType("java.lang.String");
         mtCallObjectErrorItemmSubText.setRepetead(false);
@@ -171,7 +171,7 @@ public class MetadataWSGenerator {
         modelCallObjectErrorItem.addTipoDelModelo(mtCallObjectErrorItemmSubText);
         
         ModelType mtCallObjectErrorItemmAlphaDescription = new ModelType();
-        mtCallObjectErrorItemmAlphaDescription.setParameterName("mAlphaDescription");
+        mtCallObjectErrorItemmAlphaDescription.setParameterName("alphaDescription");
         mtCallObjectErrorItemmAlphaDescription.setParameterSequence(0);
         mtCallObjectErrorItemmAlphaDescription.setParameterType("java.lang.String");
         mtCallObjectErrorItemmAlphaDescription.setRepetead(false);
@@ -179,7 +179,7 @@ public class MetadataWSGenerator {
         modelCallObjectErrorItem.addTipoDelModelo(mtCallObjectErrorItemmAlphaDescription);
         
         ModelType mtCallObjectErrorItemmGlossaryText = new ModelType();
-        mtCallObjectErrorItemmGlossaryText.setParameterName("mGlossaryText");
+        mtCallObjectErrorItemmGlossaryText.setParameterName("glossaryText");
         mtCallObjectErrorItemmGlossaryText.setParameterSequence(0);
         mtCallObjectErrorItemmGlossaryText.setParameterType("java.lang.String");
         mtCallObjectErrorItemmGlossaryText.setRepetead(false);
@@ -187,7 +187,7 @@ public class MetadataWSGenerator {
         modelCallObjectErrorItem.addTipoDelModelo(mtCallObjectErrorItemmGlossaryText);
         
         ModelType mtCallObjectErrorItemmErrorLevel = new ModelType();
-        mtCallObjectErrorItemmErrorLevel.setParameterName("mErrorLevel");
+        mtCallObjectErrorItemmErrorLevel.setParameterName("errorLevel");
         mtCallObjectErrorItemmErrorLevel.setParameterSequence(0);
         mtCallObjectErrorItemmErrorLevel.setParameterType("java.lang.Integer");
         mtCallObjectErrorItemmErrorLevel.setRepetead(false);
@@ -213,21 +213,37 @@ public class MetadataWSGenerator {
         
         */
         
-        ModelType mtCallObjectErrorItemmMessagePrefix = new ModelType();
-        mtCallObjectErrorItemmMessagePrefix.setParameterName("mMessagePrefix");
-        mtCallObjectErrorItemmMessagePrefix.setParameterSequence(0);
-        mtCallObjectErrorItemmMessagePrefix.setParameterType("java.lang.String");
-        mtCallObjectErrorItemmMessagePrefix.setRepetead(false);
+        ModelType mtCallObjectErrorItemmmessage = new ModelType();
+        mtCallObjectErrorItemmmessage.setParameterName("message");
+        mtCallObjectErrorItemmmessage.setParameterSequence(0);
+        mtCallObjectErrorItemmmessage.setParameterType("java.lang.String");
+        mtCallObjectErrorItemmmessage.setRepetead(false);
         
-        modelE1Message.addTipoDelModelo(mtCallObjectErrorItemmMessagePrefix);
+        modelE1Message.addTipoDelModelo(mtCallObjectErrorItemmmessage);
         
-        ModelType mtCallObjectErrorItemmCallObjError = new ModelType();
-        mtCallObjectErrorItemmCallObjError.setParameterName("mCallObjError");
-        mtCallObjectErrorItemmCallObjError.setParameterSequence(0);
-        mtCallObjectErrorItemmCallObjError.setParameterType("com.jdedwards.system.kernel.CallObjectErrorItem");
-        mtCallObjectErrorItemmCallObjError.setRepetead(false);
+        ModelType mtCallObjectErrorItemmmessageType = new ModelType();
+        mtCallObjectErrorItemmmessageType.setParameterName("messageType");
+        mtCallObjectErrorItemmmessageType.setParameterSequence(1);
+        mtCallObjectErrorItemmmessageType.setParameterType("java.lang.Integer");
+        mtCallObjectErrorItemmmessageType.setRepetead(false);
         
-        modelE1Message.addTipoDelModelo(mtCallObjectErrorItemmCallObjError);
+        modelE1Message.addTipoDelModelo(mtCallObjectErrorItemmmessageType);
+        
+        ModelType mtCallObjectErrorItemmessagePrefix = new ModelType();
+        mtCallObjectErrorItemmessagePrefix.setParameterName("messagePrefix");
+        mtCallObjectErrorItemmessagePrefix.setParameterSequence(2);
+        mtCallObjectErrorItemmessagePrefix.setParameterType("java.lang.String");
+        mtCallObjectErrorItemmessagePrefix.setRepetead(false);
+        
+        modelE1Message.addTipoDelModelo(mtCallObjectErrorItemmessagePrefix);
+        
+        ModelType mtCallObjectErrorItemcallObjError = new ModelType();
+        mtCallObjectErrorItemcallObjError.setParameterName("callObjError");
+        mtCallObjectErrorItemcallObjError.setParameterSequence(3);
+        mtCallObjectErrorItemcallObjError.setParameterType("com.jdedwards.system.kernel.CallObjectErrorItem");
+        mtCallObjectErrorItemcallObjError.setRepetead(false);
+        
+        modelE1Message.addTipoDelModelo(mtCallObjectErrorItemcallObjError);
         
         modelos.AddModelo(modelE1Message);
         
@@ -236,7 +252,7 @@ public class MetadataWSGenerator {
         // ----------------------------------------
         
         Model modelE1MessageList = new Model();
-        modelE1MessageList.setModelName("E1MessageList");
+        modelE1MessageList.setModelName("E1MessagesList");
         modelE1MessageList.setModelPackage("oracle.e1.bssvfoundation.util");
         
         /*
@@ -690,9 +706,9 @@ public class MetadataWSGenerator {
                 if (currentReturnModel != null) {
                     
                     ModelType errorList = new ModelType();
-                    errorList.setParameterName("e1MessageList");
+                    errorList.setParameterName("e1MessagesList");
                     errorList.setParameterSequence(1);
-                    errorList.setParameterType("oracle.e1.bssvfoundation.util.E1MessageList");
+                    errorList.setParameterType("oracle.e1.bssvfoundation.util.E1MessagesList");
                     errorList.setRepetead(false);
 
                     currentReturnModel.addTipoDelModelo(errorList);

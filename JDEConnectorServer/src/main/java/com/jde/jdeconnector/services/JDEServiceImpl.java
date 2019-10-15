@@ -829,7 +829,38 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
                         if (parameterMetadata.isRepeated()) {
 
+                            newOperationResponse.setNombreDelParametro(nombreDelParametro);
 
+                            newOperationResponse.setTipoDelParametro(parameterMetadata.getModelType());
+                            
+                            newOperationResponse.setNullValue(false);
+                            
+                            ArrayList<LinkedHashMap> values = (ArrayList<LinkedHashMap>) value;
+                            
+                            newOperationResponse.setNullValue(values.isEmpty());
+                            
+                            for(LinkedHashMap eachValue:values)
+                            {
+                                EjecutarOperacionResponse.Builder operacionResponseObject = EjecutarOperacionResponse.newBuilder();
+                        
+                                operacionResponseObject.setNombreDelParametro(nombreDelParametro);
+                                operacionResponseObject.setTipoDelParametro(parameterMetadata.getModelType());
+                                operacionResponseObject.setRepeatedParameter(false);
+                                operacionResponseObject.setNullValue(false);
+                                
+                                parameterMetadata.setRepeated(false);
+                                
+                                level++;
+                                
+                                createOperationResponse(operacionResponseObject, ((ParameterTypeObject) parameterMetadata).getSubParameters(), (HashMap<String, Object>) eachValue,level);
+
+                                level--;
+                                
+                                parameterMetadata.setRepeated(true);
+                                  
+                                newOperationResponse.addListaDeValores(operacionResponseObject.build());
+
+                            }
 
 
                         } else {
