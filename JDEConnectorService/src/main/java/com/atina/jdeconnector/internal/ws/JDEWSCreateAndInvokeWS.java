@@ -199,7 +199,7 @@ public class JDEWSCreateAndInvokeWS {
              
              E1ReturnWSValue returnWSOutputValue = new E1ReturnWSValue();
              returnWSOutputValue.setMessageValueObject((MessageValueObject) returnValue);
-             returnWSOutputValue.setE1MessagesList(returnMessages);
+             returnWSOutputValue.setE1MessageList(returnMessages);
              
              try {
 

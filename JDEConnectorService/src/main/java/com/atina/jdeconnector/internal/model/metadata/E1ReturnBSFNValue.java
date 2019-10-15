@@ -17,7 +17,7 @@ import oracle.e1.bssvfoundation.base.MessageValueObject;
 public class E1ReturnBSFNValue {
     
     private Map<String, Object> messageValueObject;
-    private CallObjectErrorList e1MessagesList;
+    private CallObjectErrorList e1MessageList;
 
     public Map<String, Object> getMessageValueObject() {
         return messageValueObject;
@@ -27,12 +27,12 @@ public class E1ReturnBSFNValue {
         this.messageValueObject = messageValueObject;
     }
  
-    public CallObjectErrorList getE1MessagesList() {
-        return e1MessagesList;
+    public CallObjectErrorList getE1MessageList() {
+        return e1MessageList;
     }
 
-    public void setE1MessagesList(CallObjectErrorList e1MessagesList) {
-        this.e1MessagesList = e1MessagesList;
+    public void setE1MessageList(CallObjectErrorList e1MessageList) {
+        this.e1MessageList = e1MessageList;
     }
 
      

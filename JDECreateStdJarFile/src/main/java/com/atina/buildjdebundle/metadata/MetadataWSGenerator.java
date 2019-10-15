@@ -252,7 +252,7 @@ public class MetadataWSGenerator {
         // ----------------------------------------
         
         Model modelE1MessageList = new Model();
-        modelE1MessageList.setModelName("E1MessagesList");
+        modelE1MessageList.setModelName("E1MessageList");
         modelE1MessageList.setModelPackage("oracle.e1.bssvfoundation.util");
         
         /*
@@ -706,9 +706,9 @@ public class MetadataWSGenerator {
                 if (currentReturnModel != null) {
                     
                     ModelType errorList = new ModelType();
-                    errorList.setParameterName("e1MessagesList");
+                    errorList.setParameterName("e1MessageList");
                     errorList.setParameterSequence(1);
-                    errorList.setParameterType("oracle.e1.bssvfoundation.util.E1MessagesList");
+                    errorList.setParameterType("oracle.e1.bssvfoundation.util.E1MessageList");
                     errorList.setRepetead(false);
 
                     currentReturnModel.addTipoDelModelo(errorList);

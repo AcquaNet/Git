@@ -15,7 +15,7 @@ import oracle.e1.bssvfoundation.base.MessageValueObject;
 public class E1ReturnWSValue {
     
     private MessageValueObject messageValueObject;
-    private E1MessageList e1MessagesList;
+    private E1MessageList e1MessageList;
 
     public MessageValueObject getMessageValueObject() {
         return messageValueObject;
@@ -25,11 +25,11 @@ public class E1ReturnWSValue {
         this.messageValueObject = messageValueObject;
     }
 
-    public E1MessageList getE1MessagesList() {
-        return e1MessagesList;
+    public E1MessageList getE1MessageList() {
+        return e1MessageList;
     }
 
-    public void setE1MessagesList(E1MessageList e1MessagesList) {
-        this.e1MessagesList = e1MessagesList;
+    public void setE1MessageList(E1MessageList e1MessageList) {
+        this.e1MessageList = e1MessageList;
     } 
 }
