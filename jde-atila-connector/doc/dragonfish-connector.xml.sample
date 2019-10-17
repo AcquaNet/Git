@@ -1,0 +1,6 @@
+<!-- BEGIN_INCLUDE(dragonfish:greet) -->
+    <dragonfish:greet config-ref="" friend="#[map-payload:friend]" />
+<!-- END_INCLUDE(dragonfish:greet) -->
+<!-- BEGIN_INCLUDE(dragonfish:add-entity) -->
+    <dragonfish:add-entity config-ref="" key="id1"/>
+<!-- END_INCLUDE(dragonfish:add-entity) -->
