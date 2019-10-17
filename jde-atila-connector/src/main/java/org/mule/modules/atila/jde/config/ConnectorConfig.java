@@ -19,7 +19,7 @@ import org.mule.api.annotations.param.ConnectionKey;
 import org.mule.api.annotations.param.Default;
 import org.mule.modules.atila.jde.implementations.ConnectorServiceImpl;
 import org.mule.modules.atila.jde.interfaces.ConnectorServiceInterface;
-import org.mule.modules.atila.jde.models.DragonFishConfiguracion;
+import org.mule.modules.atila.jde.models.JDEAtilaConfiguracion;
 import org.mule.modules.connector.exceptions.InternalConnectorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +95,7 @@ public class ConnectorConfig {
     private Integer puertoServicio;
 
     private ConnectorServiceInterface service;
-    private DragonFishConfiguracion configuracion;
+    private JDEAtilaConfiguracion configuracion;
     private ManagedChannel channel;
     private DragonFishServiceBlockingStub stub;
 
@@ -195,7 +195,7 @@ public class ConnectorConfig {
         // Check Input Parameters
         // ----------------------------------------------
 
-        this.configuracion = new DragonFishConfiguracion(urlBase, codigoConfCliente, clavePrivadaConfCliente,
+        this.configuracion = new JDEAtilaConfiguracion(urlBase, codigoConfCliente, clavePrivadaConfCliente,
                 algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
 
         logger.info("DragonFish Connector - Configuracion: " + this.configuracion.toString());
@@ -307,7 +307,7 @@ public class ConnectorConfig {
 
     }
 
-    public DragonFishConfiguracion getConfiguracion() {
+    public JDEAtilaConfiguracion getConfiguracion() {
         return configuracion;
     }
 

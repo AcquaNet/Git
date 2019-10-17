@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.mule.modules.atila.jde.interfaces.ConnectorServiceInterface;
-import org.mule.modules.atila.jde.models.DragonFishConfiguracion;
+import org.mule.modules.atila.jde.models.JDEAtilaConfiguracion;
 import org.mule.modules.atila.jde.models.ParametroInput;
 import org.mule.modules.connector.exceptions.ExternalConnectorException;
 import org.mule.modules.connector.exceptions.InternalConnectorException;
@@ -54,7 +54,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
     private DragonFishServiceBlockingStub stub;
     @SuppressWarnings("unused")
-    private DragonFishConfiguracion configuracion;
+    private JDEAtilaConfiguracion configuracion;
 
     @SuppressWarnings("rawtypes")
     private LoadingCache cacheMetadataInput;
@@ -124,7 +124,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     }
 
     @Override
-    public void login(DragonFishServiceBlockingStub stub, DragonFishConfiguracion configuracion)
+    public void login(DragonFishServiceBlockingStub stub, JDEAtilaConfiguracion configuracion)
             throws InternalConnectorException, ExternalConnectorException {
 
         logger.info("DragonFish Service - Inicio login ");
@@ -195,7 +195,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     }
 
     @Override
-    public Map<String, String> getMetadataOperations(DragonFishServiceBlockingStub stub, DragonFishConfiguracion configuracion)
+    public Map<String, String> getMetadataOperations(DragonFishServiceBlockingStub stub, JDEAtilaConfiguracion configuracion)
             throws InternalConnectorException {
 
         logger.info("DRAGONFISH - ConnectorServiceImpl - getMetadataOperations ...");
@@ -239,7 +239,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<TipoDelParametroInput> getInputMetadataForOperation(DragonFishServiceBlockingStub stub, DragonFishConfiguracion configuracion, String operation)
+    public List<TipoDelParametroInput> getInputMetadataForOperation(DragonFishServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, String operation)
             throws InternalConnectorException {
 
         logger.info("DRAGONFISH - ConnectorServiceImpl - getInputMetadataForOperation for operation: " + operation);
@@ -276,7 +276,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<TipoDelParametroOutput> getOutputMetadataForOperation(DragonFishServiceBlockingStub stub, DragonFishConfiguracion configuracion, String operation)
+    public List<TipoDelParametroOutput> getOutputMetadataForOperation(DragonFishServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, String operation)
             throws InternalConnectorException {
 
         logger.info("DRAGONFISH - ConnectorServiceImpl - getInputMetadataForOperation for operation: " + operation);
@@ -314,7 +314,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     @SuppressWarnings("unchecked")
     @Override
     public Object ejecutarServicio(DragonFishServiceBlockingStub stub,
-            DragonFishConfiguracion configuracion, String entityType, Map<String, Object> entityData)
+            JDEAtilaConfiguracion configuracion, String entityType, Map<String, Object> entityData)
             throws InternalConnectorException, ExternalConnectorException {
 
         this.stub = stub;

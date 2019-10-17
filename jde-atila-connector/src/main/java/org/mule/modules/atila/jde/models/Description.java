@@ -15,7 +15,7 @@ public class Description {
     private DataType dataType;
     private String innerType;
     private List<Description> innerFields;
-    private DragonFishConfiguracion conf;
+    private JDEAtilaConfiguracion conf;
 
     public Description() {
         super();
@@ -23,11 +23,11 @@ public class Description {
         this.innerFields = null;
     }
 
-    public DragonFishConfiguracion getConf() {
+    public JDEAtilaConfiguracion getConf() {
         return conf;
     }
 
-    public void setConf(DragonFishConfiguracion conf) {
+    public void setConf(JDEAtilaConfiguracion conf) {
         this.conf = conf;
     }
 
