@@ -646,18 +646,15 @@ public class MainJDEClient {
             // Invoke WS              
             // ===========================  
             // 
+           
             
-            EjecutarOperacionValores.Builder itemId = EjecutarOperacionValores.newBuilder();
-            itemId.setNombreDelParametro("itemId");
-            itemId.setValueAsInteger(60003);
-
-            EjecutarOperacionValores.Builder item = EjecutarOperacionValores.newBuilder();
-            item.setNombreDelParametro("item");
-            item.addListaDeValores(itemId);
+            EjecutarOperacionValores.Builder processingVersionStandardReceiptEntryZJDE00001 = EjecutarOperacionValores.newBuilder();
+            processingVersionStandardReceiptEntryZJDE00001.setNombreDelParametro("");
+            processingVersionStandardReceiptEntryZJDE00001.setValueAsString("ZJDE0001");
             
-            EjecutarOperacionValores.Builder branchPlantList = EjecutarOperacionValores.newBuilder();
-            branchPlantList.setNombreDelParametro("branchPlantList");
-            branchPlantList.setValueAsString("          10");
+            EjecutarOperacionValores.Builder processingVersionStandardReceiptEntry = EjecutarOperacionValores.newBuilder();
+            processingVersionStandardReceiptEntry.setNombreDelParametro("processingVersionStandardReceiptEntry");
+            processingVersionStandardReceiptEntry.addListaDeValores(processingVersionStandardReceiptEntryZJDE00001.build());
              
             EjecutarOperacionResponse ejecutarOperacionesResponse = stub.ejecutarOperacion(
                     EjecutarOperacionRequest.newBuilder()
@@ -669,8 +666,7 @@ public class MainJDEClient {
                             .setRole(configuracion.getRole())
                             .setWsconnection(configuracion.getWsConnection())
                             .setSessionId(sessionID)
-                            .addListaDeValores(item.build())
-                            .addListaDeValores(branchPlantList.build())
+                            .addListaDeValores(processingVersionStandardReceiptEntry.build())
                             .build()); 
             
             logger.info("Resonpse  ");

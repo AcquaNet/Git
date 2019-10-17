@@ -979,12 +979,15 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                     
                     for (EjecutarOperacionValores valorLista : valores) {
                         
+                        level ++;
                         
-                        // listaDeValores.add(convertirInputEnHashMap(valorLista.getListaDeValoresList(), metadataFromInput));
+                        listaDeValores.add(convertirInputEnHashMap(valorLista.getListaDeValoresList(), metadataFromInput,level));
+                        
+                        level--;
                         
                     }
                     
-                    //inputValues.put(nombreDelParametro, listaDeValores);
+                    returnValue.put(nombreDelParametro, listaDeValores);
                     
                 }
                 else
@@ -1001,6 +1004,64 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
                 if (parameterMetadata.isRepeated()) {
 
+                    ArrayList<Object> listaDeValores = new ArrayList();
+                    
+                    List<EjecutarOperacionValores> valores = valor.getListaDeValoresList();
+                    
+                    for (EjecutarOperacionValores valorLista : valores) {
+                        
+                        Object valorActual = null;
+
+                        switch (parameterMetadata.getModelType()) {
+
+                            case "java.lang.String":
+                                valorActual = valorLista.getValueAsString();
+                                break;
+                            case "java.lang.Integer":
+                                valorActual = valorLista.getValueAsInteger();
+                                break;
+                            case "java.lang.Boolean":
+                                valorActual = valorLista.getValueAsBoolean();
+                                break;
+                            case "java.lang.Long":
+                                valorActual = valorLista.getValueAsLong();
+                                break;
+                            case "java.lang.Double":
+                                valorActual = valorLista.getValueAsDouble();
+                                break;
+                            case "java.lang.Float":
+                                valorActual = valorLista.getValueAsFloat();
+                                break;
+                            case "java.util.Date":
+                                // Convertir de TimeStamp to Date
+                                com.google.protobuf.Timestamp ts = valorLista.getValueAsDate();
+                                Instant valorTM = Instant.ofEpochSecond(ts.getSeconds(), ts.getNanos());
+                                valorActual = Date.from(valorTM);
+                                break;
+                            case "java.lang.Byte":
+                                valorActual = valorLista.getValuesAsByteString();
+                                break;
+                            case "BDecimal":
+                                Double valueDouble = new Double(valorLista.getValueAsDouble());
+                                String strValueD = valueDouble.toString();
+                                valorActual = new BigDecimal(strValueD);
+                                break;
+                            case "BInteger":
+                                Long valueLong = new Long(valorLista.getValueAsLong());
+                                String strValueL = valueLong.toString();
+                                valorActual = new BigInteger(strValueL);
+                                break;
+                            default:
+                                logger.info("Error convirtiendo tipoDelParametroDeInput: " + parameterMetadata.getModelType());
+                                break;
+
+                        }
+
+                        listaDeValores.add(valorActual);
+                        
+                    }
+                    
+                    returnValue.put(nombreDelParametro, listaDeValores);
                     
                     
                 } else {

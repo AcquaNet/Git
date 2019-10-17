@@ -13,8 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import com.atina.jdeconnectorservice.JDEConnectorService;
 import com.atina.jdeconnectorservice.exception.JDESingleException;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import org.mule.util.ClassUtils;
@@ -82,18 +84,21 @@ public class JDEWSCreateObjectUtil {
             if (models.isModel(parameterType)) {
                 
                 Model newModel = models.getModelo(parameterType);
-                
+                      
                 Object parameterInstance = generateObject(parameterType,models, newModel, (HashMap<String, Object>) inputParameter.getValue());
                 
-                setValue(inputValueClass,instanceLoaded, variableName, parameterType, parameterInstance);
+                setValue(inputValueClass,instanceLoaded, variableName, parameterType, parameterInstance, i, currentModelType.isRepetead());
 
             } else {
                  
-                setValue(inputValueClass,instanceLoaded, variableName, parameterType, inputParameter.getValue());
+                setValue(inputValueClass,instanceLoaded, variableName, parameterType, inputParameter.getValue(),i, currentModelType.isRepetead());
+                
                  
             }
 
             logger.info("Error getting class " + inputParameter.getClass().getName());
+            
+            i++;
 
         }
 
@@ -187,16 +192,27 @@ public class JDEWSCreateObjectUtil {
                                  Object instanceLoaded, 
                                  String variableName, 
                                  String variableClass, 
-                                 Object valueObject) {
+                                 Object valueObject,
+                                 int pos,
+                                 boolean repeated) {
 
         try {
 
             String setterName = "set" + variableName.substring(0, 1).toUpperCase() + variableName.substring(1);
 
-            Class<?>[] parametroClasss = new Class[1];
-
-            parametroClasss[0] = Class.forName(variableClass);
-
+            Class<?>[] parametroClasss = null;
+            
+            if(repeated)
+            {
+                parametroClasss = new Class[1];
+                parametroClasss[0] = Array.newInstance(Class.forName(variableClass), 0).getClass();;
+            } 
+            else
+            {
+                parametroClasss = new Class[1];
+                parametroClasss[0] = Class.forName(variableClass);
+            }
+  
             Method metodo = ClassUtils.getMethod(cls, setterName, parametroClasss, true);
 
             if (metodo == null) {
@@ -206,10 +222,27 @@ public class JDEWSCreateObjectUtil {
                 throw new JDESingleException("Error getting method: " + cls.getName() + "." + setterName);
             }
 
-            Object[] parametrosDeInputDelMetodo = new Object[1];
+            Object[] parametrosDeInputDelMetodo = null;
             
-            parametrosDeInputDelMetodo[0] = valueObject;
-
+            if(repeated)
+            {
+                ArrayList   values = (ArrayList) valueObject;
+                
+                parametrosDeInputDelMetodo = new Object[1];
+                
+                //Object[] newArray = values.toArray(new String[values.size()]); 
+                
+                Object[] newArray2 = arrayListToArray(values);
+                
+                parametrosDeInputDelMetodo[0] = newArray2;
+                 
+                
+            } else
+            {
+                parametrosDeInputDelMetodo = new Object[1];
+                parametrosDeInputDelMetodo[0] = valueObject;
+            }
+              
             metodo.invoke(instanceLoaded, parametrosDeInputDelMetodo);
 
         } catch (ClassNotFoundException ex) {
@@ -238,6 +271,28 @@ public class JDEWSCreateObjectUtil {
 
         }
 
+    }
+    
+    public static <E> E[] arrayListToArray(ArrayList<E> list)
+    {
+        int s;
+        if(list == null || (s = list.size())<1)
+            return null;
+        E[] temp;
+        E typeHelper = list.get(0);
+
+        try
+        {
+            Object o = Array.newInstance(typeHelper.getClass(), s);
+            temp = (E[]) o;
+
+            for (int i = 0; i < list.size(); i++)
+                Array.set(temp, i, list.get(i));
+        }
+        catch (Exception e)
+        {return null;}
+
+        return temp;
     }
 
 }
