@@ -1,0 +1,168 @@
+// Copyright 2015 The gRPC Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.jde.jdeserverwp.servicios";
+option java_outer_classname = "JDEProto";
+option objc_class_prefix = "JDE";
+
+package servicios;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+// Interface exported by the server.
+service JDEService {
+  // A simple RPC.
+  //
+  // Login to JDE
+  //
+  // Genera JWT y Valida Conexion a JDE
+  // position.
+  rpc Login(SessionRequest) returns (SessionResponse) {}
+  
+  rpc Operaciones(OperacionesRequest) returns (OperacionesResponse) {}
+  
+  rpc GetMetadaParaOperacion(GetMetadataRequest) returns (GetMetadataResponse) {}
+  
+  rpc EjecutarOperacion(EjecutarOperacionRequest) returns (EjecutarOperacionResponse) {}
+  
+}
+
+// Configuracion del la Conexion a JDE
+message SessionRequest {
+  string user = 1;
+  string password = 2;
+  string environment = 3;
+  string role = 4;
+  int64 sessionId = 5;
+  bool  wsconnection = 6;
+}
+
+// Configuracion del la Conexion a JDE
+message SessionResponse {
+  int64 sessionId = 1;
+}
+
+message OperacionesRequest {
+  string connectorName = 2;
+  string user = 3;
+  string password = 4;
+  string environment = 5;
+  string role = 6;
+  int64 sessionId = 7;
+  bool  wsconnection = 8;
+}
+
+message OperacionesResponse {
+  repeated Operacion operaciones = 1;
+  int64 sessionId = 2;
+}
+ 
+// Configuracion del la Conexion a JDE
+message Operacion {
+  string idOperacion = 1;
+  string nombreOperacion = 2;
+}
+
+message GetMetadataRequest {
+  string operacionKey = 1; 
+  string connectorName = 2;
+  string user = 3;
+  string password = 4;
+  string environment = 5;
+  string role = 6;
+  int64 sessionId = 7;
+  bool  wsconnection = 8;
+}
+
+message GetMetadataResponse {
+  repeated TipoDelParametroInput listaDeParametrosInput = 1;
+  repeated TipoDelParametroOutput listaDeParametrosOutput =2;
+}
+
+message TipoDelParametroInput {
+  string nombreDelParametro = 1;
+  repeated TipoDelParametroInput subParametro = 4;
+  string tipoDelParametroJava = 5;
+  bool repeatedParameter = 6;
+}
+ 
+message TipoDelParametroOutput {
+  string nombreDelParametro = 1;
+  repeated TipoDelParametroOutput subParametro = 4;
+  string tipoDelParametroJava = 5;
+  bool repeatedParameter = 6;
+}
+
+message EjecutarOperacionRequest {
+  string operacionKey = 1; 
+  repeated EjecutarOperacionValores listaDeValores =2;
+  string connectorName = 6; 
+  string user = 13;
+  string password = 8;
+  string environment = 9;
+  string role = 10;
+  int64 sessionId = 11;
+  bool  wsconnection = 12;
+}
+
+message EjecutarOperacionValores {
+  string nombreDelParametro = 1;
+  oneof muleValue {
+    string valueAsString = 2;
+    int32 valueAsInteger = 3;
+    double valueAsDouble = 4;
+    float valueAsFloat = 5;
+    int64 valueAsLong = 6;
+    bool valueAsBoolean = 7;
+    bytes valuesAsByteString = 8;
+    google.protobuf.Timestamp valueAsDate = 9;
+    BDecimal valueAsBDDecimal = 10; 
+    bool nullValue = 12;
+    BInteger valueAsBDInteger = 13; 
+  }
+  repeated EjecutarOperacionValores listaDeValores =11;
+}
+
+message EjecutarOperacionResponse {
+  string nombreDelParametro = 1;
+  oneof muleValue {
+    string valueAsString = 2;
+    int32 valueAsInteger = 3;
+    double valueAsDouble = 4;
+    float valueAsFloat = 5;
+    int64 valueAsLong = 6;
+    bool valueAsBoolean = 7;
+    bytes valuesAsByteString = 8;
+    google.protobuf.Timestamp valueAsDate = 9; 
+    BDecimal valueAsBDDecimal = 11; 
+    bool nullValue = 12;
+    BInteger valueAsBDInteger = 14; 
+  }
+  repeated EjecutarOperacionResponse listaDeValores =10;
+  string tipoDelParametro = 13;
+  bool repeatedParameter = 15;
+}
+
+message BDecimal {
+  int32 scale = 1;
+  BInteger int_val = 2;
+}
+
+message BInteger {
+  bytes value = 1;
+}
