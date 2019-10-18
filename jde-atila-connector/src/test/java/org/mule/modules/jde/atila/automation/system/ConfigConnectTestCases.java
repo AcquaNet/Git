@@ -41,7 +41,7 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
 
     }
 
-    @Test  
+    @Test 
     public void validWSConnection() throws Exception {
 
         logger.info(LOG_PREFIX + " validarConexion() INICIO ");
@@ -59,14 +59,12 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
         configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
 
         Assert.assertTrue(configJDEAtina.getConfiguracion().getSessionID() != 0);
-        
-        configJDEAtina.disconnect();
-        
+         
         logger.info(LOG_PREFIX + " validarConexion() FIN ");
 
     }
 
-    @Test  
+    @Test   
     public void InvalidWSConexionWithExternalConnectorException() throws Exception {
 
         logger.info(LOG_PREFIX + " validarConexion() INICIO ");
@@ -84,7 +82,7 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
         try
         {
         	configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
-
+        	
         } catch (ConnectionException e)
         {
         	
@@ -100,9 +98,7 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
                     .startsWith("JDE Conexion Error InvalidLoginException: Invalid UserName and/or Password"));
             
         }
-        
-        configJDEAtina.disconnect();
-
+          
         logger.info(LOG_PREFIX + " validarConexion() FIN ");
 
     }
@@ -141,9 +137,10 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
             Assert.assertTrue(causeBy.getErrorMessage()
                     .startsWith("UNAVAILABLE: NameResolver returned an empty list"));
             
-        }
- 
+        } 
+        
         logger.info(LOG_PREFIX + " validarConexion() FIN ");
+        
 
     }
  

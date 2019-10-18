@@ -250,9 +250,80 @@ public class ConnectorConfig {
     }
 
     @Disconnect
-    public void disconnect() throws RuntimeException {
+    public void disconnect() throws ConnectionException {
+    	
+    	
+    	logger.debug("JDE ATILA Connector - disconnecting...");
 
-        logger.debug("JDE ATILA Connector - Begin: disconnect.");
+        // ----------------------------------------------
+        // Check Input Parameters
+        // ----------------------------------------------
+        
+		if (this.configuracion == null) {
+
+			InternalConnectorException exception = new InternalConnectorException("No configuration available");
+			
+			throw new ConnectionException(ConnectionExceptionCode.CANNOT_REACH, "JDE ATILA Error disconnecting: ", exception.getErrorMessage(), exception);
+             
+		}
+
+        logger.info("JDE ATILA Connector - Current Configuration: " + this.configuracion.toString());
+        
+		if (configuracion.getSessionID() != 0) {
+
+			try {
+
+				channel = ManagedChannelBuilder
+						.forAddress(configuracion.getMicroServiceName(), configuracion.getMicroServicePort())
+						.usePlaintext().build();
+
+				stub = JDEServiceGrpc.newBlockingStub(channel);
+
+				logger.info("JDE ATILA Connector - Disconnecting from JDE...");
+
+				ConnectorServiceImpl servicio = (ConnectorServiceImpl) getService();
+
+				servicio.logout(stub, this.configuracion);
+
+				logger.info("JDE ATILA Connector - JDE Disconnected");
+
+			} catch (ExternalConnectorException e) {
+
+				startLogin = 0L;
+
+				logger.error("JDE ATILA Connector - Error Disconnecting ..." + e.getMessage(), e);
+
+				logger.debug("JDE ATILA Connector - End.");
+
+				throw new ConnectionException(ConnectionExceptionCode.CANNOT_REACH, "JDE ATILA Error Disconnecting: ",
+						e.getMessage(), e);
+
+			} catch (InternalConnectorException e) {
+
+				startLogin = 0L;
+
+				logger.error("JDE ATILA Connector - Error Disconnecting ..." + e.getMessage(), e);
+
+				logger.debug("JDE ATILA Connector - End.");
+
+				throw new ConnectionException(ConnectionExceptionCode.CANNOT_REACH, "JDE ATILA Error Disconnecting: ",
+						e.getMessage(), e);
+
+			} catch (Exception e) {
+
+				startLogin = 0L;
+
+				logger.error("JDE ATILA Connector - Error Disconnecting ..." + e.getMessage(), e);
+
+				logger.debug("JDE ATILA Disconnecting - End.");
+
+				throw new ConnectionException(ConnectionExceptionCode.CANNOT_REACH, "JDE ATILA Error Disconnecting: ",
+						e.getMessage(), e);
+			}
+
+		}
+        
+        logger.debug("JDE ATILA Connector - Begin: Disconnecting Channel.");
 
         try {
 
@@ -265,12 +336,12 @@ public class ConnectorConfig {
 
         }
 
-        logger.debug("JDE ATILA Connector - Fin: disconnect.");
+        logger.debug("JDE ATILA Connector - End: disconnect.");
 
     }
 
     @ValidateConnection
-    public boolean isConnected() {
+    public boolean isConnected() throws ConnectionException {
 
         logger.debug("JDE ATILA Connector - Begin: isConnected.");
 
@@ -285,7 +356,69 @@ public class ConnectorConfig {
 
         if (this.startLogin > 0) {
 
-            //
+        	logger.debug("JDE ATILA Connector - isConnected...");
+
+            // ----------------------------------------------
+            // Check Input Parameters
+            // ----------------------------------------------
+            
+    		if (this.configuracion == null) {
+
+    			InternalConnectorException exception = new InternalConnectorException("No configuration available");
+    			
+    			throw new ConnectionException(ConnectionExceptionCode.CANNOT_REACH, "JDE ATILA Error checking is session is still connected: ", exception.getErrorMessage(), exception);
+                 
+    		}
+
+            logger.info("JDE ATILA Connector - Current Configuration: " + this.configuracion.toString());
+
+            try {
+     
+                channel = ManagedChannelBuilder
+                        .forAddress(configuracion.getMicroServiceName(), configuracion.getMicroServicePort())
+                        .usePlaintext()
+                        .build();
+
+                stub = JDEServiceGrpc.newBlockingStub(channel);
+
+                logger.info("JDE ATILA Connector - Checking is session is still connected...");
+
+                ConnectorServiceImpl servicio = (ConnectorServiceImpl) getService();
+
+                logger.info("JDE ATILA Connector - Error checking is session is still connected Done");
+                
+                return servicio.isConnected(stub, this.configuracion);
+ 
+            } catch (ExternalConnectorException e) {
+
+                startLogin = 0L;
+
+                logger.error("JDE ATILA Connector - Error checking is session is still connected ..." + e.getMessage(), e);
+                
+                logger.debug("JDE ATILA Connector - End.");
+
+                throw new ConnectionException(ConnectionExceptionCode.CANNOT_REACH, "JDE ATILA Error checking is session is still connected: ", e.getMessage(), e);
+                
+            } catch (InternalConnectorException e) {
+
+                startLogin = 0L;
+
+                logger.error("JDE ATILA Connector - Error checking is session is still connected ..." + e.getMessage(), e);
+                
+                logger.debug("JDE ATILA Connector - End.");
+
+                throw new ConnectionException(ConnectionExceptionCode.CANNOT_REACH, "JDE ATILA Error checking is session is still connected: ", e.getMessage(), e);
+                
+            } catch (Exception e) {
+
+                startLogin = 0L;
+
+                logger.error("JDE ATILA Connector - Error checking is session is still connected ..." + e.getMessage(), e);
+                
+                logger.debug("JDE ATILA Disconnecting - End.");
+
+                throw new ConnectionException(ConnectionExceptionCode.CANNOT_REACH, "JDE ATILA Error checking is session is still connected: ", e.getMessage(), e);
+            } 
 
         }
 

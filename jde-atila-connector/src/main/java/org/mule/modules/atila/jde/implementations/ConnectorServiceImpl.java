@@ -32,7 +32,10 @@ import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
 import com.jde.jdeserverwp.servicios.GetMetadataRequest;
 import com.jde.jdeserverwp.servicios.GetMetadataResponse;
+import com.jde.jdeserverwp.servicios.IsConnectedRequest;
+import com.jde.jdeserverwp.servicios.IsConnectedResponse;
 import com.jde.jdeserverwp.servicios.JDEServiceGrpc.JDEServiceBlockingStub;
+import com.jde.jdeserverwp.servicios.LogoutRequest;
 import com.jde.jdeserverwp.servicios.Operacion;
 import com.jde.jdeserverwp.servicios.OperacionesRequest;
 import com.jde.jdeserverwp.servicios.OperacionesResponse;
@@ -51,7 +54,6 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     private static final Logger logger = LoggerFactory.getLogger(ConnectorServiceImpl.class);
 
     private JDEServiceBlockingStub stub;
-    @SuppressWarnings("unused")
     private JDEAtilaConfiguracion configuracion;
 
     @SuppressWarnings("rawtypes")
@@ -189,6 +191,139 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
         logger.info("JDE Atina Service - End login ");
 
         configuracion.setSessionID(tokenResponse.getSessionId());
+    }
+    
+    @Override
+    public void logout(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion)
+            throws InternalConnectorException, ExternalConnectorException {
+
+        logger.info("JDE Atina Service - Logout... ");
+
+        SessionResponse tokenResponse = null;
+
+        try { 
+
+            tokenResponse = stub.logout(
+            		LogoutRequest.newBuilder() 
+                            .setWsconnection(configuracion.getWsConnection())
+                            .setSessionId(configuracion.getSessionID())
+                            .build());
+
+        } catch (StatusRuntimeException e) {
+
+            logger.error("JDE Atina Service + Error: " + e.getMessage());
+
+            if (e.getMessage()
+                    .endsWith("%ExternalServiceException%") ||
+                    e.getMessage()
+                            .endsWith("%InternalServiceException%"))
+            {
+
+                String[] tokens = StringUtils.split(e.getMessage(), "|");
+
+                String errorMessage = tokens[0];
+                String claseDeLaOperacion = tokens[1];
+                String metodoDeLaOperacion = tokens[2];
+                int httpStatus = 0;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
+
+                throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+
+            }
+            else
+            {
+
+                String errorMessage = e.getMessage();
+                String claseDeLaOperacion = "Logout";
+                String metodoDeLaOperacion = "Logout";
+                int httpStatus = 510;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
+
+                throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+
+            }
+
+        }
+
+        if (tokenResponse != null) {
+
+            logger.info("JDE Atina Service - SessionID: [" + tokenResponse.getSessionId() + "]");
+        }
+
+        logger.info("JDE Atina Service - End logout ");
+
+        configuracion.setSessionID(tokenResponse.getSessionId());
+    }
+    
+    @Override
+    public boolean isConnected(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion)
+            throws InternalConnectorException, ExternalConnectorException {
+
+        logger.info("JDE Atina Service - isConnected... ");
+
+        IsConnectedResponse tokenResponse = null;
+
+        try { 
+
+            tokenResponse = stub.isConnected(
+            		IsConnectedRequest.newBuilder() 
+                            .setWsconnection(configuracion.getWsConnection())
+                            .setSessionId(configuracion.getSessionID())
+                            .build());
+
+        } catch (StatusRuntimeException e) {
+
+            logger.error("JDE Atina Service + Error: " + e.getMessage());
+
+            if (e.getMessage()
+                    .endsWith("%ExternalServiceException%") ||
+                    e.getMessage()
+                            .endsWith("%InternalServiceException%"))
+            {
+
+                String[] tokens = StringUtils.split(e.getMessage(), "|");
+
+                String errorMessage = tokens[0];
+                String claseDeLaOperacion = tokens[1];
+                String metodoDeLaOperacion = tokens[2];
+                int httpStatus = 0;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
+
+                throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+
+            }
+            else
+            {
+
+                String errorMessage = e.getMessage();
+                String claseDeLaOperacion = "IsConnected";
+                String metodoDeLaOperacion = "IsConnected";
+                int httpStatus = 510;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
+
+                throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+
+            }
+
+        }
+
+        if (tokenResponse != null) {
+
+            return tokenResponse.getConnected();
+        }
+
+        logger.info("JDE Atina Service - End isConnected ");
+
+        return false;
+        
     }
 
     @Override

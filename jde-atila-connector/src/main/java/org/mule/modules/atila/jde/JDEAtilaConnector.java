@@ -3,6 +3,7 @@ package org.mule.modules.atila.jde;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.mule.api.ConnectionException;
 import org.mule.api.annotations.Config;
 import org.mule.api.annotations.Connector;
 import org.mule.api.annotations.param.MetaDataKeyParam;
@@ -12,6 +13,7 @@ import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.param.Default;
 import org.mule.modules.atila.jde.config.ConnectorConfig;
 import org.mule.modules.atila.jde.datasense.ServicioDataSenseResolver;
+import org.mule.modules.atila.jde.exceptions.InternalConnectorException;
 
 import io.grpc.StatusRuntimeException;
 
@@ -34,11 +36,13 @@ public class JDEAtilaConnector {
      * @param entity
      *            Map that represents the entity
      * @return Some string
+     * @throws ConnectionException 
+     * @throws InternalConnectorException 
      */
 
     @Processor(friendlyName = "Invoke WS")
     @MetaDataScope(ServicioDataSenseResolver.class)
-    public Object servicio(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) String entityType, @Default("#[payload]") Map<String, Object> entityData) {
+    public Object servicio(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) String entityType, @Default("#[payload]") Map<String, Object> entityData) throws InternalConnectorException, ConnectionException {
 
         logger.info("DRAGONFISH - Ejecutar Servicio: [" + entityType + "]");
 
