@@ -31,9 +31,9 @@ import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
 
 import junit.framework.Assert;
 
-public class MetadataTestCases extends AbstractConfigConnectTestCases {
+public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
 
-    protected final Logger logger = LoggerFactory.getLogger(MetadataTestCases.class);
+    protected final Logger logger = LoggerFactory.getLogger(WSMetadataTestCases.class);
 
     private static final String LOG_PREFIX = "DragonFish - SYSTEM_TEST - ConfigConnectTestCases:";
 
@@ -79,13 +79,13 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
 
         Map<String, String> operaciones = servicio.getMetadataOperations(configJDEAtina.getStub(), configJDEAtina.getConfiguracion());
 
-        // MetaDataKey key = new MetaDataKey();
-
-        MetaDataKey mdkey = new DefaultMetaDataKey("Articulo_articuloPost", "Alta de Articulos");
-
-        List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(), "Articulo_articuloPost");
-
-        List<TipoDelParametroOutput> outputList = servicio.getOutputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(), "Articulo_articuloPost");
+//        // MetaDataKey key = new MetaDataKey();
+//
+//        MetaDataKey mdkey = new DefaultMetaDataKey("Articulo_articuloPost", "Alta de Articulos");
+//
+//        List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(), "Articulo_articuloPost");
+//
+//        List<TipoDelParametroOutput> outputList = servicio.getOutputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(), "Articulo_articuloPost");
 
         logger.info(LOG_PREFIX + " validarConexion() FIN ");
 
