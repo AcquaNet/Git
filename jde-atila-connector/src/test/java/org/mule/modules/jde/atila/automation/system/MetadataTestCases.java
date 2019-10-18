@@ -15,7 +15,7 @@ import org.mule.common.Result;
 import org.mule.common.metadata.DefaultMetaDataKey;
 import org.mule.common.metadata.MetaData;
 import org.mule.common.metadata.MetaDataKey;
-import org.mule.modules.atila.jde.JDEAtilaConnector;
+import org.mule.modules.atila.jde.JDEAtinaConnector;
 import org.mule.modules.atila.jde.exceptions.InternalConnectorException;
 import org.mule.modules.atila.jde.interfaces.ConnectorServiceInterface;
 import org.mule.modules.tests.ConnectorTestUtils;
@@ -40,8 +40,8 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
 
     public static org.mule.modules.atila.jde.config.ConnectorConfig configJDEAtina;
 
-    private static ConnectorTestContext<JDEAtilaConnector> context = null;
-    private static ConnectorDispatcher<JDEAtilaConnector> dispatcher = null;
+    private static ConnectorTestContext<JDEAtinaConnector> context = null;
+    private static ConnectorDispatcher<JDEAtinaConnector> dispatcher = null;
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -50,7 +50,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
 
         // Current connector context instance
 
-        ConnectorTestContext.initialize(JDEAtilaConnector.class);
+        ConnectorTestContext.initialize(JDEAtinaConnector.class);
 
         context = ConnectorTestContext.getInstance();
 

@@ -2,7 +2,7 @@ package org.mule.modules.jde.atila.automation.functional;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.mule.modules.atila.jde.JDEAtilaConnector;
+import org.mule.modules.atila.jde.JDEAtinaConnector;
 import org.mule.tools.devkit.ctf.configuration.util.ConfigurationUtils;
 import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
 import org.slf4j.Logger;
@@ -12,14 +12,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-public class AbstractTestCases extends AbstractTestCase<JDEAtilaConnector> {
+public class AbstractTestCases extends AbstractTestCase<JDEAtinaConnector> {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractTestCases.class);
     @SuppressWarnings("unused")
     private static Properties validCredentials;
 
     public AbstractTestCases() {
-        super(JDEAtilaConnector.class);
+        super(JDEAtinaConnector.class);
     }
 
     @BeforeClass

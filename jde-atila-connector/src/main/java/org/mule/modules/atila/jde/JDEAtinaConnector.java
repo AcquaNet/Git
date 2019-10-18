@@ -21,9 +21,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Connector(name = "jdeatila", friendlyName = "JDE Atila")
-public class JDEAtilaConnector {
+public class JDEAtinaConnector {
 
-    private static final Logger logger = LogManager.getLogger(JDEAtilaConnector.class);
+    private static final Logger logger = LogManager.getLogger(JDEAtinaConnector.class);
 
     @Config
     ConnectorConfig config;

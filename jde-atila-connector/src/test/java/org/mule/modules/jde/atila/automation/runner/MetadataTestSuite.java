@@ -1,6 +1,6 @@
 package org.mule.modules.jde.atila.automation.runner;
 
-import org.mule.modules.atila.jde.JDEAtilaConnector;
+import org.mule.modules.atila.jde.JDEAtinaConnector;
 import org.mule.modules.jde.atila.automation.functional.ServicioMetaDataTestCases;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -18,7 +18,7 @@ public class MetadataTestSuite {
     @BeforeClass
     public static void initialiseSuite() {
 
-        ConnectorTestContext.initialize(JDEAtilaConnector.class);
+        ConnectorTestContext.initialize(JDEAtinaConnector.class);
     }
 
     @AfterClass
