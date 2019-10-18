@@ -15,6 +15,7 @@ import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectorException; 
 import com.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
 import com.jdedwards.system.connector.dynamic.Connector;
+import com.jdedwards.system.connector.dynamic.InvalidLoginException;
 import com.jdedwards.system.security.SecurityToken;
 import java.io.File;
 import java.io.IOException;
@@ -202,9 +203,13 @@ public class JDESingleWSClient {
             }
 
         } catch (ServerFailureException e) {
-            throw new JDESingleConnectionException("JDE Conexion Error" + e.getMessage(), e);
+            throw new JDESingleConnectionException("JDE Conexion Error ServerFailureException: " + e.getMessage(), e);
         } catch (InterruptedException e) {
-            throw new JDESingleConnectionException("JDE Conexion Error" + e.getMessage(), e);
+            throw new JDESingleConnectionException("JDE Conexion Error InterruptedException: " + e.getMessage(), e);
+        } catch (InvalidLoginException e) {
+            throw new JDESingleConnectionException("JDE Conexion Error InvalidLoginException: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new JDESingleConnectionException("JDE Conexion Error Exception: " + e.getMessage(), e);
         } finally {
 
             JDEConnectionLocker.getInstance()

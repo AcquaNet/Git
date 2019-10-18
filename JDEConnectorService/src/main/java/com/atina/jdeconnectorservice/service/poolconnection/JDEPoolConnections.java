@@ -43,6 +43,8 @@ public class JDEPoolConnections {
         logger.info("      User: " + user);
         logger.info("      Role: " + role);
         logger.info("      Environment: " + environment);
+        logger.info("      sessionID: " + sessionID);
+        logger.info("      wsConnection: " + wsConnection);
                     
         int currentSessionId = 0;
         

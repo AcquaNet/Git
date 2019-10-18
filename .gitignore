@@ -1,3 +1,5 @@
 JDEConnectorWSService/target/
 /JDEConnectorServer/target/
 /JDEClient/target/
+jde-atila-connector/target/
+JDEConnectorServer/tmp/

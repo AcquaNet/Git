@@ -8,8 +8,8 @@ import org.mule.modules.jde.atila.automation.system.MetadataTestCases;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-        // ConfigConnectTestCases.class,
-        MetadataTestCases.class
+        ConfigConnectTestCases.class,
+        //MetadataTestCases.class
 })
 public class SystemTestSuite {
 

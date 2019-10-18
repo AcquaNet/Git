@@ -16,16 +16,16 @@ import org.mule.api.annotations.Disconnect;
 import org.mule.api.annotations.TestConnectivity;
 import org.mule.api.annotations.ValidateConnection;
 import org.mule.api.annotations.param.ConnectionKey;
-import org.mule.api.annotations.param.Default;
+import org.mule.modules.atila.jde.exceptions.ExternalConnectorException;
+import org.mule.modules.atila.jde.exceptions.InternalConnectorException;
 import org.mule.modules.atila.jde.implementations.ConnectorServiceImpl;
 import org.mule.modules.atila.jde.interfaces.ConnectorServiceInterface;
 import org.mule.modules.atila.jde.models.JDEAtilaConfiguracion;
-import org.mule.modules.connector.exceptions.InternalConnectorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.acqua.dragonfishserverwp.servicios.DragonFishServiceGrpc;
-import com.acqua.dragonfishserverwp.servicios.DragonFishServiceGrpc.DragonFishServiceBlockingStub;
+import com.jde.jdeserverwp.servicios.JDEServiceGrpc;
+import com.jde.jdeserverwp.servicios.JDEServiceGrpc.JDEServiceBlockingStub;
 
 import io.grpc.ConnectivityState;
 import io.grpc.ManagedChannel;
@@ -37,207 +37,222 @@ public class ConnectorConfig {
     private static final Logger logger = LoggerFactory.getLogger(ConnectorConfig.class);
 
     /**
-     * Nombre del Servidor de DragonFish
+     * JDE User
      */
-    @Placement(group = "Servidor Magento", order = 1)
-    @FriendlyName("URL base")
-    private String urlBase;
+    @Placement(group = "JDE Configuration", order = 1)
+    @FriendlyName("JDE User")
+    private String jdeUser;
 
     /**
-     * Codigo del Cliente
-     */
-    @Placement(group = "Configuracion de Cliente", order = 3)
-    @FriendlyName("Codigo")
-    private String codigoConfCliente;
-
-    /**
-     * Clave Privada
-     */
-    @Placement(group = "Configuracion de Cliente", order = 4)
-    @FriendlyName("Clave Privada")
-    private String clavePrivadaConfCliente;
-
-    /**
-     * Uusario
-     */
-    @Placement(group = "Configuracion de Login", order = 6)
-    @FriendlyName("Usuario")
-    private String user;
-
-    /**
-     * Clave
+     * JDE Password
      */
     @Placement(group = "Configuracion de Login", order = 7)
     @Password
-    @FriendlyName("Password")
-    private String password;
+    @FriendlyName("JDE Password")
+    private String jdePassword;
 
     /**
-     * Expiracion
+     * JDE Environment
      */
-    @Placement(group = "Configuracion de Login", order = 8)
-    @FriendlyName("Expiracion del Token")
-    @Summary("Tiempo en minutos de vigencia del token")
-    private Integer expiracion;
+    @Placement(group = "JDE Configuration", order = 3)
+    @FriendlyName("JDE Environment")
+    private String jdeEnvironment;
+
+    /**
+     * JDE Environment
+     */
+    @Placement(group = "JDE Configuration", order = 4)
+    @FriendlyName("JDE Role")
+    private String jdeRole;
+
+    /**
+     * JDE WS Connection
+     */
+    @Placement(group = "JDE Configuration", order = 5)
+    @FriendlyName("WS Connection")
+    private Boolean wsConnection;
 
     /**
      * Service Server Name
      */
-    @Placement(tab = "Servicio", group = "Servidor", order = 0)
-    @FriendlyName("Servidor")
-    private String servidorServicio;
+    @Placement(tab = "Service", group = "Service", order = 0)
+    @FriendlyName("ServerName")
+    private String microServiceName;
 
     /**
      * Service Server Name
      */
-    @Placement(tab = "Servicio", group = "Servidor", order = 1)
-    @FriendlyName("puertoServicio")
-    private Integer puertoServicio;
+    @Placement(tab = "Service", group = "Service", order = 1)
+    @FriendlyName("ServerPort")
+    private Integer microServicePort;
 
     private ConnectorServiceInterface service;
     private JDEAtilaConfiguracion configuracion;
     private ManagedChannel channel;
-    private DragonFishServiceBlockingStub stub;
+    private JDEServiceBlockingStub stub;
 
     private long startLogin = 0L;
 
-    public String getUrlBase() {
-        return urlBase;
+    public String getJdeUser() {
+        return jdeUser;
     }
 
-    public void setUrlBase(String urlBase) {
-        this.urlBase = urlBase;
+    public void setJdeUser(String jdeUser) {
+        this.jdeUser = jdeUser;
     }
 
-    public String getCodigoConfCliente() {
-        return codigoConfCliente;
+    public String getJdePassword() {
+        return jdePassword;
     }
 
-    public void setCodigoConfCliente(String codigoConfCliente) {
-        this.codigoConfCliente = codigoConfCliente;
+    public void setJdePassword(String jdePassword) {
+        this.jdePassword = jdePassword;
     }
 
-    public String getClavePrivadaConfCliente() {
-        return clavePrivadaConfCliente;
+    public String getJdeEnvironment() {
+        return jdeEnvironment;
     }
 
-    public void setClavePrivadaConfCliente(String clavePrivadaConfCliente) {
-        this.clavePrivadaConfCliente = clavePrivadaConfCliente;
+    public void setJdeEnvironment(String jdeEnvironment) {
+        this.jdeEnvironment = jdeEnvironment;
     }
 
-    public String getUser() {
-        return user;
+    public String getJdeRole() {
+        return jdeRole;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setJdeRole(String jdeRole) {
+        this.jdeRole = jdeRole;
     }
 
-    public String getPassword() {
-        return password;
+    public Boolean getWsConnection() {
+        return wsConnection;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setWsConnection(Boolean wsConnection) {
+        this.wsConnection = wsConnection;
     }
 
-    public Integer getExpiracion() {
-        return expiracion;
+    public String getMicroServiceName() {
+        return microServiceName;
     }
 
-    public void setExpiracion(Integer expiracion) {
-        this.expiracion = expiracion;
+    public void setMicroServiceName(String microServiceName) {
+        this.microServiceName = microServiceName;
     }
 
-    public String getServidorServicio() {
-        return servidorServicio;
+    public Integer getMicroServicePort() {
+        return microServicePort;
     }
 
-    public void setServidorServicio(String servidorServicio) {
-        this.servidorServicio = servidorServicio;
-    }
-
-    public Integer getPuertoServicio() {
-        return puertoServicio;
-    }
-
-    public void setPuertoServicio(Integer puertoServicio) {
-        this.puertoServicio = puertoServicio;
+    public void setMicroServicePort(Integer microServicePort) {
+        this.microServicePort = microServicePort;
     }
 
     @TestConnectivity
-    public void testConnect(@ConnectionKey final String urlBase,
-            @ConnectionKey final String codigoConfCliente, @ConnectionKey final String clavePrivadaConfCliente,
-            @ConnectionKey final String algoritmo, @ConnectionKey final String user, @Password final String password,
-            @ConnectionKey final Integer expiracion, @ConnectionKey final String servidorServicio,
-            @ConnectionKey final Integer puertoServicio) throws ConnectionException {
+    public void testConnect(@ConnectionKey final String jdeUser,
+            @Password final String jdePassword,
+            @ConnectionKey final String jdeEnvironment,
+            @ConnectionKey final String jdeRole,
+            @ConnectionKey final Boolean wsConnection,
+            @ConnectionKey final String microServiceName,
+            @ConnectionKey final Integer microServicePort) throws ConnectionException {
 
-        logger.debug("DRAGONFISH Connector - Config - testConnect() - Begin: Testing connection...");
+        logger.debug("JDE ATILA Connector - Config - testConnect() - Begin: Testing connection...");
 
-        this.connect(urlBase, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
+        this.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
 
         this.disconnect();
 
-        logger.debug("DragonFish Connector - Config - testConnect() - End: Testing connection.");
+        logger.debug("JDE ATILA Connector - Config - testConnect() - End: Testing connection.");
 
     }
 
     @Connect
-    public void connect(@ConnectionKey final String urlBase,
-            @ConnectionKey final String codigoConfCliente, @ConnectionKey final String clavePrivadaConfCliente,
-            @ConnectionKey final String algoritmo, @ConnectionKey final String user, @Password final String password,
-            @ConnectionKey final Integer expiracion, @ConnectionKey final String servidorServicio,
-            @ConnectionKey final Integer puertoServicio) throws ConnectionException {
+    public void connect(@ConnectionKey final String jdeUser,
+            @Password final String jdePassword,
+            @ConnectionKey final String jdeEnvironment,
+            @ConnectionKey final String jdeRole,
+            @ConnectionKey final Boolean wsConnection,
+            @ConnectionKey final String microServiceName,
+            @ConnectionKey final Integer microServicePort) throws ConnectionException {
 
-        logger.debug("DragonFish Connector - Inicio: connect ...");
+        logger.debug("JDE ATILA Connector - Begin");
 
         // ----------------------------------------------
         // Check Input Parameters
         // ----------------------------------------------
+        
+		if (this.configuracion == null) {
 
-        this.configuracion = new JDEAtilaConfiguracion(urlBase, codigoConfCliente, clavePrivadaConfCliente,
-                algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
+			this.configuracion = new JDEAtilaConfiguracion(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection,
+					microServiceName, microServicePort);
 
-        logger.info("DragonFish Connector - Configuracion: " + this.configuracion.toString());
+		}
+
+        logger.info("JDE ATILA Connector - Configuracion: " + this.configuracion.toString());
 
         try {
 
             startLogin = System.currentTimeMillis();
 
-            logger.info("DragonFish Connector - Connectando a DragonFish Service Server");
+            logger.info("JDE ATILA Connector - Connectando a DragonFish Service Server");
 
             channel = ManagedChannelBuilder
-                    .forAddress(configuracion.getServidorServicio(), configuracion.getPuertoServicio())
+                    .forAddress(configuracion.getMicroServiceName(), configuracion.getMicroServicePort())
                     .usePlaintext()
                     .build();
 
-            stub = DragonFishServiceGrpc.newBlockingStub(channel);
+            stub = JDEServiceGrpc.newBlockingStub(channel);
 
-            logger.info("DragonFish Connector - Logeando a DragonFish");
+            logger.info("JDE ATILA Connector - Login to JDE...");
 
             ConnectorServiceImpl servicio = (ConnectorServiceImpl) getService();
 
             servicio.login(stub, this.configuracion);
 
-            logger.info("DragonFish Connector - Logeado en DragonFish");
+            logger.info("JDE ATILA Connector - JDE Logged");
 
+        } catch (ExternalConnectorException e) {
+
+            startLogin = 0L;
+
+            logger.error("JDE ATILA Connector - Error Connecting ..." + e.getMessage(), e);
+            
+            logger.debug("JDE ATILA Connector - End.");
+
+            throw new ConnectionException(ConnectionExceptionCode.CANNOT_REACH, "JDE ATILA Error connection: ", e.getMessage(), e);
+            
         } catch (InternalConnectorException e) {
 
             startLogin = 0L;
 
-            logger.error("DragonFish Connector - Error Conectando a DragonServer ..." + e.getMessage(), e);
+            logger.error("JDE ATILA Connector - Error Connecting ..." + e.getMessage(), e);
+            
+            logger.debug("JDE ATILA Connector - End.");
 
-            throw new ConnectionException(ConnectionExceptionCode.CANNOT_REACH, "DragonFish Error en Conexion", e.getMessage(), e);
+            throw new ConnectionException(ConnectionExceptionCode.CANNOT_REACH, "JDE ATILA Error connection: ", e.getMessage(), e);
+            
+        } catch (Exception e) {
+
+            startLogin = 0L;
+
+            logger.error("JDE ATILA Connector - Error Connecting ..." + e.getMessage(), e);
+            
+            logger.debug("JDE ATILA Connector - End.");
+
+            throw new ConnectionException(ConnectionExceptionCode.CANNOT_REACH, "JDE ATILA Error Connection: ", e.getMessage(), e);
         }
 
-        logger.debug("DragonFish Connector - Fin: connect.");
+
+        logger.debug("JDE ATILA Connector - End.");
 
     }
 
     @Disconnect
     public void disconnect() throws RuntimeException {
 
-        logger.debug("DragonFish Connector - Begin: disconnect.");
+        logger.debug("JDE ATILA Connector - Begin: disconnect.");
 
         try {
 
@@ -250,18 +265,18 @@ public class ConnectorConfig {
 
         }
 
-        logger.debug("DragonFish Connector - Fin: disconnect.");
+        logger.debug("JDE ATILA Connector - Fin: disconnect.");
 
     }
 
     @ValidateConnection
     public boolean isConnected() {
 
-        logger.debug("DragonFish Connector - Begin: isConnected.");
+        logger.debug("JDE ATILA Connector - Begin: isConnected.");
 
         if (channel == null) {
 
-            logger.debug("DragonFish Connector - End: isConnected. Channel is null");
+            logger.debug("JDE ATILA Connector - End: isConnected. Channel is null");
 
             return false;
         }
@@ -270,31 +285,15 @@ public class ConnectorConfig {
 
         if (this.startLogin > 0) {
 
-            long current = System.currentTimeMillis();
-
-            double calc = (current - this.startLogin) / 1000d;
-
-            Integer seconds = new Integer((int) calc);
-
-            if (seconds.compareTo(configuracion.getExpiracion()) > 0) {
-
-                logger.debug("DragonFish Connector - isConnected. Falso. Token expiro despues de " + Integer.toString(seconds) + " segundos");
-
-                return false;
-
-            }
-            else
-            {
-                logger.debug("DragonFish Connector - isConnected. Token aun activo");
-            }
+            //
 
         }
 
         ConnectivityState st = channel.getState(true);
 
-        logger.debug("DragonFish Connector - isConnected: " + st.toString());
+        logger.debug("JDE ATILA Connector - isConnected: " + st.toString());
 
-        logger.debug("DragonFish Connector - End: isConnected.");
+        logger.debug("JDE ATILA Connector - End: isConnected.");
 
         return st == ConnectivityState.READY;
 
@@ -303,7 +302,7 @@ public class ConnectorConfig {
     @ConnectionIdentifier
     public String connectionId() {
 
-        return this.configuracion.getUrlBase(); // one channel per host.
+        return Long.toString(this.configuracion.getSessionID()); // one channel per host.
 
     }
 
@@ -328,7 +327,7 @@ public class ConnectorConfig {
         return channel;
     }
 
-    public DragonFishServiceBlockingStub getStub() {
+    public JDEServiceBlockingStub getStub() {
         return stub;
     }
 

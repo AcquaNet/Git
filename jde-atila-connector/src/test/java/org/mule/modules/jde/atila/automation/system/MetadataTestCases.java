@@ -16,6 +16,7 @@ import org.mule.common.metadata.DefaultMetaDataKey;
 import org.mule.common.metadata.MetaData;
 import org.mule.common.metadata.MetaDataKey;
 import org.mule.modules.atila.jde.JDEAtilaConnector;
+import org.mule.modules.atila.jde.exceptions.InternalConnectorException;
 import org.mule.modules.atila.jde.interfaces.ConnectorServiceInterface;
 import org.mule.modules.tests.ConnectorTestUtils;
 import org.mule.tools.devkit.ctf.configuration.util.ConfigurationUtils;
@@ -24,8 +25,10 @@ import org.mule.tools.devkit.ctf.mockup.ConnectorTestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.acqua.dragonfishserverwp.servicios.TipoDelParametroInput;
-import com.acqua.dragonfishserverwp.servicios.TipoDelParametroOutput;
+import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
+import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
+
+import org.mule.modules.jde.atila.automation.system.AbstractConfigConnectTestCases;
 
 import junit.framework.Assert;
 
@@ -84,7 +87,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
         String servidorServicio = validCredentials.getProperty("config.servidorServicio");
         Integer puertoServicio = Integer.valueOf(validCredentials.getProperty("config.puertoServicio"));
 
-        configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
+        // configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
 
         ConnectorServiceInterface servicio = configDragonFish.getService();
 
@@ -156,7 +159,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
         String servidorServicio = validCredentials.getProperty("config.servidorServicio");
         Integer puertoServicio = Integer.valueOf(validCredentials.getProperty("config.puertoServicio"));
 
-        configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
+        // configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
 
         ConnectorServiceInterface servicio = configDragonFish.getService();
 
@@ -164,7 +167,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
         {
             Map<String, String> operaciones = servicio.getMetadataOperations(configDragonFish.getStub(), configDragonFish.getConfiguracion());
 
-        } catch (org.mule.modules.connector.exceptions.InternalConnectorException e)
+        } catch (InternalConnectorException e)
         {
             logger.error("Validacion de Login Correcta: " + e.getErrorMessage(), e);
 
@@ -193,7 +196,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
         String servidorServicio = validCredentials.getProperty("config.servidorServicio");
         Integer puertoServicio = Integer.valueOf(validCredentials.getProperty("config.puertoServicio"));
 
-        configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
+        // configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
 
         ConnectorServiceInterface servicio = configDragonFish.getService();
 
@@ -206,7 +209,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
             List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configDragonFish.getStub(), configDragonFish.getConfiguracion(),
                     "ArticuloById_articuloByIdGet");
 
-        } catch (org.mule.modules.connector.exceptions.InternalConnectorException e)
+        } catch (InternalConnectorException e)
         {
             logger.error("Validacion de Login Correcta: " + e.getErrorMessage(), e);
 
@@ -236,7 +239,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
         String servidorServicio = validCredentials.getProperty("config.servidorServicio");
         Integer puertoServicio = Integer.valueOf(validCredentials.getProperty("config.puertoServicio"));
 
-        configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
+        // configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
 
         ConnectorServiceInterface servicio = configDragonFish.getService();
 
@@ -248,7 +251,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
         {
             List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configDragonFish.getStub(), configDragonFish.getConfiguracion(), "Articulo_articuloPostX");
 
-        } catch (org.mule.modules.connector.exceptions.InternalConnectorException e)
+        } catch (InternalConnectorException e)
         {
             logger.error("Validacion de Login Correcta: " + e.getErrorMessage(), e);
 
@@ -278,7 +281,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
         String servidorServicio = validCredentials.getProperty("config.servidorServicio");
         Integer puertoServicio = Integer.valueOf(validCredentials.getProperty("config.puertoServicio"));
 
-        configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
+        // configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
 
         ConnectorServiceInterface servicio = configDragonFish.getService();
 
@@ -291,7 +294,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
             List<TipoDelParametroOutput> outputList = servicio.getOutputMetadataForOperation(configDragonFish.getStub(), configDragonFish.getConfiguracion(),
                     "Articulo_articuloPost");
 
-        } catch (org.mule.modules.connector.exceptions.InternalConnectorException e)
+        } catch (InternalConnectorException e)
         {
             logger.error("Validacion de Login Correcta: " + e.getErrorMessage(), e);
 

@@ -15,8 +15,7 @@
 	<classpathentry kind="var" path="M2_REPO/javax/validation/validation-api/1.0.0.GA/validation-api-1.0.0.GA.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="var" path="M2_REPO/org/jetbrains/annotations/13.0/annotations-13.0.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/acqua/GPRCShade/1.0.0-SNAPSHOT/GPRCShade-1.0.0-SNAPSHOT.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/acqua/common-connector/1.0.0-SNAPSHOT/common-connector-1.0.0-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/atina/JDEGPRCShaded/1.0.0/JDEGPRCShaded-1.0.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.0/commons-lang3-3.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mule/modules/mule-connector-test/2.0.6/mule-connector-test-2.0.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mule/mule-core/3.8.0/mule-core-3.8.0.jar"/>

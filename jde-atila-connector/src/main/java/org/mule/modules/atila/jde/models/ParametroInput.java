@@ -2,7 +2,7 @@ package org.mule.modules.atila.jde.models;
 
 import java.util.HashMap;
 
-import com.acqua.dragonfishserverwp.servicios.TipoDelParametroInput;
+import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
 
 public class ParametroInput {
 

@@ -2,121 +2,100 @@ package org.mule.modules.atila.jde.models;
 
 public class JDEAtilaConfiguracion {
 
-    private String urlBase;
-    private String codigoConfCliente;
-    private String clavePrivadaConfCliente;
-    private String algoritmo;
-    private String user;
-    private String password;
-    private Integer expiracion;
-    private String servidorServicio;
-    private Integer puertoServicio;
-    private String tocken;
+    private String jdeUser;
+    private String jdePassword;
+    private String jdeEnvironment;
+    private String jdeRole;
+    private Boolean wsConnection;
+    private String microServiceName;
+    private Integer microServicePort;
+    private long sessionID;
 
     public JDEAtilaConfiguracion() {
         super();
     }
 
-    public JDEAtilaConfiguracion(String urlBase, String codigoConfCliente, String clavePrivadaConfCliente,
-            String algoritmo, String user, String password, Integer expiracion, String servidorServicio,
-            Integer puertoServicio) {
+    public JDEAtilaConfiguracion(String jdeUser, String jdePassword, String jdeEnvironment, String jdeRole,
+            Boolean wsConnection, String microServiceName, Integer microServicePort) {
         super();
-        this.urlBase = urlBase;
-        this.codigoConfCliente = codigoConfCliente;
-        this.clavePrivadaConfCliente = clavePrivadaConfCliente;
-        this.algoritmo = algoritmo;
-        this.user = user;
-        this.password = password;
-        this.expiracion = expiracion;
-        this.servidorServicio = servidorServicio;
-        this.puertoServicio = puertoServicio;
+        this.jdeUser = jdeUser;
+        this.jdePassword = jdePassword;
+        this.jdeEnvironment = jdeEnvironment;
+        this.jdeRole = jdeRole;
+        this.wsConnection = wsConnection;
+        this.microServiceName = microServiceName;
+        this.microServicePort = microServicePort;
     }
 
-    public String getUrlBase() {
-        return urlBase;
+    public String getJdeUser() {
+        return jdeUser;
     }
 
-    public void setUrlBase(String urlBase) {
-        this.urlBase = urlBase;
+    public void setJdeUser(String jdeUser) {
+        this.jdeUser = jdeUser;
     }
 
-    public String getCodigoConfCliente() {
-        return codigoConfCliente;
+    public String getJdePassword() {
+        return jdePassword;
     }
 
-    public void setCodigoConfCliente(String codigoConfCliente) {
-        this.codigoConfCliente = codigoConfCliente;
+    public void setJdePassword(String jdePassword) {
+        this.jdePassword = jdePassword;
     }
 
-    public String getClavePrivadaConfCliente() {
-        return clavePrivadaConfCliente;
+    public String getJdeEnvironment() {
+        return jdeEnvironment;
     }
 
-    public void setClavePrivadaConfCliente(String clavePrivadaConfCliente) {
-        this.clavePrivadaConfCliente = clavePrivadaConfCliente;
+    public void setJdeEnvironment(String jdeEnvironment) {
+        this.jdeEnvironment = jdeEnvironment;
     }
 
-    public String getAlgoritmo() {
-        return algoritmo;
+    public String getJdeRole() {
+        return jdeRole;
     }
 
-    public void setAlgoritmo(String algoritmo) {
-        this.algoritmo = algoritmo;
+    public void setJdeRole(String jdeRole) {
+        this.jdeRole = jdeRole;
     }
 
-    public String getUser() {
-        return user;
+    public Boolean getWsConnection() {
+        return wsConnection;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setWsConnection(Boolean wsConnection) {
+        this.wsConnection = wsConnection;
     }
 
-    public String getPassword() {
-        return password;
+    public String getMicroServiceName() {
+        return microServiceName;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setMicroServiceName(String microServiceName) {
+        this.microServiceName = microServiceName;
     }
 
-    public Integer getExpiracion() {
-        return expiracion;
+    public Integer getMicroServicePort() {
+        return microServicePort;
     }
 
-    public void setExpiracion(Integer expiracion) {
-        this.expiracion = expiracion;
+    public void setMicroServicePort(Integer microServicePort) {
+        this.microServicePort = microServicePort;
     }
 
-    public String getServidorServicio() {
-        return servidorServicio;
+    public long getSessionID() {
+        return sessionID;
     }
 
-    public void setServidorServicio(String servidorServicio) {
-        this.servidorServicio = servidorServicio;
-    }
-
-    public Integer getPuertoServicio() {
-        return puertoServicio;
-    }
-
-    public void setPuertoServicio(Integer puertoServicio) {
-        this.puertoServicio = puertoServicio;
-    }
-
-    public String getTocken() {
-        return tocken;
-    }
-
-    public void setTocken(String tocken) {
-        this.tocken = tocken;
+    public void setSessionID(long sessionID) {
+        this.sessionID = sessionID;
     }
 
     @Override
     public String toString() {
-        return "Configuracion [urlBase=" + urlBase + ", codigoConfCliente="
-                + codigoConfCliente + ", clavePrivadaConfCliente=" + clavePrivadaConfCliente + ", algoritmo="
-                + algoritmo + ", user=" + user + ", expiracion=" + expiracion + "]";
+        return "JDEAtilaConfiguracion [jdeUser=" + jdeUser + ", jdeEnvironment=" + jdeEnvironment + ", jdeRole="
+                + jdeRole + ", wsConnection=" + wsConnection + ", microServiceName=" + microServiceName
+                + ", microServicePort=" + microServicePort + ", sessionID=" + sessionID + "]";
     }
 
 }

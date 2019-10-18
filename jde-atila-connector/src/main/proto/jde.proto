@@ -14,9 +14,9 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "com.acqua.dragonfishserverwp.servicios";
-option java_outer_classname = "DragonFishProto";
-option objc_class_prefix = "DRG";
+option java_package = "com.jde.jdeserverwp.servicios";
+option java_outer_classname = "JDEProto";
+option objc_class_prefix = "JDE";
 
 package servicios;
 
@@ -25,14 +25,14 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
 // Interface exported by the server.
-service DragonFishService {
+service JDEService {
   // A simple RPC.
   //
-  // Login to DragonFish
+  // Login to JDE
   //
-  // Genera JWT y Valida Conexion a DragonFish
+  // Genera JWT y Valida Conexion a JDE
   // position.
-  rpc Login(ConfiguracionRequest) returns (TokenResponse) {}
+  rpc Login(SessionRequest) returns (SessionResponse) {}
   
   rpc Operaciones(OperacionesRequest) returns (OperacionesResponse) {}
   
@@ -42,36 +42,37 @@ service DragonFishService {
   
 }
 
-// Configuracion del la Conexion a DragonFish
-message ConfiguracionRequest {
-  string serverName = 1;
-  string portNumber = 2;
-  string codigoConfCliente = 3;
-  string clavePrivadaConfCliente = 4;
-  string algoritmo = 5;
-  string user = 6;
-  string password = 7;
-  int64 expiracion = 8;
-  string jwt = 9;
-  string connectorName = 10;
-  string baseUrl = 11; 
+// Configuracion del la Conexion a JDE
+message SessionRequest {
+  string user = 1;
+  string password = 2;
+  string environment = 3;
+  string role = 4;
+  int64 sessionId = 5;
+  bool  wsconnection = 6;
 }
 
-// Configuracion del la Conexion a DragonFish
-message TokenResponse {
-  string jwt = 1;
-  int64 expiracionTime = 2;
+// Configuracion del la Conexion a JDE
+message SessionResponse {
+  int64 sessionId = 1;
 }
 
 message OperacionesRequest {
   string connectorName = 2;
+  string user = 3;
+  string password = 4;
+  string environment = 5;
+  string role = 6;
+  int64 sessionId = 7;
+  bool  wsconnection = 8;
 }
 
 message OperacionesResponse {
   repeated Operacion operaciones = 1;
+  int64 sessionId = 2;
 }
  
-// Configuracion del la Conexion a DragonFish
+// Configuracion del la Conexion a JDE
 message Operacion {
   string idOperacion = 1;
   string nombreOperacion = 2;
@@ -80,6 +81,12 @@ message Operacion {
 message GetMetadataRequest {
   string operacionKey = 1; 
   string connectorName = 2;
+  string user = 3;
+  string password = 4;
+  string environment = 5;
+  string role = 6;
+  int64 sessionId = 7;
+  bool  wsconnection = 8;
 }
 
 message GetMetadataResponse {
@@ -89,27 +96,28 @@ message GetMetadataResponse {
 
 message TipoDelParametroInput {
   string nombreDelParametro = 1;
-  string tipoDelParametroMule = 2; 
-  string secuencia = 3; 
   repeated TipoDelParametroInput subParametro = 4;
   string tipoDelParametroJava = 5;
+  bool repeatedParameter = 6;
 }
  
 message TipoDelParametroOutput {
   string nombreDelParametro = 1;
-  string tipoDelParametroMule = 2;
-  string secuencia = 3; 
   repeated TipoDelParametroOutput subParametro = 4;
   string tipoDelParametroJava = 5;
+  bool repeatedParameter = 6;
 }
 
 message EjecutarOperacionRequest {
   string operacionKey = 1; 
   repeated EjecutarOperacionValores listaDeValores =2;
-  string serverName = 3;
-  string portNumber = 4;      
-  string baseUrl = 5; 
-  string connectorName = 6;
+  string connectorName = 6; 
+  string user = 13;
+  string password = 8;
+  string environment = 9;
+  string role = 10;
+  int64 sessionId = 11;
+  bool  wsconnection = 12;
 }
 
 message EjecutarOperacionValores {
@@ -147,6 +155,7 @@ message EjecutarOperacionResponse {
   }
   repeated EjecutarOperacionResponse listaDeValores =10;
   string tipoDelParametro = 13;
+  bool repeatedParameter = 15;
 }
 
 message BDecimal {

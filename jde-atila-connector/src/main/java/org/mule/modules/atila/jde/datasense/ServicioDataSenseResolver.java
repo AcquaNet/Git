@@ -25,9 +25,9 @@ import org.mule.modules.atila.jde.utils.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.acqua.dragonfishserverwp.servicios.TipoDelParametroInput;
-import com.acqua.dragonfishserverwp.servicios.TipoDelParametroOutput;
 import com.google.common.base.MoreObjects;
+import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
+import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
 
 /**
  * Category which can differentiate between input or output MetaDataRetriever
@@ -184,7 +184,8 @@ public class ServicioDataSenseResolver {
     protected void addMetaDataField(final MetaDataBuilder<?> objectBuilder, final TipoDelParametroInput field)
             throws Exception {
 
-        String dataType = field.getTipoDelParametroMule();
+        // String dataType = field.getTipoDelParametroMule();
+        String dataType = "";
 
         String nombreParametro = field.getNombreDelParametro();
 
@@ -238,7 +239,8 @@ public class ServicioDataSenseResolver {
     protected void addOutputMetaDataField(final MetaDataBuilder<?> objectBuilder,
             final TipoDelParametroOutput field) throws Exception {
 
-        String dataType = field.getTipoDelParametroMule();
+        // String dataType = field.getTipoDelParametroMule();
+        String dataType = "";
 
         String nombreParametro = field.getNombreDelParametro();
 

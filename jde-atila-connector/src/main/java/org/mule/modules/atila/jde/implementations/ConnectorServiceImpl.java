@@ -16,29 +16,30 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
+import org.mule.modules.atila.jde.exceptions.ExternalConnectorException;
+import org.mule.modules.atila.jde.exceptions.InternalConnectorException;
 import org.mule.modules.atila.jde.interfaces.ConnectorServiceInterface;
 import org.mule.modules.atila.jde.models.JDEAtilaConfiguracion;
 import org.mule.modules.atila.jde.models.ParametroInput;
-import org.mule.modules.connector.exceptions.ExternalConnectorException;
-import org.mule.modules.connector.exceptions.InternalConnectorException;
 
-import com.acqua.dragonfishserverwp.servicios.ConfiguracionRequest;
-import com.acqua.dragonfishserverwp.servicios.DragonFishServiceGrpc.DragonFishServiceBlockingStub;
-import com.acqua.dragonfishserverwp.servicios.EjecutarOperacionRequest;
-import com.acqua.dragonfishserverwp.servicios.EjecutarOperacionResponse;
-import com.acqua.dragonfishserverwp.servicios.EjecutarOperacionValores;
-import com.acqua.dragonfishserverwp.servicios.GetMetadataRequest;
-import com.acqua.dragonfishserverwp.servicios.GetMetadataResponse;
-import com.acqua.dragonfishserverwp.servicios.OperacionesRequest;
-import com.acqua.dragonfishserverwp.servicios.OperacionesResponse;
-import com.acqua.dragonfishserverwp.servicios.TipoDelParametroInput;
-import com.acqua.dragonfishserverwp.servicios.TipoDelParametroOutput;
-import com.acqua.dragonfishserverwp.servicios.TokenResponse;
 import com.google.shade.common.cache.CacheBuilder;
 import com.google.shade.common.cache.CacheLoader;
 import com.google.shade.common.cache.LoadingCache;
 import com.google.shade.protobuf.ByteString;
 import com.google.shade.protobuf.Timestamp;
+import com.jde.jdeserverwp.servicios.EjecutarOperacionRequest;
+import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
+import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
+import com.jde.jdeserverwp.servicios.GetMetadataRequest;
+import com.jde.jdeserverwp.servicios.GetMetadataResponse;
+import com.jde.jdeserverwp.servicios.JDEServiceGrpc.JDEServiceBlockingStub;
+import com.jde.jdeserverwp.servicios.Operacion;
+import com.jde.jdeserverwp.servicios.OperacionesRequest;
+import com.jde.jdeserverwp.servicios.OperacionesResponse;
+import com.jde.jdeserverwp.servicios.SessionRequest;
+import com.jde.jdeserverwp.servicios.SessionResponse;
+import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
+import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
 
 import io.grpc.StatusRuntimeException;
 
@@ -48,11 +49,8 @@ import org.slf4j.LoggerFactory;
 public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
     private static final Logger logger = LoggerFactory.getLogger(ConnectorServiceImpl.class);
-    private static final String ID_CLIENTE = String.valueOf("idCliente");
-    private static final String AUTTHORIZATION = String.valueOf("authorization");
-    private static final String BASE_DE_DATOS = String.valueOf("baseDeDatos");
 
-    private DragonFishServiceBlockingStub stub;
+    private JDEServiceBlockingStub stub;
     @SuppressWarnings("unused")
     private JDEAtilaConfiguracion configuracion;
 
@@ -124,29 +122,28 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     }
 
     @Override
-    public void login(DragonFishServiceBlockingStub stub, JDEAtilaConfiguracion configuracion)
+    public void login(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion)
             throws InternalConnectorException, ExternalConnectorException {
 
-        logger.info("DragonFish Service - Inicio login ");
+        logger.info("JDE Atina Service - Login... ");
 
-        TokenResponse tokenResponse = null;
+        SessionResponse tokenResponse = null;
 
         try {
 
             tokenResponse = stub.login(
-                    ConfiguracionRequest.newBuilder()
-                            .setBaseUrl(configuracion.getUrlBase())
-                            .setCodigoConfCliente(configuracion.getCodigoConfCliente())
-                            .setClavePrivadaConfCliente(configuracion.getClavePrivadaConfCliente())
-                            .setUser(configuracion.getUser())
-                            .setPassword(configuracion.getPassword())
-                            .setExpiracion(configuracion.getExpiracion())
-                            .setConnectorName("DRAGON")
+                    SessionRequest.newBuilder()
+                            .setUser(configuracion.getJdeUser())
+                            .setPassword(configuracion.getJdePassword())
+                            .setEnvironment(configuracion.getJdeEnvironment())
+                            .setRole(configuracion.getJdeRole())
+                            .setWsconnection(configuracion.getWsConnection())
+                            .setSessionId(configuracion.getSessionID())
                             .build());
 
         } catch (StatusRuntimeException e) {
 
-            logger.error("DragonFish Service + Error: " + e.getMessage());
+            logger.error("JDE Atina Service + Error: " + e.getMessage());
 
             if (e.getMessage()
                     .endsWith("%ExternalServiceException%") ||
@@ -159,10 +156,10 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 String errorMessage = tokens[0];
                 String claseDeLaOperacion = tokens[1];
                 String metodoDeLaOperacion = tokens[2];
-                int httpStatus = Integer.parseInt(tokens[3]);
-                String httpStatusReason = tokens[4];
-                String request = tokens[5];
-                String response = tokens[6];
+                int httpStatus = 0;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
 
                 throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
 
@@ -186,19 +183,19 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
         if (tokenResponse != null) {
 
-            logger.info("DragonFish Service - JWT: [" + tokenResponse.getJwt() + "]");
+            logger.info("JDE Atina Service - SessionID: [" + tokenResponse.getSessionId() + "]");
         }
 
-        logger.info("DragonFish Service - End login ");
+        logger.info("JDE Atina Service - End login ");
 
-        configuracion.setTocken(tokenResponse.getJwt());
+        configuracion.setSessionID(tokenResponse.getSessionId());
     }
 
     @Override
-    public Map<String, String> getMetadataOperations(DragonFishServiceBlockingStub stub, JDEAtilaConfiguracion configuracion)
+    public Map<String, String> getMetadataOperations(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion)
             throws InternalConnectorException {
 
-        logger.info("DRAGONFISH - ConnectorServiceImpl - getMetadataOperations ...");
+        logger.info("JDE Atina Service - ConnectorServiceImpl - getMetadataOperations ...");
 
         HashMap<String, String> operations = new HashMap<String, String>();
 
@@ -208,17 +205,26 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
             operacionesResponse = stub.operaciones(
                     OperacionesRequest.newBuilder()
-                            .setConnectorName("DRAGON")
+                            .setConnectorName("WS")
+                            .setUser(configuracion.getJdeUser())
+                            .setPassword(configuracion.getJdePassword())
+                            .setEnvironment(configuracion.getJdeEnvironment())
+                            .setRole(configuracion.getJdeRole())
+                            .setSessionId(configuracion.getSessionID())
+                            .setWsconnection(configuracion.getWsConnection())
                             .build());
 
-            for (com.acqua.dragonfishserverwp.servicios.Operacion operacion : operacionesResponse.getOperacionesList()) {
-                logger.info("Operacion: " + operacion.getIdOperacion() + " > " + operacion.getNombreOperacion());
+            for (Operacion operacion : operacionesResponse.getOperacionesList()) {
+
+                logger.info("Operation: " + operacion.getIdOperacion() + " > " + operacion.getNombreOperacion());
+
                 operations.put(operacion.getIdOperacion(), operacion.getNombreOperacion());
+
             }
 
         } catch (StatusRuntimeException e) {
 
-            logger.error("DragonFish Service + Error: " + e.getMessage());
+            logger.error("JDE Atina Service + Error: " + e.getMessage());
 
             String[] tokens = StringUtils.split(e.getMessage(), "|");
 
@@ -239,7 +245,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<TipoDelParametroInput> getInputMetadataForOperation(DragonFishServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, String operation)
+    public List<TipoDelParametroInput> getInputMetadataForOperation(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, String operation)
             throws InternalConnectorException {
 
         logger.info("DRAGONFISH - ConnectorServiceImpl - getInputMetadataForOperation for operation: " + operation);
@@ -276,7 +282,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<TipoDelParametroOutput> getOutputMetadataForOperation(DragonFishServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, String operation)
+    public List<TipoDelParametroOutput> getOutputMetadataForOperation(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, String operation)
             throws InternalConnectorException {
 
         logger.info("DRAGONFISH - ConnectorServiceImpl - getInputMetadataForOperation for operation: " + operation);
@@ -313,7 +319,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Object ejecutarServicio(DragonFishServiceBlockingStub stub,
+    public Object ejecutarServicio(JDEServiceBlockingStub stub,
             JDEAtilaConfiguracion configuracion, String entityType, Map<String, Object> entityData)
             throws InternalConnectorException, ExternalConnectorException {
 
@@ -412,39 +418,6 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             ArrayList<EjecutarOperacionValores> valores = new ArrayList<EjecutarOperacionValores>();
 
             // --------------------------------------------------------------
-            // idCliente
-            // --------------------------------------------------------------
-            //
-            EjecutarOperacionValores.Builder valor1 = EjecutarOperacionValores.newBuilder();
-            valor1.setNombreDelParametro("idCliente");
-            valor1.setValueAsString(configuracion.getCodigoConfCliente());
-            EjecutarOperacionValores valorValido = valor1.build();
-
-            valores.add(valorValido);
-
-            // --------------------------------------------------------------
-            // authorization
-            // --------------------------------------------------------------
-            //
-            EjecutarOperacionValores.Builder valor2 = EjecutarOperacionValores.newBuilder();
-            valor2.setNombreDelParametro("authorization");
-            valor2.setValueAsString(configuracion.getTocken());
-            valorValido = valor2.build();
-
-            valores.add(valorValido);
-
-            // --------------------------------------------------------------
-            // authorization
-            // --------------------------------------------------------------
-            //
-            EjecutarOperacionValores.Builder valor3 = EjecutarOperacionValores.newBuilder();
-            valor3.setNombreDelParametro("baseDeDatos");
-            valor3.setValueAsString("");
-            valorValido = valor3.build();
-
-            valores.add(valorValido);
-
-            // --------------------------------------------------------------
             // request
             // --------------------------------------------------------------
             //
@@ -460,10 +433,15 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
             EjecutarOperacionResponse ejecutarOperacionesResponse = stub.ejecutarOperacion(EjecutarOperacionRequest
                     .newBuilder()
-                    .setBaseUrl(configuracion.getUrlBase())
+                    .setConnectorName("WS")
                     .setOperacionKey(entityType)
+                    .setUser(configuracion.getJdeUser())
+                    .setPassword(configuracion.getJdePassword())
+                    .setEnvironment(configuracion.getJdeEnvironment())
+                    .setRole(configuracion.getJdeRole())
+                    .setSessionId(configuracion.getSessionID())
+                    .setWsconnection(configuracion.getWsConnection())
                     .addAllListaDeValores(valores)
-                    .setConnectorName("DRAGON")
                     .build());
 
             logger.info(" Valores Retornados: ");
@@ -607,7 +585,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
         Iterator<Map.Entry<String, Object>> iterador = values.iterator();
 
-        logger.info("DragonFish Service - Procesando valores recibidos...");
+        logger.info("JDE Atina Service - Procesando valores recibidos...");
 
         while (iterador.hasNext()) {
 
@@ -625,7 +603,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 valorNuevo.setNombreDelParametro(valor.getKey());
 
                 logger.info("-------------------------------------------------------------------------------------------");
-                logger.info("DragonFish Service -                     Parametro: Nombre: " + valor.getKey());
+                logger.info("JDE Atina Service -                     Parametro: Nombre: " + valor.getKey());
                 logger.info("                                                    Tipo del Parametro:" + className);
 
                 // --------------------------------------------------------------
@@ -651,12 +629,10 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
                 }
 
-                logger.info("DragonFish Service -                     Metadata: Parametro:" + metadataDelInput.getParametro()
+                logger.info("JDE Atina Service -                     Metadata: Parametro:" + metadataDelInput.getParametro()
                         .getNombreDelParametro());
-                logger.info("DragonFish Service -                             : Tipo Java:" + metadataDelInput.getParametro()
+                logger.info("JDE Atina Service -                             : Tipo Java:" + metadataDelInput.getParametro()
                         .getTipoDelParametroJava());
-                logger.info("DragonFish Service -                             : Tipo Mule:" + metadataDelInput.getParametro()
-                        .getTipoDelParametroMule());
 
                 // --------------------------------------------------------------
                 // Get Metadata
@@ -1160,25 +1136,25 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
             GetMetadataResponse metadataResponse = stub.getMetadaParaOperacion(
                     GetMetadataRequest.newBuilder()
+                            .setConnectorName("WS")
+                            .setUser(configuracion.getJdeUser())
+                            .setPassword(configuracion.getJdePassword())
+                            .setEnvironment(configuracion.getJdeEnvironment())
+                            .setRole(configuracion.getJdeRole())
+                            .setSessionId(configuracion.getSessionID())
+                            .setWsconnection(configuracion.getWsConnection())
                             .setOperacionKey(operation)
-                            .setConnectorName("DRAGON")
                             .build());
 
             for (TipoDelParametroInput tipoDelParametroInput : metadataResponse.getListaDeParametrosInputList()) {
 
-                if (!tipoDelParametroInput.getNombreDelParametro()
-                        .equals(ID_CLIENTE) &&
-                        !tipoDelParametroInput.getNombreDelParametro()
-                                .equals(AUTTHORIZATION) &&
-                        !tipoDelParametroInput.getNombreDelParametro()
-                                .equals(BASE_DE_DATOS))
-                    metadataList.add(tipoDelParametroInput);
+                metadataList.add(tipoDelParametroInput);
 
             }
 
         } catch (StatusRuntimeException e) {
 
-            logger.error("DragonFish Service + Error: " + e.getMessage());
+            logger.error("JDE Atina Service + Error: " + e.getMessage());
 
             String errorMessage = e.getMessage();
             String claseDeLaOperacion = "";
@@ -1204,8 +1180,14 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
             GetMetadataResponse metadataResponse = stub.getMetadaParaOperacion(
                     GetMetadataRequest.newBuilder()
+                            .setConnectorName("WS")
+                            .setUser(configuracion.getJdeUser())
+                            .setPassword(configuracion.getJdePassword())
+                            .setEnvironment(configuracion.getJdeEnvironment())
+                            .setRole(configuracion.getJdeRole())
+                            .setSessionId(configuracion.getSessionID())
+                            .setWsconnection(configuracion.getWsConnection())
                             .setOperacionKey(operation)
-                            .setConnectorName("DRAGON")
                             .build());
 
             List<TipoDelParametroOutput> valoresMetadata = metadataResponse.getListaDeParametrosOutputList();
@@ -1216,7 +1198,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
         } catch (StatusRuntimeException e) {
 
-            logger.error("DragonFish Service + Error: " + e.getMessage());
+            logger.error("JDE Atina Service + Error: " + e.getMessage());
 
             String errorMessage = e.getMessage();
             String claseDeLaOperacion = "";
@@ -1238,12 +1220,6 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
         return LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos()), ZoneId.of("UTC"))
                 .toLocalDate();
-    }
-
-    @Override
-    public String getToken() throws InternalConnectorException {
-        return this.configuracion.getTocken();
-
     }
 
 }
