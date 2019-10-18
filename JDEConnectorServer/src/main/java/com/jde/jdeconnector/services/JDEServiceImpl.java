@@ -20,6 +20,7 @@ import com.jde.jdeconnectorserver.model.Configuracion;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
 import com.jde.jdeserverwp.servicios.GetMetadataResponse;
+import com.jde.jdeserverwp.servicios.IsConnectedResponse;
 import com.jde.jdeserverwp.servicios.JDEServiceGrpc;
 import com.jde.jdeserverwp.servicios.Operacion;
 import com.jde.jdeserverwp.servicios.OperacionesResponse;
@@ -137,6 +138,123 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             
             StringBuilder sb = new StringBuilder();
             sb.append("Error Creating Connection");
+            sb.append("|");
+            sb.append(ex.getMessage());
+            sb.append("|%ServiceServerException%");
+ 
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(sb.toString())
+                    .withCause(ex)
+                    .asRuntimeException());
+             
+        } 
+
+        logger.info("Swagger Login: End Login");
+
+    } 
+    
+    @Override
+    public void logout(com.jde.jdeserverwp.servicios.LogoutRequest request,
+            io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.SessionResponse> responseObserver) {
+
+        
+        logger.info("JDE Logout: Begin");
+          
+        // -----------------------------------------
+        // Generar Session
+        // -----------------------------------------
+        //
+         
+        try {
+ 
+            JDEPoolConnections.getInstance().disconnect((int) request.getSessionId());
+             
+            SessionResponse response = SessionResponse.newBuilder().setSessionId(0).build();
+   
+            responseObserver.onNext(response);
+
+            responseObserver.onCompleted();
+            
+        } catch (JDESingleConnectionException ex) {
+             
+            StringBuilder sb = new StringBuilder();
+            sb.append("Error with Logout");
+            sb.append("|");
+            sb.append(ex.getMessage());
+            sb.append("|%ExternalServiceException%");
+ 
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(sb.toString())
+                    .withCause(ex)
+                    .asRuntimeException());
+ 
+      
+        } catch (Exception ex) {
+            
+            String msg = "Error WS Server: " + ex.getMessage();
+            logger.error(msg, ex);
+            
+            StringBuilder sb = new StringBuilder();
+            sb.append("Error with Logout");
+            sb.append("|");
+            sb.append(ex.getMessage());
+            sb.append("|%ServiceServerException%");
+ 
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(sb.toString())
+                    .withCause(ex)
+                    .asRuntimeException());
+             
+        } 
+
+        logger.info("Swagger Login: End Login");
+
+    } 
+    
+    @Override
+    public void isConnected(com.jde.jdeserverwp.servicios.IsConnectedRequest request,
+            io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.IsConnectedResponse> responseObserver) {
+
+        
+        logger.info("JDE Logout: Begin");
+          
+        // -----------------------------------------
+        // Generar Session
+        // -----------------------------------------
+        //
+         
+        try {
+ 
+            int sessionId = JDEPoolConnections.getInstance().getSingleConnection((int) request.getSessionId()).isJDEConnected();
+             
+            IsConnectedResponse response = IsConnectedResponse.newBuilder().setConnected(sessionId!=0).build();
+            
+            responseObserver.onNext(response);
+
+            responseObserver.onCompleted();
+             
+            
+        } catch (JDESingleConnectionException ex) {
+             
+            StringBuilder sb = new StringBuilder();
+            sb.append("Error with Logout");
+            sb.append("|");
+            sb.append(ex.getMessage());
+            sb.append("|%ExternalServiceException%");
+ 
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(sb.toString())
+                    .withCause(ex)
+                    .asRuntimeException());
+ 
+      
+        } catch (Exception ex) {
+            
+            String msg = "Error WS Server: " + ex.getMessage();
+            logger.error(msg, ex);
+            
+            StringBuilder sb = new StringBuilder();
+            sb.append("Error with Logout");
             sb.append("|");
             sb.append(ex.getMessage());
             sb.append("|%ServiceServerException%");

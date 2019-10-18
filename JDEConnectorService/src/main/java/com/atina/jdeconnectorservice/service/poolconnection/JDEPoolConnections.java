@@ -110,6 +110,7 @@ public class JDEPoolConnections {
         if(this.pool.containsKey(sessionID))
         {
            this.pool.get(sessionID).disconnect();
+           this.pool.remove(sessionID);
         }
         else
         {

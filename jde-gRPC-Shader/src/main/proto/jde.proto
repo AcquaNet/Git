@@ -32,7 +32,12 @@ service JDEService {
   //
   // Genera JWT y Valida Conexion a JDE
   // position.
+
+  rpc Logout(LogoutRequest) returns (SessionResponse) {}
+
   rpc Login(SessionRequest) returns (SessionResponse) {}
+
+  rpc IsConnected(IsConnectedRequest) returns (IsConnectedResponse) {}
   
   rpc Operaciones(OperacionesRequest) returns (OperacionesResponse) {}
   
@@ -40,6 +45,21 @@ service JDEService {
   
   rpc EjecutarOperacion(EjecutarOperacionRequest) returns (EjecutarOperacionResponse) {}
   
+}
+
+// Configuracion del la Conexion a JDE
+message LogoutRequest {
+  int64 sessionId = 1;
+  bool  wsconnection = 2;
+}
+
+message IsConnectedRequest {
+  int64 sessionId = 1;
+  bool  wsconnection = 2;
+}
+
+message IsConnectedResponse { 
+  bool  connected = 1;
 }
 
 // Configuracion del la Conexion a JDE

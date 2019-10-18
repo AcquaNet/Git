@@ -11,8 +11,11 @@ import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
 import com.jde.jdeserverwp.servicios.GetMetadataRequest;
 import com.jde.jdeserverwp.servicios.GetMetadataResponse;
+import com.jde.jdeserverwp.servicios.IsConnectedRequest;
+import com.jde.jdeserverwp.servicios.IsConnectedResponse;
 import com.jde.jdeserverwp.servicios.JDEServiceGrpc;
 import com.jde.jdeserverwp.servicios.JDEServiceGrpc.JDEServiceBlockingStub;
+import com.jde.jdeserverwp.servicios.LogoutRequest;
 import com.jde.jdeserverwp.servicios.Operacion;
 import com.jde.jdeserverwp.servicios.OperacionesRequest;
 import com.jde.jdeserverwp.servicios.OperacionesResponse;
@@ -35,7 +38,8 @@ public class MainJDEClient {
 
     private static final Logger logger = LoggerFactory.getLogger(MainJDEClient.class);
     
-    private static final Boolean testWS_WriteOffProcessingOptions = Boolean.TRUE;
+    private static final Boolean testWS_Logout = Boolean.TRUE;
+    private static final Boolean testWS_WriteOffProcessingOptions = Boolean.FALSE;
     private static final Boolean testWS_ItemPrice = Boolean.FALSE;
     private static final Boolean testWS_PurchaseOrdersForApprover = Boolean.FALSE;
     private static final Boolean testBSFN = Boolean.FALSE;
@@ -672,6 +676,139 @@ public class MainJDEClient {
             logger.info("Resonpse  ");
             logger.info(ejecutarOperacionesResponse.toString());
              
+        }
+        
+        if(testWS_Logout)
+        {
+              
+            configuracion.setWsConnection(Boolean.TRUE);
+
+            // ===========================  
+            // Crear Canal de Comunicacion  
+            // ===========================  
+            //
+            ManagedChannel channel = ManagedChannelBuilder.forAddress(configuracion.getServidorServicio(), configuracion.getPuertoServicio())
+                    .usePlaintext()
+                    .build();
+
+            // =========================== 
+            // Creacion del Stub           
+            // ===========================  
+            // 
+            JDEServiceBlockingStub stub = JDEServiceGrpc.newBlockingStub(channel);
+
+            int sessionID = 0;
+            int sessionIDOld = 0;
+
+            // ===========================  
+            // Login                       
+            // ===========================  
+            //
+            try {
+
+                SessionResponse tokenResponse = stub.login(
+                        SessionRequest.newBuilder()
+                                .setUser(configuracion.getUser())
+                                .setPassword(configuracion.getPassword())
+                                .setEnvironment(configuracion.getEnvironment())
+                                .setRole(configuracion.getRole())
+                                .setWsconnection(configuracion.getWsConnection())
+                                .build());
+
+                sessionID = (int) tokenResponse.getSessionId();
+                
+                sessionIDOld = sessionID;
+
+                System.out.println("Logeado con Session [" + tokenResponse.getSessionId() + "]");
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo ");
+
+                throw new RuntimeException("Error Logeando", null);
+
+            }
+            
+            // ===========================  
+            // Is Connected                       
+            // ===========================  
+            //
+            
+            Boolean isConnected = Boolean.FALSE;
+            
+            try {
+
+                IsConnectedResponse tokenResponse = stub.isConnected(
+                        IsConnectedRequest.newBuilder()
+                                .setSessionId(sessionID)
+                                .setWsconnection(configuracion.getWsConnection())
+                                .build());
+
+                isConnected =  tokenResponse.getConnected();
+
+                System.out.println("Logeado con Session [" + sessionID + "] ? " + isConnected);
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo ");
+
+                throw new RuntimeException("Error Logeando", null);
+
+            }
+            
+            // ===========================  
+            // Logout                   
+            // ===========================  
+            //
+            
+            try {
+
+                SessionResponse tokenResponse = stub.logout(
+                        LogoutRequest.newBuilder()
+                                .setSessionId(sessionID)
+                                .setWsconnection(configuracion.getWsConnection())
+                                .build());
+
+                sessionID =  (int) tokenResponse.getSessionId();
+
+                System.out.println("Logeado con Session [" + sessionID + "] ? " + isConnected);
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo ");
+
+                throw new RuntimeException("Error Logeando", null);
+
+            }
+            
+            // ===========================  
+            // Is Connected                       
+            // ===========================  
+            //
+            
+            isConnected = Boolean.FALSE;
+            
+            try {
+
+                IsConnectedResponse tokenResponse = stub.isConnected(
+                        IsConnectedRequest.newBuilder()
+                                .setSessionId(sessionIDOld)
+                                .setWsconnection(configuracion.getWsConnection())
+                                .build());
+
+                isConnected =  tokenResponse.getConnected();
+
+                System.out.println("Logout con Session [" + sessionID + "] ");
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo ");
+
+                throw new RuntimeException("Error Logeando", null);
+
+            }
+            
+            
         }
 
     }
