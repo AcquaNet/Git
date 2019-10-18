@@ -54,7 +54,7 @@ public class AbstractTestCases extends AbstractTestCase<JDEAtinaConnector> {
 
         Object returnValue = null;
 
-        returnValue = getConnector().servicio(entityType, entityData);
+        returnValue = getConnector().invokeWS(entityType, entityData);
 
         if (returnValue instanceof HashMap) {
 

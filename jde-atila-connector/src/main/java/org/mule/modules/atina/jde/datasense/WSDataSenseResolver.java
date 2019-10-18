@@ -33,9 +33,9 @@ import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
  * Category which can differentiate between input or output MetaDataRetriever
  */
 @MetaDataCategory
-public class ServicioDataSenseResolver {
+public class WSDataSenseResolver {
 
-    private static final Logger logger = LoggerFactory.getLogger(ServicioDataSenseResolver.class);
+    private static final Logger logger = LoggerFactory.getLogger(WSDataSenseResolver.class);
 
     @Inject
     protected JDEAtinaConnector connector;
@@ -52,9 +52,9 @@ public class ServicioDataSenseResolver {
     @MetaDataKeyRetriever
     public List<MetaDataKey> getMetaDataKeys() throws Exception {
 
-        logger.info("DRAGONFISH - DataSenseResolver - getMetaDataKeys ...");
+        logger.info("JDE Atina - WSDataSenseResolver - getMetaDataKeys ...");
 
-        logger.info("DragonFish Service - Recuperando Operaciones Disponibles de DragonFish");
+        logger.info("JDE Atina - WSDataSenseResolver - Getting WS's ...");
 
         List<MetaDataKey> keys = new ArrayList<MetaDataKey>();
 
@@ -67,13 +67,13 @@ public class ServicioDataSenseResolver {
                         .getConfiguracion());
 
         for (String key : operationsAsObject.keySet()) {
-            logger.info("DragonFish Service -                  Clave Operacion: " + key + " Valor Operacion: "
+            logger.info("JDE Atina - WSDataSenseResolver -                  WS: " + key + " Valor Operacion: "
                     + operationsAsObject.get(key));
             keys.add(new DefaultMetaDataKey(key, operationsAsObject.get(key)));
         }
 
-        logger.info("DragonFish Service - Recuperando Operaciones Disponibles de DragonFish ha recuperado "
-                + keys.size() + " operaciones.");
+        logger.info("JDE Atina - WSDataSenseResolver - There is "
+                + keys.size() + " WS available.");
 
         return keys;
 
@@ -91,7 +91,7 @@ public class ServicioDataSenseResolver {
     @MetaDataRetriever
     public MetaData getMetaData(MetaDataKey key) throws Exception {
 
-        logger.info("DRAGONFISH - DataSenseResolver - getMetaData for key: [" + key.getId() + "] Display Name: ["
+        logger.info("JDE Atina - WSDataSenseResolver - GetMetaData for key: [" + key.getId() + "] Display Name: ["
                 + key.getDisplayName() + "]");
 
         metadataOutput = null;

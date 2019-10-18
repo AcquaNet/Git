@@ -1,6 +1,5 @@
 package org.mule.modules.atina.jde;
-
-import java.util.HashMap;
+ 
 import java.util.Map;
 
 import org.mule.api.ConnectionException;
@@ -12,10 +11,9 @@ import org.mule.api.annotations.MetaDataScope;
 import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.param.Default;
 import org.mule.modules.atina.jde.config.ConnectorConfig;
-import org.mule.modules.atina.jde.datasense.ServicioDataSenseResolver;
+import org.mule.modules.atina.jde.datasense.WSDataSenseResolver;
 import org.mule.modules.atina.jde.exceptions.InternalConnectorException;
-
-import io.grpc.StatusRuntimeException;
+ 
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,14 +39,14 @@ public class JDEAtinaConnector {
      */
 
     @Processor(friendlyName = "Invoke WS")
-    @MetaDataScope(ServicioDataSenseResolver.class)
-    public Object servicio(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) String entityType, @Default("#[payload]") Map<String, Object> entityData) throws InternalConnectorException, ConnectionException {
+    @MetaDataScope(WSDataSenseResolver.class)
+    public Object invokeWS(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) String entityType, @Default("#[payload]") Map<String, Object> entityData) throws InternalConnectorException, ConnectionException {
 
-        logger.info("DRAGONFISH - Ejecutar Servicio: [" + entityType + "]");
+        logger.info("JDE Atina - Invoke WS: [" + entityType + "]");
 
         if (!config.isConnected())
         {
-            logger.info("DRAGONFISH - Token Expired");
+            logger.info("JDE Atina - Token Expired");
 
             this.getConfig()
                     .getService()
@@ -58,9 +56,9 @@ public class JDEAtinaConnector {
 
         }
 
-        Object entity = ejecutarServicio(entityType, entityData);
+        Object entity = invokeWebService(entityType, entityData);
 
-        logger.info("DRAGONFISH - Servicio: [" + entityType + "] Ejecutado");
+        logger.info("JDE Atina - WS: [" + entityType + "] Executed");
 
         return entity;
     }
@@ -73,7 +71,7 @@ public class JDEAtinaConnector {
         this.config = config;
     }
 
-    private Object ejecutarServicio(String entityType, Map<String, Object> entityData) {
+    private Object invokeWebService(String entityType, Map<String, Object> entityData) {
 
         Object returnValue = this.getConfig()
                 .getService()

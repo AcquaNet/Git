@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.mule.modules.atina.jde.JDEAtinaConnector;
-import org.mule.modules.atina.jde.datasense.ServicioDataSenseResolver;
+import org.mule.modules.atina.jde.datasense.WSDataSenseResolver;
 
 public class ServicioMetaDataTestCases extends AbstractMetaDataTestCases {
 
@@ -16,7 +16,7 @@ public class ServicioMetaDataTestCases extends AbstractMetaDataTestCases {
     }
 
     public ServicioMetaDataTestCases() {
-        super(keys, ServicioDataSenseResolver.class, JDEAtinaConnector.class);
+        super(keys, WSDataSenseResolver.class, JDEAtinaConnector.class);
 
     }
 
