@@ -17,19 +17,19 @@
     <Loggers>
     	 
     	<AsyncLogger
-			name="org.mule.modules.jde.atila.DragonfishConnector"
+			name="org.mule.modules.jde.atina.DragonfishConnector"
 			level="DEBUG" />
 		<AsyncLogger
-			name="org.mule.modules.jde.atila.config.ConnectorConfig"
+			name="org.mule.modules.jde.atina.config.ConnectorConfig"
 			level="DEBUG" />
 		<AsyncLogger
-			name="org.mule.modules.jde.atila.datasense.DataSenseResolver"
+			name="org.mule.modules.jde.atina.datasense.DataSenseResolver"
 			level="DEBUG" />
         <AsyncLogger
-			name="org.mule.modules.jde.atila.implementations.ConnectorServiceImpl"
+			name="org.mule.modules.jde.atina.implementations.ConnectorServiceImpl"
 			level="DEBUG" />
 		<AsyncLogger
-			name="org.mule.modules.jde.atila.implementations.GRPCReflectionUtil"
+			name="org.mule.modules.jde.atina.implementations.GRPCReflectionUtil"
 			level="DEBUG" />
 		
         
