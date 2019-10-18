@@ -3,8 +3,7 @@ package org.mule.modules.jde.atila.automation.system;
 import static org.junit.Assert.fail;
 
 import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.Before; 
 import org.junit.Test;
 import org.mule.api.ConnectionException;
 import org.mule.modules.atila.jde.exceptions.ExternalConnectorException;

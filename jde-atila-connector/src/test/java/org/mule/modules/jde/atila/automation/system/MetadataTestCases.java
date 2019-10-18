@@ -38,7 +38,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
 
     private static final String LOG_PREFIX = "DragonFish - SYSTEM_TEST - ConfigConnectTestCases:";
 
-    public static org.mule.modules.atila.jde.config.ConnectorConfig configDragonFish;
+    public static org.mule.modules.atila.jde.config.ConnectorConfig configJDEAtina;
 
     private static ConnectorTestContext<JDEAtilaConnector> context = null;
     private static ConnectorDispatcher<JDEAtilaConnector> dispatcher = null;
@@ -62,44 +62,31 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
     @AfterClass
     public static void close() throws Exception {
 
-        if (configDragonFish != null)
+        if (configJDEAtina != null)
         {
-            configDragonFish.disconnect();
+            configJDEAtina.disconnect();
         }
 
     }
 
-    @Test
-    @Ignore
-    public void validarMetadata() throws Exception {
+    @Test 
+    public void validarWSMetadata() throws Exception {
 
         logger.info(LOG_PREFIX + " validarMetadata() INICIO ");
 
-        configDragonFish = new org.mule.modules.atila.jde.config.ConnectorConfig();
+        configJDEAtina = new org.mule.modules.atila.jde.config.ConnectorConfig();
+ 
+        ConnectorServiceInterface servicio = configJDEAtina.getService();
 
-        String serverName = validCredentials.getProperty("config.urlBase");
-        String codigoConfCliente = validCredentials.getProperty("config.codigoConfCliente");
-        String clavePrivadaConfCliente = validCredentials.getProperty("config.clavePrivadaConfCliente");
-        String algoritmo = validCredentials.getProperty("config.algoritmo");
-        String user = validCredentials.getProperty("config.user");
-        String password = validCredentials.getProperty("config.password");
-        Integer expiracion = Integer.valueOf(validCredentials.getProperty("config.expiracion"));
-        String servidorServicio = validCredentials.getProperty("config.servidorServicio");
-        Integer puertoServicio = Integer.valueOf(validCredentials.getProperty("config.puertoServicio"));
-
-        // configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
-
-        ConnectorServiceInterface servicio = configDragonFish.getService();
-
-        Map<String, String> operaciones = servicio.getMetadataOperations(configDragonFish.getStub(), configDragonFish.getConfiguracion());
+        Map<String, String> operaciones = servicio.getMetadataOperations(configJDEAtina.getStub(), configJDEAtina.getConfiguracion());
 
         // MetaDataKey key = new MetaDataKey();
 
         MetaDataKey mdkey = new DefaultMetaDataKey("Articulo_articuloPost", "Alta de Articulos");
 
-        List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configDragonFish.getStub(), configDragonFish.getConfiguracion(), "Articulo_articuloPost");
+        List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(), "Articulo_articuloPost");
 
-        List<TipoDelParametroOutput> outputList = servicio.getOutputMetadataForOperation(configDragonFish.getStub(), configDragonFish.getConfiguracion(), "Articulo_articuloPost");
+        List<TipoDelParametroOutput> outputList = servicio.getOutputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(), "Articulo_articuloPost");
 
         logger.info(LOG_PREFIX + " validarConexion() FIN ");
 
@@ -147,7 +134,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
 
         logger.info(LOG_PREFIX + " validarMetadata() INICIO ");
 
-        configDragonFish = new org.mule.modules.atila.jde.config.ConnectorConfig();
+        configJDEAtina = new org.mule.modules.atila.jde.config.ConnectorConfig();
 
         String serverName = validCredentials.getProperty("config.urlBase");
         String codigoConfCliente = validCredentials.getProperty("config.codigoConfCliente");
@@ -161,11 +148,11 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
 
         // configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
 
-        ConnectorServiceInterface servicio = configDragonFish.getService();
+        ConnectorServiceInterface servicio = configJDEAtina.getService();
 
         try
         {
-            Map<String, String> operaciones = servicio.getMetadataOperations(configDragonFish.getStub(), configDragonFish.getConfiguracion());
+            Map<String, String> operaciones = servicio.getMetadataOperations(configJDEAtina.getStub(), configJDEAtina.getConfiguracion());
 
         } catch (InternalConnectorException e)
         {
@@ -180,11 +167,12 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
     }
 
     @Test
+    @Ignore
     public void validInputMetadata() throws Exception {
 
         logger.info(LOG_PREFIX + " validarMetadata() INICIO ");
 
-        configDragonFish = new org.mule.modules.atila.jde.config.ConnectorConfig();
+        configJDEAtina = new org.mule.modules.atila.jde.config.ConnectorConfig();
 
         String serverName = validCredentials.getProperty("config.urlBase");
         String codigoConfCliente = validCredentials.getProperty("config.codigoConfCliente");
@@ -198,7 +186,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
 
         // configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
 
-        ConnectorServiceInterface servicio = configDragonFish.getService();
+        ConnectorServiceInterface servicio = configJDEAtina.getService();
 
         // MetaDataKey key = new MetaDataKey();
 
@@ -206,7 +194,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
 
         try
         {
-            List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configDragonFish.getStub(), configDragonFish.getConfiguracion(),
+            List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(),
                     "ArticuloById_articuloByIdGet");
 
         } catch (InternalConnectorException e)
@@ -227,7 +215,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
 
         logger.info(LOG_PREFIX + " validarMetadata() INICIO ");
 
-        configDragonFish = new org.mule.modules.atila.jde.config.ConnectorConfig();
+        configJDEAtina = new org.mule.modules.atila.jde.config.ConnectorConfig();
 
         String serverName = validCredentials.getProperty("config.urlBase");
         String codigoConfCliente = validCredentials.getProperty("config.codigoConfCliente");
@@ -241,7 +229,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
 
         // configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
 
-        ConnectorServiceInterface servicio = configDragonFish.getService();
+        ConnectorServiceInterface servicio = configJDEAtina.getService();
 
         // MetaDataKey key = new MetaDataKey();
 
@@ -249,7 +237,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
 
         try
         {
-            List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configDragonFish.getStub(), configDragonFish.getConfiguracion(), "Articulo_articuloPostX");
+            List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(), "Articulo_articuloPostX");
 
         } catch (InternalConnectorException e)
         {
@@ -269,7 +257,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
 
         logger.info(LOG_PREFIX + " validarMetadata() INICIO ");
 
-        configDragonFish = new org.mule.modules.atila.jde.config.ConnectorConfig();
+        configJDEAtina = new org.mule.modules.atila.jde.config.ConnectorConfig();
 
         String serverName = validCredentials.getProperty("config.urlBase");
         String codigoConfCliente = validCredentials.getProperty("config.codigoConfCliente");
@@ -283,7 +271,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
 
         // configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
 
-        ConnectorServiceInterface servicio = configDragonFish.getService();
+        ConnectorServiceInterface servicio = configJDEAtina.getService();
 
         // MetaDataKey key = new MetaDataKey();
 
@@ -291,7 +279,7 @@ public class MetadataTestCases extends AbstractConfigConnectTestCases {
 
         try
         {
-            List<TipoDelParametroOutput> outputList = servicio.getOutputMetadataForOperation(configDragonFish.getStub(), configDragonFish.getConfiguracion(),
+            List<TipoDelParametroOutput> outputList = servicio.getOutputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(),
                     "Articulo_articuloPost");
 
         } catch (InternalConnectorException e)
