@@ -1,5 +1,5 @@
 package org.mule.modules.atina.jde;
- 
+
 import java.util.Map;
 
 import org.mule.api.ConnectionException;
@@ -13,7 +13,6 @@ import org.mule.api.annotations.param.Default;
 import org.mule.modules.atina.jde.config.ConnectorConfig;
 import org.mule.modules.atina.jde.datasense.WSDataSenseResolver;
 import org.mule.modules.atina.jde.exceptions.InternalConnectorException;
- 
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,13 +33,14 @@ public class JDEAtinaConnector {
      * @param entity
      *            Map that represents the entity
      * @return Some string
-     * @throws ConnectionException 
-     * @throws InternalConnectorException 
+     * @throws ConnectionException
+     * @throws InternalConnectorException
      */
 
     @Processor(friendlyName = "Invoke WS")
     @MetaDataScope(WSDataSenseResolver.class)
-    public Object invokeWS(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) String entityType, @Default("#[payload]") Map<String, Object> entityData) throws InternalConnectorException, ConnectionException {
+    public Object invokeWS(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) String entityType, @Default("#[payload]") Map<String, Object> entityData)
+            throws InternalConnectorException, ConnectionException {
 
         logger.info("JDE Atina - Invoke WS: [" + entityType + "]");
 

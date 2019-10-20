@@ -2,13 +2,10 @@ package org.mule.modules.jde.atina.automation.functional;
 
 import java.util.Map;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.modules.jde.atina.automation.functional.TestDataBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import junit.framework.Assert;
 
 public class EjecutarOperacionConsultaDeArticulosTestCases extends AbstractTestCases {
 

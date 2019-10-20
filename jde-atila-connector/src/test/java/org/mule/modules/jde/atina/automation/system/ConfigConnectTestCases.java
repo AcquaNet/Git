@@ -3,7 +3,7 @@ package org.mule.modules.jde.atina.automation.system;
 import static org.junit.Assert.fail;
 
 import org.junit.After;
-import org.junit.Before; 
+import org.junit.Before;
 import org.junit.Test;
 import org.mule.api.ConnectionException;
 import org.mule.modules.atina.jde.exceptions.ExternalConnectorException;
@@ -11,7 +11,7 @@ import org.mule.modules.atina.jde.exceptions.InternalConnectorException;
 import org.mule.tools.devkit.ctf.configuration.util.ConfigurationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
- 
+
 import junit.framework.Assert;
 
 public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
@@ -40,7 +40,7 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
 
     }
 
-    @Test 
+    @Test
     public void validWSConnection() throws Exception {
 
         logger.info(LOG_PREFIX + " validarConexion() INICIO ");
@@ -57,13 +57,14 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
 
         configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
 
-        Assert.assertTrue(configJDEAtina.getConfiguracion().getSessionID() != 0);
-         
+        Assert.assertTrue(configJDEAtina.getConfiguracion()
+                .getSessionID() != 0);
+
         logger.info(LOG_PREFIX + " validarConexion() FIN ");
 
     }
 
-    @Test   
+    @Test
     public void InvalidWSConexionWithExternalConnectorException() throws Exception {
 
         logger.info(LOG_PREFIX + " validarConexion() INICIO ");
@@ -80,29 +81,29 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
 
         try
         {
-        	configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
-        	
+            configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
+
         } catch (ConnectionException e)
         {
-        	
-        	ExternalConnectorException causeBy = (ExternalConnectorException) e.getCause();
-        	 
+
+            ExternalConnectorException causeBy = (ExternalConnectorException) e.getCause();
+
             logger.error("Invalid Connection: " + causeBy.getErrorMessage(), e);
             logger.error("        Error: " + causeBy.getClaseDeLaOperacion(), e);
 
             Assert.assertTrue(causeBy.getErrorMessage()
                     .startsWith("INTERNAL: Error Creating Connection"));
-            
+
             Assert.assertTrue(causeBy.getClaseDeLaOperacion()
                     .startsWith("JDE Conexion Error InvalidLoginException: Invalid UserName and/or Password"));
-            
+
         }
-          
+
         logger.info(LOG_PREFIX + " validarConexion() FIN ");
 
     }
-    
-    @Test  
+
+    @Test
     public void InvalidWSConexionWithInternalConnectorException() throws Exception {
 
         logger.info(LOG_PREFIX + " validarConexion() INICIO ");
@@ -116,31 +117,29 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
         Boolean wsConnection = Boolean.valueOf(validCredentials.getProperty("config.wsConnection"));
         String microServiceName = validCredentials.getProperty("config.microServiceName");
         Integer microServicePort = Integer.valueOf(validCredentials.getProperty("config.microServicePort"));
-         
+
         try
         {
-        	 
-        	microServiceName = "Invalid";
-        	
-        	configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
 
-        	fail("Exception not thrown");
-        	
-        	
+            microServiceName = "Invalid";
+
+            configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
+
+            fail("Exception not thrown");
+
         } catch (ConnectionException e)
         {
-        	logger.error("Invalid Connection ConnectionException : " + e.getMessage(), e); 
-        	
-        	InternalConnectorException causeBy = (InternalConnectorException) e.getCause(); 
+            logger.error("Invalid Connection ConnectionException : " + e.getMessage(), e);
+
+            InternalConnectorException causeBy = (InternalConnectorException) e.getCause();
 
             Assert.assertTrue(causeBy.getErrorMessage()
                     .startsWith("UNAVAILABLE: NameResolver returned an empty list"));
-            
-        } 
-        
+
+        }
+
         logger.info(LOG_PREFIX + " validarConexion() FIN ");
-        
 
     }
- 
+
 }

@@ -192,7 +192,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
         configuracion.setSessionID(tokenResponse.getSessionId());
     }
-    
+
     @Override
     public void logout(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion)
             throws InternalConnectorException, ExternalConnectorException {
@@ -201,10 +201,10 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
         SessionResponse tokenResponse = null;
 
-        try { 
+        try {
 
             tokenResponse = stub.logout(
-            		LogoutRequest.newBuilder() 
+                    LogoutRequest.newBuilder()
                             .setWsconnection(configuracion.getWsConnection())
                             .setSessionId(configuracion.getSessionID())
                             .build());
@@ -258,7 +258,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
         configuracion.setSessionID(tokenResponse.getSessionId());
     }
-    
+
     @Override
     public boolean isConnected(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion)
             throws InternalConnectorException, ExternalConnectorException {
@@ -267,10 +267,10 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
         IsConnectedResponse tokenResponse = null;
 
-        try { 
+        try {
 
             tokenResponse = stub.isConnected(
-            		IsConnectedRequest.newBuilder() 
+                    IsConnectedRequest.newBuilder()
                             .setWsconnection(configuracion.getWsConnection())
                             .setSessionId(configuracion.getSessionID())
                             .build());
@@ -323,7 +323,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
         logger.info("JDE Atina Service - End isConnected ");
 
         return false;
-        
+
     }
 
     @Override
@@ -358,6 +358,22 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             }
 
         } catch (StatusRuntimeException e) {
+
+            logger.error("JDE Atina Service + Error: " + e.getMessage());
+
+            String[] tokens = StringUtils.split(e.getMessage(), "|");
+
+            String errorMessage = tokens[0];
+            String claseDeLaOperacion = tokens[1];
+            String metodoDeLaOperacion = tokens[2];
+            int httpStatus = Integer.parseInt(tokens[3]);
+            String httpStatusReason = tokens[4];
+            String request = tokens[5];
+            String response = tokens[6];
+
+            throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+
+        } catch (Exception e) {
 
             logger.error("JDE Atina Service + Error: " + e.getMessage());
 
@@ -1326,10 +1342,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             .build());
 
             List<TipoDelParametroOutput> valoresMetadata = metadataResponse.getListaDeParametrosOutputList();
-
-            TipoDelParametroOutput primerMetadata = valoresMetadata.get(0);
-
-            metadataList.add(primerMetadata);
+  
+            metadataList.addAll(valoresMetadata);
 
         } catch (StatusRuntimeException e) {
 

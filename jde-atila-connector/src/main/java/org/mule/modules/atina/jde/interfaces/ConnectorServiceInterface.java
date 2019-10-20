@@ -17,7 +17,7 @@ public interface ConnectorServiceInterface {
     public abstract void logout(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion) throws InternalConnectorException;
 
     public abstract boolean isConnected(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion) throws InternalConnectorException;
- 
+
     public abstract Map<String, String> getMetadataOperations(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion) throws InternalConnectorException;
 
     public abstract List<TipoDelParametroInput> getInputMetadataForOperation(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, String operation)

@@ -18,6 +18,7 @@ import org.mule.common.metadata.MetaDataKey;
 import org.mule.modules.atina.jde.JDEAtinaConnector;
 import org.mule.modules.atina.jde.exceptions.InternalConnectorException;
 import org.mule.modules.atina.jde.interfaces.ConnectorServiceInterface;
+import org.mule.modules.atina.jde.models.JDEAtilaConfiguracion;
 import org.mule.modules.jde.atina.automation.system.AbstractConfigConnectTestCases;
 import org.mule.modules.tests.ConnectorTestUtils;
 import org.mule.tools.devkit.ctf.configuration.util.ConfigurationUtils;
@@ -68,24 +69,34 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
 
     }
 
-    @Test 
+    @SuppressWarnings("unused")
+	@Test
     public void validarWSMetadata() throws Exception {
 
         logger.info(LOG_PREFIX + " validarMetadata() INICIO ");
 
         configJDEAtina = new org.mule.modules.atina.jde.config.ConnectorConfig();
- 
+
+        String jdeUser = validCredentials.getProperty("config.jdeUser");
+        String jdePassword = validCredentials.getProperty("config.jdePassword");
+        String jdeEnvironment = validCredentials.getProperty("config.jdeEnvironment");
+        String jdeRole = validCredentials.getProperty("config.jdeRole");
+        Boolean wsConnection = Boolean.valueOf(validCredentials.getProperty("config.wsConnection"));
+        String microServiceName = validCredentials.getProperty("config.microServiceName");
+        Integer microServicePort = Integer.valueOf(validCredentials.getProperty("config.microServicePort"));
+
+        configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
+
+        Assert.assertTrue(configJDEAtina.getConfiguracion()
+                .getSessionID() != 0);
+
         ConnectorServiceInterface servicio = configJDEAtina.getService();
-
+       
         Map<String, String> operaciones = servicio.getMetadataOperations(configJDEAtina.getStub(), configJDEAtina.getConfiguracion());
+    
+        List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(), "oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
 
-//        // MetaDataKey key = new MetaDataKey();
-//
-//        MetaDataKey mdkey = new DefaultMetaDataKey("Articulo_articuloPost", "Alta de Articulos");
-//
-//        List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(), "Articulo_articuloPost");
-//
-//        List<TipoDelParametroOutput> outputList = servicio.getOutputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(), "Articulo_articuloPost");
+        List<TipoDelParametroOutput> outputList = servicio.getOutputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(), "oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
 
         logger.info(LOG_PREFIX + " validarConexion() FIN ");
 
