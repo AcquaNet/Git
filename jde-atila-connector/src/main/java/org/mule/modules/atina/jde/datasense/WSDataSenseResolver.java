@@ -151,7 +151,7 @@ public class WSDataSenseResolver {
 
     private MetaData generateOutputMetaData(final MetaDataKey key) throws Exception {
 
-        logger.info("DRAGONFISH - DataSenseResolver - getOutputMetaData for key: [" + key.getId() + "] Display Name: ["
+        logger.info("JDE Atina - DataSenseResolver - getOutputMetaData for key: [" + key.getId() + "] Display Name: ["
                 + key.getDisplayName() + "]");
 
         // ==================================================
@@ -184,17 +184,14 @@ public class WSDataSenseResolver {
     protected void addMetaDataField(final MetaDataBuilder<?> objectBuilder, final TipoDelParametroInput field)
             throws Exception {
 
-        // String dataType = field.getTipoDelParametroMule();
-        String dataType = "";
-
+ 
         String nombreParametro = field.getNombreDelParametro();
 
         String tipoDelParametroJava = field.getTipoDelParametroJava();
 
-        logger.debug("DRAGONFISH - DataSenseResolver - addMetaDataField for : [" + nombreParametro + "] Type: ["
-                + dataType + "] Java Type: [" + tipoDelParametroJava + "");
+        logger.debug("JDE Atina - DataSenseResolver - addMetaDataField for : [" + nombreParametro + "] Java Type: [" + tipoDelParametroJava + "");
 
-        if (dataType.equalsIgnoreCase("LIST")) {
+        if (field.getRepeatedParameter()) {
 
             DynamicObjectBuilder<?> metadataList = ((DynamicObjectBuilder<?>) objectBuilder).addList(nombreParametro)
                     .ofDynamicObject(nombreParametro);
@@ -205,9 +202,9 @@ public class WSDataSenseResolver {
 
             metadataList.endDynamicObject();
 
-        } else if (dataType.equalsIgnoreCase("MAP") && (!tipoDelParametroJava
-                .equals("BDecimal") && !tipoDelParametroJava
-                .equals("BInteger"))) {
+        } else if (field.getIsObject() && (!tipoDelParametroJava
+                .equals("java.math.BigDecimal") && !tipoDelParametroJava
+                .equals("java.math.BigInteger"))) {
 
             DynamicObjectBuilder<?> innerObject = ((DynamicObjectBuilder<?>) objectBuilder)
                     .addDynamicObjectField(nombreParametro);
@@ -219,18 +216,18 @@ public class WSDataSenseResolver {
             innerObject.endDynamicObject();
 
         } else if (tipoDelParametroJava
-                .equals("BDecimal")) {
+                .equals("java.math.BigDecimal")) {
 
             ((DynamicObjectBuilder<?>) objectBuilder).addSimpleField(nombreParametro, DataType.DOUBLE);
 
         } else if (field.getTipoDelParametroJava()
-                .equals("BInteger")) {
+                .equals("java.math.BigInteger")) {
 
             ((DynamicObjectBuilder<?>) objectBuilder).addSimpleField(nombreParametro, DataType.LONG);
 
         } else {
 
-            getType(objectBuilder, dataType, nombreParametro);
+            getType(objectBuilder, tipoDelParametroJava, nombreParametro);
 
         }
 
@@ -239,14 +236,11 @@ public class WSDataSenseResolver {
     protected void addOutputMetaDataField(final MetaDataBuilder<?> objectBuilder,
             final TipoDelParametroOutput field) throws Exception {
 
-        // String dataType = field.getTipoDelParametroMule();
-        String dataType = "";
-
         String nombreParametro = field.getNombreDelParametro();
 
         String tipoDelParametroJava = field.getTipoDelParametroJava();
 
-        if (dataType.equalsIgnoreCase("LIST")) {
+        if (field.getRepeatedParameter()) {
 
             DynamicObjectBuilder<?> metadataList = ((DynamicObjectBuilder<?>) objectBuilder).addList(nombreParametro)
                     .ofDynamicObject(nombreParametro);
@@ -257,9 +251,9 @@ public class WSDataSenseResolver {
 
             metadataList.endDynamicObject();
 
-        } else if (dataType.equalsIgnoreCase("MAP") && (!tipoDelParametroJava
-                .equals("BDecimal") && !tipoDelParametroJava
-                .equals("BInteger"))) {
+        } else if (field.getIsObject() && (!tipoDelParametroJava
+                .equals("java.math.BigDecimal") && !tipoDelParametroJava
+                .equals("java.math.BigInteger"))) {
 
             DynamicObjectBuilder<?> innerObject = ((DynamicObjectBuilder<?>) objectBuilder)
                     .addDynamicObjectField(nombreParametro);
@@ -271,24 +265,68 @@ public class WSDataSenseResolver {
             innerObject.endDynamicObject();
 
         } else if (field.getTipoDelParametroJava()
-                .equals("BDecimal")) {
+                .equals("java.math.BigDecimal")) {
 
             ((DynamicObjectBuilder<?>) objectBuilder).addSimpleField(nombreParametro, DataType.DOUBLE);
 
         } else if (field.getTipoDelParametroJava()
-                .equals("BInteger")) {
+                .equals("java.math.BigInteger")) {
 
             ((DynamicObjectBuilder<?>) objectBuilder).addSimpleField(nombreParametro, DataType.LONG);
 
         } else {
 
-            getType(objectBuilder, dataType, nombreParametro);
+            getType(objectBuilder, tipoDelParametroJava, nombreParametro);
 
         }
 
     }
 
     private void getType(final MetaDataBuilder<?> objectBuilder, String type, String name) {
+    	
+    	 logger.info("JDE Atina - DataSenseResolver - Get Type for : [" + type + "] Name: [" + name + "");
+    	   
+
+    	 switch (type)  
+    	 {
+    	 	case  "java.lang.Integer":
+    	 		type = DataType.INTEGER.name();
+    	 		break;
+    	 	
+    	 	case  "java.lang.String":
+    	 		type = DataType.STRING.name();
+    	 		break;
+    	 		
+    	 	case  "java.lang.Calendar":
+    	 		type = DataType.DATE.name();
+    	 		break;
+    	 		
+    	 	case  "java.lang.Boolean":
+    	 		type = DataType.BOOLEAN.name();
+    	 		break;
+    	 	
+    	 	case  "java.lang.Byte":
+    	 		type = DataType.BYTE.name();
+    	 		break;
+    	 		
+    	 	case  "java.lang.Long":
+    	 		type = DataType.LONG.name();
+    	 		break;
+    	 		
+    	 	case  "java.lang.Float":
+    	 		type = DataType.FLOAT.name();
+    	 		break;
+    	 		
+    	 	case  "java.util.Date":
+    	 		type = DataType.DATE.name();
+    	 		break;
+    	 
+    	 	default:
+    	 		type = DataType.STRING.name();
+    	 		break;
+    	 } 
+    	  
+    	 
         MoreObjects.firstNonNull(EnumUtils.getEnumFromString(Type.class, type), Type.STRING)
                 .addField(objectBuilder,
                         name);

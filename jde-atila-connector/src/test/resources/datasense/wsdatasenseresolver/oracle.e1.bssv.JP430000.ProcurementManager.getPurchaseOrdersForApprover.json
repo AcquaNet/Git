@@ -1,0 +1,14 @@
+{
+  "payload-type": "map",
+  "payload": {
+    "approver": {
+      "entityTaxId": "string",
+      "entityLongId": "string",
+      "entityId": "integer"
+    },
+    "orderTypeCode": "string",
+    "businessUnitCode": "string",
+    "statusCodeNext": "string",
+    "statusApproval": "string"
+  }
+}

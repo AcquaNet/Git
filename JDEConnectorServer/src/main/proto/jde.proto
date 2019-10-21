@@ -119,6 +119,7 @@ message TipoDelParametroInput {
   repeated TipoDelParametroInput subParametro = 4;
   string tipoDelParametroJava = 5;
   bool repeatedParameter = 6;
+  bool isObject = 7;
 }
  
 message TipoDelParametroOutput {
@@ -126,6 +127,7 @@ message TipoDelParametroOutput {
   repeated TipoDelParametroOutput subParametro = 4;
   string tipoDelParametroJava = 5;
   bool repeatedParameter = 6;
+  bool isObject = 7;
 }
 
 message EjecutarOperacionRequest {

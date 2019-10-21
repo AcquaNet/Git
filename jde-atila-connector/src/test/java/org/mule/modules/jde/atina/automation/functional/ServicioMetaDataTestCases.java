@@ -11,7 +11,7 @@ public class ServicioMetaDataTestCases extends AbstractMetaDataTestCases {
     private static final List<String> keys = new ArrayList<String>();
 
     static {
-        keys.add("ArticuloById_articuloByIdGet");
+        keys.add("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
 
     }
 
