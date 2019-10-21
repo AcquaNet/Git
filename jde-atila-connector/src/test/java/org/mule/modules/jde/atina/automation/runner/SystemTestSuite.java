@@ -8,7 +8,7 @@ import org.mule.modules.jde.atina.automation.system.WSMetadataTestCases;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-        // ConfigConnectTestCases.class,
+        ConfigConnectTestCases.class,
         WSMetadataTestCases.class
 })
 public class SystemTestSuite {

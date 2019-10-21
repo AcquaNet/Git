@@ -11,11 +11,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mule.api.transport.ConnectorException;
 import org.mule.common.Result;
 import org.mule.common.metadata.DefaultMetaDataKey;
 import org.mule.common.metadata.MetaData;
 import org.mule.common.metadata.MetaDataKey;
 import org.mule.modules.atina.jde.JDEAtinaConnector;
+import org.mule.modules.atina.jde.exceptions.ExternalConnectorException;
 import org.mule.modules.atina.jde.exceptions.InternalConnectorException;
 import org.mule.modules.atina.jde.interfaces.ConnectorServiceInterface;
 import org.mule.modules.atina.jde.models.JDEAtilaConfiguracion;
@@ -103,7 +105,6 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
     }
 
     @Test
-    @Ignore
     public void validarConnectorMetadata() throws Exception {
 
         try {
@@ -121,7 +122,7 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
                 System.out.println(key);
 
                 if (accountKey == null && key.getId()
-                        .equals("Articulo_articuloPost")) {
+                        .equals("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover")) {
                     accountKey = key;
                 }
 
@@ -138,169 +139,130 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
         }
     }
 
-    @Test
-    @Ignore
+    @Test 
     public void invalidOperation() throws Exception {
-
-        logger.info(LOG_PREFIX + " validarMetadata() INICIO ");
-
-        configJDEAtina = new org.mule.modules.atina.jde.config.ConnectorConfig();
-
-        String serverName = validCredentials.getProperty("config.urlBase");
-        String codigoConfCliente = validCredentials.getProperty("config.codigoConfCliente");
-        String clavePrivadaConfCliente = validCredentials.getProperty("config.clavePrivadaConfCliente");
-        String algoritmo = validCredentials.getProperty("config.algoritmo");
-        String user = validCredentials.getProperty("config.user");
-        String password = validCredentials.getProperty("config.password");
-        Integer expiracion = Integer.valueOf(validCredentials.getProperty("config.expiracion"));
-        String servidorServicio = validCredentials.getProperty("config.servidorServicio");
-        Integer puertoServicio = Integer.valueOf(validCredentials.getProperty("config.puertoServicio"));
-
-        // configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
-
-        ConnectorServiceInterface servicio = configJDEAtina.getService();
-
-        try
-        {
-            Map<String, String> operaciones = servicio.getMetadataOperations(configJDEAtina.getStub(), configJDEAtina.getConfiguracion());
-
-        } catch (InternalConnectorException e)
-        {
-            logger.error("Validacion de Login Correcta: " + e.getErrorMessage(), e);
-
-            Assert.assertTrue(e.getErrorMessage()
-                    .startsWith("org.mule.modules.connector.exceptions.InternalConnectorException: INTERNAL: Error Swagger Server: Error leyendo metadata de operaciones"));
-        }
-
-        logger.info(LOG_PREFIX + " validarConexion() FIN ");
-
-    }
-
-    @Test
-    @Ignore
-    public void validInputMetadata() throws Exception {
-
-        logger.info(LOG_PREFIX + " validarMetadata() INICIO ");
+ 
+        logger.info(LOG_PREFIX + " invalidOperation() INICIO ");
 
         configJDEAtina = new org.mule.modules.atina.jde.config.ConnectorConfig();
 
-        String serverName = validCredentials.getProperty("config.urlBase");
-        String codigoConfCliente = validCredentials.getProperty("config.codigoConfCliente");
-        String clavePrivadaConfCliente = validCredentials.getProperty("config.clavePrivadaConfCliente");
-        String algoritmo = validCredentials.getProperty("config.algoritmo");
-        String user = validCredentials.getProperty("config.user");
-        String password = validCredentials.getProperty("config.password");
-        Integer expiracion = Integer.valueOf(validCredentials.getProperty("config.expiracion"));
-        String servidorServicio = validCredentials.getProperty("config.servidorServicio");
-        Integer puertoServicio = Integer.valueOf(validCredentials.getProperty("config.puertoServicio"));
+        String jdeUser = validCredentials.getProperty("config.jdeUser");
+        String jdePassword = validCredentials.getProperty("config.jdePassword");
+        String jdeEnvironment = validCredentials.getProperty("config.jdeEnvironment");
+        String jdeRole = validCredentials.getProperty("config.jdeRole");
+        Boolean wsConnection = Boolean.valueOf(validCredentials.getProperty("config.wsConnection"));
+        String microServiceName = validCredentials.getProperty("config.microServiceName");
+        Integer microServicePort = Integer.valueOf(validCredentials.getProperty("config.microServicePort"));
 
-        // configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
+        configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
+
+        Assert.assertTrue(configJDEAtina.getConfiguracion()
+                .getSessionID() != 0);
 
         ConnectorServiceInterface servicio = configJDEAtina.getService();
-
-        // MetaDataKey key = new MetaDataKey();
-
-        MetaDataKey mdkey = new DefaultMetaDataKey("Articulo", "Get Articulos");
-
+       
         try
         {
-            List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(),
-                    "ArticuloById_articuloByIdGet");
-
+        	configJDEAtina.getConfiguracion().setSessionID(0);
+        	configJDEAtina.getConfiguracion().setJdeUser("Invalid"); 
+        	
+        	Map<String, String> operaciones = servicio.getMetadataOperations(configJDEAtina.getStub(), configJDEAtina.getConfiguracion());
+            
         } catch (InternalConnectorException e)
         {
-            logger.error("Validacion de Login Correcta: " + e.getErrorMessage(), e);
+            logger.error("Validacion de Login Correcta: " + e.getClaseDeLaOperacion(), e);
 
-            Assert.assertTrue(e.getErrorMessage()
-                    .startsWith("INTERNAL: Error Swagger Server: Error leyendo metadata de operaciones"));
+            Assert.assertTrue(e.getClaseDeLaOperacion()
+                    .startsWith("JDE Conexion Error InvalidLoginException: Invalid UserName and/or Password"));
         }
+        
+   
+        logger.info(LOG_PREFIX + " invalidOperation() FIN ");
 
-        logger.info(LOG_PREFIX + " validarConexion() FIN ");
 
     }
 
-    @Test
-    @Ignore
+    @Test 
     public void invalidInputMetadata() throws Exception {
-
-        logger.info(LOG_PREFIX + " validarMetadata() INICIO ");
+  
+        logger.info(LOG_PREFIX + " invalidInputMetadata() INICIO ");
 
         configJDEAtina = new org.mule.modules.atina.jde.config.ConnectorConfig();
 
-        String serverName = validCredentials.getProperty("config.urlBase");
-        String codigoConfCliente = validCredentials.getProperty("config.codigoConfCliente");
-        String clavePrivadaConfCliente = validCredentials.getProperty("config.clavePrivadaConfCliente");
-        String algoritmo = validCredentials.getProperty("config.algoritmo");
-        String user = validCredentials.getProperty("config.user");
-        String password = validCredentials.getProperty("config.password");
-        Integer expiracion = Integer.valueOf(validCredentials.getProperty("config.expiracion"));
-        String servidorServicio = validCredentials.getProperty("config.servidorServicio");
-        Integer puertoServicio = Integer.valueOf(validCredentials.getProperty("config.puertoServicio"));
+        String jdeUser = validCredentials.getProperty("config.jdeUser");
+        String jdePassword = validCredentials.getProperty("config.jdePassword");
+        String jdeEnvironment = validCredentials.getProperty("config.jdeEnvironment");
+        String jdeRole = validCredentials.getProperty("config.jdeRole");
+        Boolean wsConnection = Boolean.valueOf(validCredentials.getProperty("config.wsConnection"));
+        String microServiceName = validCredentials.getProperty("config.microServiceName");
+        Integer microServicePort = Integer.valueOf(validCredentials.getProperty("config.microServicePort"));
 
-        // configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
+        configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
+
+        Assert.assertTrue(configJDEAtina.getConfiguracion()
+                .getSessionID() != 0);
 
         ConnectorServiceInterface servicio = configJDEAtina.getService();
-
-        // MetaDataKey key = new MetaDataKey();
-
-        MetaDataKey mdkey = new DefaultMetaDataKey("Articulo_articuloPost", "Alta de Articulos");
-
+       
         try
         {
-            List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(), "Articulo_articuloPostX");
-
+        	 
+        	List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(),
+                    "Invalid Operation");
+            
         } catch (InternalConnectorException e)
         {
-            logger.error("Validacion de Login Correcta: " + e.getErrorMessage(), e);
+            logger.error("Error: " + e.getClaseDeLaOperacion(), e);
 
-            Assert.assertTrue(e.getErrorMessage()
-                    .startsWith("INTERNAL: Error Swagger Server: Error leyendo metadata de operaciones"));
+            Assert.assertTrue(e.getClaseDeLaOperacion()
+                    .startsWith("Operation without Input Parameter"));
         }
-
-        logger.info(LOG_PREFIX + " validarConexion() FIN ");
+        
+   
+        logger.info(LOG_PREFIX + " invalidInputMetadata() FIN ");
 
     }
 
-    @Test
-    @Ignore
-    public void invalidOutputMetadata() throws Exception {
+     
 
-        logger.info(LOG_PREFIX + " validarMetadata() INICIO ");
+    @Test
+    public void invalidOutputMetadata() throws Exception {
+   
+        logger.info(LOG_PREFIX + " invalidOutputMetadata() INICIO ");
 
         configJDEAtina = new org.mule.modules.atina.jde.config.ConnectorConfig();
 
-        String serverName = validCredentials.getProperty("config.urlBase");
-        String codigoConfCliente = validCredentials.getProperty("config.codigoConfCliente");
-        String clavePrivadaConfCliente = validCredentials.getProperty("config.clavePrivadaConfCliente");
-        String algoritmo = validCredentials.getProperty("config.algoritmo");
-        String user = validCredentials.getProperty("config.user");
-        String password = validCredentials.getProperty("config.password");
-        Integer expiracion = Integer.valueOf(validCredentials.getProperty("config.expiracion"));
-        String servidorServicio = validCredentials.getProperty("config.servidorServicio");
-        Integer puertoServicio = Integer.valueOf(validCredentials.getProperty("config.puertoServicio"));
+        String jdeUser = validCredentials.getProperty("config.jdeUser");
+        String jdePassword = validCredentials.getProperty("config.jdePassword");
+        String jdeEnvironment = validCredentials.getProperty("config.jdeEnvironment");
+        String jdeRole = validCredentials.getProperty("config.jdeRole");
+        Boolean wsConnection = Boolean.valueOf(validCredentials.getProperty("config.wsConnection"));
+        String microServiceName = validCredentials.getProperty("config.microServiceName");
+        Integer microServicePort = Integer.valueOf(validCredentials.getProperty("config.microServicePort"));
 
-        // configDragonFish.connect(serverName, codigoConfCliente, clavePrivadaConfCliente, algoritmo, user, password, expiracion, servidorServicio, puertoServicio);
+        configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
+
+        Assert.assertTrue(configJDEAtina.getConfiguracion()
+                .getSessionID() != 0);
 
         ConnectorServiceInterface servicio = configJDEAtina.getService();
-
-        // MetaDataKey key = new MetaDataKey();
-
-        MetaDataKey mdkey = new DefaultMetaDataKey("Articulo_articuloPost", "Alta de Articulos");
-
+       
         try
         {
-            List<TipoDelParametroOutput> outputList = servicio.getOutputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(),
-                    "Articulo_articuloPost");
-
+        	 
+        	List<TipoDelParametroOutput> outputList = servicio.getOutputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(),
+                    "Invalid Operation");
+            
         } catch (InternalConnectorException e)
         {
-            logger.error("Validacion de Login Correcta: " + e.getErrorMessage(), e);
+            logger.error("Error: " + e.getClaseDeLaOperacion(), e);
 
-            Assert.assertTrue(e.getErrorMessage()
-                    .startsWith("INTERNAL: Error Swagger Server: Error leyendo metadata de operaciones"));
+            Assert.assertTrue(e.getClaseDeLaOperacion()
+                    .startsWith("Operation without Input Parameter"));
         }
-
-        logger.info(LOG_PREFIX + " validarConexion() FIN ");
+        
+   
+        logger.info(LOG_PREFIX + " invalidOutputMetadata() FIN ");
 
     }
 

@@ -366,10 +366,10 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             String errorMessage = tokens[0];
             String claseDeLaOperacion = tokens[1];
             String metodoDeLaOperacion = tokens[2];
-            int httpStatus = Integer.parseInt(tokens[3]);
-            String httpStatusReason = tokens[4];
-            String request = tokens[5];
-            String response = tokens[6];
+            int httpStatus = 510;
+            String httpStatusReason = "";
+            String request = "";
+            String response = "";
 
             throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
 
@@ -382,10 +382,10 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             String errorMessage = tokens[0];
             String claseDeLaOperacion = tokens[1];
             String metodoDeLaOperacion = tokens[2];
-            int httpStatus = Integer.parseInt(tokens[3]);
-            String httpStatusReason = tokens[4];
-            String request = tokens[5];
-            String response = tokens[6];
+            int httpStatus = 510;
+            String httpStatusReason = "";
+            String request = "";
+            String response = "";
 
             throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
 
@@ -418,10 +418,10 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     .getMessage();
             String claseDeLaOperacion = tokens[1];
             String metodoDeLaOperacion = tokens[2];
-            int httpStatus = Integer.parseInt(tokens[3]);
-            String httpStatusReason = tokens[4];
-            String request = tokens[5];
-            String response = tokens[6];
+            int httpStatus = 510;
+            String httpStatusReason = "";
+            String request = "";
+            String response = "";
 
             throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
 
@@ -455,10 +455,10 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     .getMessage();
             String claseDeLaOperacion = tokens[1];
             String metodoDeLaOperacion = tokens[2];
-            int httpStatus = Integer.parseInt(tokens[3]);
-            String httpStatusReason = tokens[4];
-            String request = tokens[5];
-            String response = tokens[6];
+            int httpStatus = 510;
+            String httpStatusReason = "";
+            String request = "";
+            String response = "";
 
             throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
 
@@ -499,10 +499,10 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     .getMessage();
             String claseDeLaOperacion = tokens[1];
             String metodoDeLaOperacion = tokens[2];
-            int httpStatus = Integer.parseInt(tokens[3]);
-            String httpStatusReason = tokens[4];
-            String request = tokens[5];
-            String response = tokens[6];
+            int httpStatus = 510;
+            String httpStatusReason = "";
+            String request = "";
+            String response = "";
 
             throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
 
@@ -522,10 +522,10 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     .getMessage();
             String claseDeLaOperacion = tokens[1];
             String metodoDeLaOperacion = tokens[2];
-            int httpStatus = Integer.parseInt(tokens[3]);
-            String httpStatusReason = tokens[4];
-            String request = tokens[5];
-            String response = tokens[6];
+            int httpStatus = 510;
+            String httpStatusReason = "";
+            String request = "";
+            String response = "";
 
             throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
 
@@ -550,10 +550,10 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     .getMessage();
             String claseDeLaOperacion = tokens[1];
             String metodoDeLaOperacion = tokens[2];
-            int httpStatus = Integer.parseInt(tokens[3]);
-            String httpStatusReason = tokens[4];
-            String request = tokens[5];
-            String response = tokens[6];
+            int httpStatus = 510;
+            String httpStatusReason = "";
+            String request = "";
+            String response = "";
 
             throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
 
@@ -684,10 +684,10 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 String errorMessage = tokens[0];
                 String claseDeLaOperacion = tokens[1];
                 String metodoDeLaOperacion = tokens[2];
-                int httpStatus = Integer.parseInt(tokens[3]);
-                String httpStatusReason = tokens[4];
-                String request = tokens[5];
-                String response = tokens[6];
+                int httpStatus = 510;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
 
                 throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
 
@@ -699,10 +699,10 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 String errorMessage = e.getMessage();
                 String claseDeLaOperacion = tokens[1];
                 String metodoDeLaOperacion = tokens[2];
-                int httpStatus = Integer.parseInt(tokens[3]);
-                String httpStatusReason = tokens[4];
-                String request = tokens[5];
-                String response = tokens[6];
+                int httpStatus = 510;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
 
                 throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
 
