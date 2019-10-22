@@ -7,14 +7,14 @@ import org.mule.modules.jde.atina.automation.functional.TestDataBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GetPurchaseOrdersForApproverTestCases extends AbstractTestCases {
+public class GetItemPriceTestCases extends AbstractTestCases {
 
-    protected final Logger logger = LoggerFactory.getLogger(GetPurchaseOrdersForApproverTestCases.class);
+    protected final Logger logger = LoggerFactory.getLogger(GetItemPriceTestCases.class);
 
     @Test
     public void executeTest1() throws Exception {
 
-    	String entityType = TestDataBuilder.getPurchaseOrdersForApproverEntityType();
+    	String entityType = TestDataBuilder.getItemPriceEntityType();
     	 
         logger.info("MULESOFT - FUNCTIONAL_TEST "+ entityType + " BEGIN ");
 
@@ -22,9 +22,9 @@ public class GetPurchaseOrdersForApproverTestCases extends AbstractTestCases {
         // Get Connector Instance
         // ====================== 
 
-        Map<String, Object> entityData = TestDataBuilder.getPurchaseOrdersForApproverEntityData();
+        Map<String, Object> entityData = TestDataBuilder.getItemPriceEntityData();
 
-        Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetPurchaseOrdersForApproverTestCases: ", entityType, entityData);
+        Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetItemPriceTestCases: ", entityType, entityData);
        
         logger.info("MULESOFT - FUNCTIONAL_TEST "+ entityType + " END ");
 

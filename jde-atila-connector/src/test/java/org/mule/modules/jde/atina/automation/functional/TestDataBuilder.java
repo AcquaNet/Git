@@ -11,6 +11,7 @@ import java.util.Map;
 public class TestDataBuilder {
  
     private static final String GET_PURCHASE_ORDER_FOR_APPROVER = "oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover";
+    private static final String GET_ITEM_PRICE = "oracle.e1.bssv.JP410000.InventoryManager.getItemPrice";
     
     
     public static String getPurchaseOrdersForApproverEntityType() {
@@ -34,6 +35,26 @@ public class TestDataBuilder {
     	returnValue.put("statusCodeNext", "230");
     	
     	returnValue.put("statusApproval", "2N");
+    	  
+        return returnValue;
+ 
+    }
+    
+    public static String getItemPriceEntityType() {
+        return GET_ITEM_PRICE;
+    }
+    
+    public static Map<String, Object> getItemPriceEntityData() {
+    	
+    	final Map<String, Object> returnValue = new HashMap<String, Object>();
+
+    	
+    	Map<String, Object> tmp1 = new java.util.HashMap();
+    	tmp1.put("itemId", new Integer(60003));
+    	
+    	returnValue.put("item", tmp1);
+    	  
+    	returnValue.put("branchPlantList", "          10");
     	  
         return returnValue;
  
