@@ -184,7 +184,6 @@ public class WSDataSenseResolver {
     protected void addMetaDataField(final MetaDataBuilder<?> objectBuilder, final TipoDelParametroInput field)
             throws Exception {
 
- 
         String nombreParametro = field.getNombreDelParametro();
 
         String tipoDelParametroJava = field.getTipoDelParametroJava();
@@ -283,50 +282,48 @@ public class WSDataSenseResolver {
     }
 
     private void getType(final MetaDataBuilder<?> objectBuilder, String type, String name) {
-    	
-    	 logger.info("JDE Atina - DataSenseResolver - Get Type for : [" + type + "] Name: [" + name + "");
-    	   
 
-    	 switch (type)  
-    	 {
-    	 	case  "java.lang.Integer":
-    	 		type = DataType.INTEGER.name();
-    	 		break;
-    	 	
-    	 	case  "java.lang.String":
-    	 		type = DataType.STRING.name();
-    	 		break;
-    	 		
-    	 	case  "java.lang.Calendar":
-    	 		type = DataType.DATE.name();
-    	 		break;
-    	 		
-    	 	case  "java.lang.Boolean":
-    	 		type = DataType.BOOLEAN.name();
-    	 		break;
-    	 	
-    	 	case  "java.lang.Byte":
-    	 		type = DataType.BYTE.name();
-    	 		break;
-    	 		
-    	 	case  "java.lang.Long":
-    	 		type = DataType.LONG.name();
-    	 		break;
-    	 		
-    	 	case  "java.lang.Float":
-    	 		type = DataType.FLOAT.name();
-    	 		break;
-    	 		
-    	 	case  "java.util.Date":
-    	 		type = DataType.DATE.name();
-    	 		break;
-    	 
-    	 	default:
-    	 		type = DataType.STRING.name();
-    	 		break;
-    	 } 
-    	  
-    	 
+        logger.info("JDE Atina - DataSenseResolver - Get Type for : [" + type + "] Name: [" + name + "");
+
+        switch (type)
+        {
+            case "java.lang.Integer":
+                type = DataType.INTEGER.name();
+                break;
+
+            case "java.lang.String":
+                type = DataType.STRING.name();
+                break;
+
+            case "java.lang.Calendar":
+                type = DataType.DATE.name();
+                break;
+
+            case "java.lang.Boolean":
+                type = DataType.BOOLEAN.name();
+                break;
+
+            case "java.lang.Byte":
+                type = DataType.BYTE.name();
+                break;
+
+            case "java.lang.Long":
+                type = DataType.LONG.name();
+                break;
+
+            case "java.lang.Float":
+                type = DataType.FLOAT.name();
+                break;
+
+            case "java.util.Date":
+                type = DataType.DATE.name();
+                break;
+
+            default:
+                type = DataType.STRING.name();
+                break;
+        }
+
         MoreObjects.firstNonNull(EnumUtils.getEnumFromString(Type.class, type), Type.STRING)
                 .addField(objectBuilder,
                         name);

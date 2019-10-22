@@ -9,7 +9,7 @@ package com.jde.jdeconnector.services;
 import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
 import com.atina.jdeconnector.internal.model.metadata.ParameterTypeObject;
 import com.atina.jdeconnector.internal.model.metadata.ParameterTypeSimple;
-import com.atina.jdeconnectorservice.exception.JDESingleConnectionException;
+import com.atina.jdeconnectorservice.exception.JDESingleConnectionException; 
 import com.atina.jdeconnectorservice.service.poolconnection.JDEPoolConnections;
 import com.atina.jdeconnectorservice.service.JDESingleConnection;
 import com.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
@@ -45,8 +45,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.Set; 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -816,6 +815,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 responseBuilder.setTipoDelParametro("Object");
                 responseBuilder.setRepeatedParameter(false);
                 responseBuilder.setNullValue(false);
+                responseBuilder.setIsObject(true);
                  
                 createOperationResponse(responseBuilder, outputParameters,returnValues,0);
                  
@@ -907,6 +907,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 { 
 
                     logger.info(levelLog + "    Type: " + parameterMetadata.getModelType());
+                    logger.info(levelLog + "    Real Type: " + value.getClass().getName()); 
                     logger.info(levelLog + "    Repeated: " + parameterMetadata.isRepeated());
 
                     if (parameterMetadata instanceof ParameterTypeObject) {
@@ -916,6 +917,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                             newOperationResponse.setNombreDelParametro(nombreDelParametro);
                             newOperationResponse.setTipoDelParametro(parameterMetadata.getModelType());
                             newOperationResponse.setRepeatedParameter(parameterMetadata.isRepeated());
+                            newOperationResponse.setIsObject(true);
                              
                             ArrayList<LinkedHashMap> values = (ArrayList<LinkedHashMap>) value;
                             
@@ -928,7 +930,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                                 operacionResponseObject.setNombreDelParametro(nombreDelParametro);
                                 operacionResponseObject.setTipoDelParametro(parameterMetadata.getModelType());
                                 operacionResponseObject.setRepeatedParameter(false);
-                                operacionResponseObject.setNullValue(false);
+                                operacionResponseObject.setNullValue(false); 
+                                operacionResponseObject.setIsObject(true);
                                 
                                 parameterMetadata.setRepeated(false);
                                 
@@ -951,6 +954,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                             newOperationResponse.setNombreDelParametro(nombreDelParametro);
                             newOperationResponse.setTipoDelParametro(parameterMetadata.getModelType());
                             newOperationResponse.setRepeatedParameter(false);
+                            newOperationResponse.setIsObject(true);
                             newOperationResponse.setNullValue(false);
  
                             level++;
@@ -969,6 +973,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
                             newOperationResponse.setTipoDelParametro(parameterMetadata.getModelType());
                             
+                            newOperationResponse.setIsObject(false);
+                            
                             newOperationResponse.setNullValue(false);
                             
                             ArrayList<LinkedHashMap> values = (ArrayList<LinkedHashMap>) value;
@@ -983,8 +989,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                                 operacionResponseObject.setTipoDelParametro(parameterMetadata.getModelType());
                                 operacionResponseObject.setRepeatedParameter(false);
                                 operacionResponseObject.setNullValue(false);
-                                
-                                parameterMetadata.setRepeated(false);
+                                operacionResponseObject.setIsObject(false); 
                                 
                                 level++;
                                 
@@ -1002,11 +1007,10 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                         } else {
   
                             
-                            newOperationResponse.setNombreDelParametro(nombreDelParametro);
-
-                            newOperationResponse.setTipoDelParametro(parameterMetadata.getModelType());
-                            
-                            newOperationResponse.setNullValue(false);
+                            newOperationResponse.setNombreDelParametro(nombreDelParametro); 
+                            newOperationResponse.setTipoDelParametro(parameterMetadata.getModelType()); 
+                            newOperationResponse.setNullValue(false); 
+                            newOperationResponse.setIsObject(false);
 
                             switch (parameterMetadata.getModelType()) {
 
@@ -1022,10 +1026,25 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                                 case "java.lang.Long":
                                     newOperationResponse.setValueAsLong((long) value);
                                     break;
+                                case "java.math.BigDecimal":
+                                case "java.lang.Double":
+                                    
+                                    if(value instanceof java.lang.Integer)
+                                    {
+                                        newOperationResponse.setValueAsDouble(Double.valueOf((java.lang.Integer) value));
+                                    }
+                                    else
+                                    {
+                                         newOperationResponse.setValueAsDouble((double) value);
+                                    }
+                                   
+                                    break;
                                 case "java.lang.Float":
                                     newOperationResponse.setValueAsFloat((float) value);
                                     break;
                                 case "java.util.Date":
+                                case "java.util.Calendar":
+                                    
                                     SqlDate jdeDate = new SqlDate((long) value);
                          
                                     Timestamp.Builder tmpBuilder = Timestamp.newBuilder();
@@ -1047,9 +1066,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                                     ByteString byteString = (ByteString) ByteString.copyFrom(encoded, Charset.forName("UTF-8"));
                                     newOperationResponse.setValueAsStringBytes(byteString);
                                     break;
-
+                                     
                                 default:
-                                    newOperationResponse.setValueAsString("");
+                                    throw new JDESingleConnectionException("Invalid Type " + parameterMetadata.getModelType(),null);
                             }
  
 

@@ -178,6 +178,7 @@ message EjecutarOperacionResponse {
   repeated EjecutarOperacionResponse listaDeValores =10;
   string tipoDelParametro = 13;
   bool repeatedParameter = 15;
+  bool isObject = 16;
 }
 
 message BDecimal {

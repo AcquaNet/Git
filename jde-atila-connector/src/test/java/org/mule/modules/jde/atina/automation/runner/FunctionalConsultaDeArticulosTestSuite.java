@@ -1,7 +1,7 @@
 package org.mule.modules.jde.atina.automation.runner;
 
 import org.mule.modules.atina.jde.JDEAtinaConnector;
-import org.mule.modules.jde.atina.automation.functional.EjecutarOperacionConsultaDeArticulosTestCases;
+import org.mule.modules.jde.atina.automation.functional.GetPurchaseOrdersForApproverTestCases;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -11,7 +11,7 @@ import org.mule.tools.devkit.ctf.mockup.ConnectorTestContext;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-        EjecutarOperacionConsultaDeArticulosTestCases.class
+        GetPurchaseOrdersForApproverTestCases.class
 })
 public class FunctionalConsultaDeArticulosTestSuite {
 

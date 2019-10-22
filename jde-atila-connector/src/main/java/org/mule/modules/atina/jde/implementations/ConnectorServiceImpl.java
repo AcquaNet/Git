@@ -596,9 +596,15 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     .build());
 
             logger.info(" Valores Retornados: ");
+            
+            logger.info(" Parameter Name: " + ejecutarOperacionesResponse.getNombreDelParametro());
+        	logger.info(" Parameter Type: " + ejecutarOperacionesResponse.getTipoDelParametro());
+        	logger.info(" Is Object: " + ejecutarOperacionesResponse.getIsObject());
+        	logger.info(" Is Repeated: " + ejecutarOperacionesResponse.getRepeatedParameter());
 
-            if (ejecutarOperacionesResponse.getTipoDelParametro()
-                    .equals("LIST"))
+        	int level = 0;
+        	
+            if (ejecutarOperacionesResponse.getRepeatedParameter())
             {
                 ArrayList<HashMap<String, Object>> response = new ArrayList<HashMap<String, Object>>();
 
@@ -616,7 +622,9 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
                         for (EjecutarOperacionResponse respuestaAProcesar : resultado.getListaDeValoresList()) {
 
-                            procesarRespuesta(respuestaAProcesar, obj);
+                        	level++;
+                            procesarRespuesta(respuestaAProcesar, obj,level);
+                            level--;
 
                         }
 
@@ -627,21 +635,20 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
                 returnValue = response;
 
-            } else if (ejecutarOperacionesResponse.getTipoDelParametro()
-                    .equals("MAP"))
+            } else if (ejecutarOperacionesResponse.getIsObject())
             {
-
+            	 
                 HashMap<String, Object> response = new HashMap<String, Object>();
 
                 List<EjecutarOperacionResponse> respuestaMap = ejecutarOperacionesResponse.getListaDeValoresList();
 
-                if (respuestaMap != null && !respuestaMap.isEmpty()) {
+                if (respuestaMap != null && !respuestaMap.isEmpty()) { 
 
-                    EjecutarOperacionResponse resultado = respuestaMap.get(0);
+                    for (EjecutarOperacionResponse respuestaAProcesar : respuestaMap) {
 
-                    for (EjecutarOperacionResponse respuestaAProcesar : resultado.getListaDeValoresList()) {
-
-                        procesarRespuesta(respuestaAProcesar, response);
+                    	level++;
+                        procesarRespuesta(respuestaAProcesar, response,level);
+                        level--;
 
                     }
 
@@ -665,7 +672,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
                 if (ejecutarOperacionesResponse != null) {
 
-                    procesarRespuesta(ejecutarOperacionesResponse, response);
+                    procesarRespuesta(ejecutarOperacionesResponse, response,level);
 
                 }
 
@@ -1100,10 +1107,16 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
     @SuppressWarnings("unchecked")
     private HashMap<String, Object> procesarRespuesta(EjecutarOperacionResponse ejecutarOperacionesResponse,
-            HashMap<String, Object> response) {
+            HashMap<String, Object> response, int level) {
+    	
+    	String levelLog = StringUtils.repeat(" > ", level);
+    	logger.info(" ------------------------------------------------------------------ "); 
+    	logger.info(" Processing: " + ejecutarOperacionesResponse.getNombreDelParametro()); 
+    	logger.info(" Parameter Type: " + ejecutarOperacionesResponse.getTipoDelParametro());
+    	logger.info(" Is Object: " + ejecutarOperacionesResponse.getIsObject());
+    	logger.info(" Is Repeated: " + ejecutarOperacionesResponse.getRepeatedParameter());
 
-        if (ejecutarOperacionesResponse.getTipoDelParametro()
-                .equals("LIST")) {
+        if (ejecutarOperacionesResponse.getRepeatedParameter()) {
 
             String nombreParametro = ejecutarOperacionesResponse.getNombreDelParametro();
 
@@ -1112,19 +1125,27 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             ArrayList<Object> lista = new ArrayList<Object>();
 
             for (EjecutarOperacionResponse respuestaList : ejecutarOperacionesResponse.getListaDeValoresList()) {
+            	
+            	logger.info(" Processing Values: " + respuestaList.getNombreDelParametro());  
+            	logger.info(" Parameter Type: " + respuestaList.getTipoDelParametro());
+            	logger.info(" Is Object: " + respuestaList.getIsObject());
+            	logger.info(" Is Repeated: " + respuestaList.getRepeatedParameter());
 
-                if (respuestaList.getTipoDelParametro()
-                        .equals("MAP") || respuestaList.getTipoDelParametro()
-                        .equals("LIST"))
+                if (respuestaList.getIsObject() || respuestaList.getRepeatedParameter())
                 {
-                    valores = procesarRespuesta(respuestaList, valores);
+                	level++;
+                    valores = procesarRespuesta(respuestaList, valores,level);
+                    level--;
 
                     lista.add((HashMap<String, Object>) valores.get(respuestaList.getNombreDelParametro()));
                 }
                 else
                 {
-                    valores = procesarRespuesta(respuestaList, valores);
-
+                    
+                    level++;
+                    valores = procesarRespuesta(respuestaList, valores,level); 
+                    level--;
+                    
                     if (!valores.isEmpty())
                     {
                         lista.add(valores.values()
@@ -1138,8 +1159,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
             response.put(nombreParametro, lista);
 
-        } else if (ejecutarOperacionesResponse.getTipoDelParametro()
-                .equals("MAP")) {
+        } else if (ejecutarOperacionesResponse.getIsObject()) {
 
             String nombreParametro = ejecutarOperacionesResponse.getNombreDelParametro();
 
@@ -1147,7 +1167,14 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
             for (EjecutarOperacionResponse respuestaMap : ejecutarOperacionesResponse.getListaDeValoresList()) {
 
-                valores = procesarRespuesta(respuestaMap, valores);
+            	logger.info(" Processing Values: " + respuestaMap.getNombreDelParametro());  
+            	logger.info(" Parameter Type: " + respuestaMap.getTipoDelParametro());
+            	logger.info(" Is Object: " + respuestaMap.getIsObject());
+            	logger.info(" Is Repeated: " + respuestaMap.getRepeatedParameter());
+            	
+            	level++;
+                valores = procesarRespuesta(respuestaMap, valores,level);
+                level--;
 
             }
 
@@ -1158,6 +1185,11 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             String nombreParametro = ejecutarOperacionesResponse.getNombreDelParametro();
 
             String tipoDelParametro = ejecutarOperacionesResponse.getTipoDelParametro();
+             
+            logger.info(" Processing Value: " + ejecutarOperacionesResponse.getNombreDelParametro());  
+        	logger.info(" Parameter Type: " + ejecutarOperacionesResponse.getTipoDelParametro());
+        	logger.info(" Is Object: " + ejecutarOperacionesResponse.getIsObject());
+        	logger.info(" Is Repeated: " + ejecutarOperacionesResponse.getRepeatedParameter());
 
             Object value = null;
 
@@ -1179,7 +1211,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     value = ejecutarOperacionesResponse.getValueAsFloat();
                     break;
                 case "java.util.Date":
-                case "org.joda.time.LocalDate":
+                case "org.joda.time.LocalDate": 
                     value = toLocalDate(ejecutarOperacionesResponse.getValueAsDate());
                     break;
                 case "java.lang.Byte":
@@ -1202,13 +1234,15 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 case "java.util.LinkedHashMap":
                     value = toLocalDate(ejecutarOperacionesResponse.getValueAsDate());
                     break;
+                case "java.util.Calendar":
+                	value = toLocalDateFromCalendar(ejecutarOperacionesResponse.getValueAsDate());
+                	break;
                 case "NULL":
                     value = null;
                     break;
                 default:
-                    logger.info("     Parametro: " + nombreParametro + " Tipo del Parametro:" + tipoDelParametro + "  INVALIDO");
-                    break;
-
+                    logger.info("     Parameter: " + nombreParametro + " Type:" + tipoDelParametro + "  Invalid");
+                    throw new InternalConnectorException("     Parameter: " + nombreParametro + " Type:" + tipoDelParametro + "  Invalid");
             }
 
             logger.info("     Parametro: " + nombreParametro + " Tipo del Parametro:" + tipoDelParametro + " Valor: " + (value == null ? "NULO" : value.toString()));
@@ -1342,7 +1376,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             .build());
 
             List<TipoDelParametroOutput> valoresMetadata = metadataResponse.getListaDeParametrosOutputList();
-  
+
             metadataList.addAll(valoresMetadata);
 
         } catch (StatusRuntimeException e) {
@@ -1366,6 +1400,12 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     }
 
     private LocalDate toLocalDate(Timestamp timestamp) {
+
+        return LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos()), ZoneId.of("UTC"))
+                .toLocalDate();
+    }
+    
+    private LocalDate toLocalDateFromCalendar(Timestamp timestamp) {
 
         return LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos()), ZoneId.of("UTC"))
                 .toLocalDate();

@@ -8,9 +8,12 @@ import org.mule.tools.devkit.ctf.junit.AbstractTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.commons.lang.StringUtils;
 
 public class AbstractTestCases extends AbstractTestCase<JDEAtinaConnector> {
 
@@ -44,13 +47,9 @@ public class AbstractTestCases extends AbstractTestCase<JDEAtinaConnector> {
     public Object ejecucionInterna(String origin, String entityType, Map<String, Object> entityData)
             throws Exception {
 
-        logger.info("MULESOFT - FUNCTIONAL_TEST BEGIN ejecucionInterna: " + origin + " Calling: " + entityType);
+        logger.info("JDE ATINA - Parameters: " + origin + " Calling: " + entityType);
 
-        for (String key : entityData.keySet()) {
-            logger.info("MULESOFT - FUNCTIONAL_TEST ejecucionInterna: Key: [" + key + "] Value: ["
-                    + (entityData.get(key) != null ? entityData.get(key)
-                            .toString() : "NULL") + "]");
-        }
+        hashMapper((HashMap) entityData,0);
 
         Object returnValue = null;
 
@@ -58,18 +57,51 @@ public class AbstractTestCases extends AbstractTestCase<JDEAtinaConnector> {
 
         if (returnValue instanceof HashMap) {
 
-            for (String key : ((Map<String, Object>) returnValue).keySet()) {
-                logger.info("MULESOFT - FUNCTIONAL_TEST ejecucionInterna: Return Values: Key: [" + key + "] Value: ["
-                        + (entityData.get(key) != null ? entityData.get(key)
-                                .toString() : "NULL") + "]");
-            }
+        	hashMapper((HashMap) returnValue,0);
 
         }
 
-        logger.info("MULESOFT - FUNCTIONAL_TEST END ejecucionInterna: " + origin + " Calling: " + entityType);
+        logger.info("JDE ATINA - FUNCTIONAL_TEST END ejecucionInterna: " + origin + " Calling: " + entityType);
 
         return returnValue;
 
+    }
+    
+    public static void hashMapper(Map<String, Object> lhm1, int level) throws ParseException {
+    	String levelLog = StringUtils.repeat(" > ", level);
+        for (Map.Entry<String, Object> entry : lhm1.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (!(value instanceof Map) && !(value instanceof ArrayList)) { 
+                 logger.info("JDE ATINA - " + levelLog + " Key: [" + key + "] Value: [" +
+                		 value + "]");
+            } else if (value instanceof ArrayList) {
+            	logger.info("JDE ATINA - " + levelLog + " Key: [" + key + "]");
+            	for(Object obj:(ArrayList) value)
+            	{ 
+            		logger.info("JDE ATINA " + levelLog + "-----------------------------------------------");
+            		
+            		if (obj instanceof Map)
+            		{
+	            		Map<String, Object> subMap = (Map<String, Object>)obj;
+	                    level++;
+	                    hashMapper(subMap,level);
+	                    level--;
+            		}
+            		
+            	}
+                
+            } else if (value instanceof Map) {
+            	logger.info("JDE ATINA - " + levelLog + " Key: [" + key + "]");
+                Map<String, Object> subMap = (Map<String, Object>)value;
+                level++;
+                hashMapper(subMap,level);
+                level--;
+            } else {
+                 throw new IllegalArgumentException(String.valueOf(value));
+            }
+
+        }
     }
 
 }

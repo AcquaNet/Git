@@ -72,7 +72,7 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
     }
 
     @SuppressWarnings("unused")
-	@Test
+    @Test
     public void validarWSMetadata() throws Exception {
 
         logger.info(LOG_PREFIX + " validarMetadata() INICIO ");
@@ -93,12 +93,14 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
                 .getSessionID() != 0);
 
         ConnectorServiceInterface servicio = configJDEAtina.getService();
-       
-        Map<String, String> operaciones = servicio.getMetadataOperations(configJDEAtina.getStub(), configJDEAtina.getConfiguracion());
-    
-        List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(), "oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
 
-        List<TipoDelParametroOutput> outputList = servicio.getOutputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(), "oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
+        Map<String, String> operaciones = servicio.getMetadataOperations(configJDEAtina.getStub(), configJDEAtina.getConfiguracion());
+
+        List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(),
+                "oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
+
+        List<TipoDelParametroOutput> outputList = servicio.getOutputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(),
+                "oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover");
 
         logger.info(LOG_PREFIX + " validarConexion() FIN ");
 
@@ -139,9 +141,9 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
         }
     }
 
-    @Test 
+    @Test
     public void invalidOperation() throws Exception {
- 
+
         logger.info(LOG_PREFIX + " invalidOperation() INICIO ");
 
         configJDEAtina = new org.mule.modules.atina.jde.config.ConnectorConfig();
@@ -160,14 +162,16 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
                 .getSessionID() != 0);
 
         ConnectorServiceInterface servicio = configJDEAtina.getService();
-       
+
         try
         {
-        	configJDEAtina.getConfiguracion().setSessionID(0);
-        	configJDEAtina.getConfiguracion().setJdeUser("Invalid"); 
-        	
-        	Map<String, String> operaciones = servicio.getMetadataOperations(configJDEAtina.getStub(), configJDEAtina.getConfiguracion());
-            
+            configJDEAtina.getConfiguracion()
+                    .setSessionID(0);
+            configJDEAtina.getConfiguracion()
+                    .setJdeUser("Invalid");
+
+            Map<String, String> operaciones = servicio.getMetadataOperations(configJDEAtina.getStub(), configJDEAtina.getConfiguracion());
+
         } catch (InternalConnectorException e)
         {
             logger.error("Validacion de Login Correcta: " + e.getClaseDeLaOperacion(), e);
@@ -175,16 +179,14 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
             Assert.assertTrue(e.getClaseDeLaOperacion()
                     .startsWith("JDE Conexion Error InvalidLoginException: Invalid UserName and/or Password"));
         }
-        
-   
-        logger.info(LOG_PREFIX + " invalidOperation() FIN ");
 
+        logger.info(LOG_PREFIX + " invalidOperation() FIN ");
 
     }
 
-    @Test 
+    @Test
     public void invalidInputMetadata() throws Exception {
-  
+
         logger.info(LOG_PREFIX + " invalidInputMetadata() INICIO ");
 
         configJDEAtina = new org.mule.modules.atina.jde.config.ConnectorConfig();
@@ -203,13 +205,13 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
                 .getSessionID() != 0);
 
         ConnectorServiceInterface servicio = configJDEAtina.getService();
-       
+
         try
         {
-        	 
-        	List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(),
+
+            List<TipoDelParametroInput> inputList = servicio.getInputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(),
                     "Invalid Operation");
-            
+
         } catch (InternalConnectorException e)
         {
             logger.error("Error: " + e.getClaseDeLaOperacion(), e);
@@ -217,17 +219,14 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
             Assert.assertTrue(e.getClaseDeLaOperacion()
                     .startsWith("Operation without Input Parameter"));
         }
-        
-   
+
         logger.info(LOG_PREFIX + " invalidInputMetadata() FIN ");
 
     }
 
-     
-
     @Test
     public void invalidOutputMetadata() throws Exception {
-   
+
         logger.info(LOG_PREFIX + " invalidOutputMetadata() INICIO ");
 
         configJDEAtina = new org.mule.modules.atina.jde.config.ConnectorConfig();
@@ -246,13 +245,13 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
                 .getSessionID() != 0);
 
         ConnectorServiceInterface servicio = configJDEAtina.getService();
-       
+
         try
         {
-        	 
-        	List<TipoDelParametroOutput> outputList = servicio.getOutputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(),
+
+            List<TipoDelParametroOutput> outputList = servicio.getOutputMetadataForOperation(configJDEAtina.getStub(), configJDEAtina.getConfiguracion(),
                     "Invalid Operation");
-            
+
         } catch (InternalConnectorException e)
         {
             logger.error("Error: " + e.getClaseDeLaOperacion(), e);
@@ -260,8 +259,7 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
             Assert.assertTrue(e.getClaseDeLaOperacion()
                     .startsWith("Operation without Input Parameter"));
         }
-        
-   
+
         logger.info(LOG_PREFIX + " invalidOutputMetadata() FIN ");
 
     }

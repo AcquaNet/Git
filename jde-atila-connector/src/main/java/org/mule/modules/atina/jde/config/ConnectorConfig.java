@@ -467,8 +467,8 @@ public class ConnectorConfig {
         return stub;
     }
 
-	public void setConfiguracion(JDEAtilaConfiguracion configuracion) {
-		this.configuracion = configuracion;
-	}
-     
+    public void setConfiguracion(JDEAtilaConfiguracion configuracion) {
+        this.configuracion = configuracion;
+    }
+
 }
