@@ -5,22 +5,15 @@ import static org.junit.Assert.*;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mule.api.transport.ConnectorException;
 import org.mule.common.Result;
-import org.mule.common.metadata.DefaultMetaDataKey;
 import org.mule.common.metadata.MetaData;
 import org.mule.common.metadata.MetaDataKey;
 import org.mule.modules.atina.jde.JDEAtinaConnector;
-import org.mule.modules.atina.jde.exceptions.ExternalConnectorException;
 import org.mule.modules.atina.jde.exceptions.InternalConnectorException;
 import org.mule.modules.atina.jde.interfaces.ConnectorServiceInterface;
-import org.mule.modules.atina.jde.models.JDEAtilaConfiguracion;
 import org.mule.modules.jde.atina.automation.system.AbstractConfigConnectTestCases;
 import org.mule.modules.tests.ConnectorTestUtils;
 import org.mule.tools.devkit.ctf.configuration.util.ConfigurationUtils;
@@ -141,6 +134,7 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
         }
     }
 
+    @SuppressWarnings("unused")
     @Test
     public void invalidOperation() throws Exception {
 
@@ -184,6 +178,7 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
 
     }
 
+    @SuppressWarnings("unused")
     @Test
     public void invalidInputMetadata() throws Exception {
 
@@ -224,6 +219,7 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
 
     }
 
+    @SuppressWarnings("unused")
     @Test
     public void invalidOutputMetadata() throws Exception {
 

@@ -7,9 +7,9 @@ import org.mule.modules.jde.atina.automation.functional.TestDataBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GetPurchaseOrdersForApproverTestCases extends AbstractTestCases {
+public class WriteOffProcessingOptionsTestCases extends AbstractTestCases {
 
-    protected final Logger logger = LoggerFactory.getLogger(GetPurchaseOrdersForApproverTestCases.class);
+    protected final Logger logger = LoggerFactory.getLogger(WriteOffProcessingOptionsTestCases.class);
 
     @SuppressWarnings({
             "unused",
@@ -18,7 +18,7 @@ public class GetPurchaseOrdersForApproverTestCases extends AbstractTestCases {
     @Test
     public void executeTest1() throws Exception {
 
-        String entityType = TestDataBuilder.getPurchaseOrdersForApproverEntityType();
+        String entityType = TestDataBuilder.getWriteOffProcessingOptionsEntityType();
 
         logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " BEGIN ");
 
@@ -26,9 +26,9 @@ public class GetPurchaseOrdersForApproverTestCases extends AbstractTestCases {
         // Get Connector Instance
         // ======================
 
-        Map<String, Object> entityData = TestDataBuilder.getPurchaseOrdersForApproverEntityData();
+        Map<String, Object> entityData = TestDataBuilder.getWriteOffProcessingOptionsEntityData();
 
-        Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetPurchaseOrdersForApproverTestCases: ", entityType, entityData);
+        Map<String, Object> result = ((Map<String, Object>) ejecucionInterna("WriteOffProcessingOptionsTestCases: ", entityType, entityData));
 
         logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
 

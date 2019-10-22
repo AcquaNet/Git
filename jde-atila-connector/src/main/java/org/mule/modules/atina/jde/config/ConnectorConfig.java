@@ -4,7 +4,6 @@ import org.mule.api.annotations.components.ConnectionManagement;
 import org.mule.api.annotations.display.FriendlyName;
 import org.mule.api.annotations.display.Password;
 import org.mule.api.annotations.display.Placement;
-import org.mule.api.annotations.display.Summary;
 
 import java.util.concurrent.TimeUnit;
 

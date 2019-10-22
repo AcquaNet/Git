@@ -44,12 +44,13 @@ public class AbstractTestCases extends AbstractTestCase<JDEAtinaConnector> {
         logger.info("MULESOFT - FUNCTIONAL_TEST AbstractTestCases: cleaning: END");
     }
 
+    @SuppressWarnings("unchecked")
     public Object ejecucionInterna(String origin, String entityType, Map<String, Object> entityData)
             throws Exception {
 
         logger.info("JDE ATINA - Parameters: " + origin + " Calling: " + entityType);
 
-        hashMapper((HashMap) entityData,0);
+        hashMapper((HashMap<String, Object>) entityData, 0);
 
         Object returnValue = null;
 
@@ -57,7 +58,7 @@ public class AbstractTestCases extends AbstractTestCase<JDEAtinaConnector> {
 
         if (returnValue instanceof HashMap) {
 
-        	hashMapper((HashMap) returnValue,0);
+            hashMapper((HashMap<String, Object>) returnValue, 0);
 
         }
 
@@ -66,39 +67,40 @@ public class AbstractTestCases extends AbstractTestCase<JDEAtinaConnector> {
         return returnValue;
 
     }
-    
+
+    @SuppressWarnings("unchecked")
     public static void hashMapper(Map<String, Object> lhm1, int level) throws ParseException {
-    	String levelLog = StringUtils.repeat(" > ", level);
+        String levelLog = StringUtils.repeat(" > ", level);
         for (Map.Entry<String, Object> entry : lhm1.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
-            if (!(value instanceof Map) && !(value instanceof ArrayList)) { 
-                 logger.info("JDE ATINA - " + levelLog + " Key: [" + key + "] Value: [" +
-                		 value + "]");
+            if (!(value instanceof Map) && !(value instanceof ArrayList)) {
+                logger.info("JDE ATINA - " + levelLog + " Key: [" + key + "] Value: [" +
+                        value + "]");
             } else if (value instanceof ArrayList) {
-            	logger.info("JDE ATINA - " + levelLog + " Key: [" + key + "]");
-            	for(Object obj:(ArrayList) value)
-            	{ 
-            		logger.info("JDE ATINA " + levelLog + "-----------------------------------------------");
-            		
-            		if (obj instanceof Map)
-            		{
-	            		Map<String, Object> subMap = (Map<String, Object>)obj;
-	                    level++;
-	                    hashMapper(subMap,level);
-	                    level--;
-            		}
-            		
-            	}
-                
+                logger.info("JDE ATINA - " + levelLog + " Key: [" + key + "]");
+                for (Object obj : (ArrayList<?>) value)
+                {
+                    logger.info("JDE ATINA " + levelLog + "-----------------------------------------------");
+
+                    if (obj instanceof Map)
+                    {
+                        Map<String, Object> subMap = (Map<String, Object>) obj;
+                        level++;
+                        hashMapper(subMap, level);
+                        level--;
+                    }
+
+                }
+
             } else if (value instanceof Map) {
-            	logger.info("JDE ATINA - " + levelLog + " Key: [" + key + "]");
-                Map<String, Object> subMap = (Map<String, Object>)value;
+                logger.info("JDE ATINA - " + levelLog + " Key: [" + key + "]");
+                Map<String, Object> subMap = (Map<String, Object>) value;
                 level++;
-                hashMapper(subMap,level);
+                hashMapper(subMap, level);
                 level--;
             } else {
-                 throw new IllegalArgumentException(String.valueOf(value));
+                throw new IllegalArgumentException(String.valueOf(value));
             }
 
         }

@@ -596,14 +596,14 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     .build());
 
             logger.info(" Valores Retornados: ");
-            
-            logger.info(" Parameter Name: " + ejecutarOperacionesResponse.getNombreDelParametro());
-        	logger.info(" Parameter Type: " + ejecutarOperacionesResponse.getTipoDelParametro());
-        	logger.info(" Is Object: " + ejecutarOperacionesResponse.getIsObject());
-        	logger.info(" Is Repeated: " + ejecutarOperacionesResponse.getRepeatedParameter());
 
-        	int level = 0;
-        	
+            logger.info(" Parameter Name: " + ejecutarOperacionesResponse.getNombreDelParametro());
+            logger.info(" Parameter Type: " + ejecutarOperacionesResponse.getTipoDelParametro());
+            logger.info(" Is Object: " + ejecutarOperacionesResponse.getIsObject());
+            logger.info(" Is Repeated: " + ejecutarOperacionesResponse.getRepeatedParameter());
+
+            int level = 0;
+
             if (ejecutarOperacionesResponse.getRepeatedParameter())
             {
                 ArrayList<HashMap<String, Object>> response = new ArrayList<HashMap<String, Object>>();
@@ -622,8 +622,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
                         for (EjecutarOperacionResponse respuestaAProcesar : resultado.getListaDeValoresList()) {
 
-                        	level++;
-                            procesarRespuesta(respuestaAProcesar, obj,level);
+                            level++;
+                            procesarRespuesta(respuestaAProcesar, obj, level);
                             level--;
 
                         }
@@ -637,17 +637,17 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
             } else if (ejecutarOperacionesResponse.getIsObject())
             {
-            	 
+
                 HashMap<String, Object> response = new HashMap<String, Object>();
 
                 List<EjecutarOperacionResponse> respuestaMap = ejecutarOperacionesResponse.getListaDeValoresList();
 
-                if (respuestaMap != null && !respuestaMap.isEmpty()) { 
+                if (respuestaMap != null && !respuestaMap.isEmpty()) {
 
                     for (EjecutarOperacionResponse respuestaAProcesar : respuestaMap) {
 
-                    	level++;
-                        procesarRespuesta(respuestaAProcesar, response,level);
+                        level++;
+                        procesarRespuesta(respuestaAProcesar, response, level);
                         level--;
 
                     }
@@ -672,7 +672,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
                 if (ejecutarOperacionesResponse != null) {
 
-                    procesarRespuesta(ejecutarOperacionesResponse, response,level);
+                    procesarRespuesta(ejecutarOperacionesResponse, response, level);
 
                 }
 
@@ -743,7 +743,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
         Iterator<Map.Entry<String, Object>> iterador = values.iterator();
 
-        logger.info("JDE Atina Service - Procesando valores recibidos...");
+        logger.info("JDE Atina Service - Processing input request...");
 
         while (iterador.hasNext()) {
 
@@ -761,8 +761,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 valorNuevo.setNombreDelParametro(valor.getKey());
 
                 logger.info("-------------------------------------------------------------------------------------------");
-                logger.info("JDE Atina Service -                     Parametro: Nombre: " + valor.getKey());
-                logger.info("                                                    Tipo del Parametro:" + className);
+                logger.info("JDE Atina Service -                     Parameter Name recieved: " + valor.getKey());
+                logger.info("                                        Parameter Value Type recieved: " + className);
 
                 // --------------------------------------------------------------
                 // Obtner Metadata del Input para Conversion del Tipo de Datos
@@ -772,7 +772,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
                 if (metadataDelInput == null)
                 {
-                    String msg = "Parametro Invalido [" + valor.getKey() + "]";
+                    String msg = "Invalid Parameter [" + valor.getKey() + "]";
                     logger.error(msg);
 
                     String errorMessage = msg;
@@ -787,10 +787,14 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
                 }
 
-                logger.info("JDE Atina Service -                     Metadata: Parametro:" + metadataDelInput.getParametro()
+                logger.info("                                        Metadata: Parameter Name: " + metadataDelInput.getParametro()
                         .getNombreDelParametro());
-                logger.info("JDE Atina Service -                             : Tipo Java:" + metadataDelInput.getParametro()
+                logger.info("                                        Metadata: Parameter Type: " + metadataDelInput.getParametro()
                         .getTipoDelParametroJava());
+                logger.info("                                        Metadata: Is a Object: " + metadataDelInput.getParametro()
+                        .getIsObject());
+                logger.info("                                        Metadata: Is Repeated: " + metadataDelInput.getParametro()
+                        .getRepeatedParameter());
 
                 // --------------------------------------------------------------
                 // Get Metadata
@@ -815,16 +819,36 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
                     valoresNuevo.setNombreDelParametro(valor.getKey());
 
-                    for (Object valorAProcesar : valores)
+                    if (metadataDelInput.getParametro()
+                            .getIsObject())
                     {
-                        EjecutarOperacionValores.Builder valorXNuevo = EjecutarOperacionValores.newBuilder();
 
-                        ArrayList<EjecutarOperacionValores> valoresRetornados = procesarRequest(metadataInput, (Map<String, Object>) valorAProcesar,
-                                metadataDelInput.getListaSubParametros());
+                        for (Object valorAProcesar : valores)
+                        {
+                            EjecutarOperacionValores.Builder valorXNuevo = EjecutarOperacionValores.newBuilder();
 
-                        valorXNuevo.addAllListaDeValores(valoresRetornados);
+                            ArrayList<EjecutarOperacionValores> valoresRetornados = procesarRequest(metadataInput, (Map<String, Object>) valorAProcesar,
+                                    metadataDelInput.getListaSubParametros());
 
-                        valoresNuevo.addListaDeValores(valorXNuevo.build());
+                            valorXNuevo.addAllListaDeValores(valoresRetornados);
+
+                            valoresNuevo.addListaDeValores(valorXNuevo.build());
+
+                        }
+
+                    } else
+                    {
+
+                        for (Object valorAProcesar : valores)
+                        {
+
+                            EjecutarOperacionValores valoresRetornados = procesarObject(metadataDelInput.getParametro()
+                                    .getNombreDelParametro(), metadataDelInput.getParametro()
+                                    .getTipoDelParametroJava(), valorAProcesar);
+
+                            valoresNuevo.addListaDeValores(valoresRetornados);
+
+                        }
 
                     }
 
@@ -860,7 +884,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                                     break;
                                 default:
 
-                                    String msg = "ERROR: Parametro: " + valor.getKey() + " Convirtiendo valor de input de " + className + " a String. Metadata Input: "
+                                    String msg = "ERROR: Parameter: " + valor.getKey() + " of " + className + " has an error"
                                             + metadataDelInput.toString();
                                     logger.error(msg);
 
@@ -1105,16 +1129,261 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
     }
 
+    private EjecutarOperacionValores procesarObject(String parameterName, String tipoDelParametroJava, Object valor)
+    {
+
+        EjecutarOperacionValores.Builder valorNuevo = EjecutarOperacionValores.newBuilder();
+
+        String className = valor.getClass()
+                .getName();
+
+        switch (tipoDelParametroJava) {
+
+            case "java.lang.String":
+                switch (className) {
+                    case "java.lang.String":
+                        valorNuevo.setValueAsString((String) valor);
+                        break;
+                    case "java.lang.Integer":
+                        valorNuevo.setValueAsString(((Integer) valor).toString());
+                        break;
+                    case "java.lang.Double":
+                        valorNuevo.setValueAsString(((Double) valor).toString());
+                        break;
+                    case "java.lang.Long":
+                        valorNuevo.setValueAsString(((Long) valor).toString());
+                        break;
+                    case "java.lang.Float":
+                        valorNuevo.setValueAsString(((Float) valor).toString());
+                        break;
+                    default:
+
+                        String msg = "ERROR: Parameter: " + parameterName + " of " + className + " cannot be converted to " + parameterName;
+
+                        logger.error(msg);
+
+                        String errorMessage = msg;
+                        String claseDeLaOperacion = "";
+                        String metodoDeLaOperacion = "";
+                        int httpStatus = 510;
+                        String httpStatusReason = "";
+                        String request = "";
+                        String response = "";
+
+                        throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response,
+                                null);
+
+                }
+                break;
+            case "java.lang.Integer":
+                switch (className) {
+                    case "java.lang.String":
+                        valorNuevo.setValueAsInteger(Integer.parseInt((String) valor));
+                        break;
+                    case "java.lang.Integer":
+                        valorNuevo.setValueAsInteger((Integer) valor);
+                        break;
+                    default:
+                        String msg = "ERROR: Parameter: " + parameterName + " of " + className + " cannot be converted to " + parameterName;
+                        logger.error(msg);
+
+                        String errorMessage = msg;
+                        String claseDeLaOperacion = "";
+                        String metodoDeLaOperacion = "";
+                        int httpStatus = 510;
+                        String httpStatusReason = "";
+                        String request = "";
+                        String response = "";
+
+                        throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response,
+                                null);
+
+                }
+                break;
+            case "java.lang.Boolean":
+                switch (className) {
+                    case "java.lang.Boolean":
+                        valorNuevo.setValueAsBoolean((Boolean) valor);
+                        break;
+                    default:
+                        String msg = "ERROR: Parameter: " + parameterName + " of " + className + " cannot be converted to " + parameterName;
+                        logger.error(msg);
+
+                        String errorMessage = msg;
+                        String claseDeLaOperacion = "";
+                        String metodoDeLaOperacion = "";
+                        int httpStatus = 510;
+                        String httpStatusReason = "";
+                        String request = "";
+                        String response = "";
+
+                        throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response,
+                                null);
+
+                }
+                break;
+            case "java.lang.Float":
+                switch (className) {
+                    case "java.lang.String":
+                        valorNuevo.setValueAsFloat((Float) valor);
+                        break;
+                    default:
+                        String msg = "ERROR: Parameter: " + parameterName + " of " + className + " cannot be converted to " + parameterName;
+                        logger.error(msg);
+
+                        String errorMessage = msg;
+                        String claseDeLaOperacion = "";
+                        String metodoDeLaOperacion = "";
+                        int httpStatus = 510;
+                        String httpStatusReason = "";
+                        String request = "";
+                        String response = "";
+
+                        throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response,
+                                null);
+
+                }
+                break;
+            case "java.util.Date":
+                switch (className) {
+                    case "java.util.Date":
+                        Date date = (java.util.Date) valor;
+                        Instant instant = date.toInstant();
+                        long seconds = instant.getEpochSecond();
+                        int nanos = (int) instant.getEpochSecond();
+                        valorNuevo.setValueAsDate(Timestamp.newBuilder()
+                                .setSeconds(seconds)
+                                .setNanos(nanos)
+                                .build());
+                        break;
+                    default:
+                        String msg = "ERROR: Parameter: " + parameterName + " of " + className + " cannot be converted to " + parameterName;
+                        logger.error(msg);
+
+                        String errorMessage = msg;
+                        String claseDeLaOperacion = "";
+                        String metodoDeLaOperacion = "";
+                        int httpStatus = 510;
+                        String httpStatusReason = "";
+                        String request = "";
+                        String response = "";
+
+                        throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response,
+                                null);
+
+                }
+                break;
+            case "java.lang.Byte":
+                valorNuevo.setValuesAsByteString((ByteString) valor);
+                break;
+            case "java.lang.Double":
+            case "BDecimal":
+                switch (className) {
+                    case "java.lang.String":
+                        valorNuevo.setValueAsDouble(Double.valueOf((String) valor)
+                                .doubleValue());
+                        break;
+                    case "java.lang.Integer":
+                        valorNuevo.setValueAsDouble(((Integer) valor).doubleValue());
+                        break;
+                    case "java.lang.Double":
+                        valorNuevo.setValueAsDouble((Double) valor);
+                        break;
+                    case "java.lang.Long":
+                        valorNuevo.setValueAsDouble(((Long) valor).doubleValue());
+                        break;
+                    case "java.lang.Float":
+                        valorNuevo.setValueAsDouble(((Float) valor).doubleValue());
+                        break;
+                    default:
+                        String msg = "ERROR: Parameter: " + parameterName + " of " + className + " cannot be converted to " + parameterName;
+
+                        logger.error(msg);
+
+                        String errorMessage = msg;
+                        String claseDeLaOperacion = "";
+                        String metodoDeLaOperacion = "";
+                        int httpStatus = 510;
+                        String httpStatusReason = "";
+                        String request = "";
+                        String response = "";
+
+                        throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response,
+                                null);
+
+                }
+                break;
+            case "java.lang.Long":
+            case "BInteger":
+                switch (className) {
+                    case "java.lang.String":
+                        valorNuevo.setValueAsLong(Long.valueOf((String) valor)
+                                .longValue());
+                        break;
+                    case "java.lang.Integer":
+                        valorNuevo.setValueAsLong(((Integer) valor).longValue());
+                        break;
+                    case "java.lang.Long":
+                        valorNuevo.setValueAsLong((Long) valor);
+                        break;
+                    case "java.lang.Double":
+                        valorNuevo.setValueAsLong(Double.valueOf((Long) valor)
+                                .longValue());
+                        break;
+                    case "java.lang.Float":
+                        valorNuevo.setValueAsLong(Float.valueOf((Long) valor)
+                                .longValue());
+                        break;
+                    default:
+                        String msg = "ERROR: Parameter: " + parameterName + " of " + className + " cannot be converted to " + parameterName;
+                        logger.error(msg);
+
+                        String errorMessage = msg;
+                        String claseDeLaOperacion = "";
+                        String metodoDeLaOperacion = "";
+                        int httpStatus = 510;
+                        String httpStatusReason = "";
+                        String request = "";
+                        String response = "";
+
+                        throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response,
+                                null);
+
+                }
+                break;
+            default:
+
+                String msg = "ERROR: Parameter: " + parameterName + " of " + className + " cannot be converted to " + parameterName;
+                logger.error(msg);
+
+                String errorMessage = msg;
+                String claseDeLaOperacion = "";
+                String metodoDeLaOperacion = "";
+                int httpStatus = 510;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
+
+                throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, null);
+
+        }
+
+        EjecutarOperacionValores valorNuevoValido = valorNuevo.build();
+
+        return valorNuevoValido;
+
+    }
+
     @SuppressWarnings("unchecked")
     private HashMap<String, Object> procesarRespuesta(EjecutarOperacionResponse ejecutarOperacionesResponse,
             HashMap<String, Object> response, int level) {
-    	
-    	String levelLog = StringUtils.repeat(" > ", level);
-    	logger.info(" ------------------------------------------------------------------ "); 
-    	logger.info(" Processing: " + ejecutarOperacionesResponse.getNombreDelParametro()); 
-    	logger.info(" Parameter Type: " + ejecutarOperacionesResponse.getTipoDelParametro());
-    	logger.info(" Is Object: " + ejecutarOperacionesResponse.getIsObject());
-    	logger.info(" Is Repeated: " + ejecutarOperacionesResponse.getRepeatedParameter());
+
+        String levelLog = StringUtils.repeat(" > ", level);
+        logger.info(levelLog + " ------------------------------------------------------------------ ");
+        logger.info(levelLog + " Processing: " + ejecutarOperacionesResponse.getNombreDelParametro());
+        logger.info(levelLog + " Parameter Type: " + ejecutarOperacionesResponse.getTipoDelParametro());
+        logger.info(levelLog + " Is Object: " + ejecutarOperacionesResponse.getIsObject());
+        logger.info(levelLog + " Is Repeated: " + ejecutarOperacionesResponse.getRepeatedParameter());
 
         if (ejecutarOperacionesResponse.getRepeatedParameter()) {
 
@@ -1125,27 +1394,27 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             ArrayList<Object> lista = new ArrayList<Object>();
 
             for (EjecutarOperacionResponse respuestaList : ejecutarOperacionesResponse.getListaDeValoresList()) {
-            	
-            	logger.info(" Processing Values: " + respuestaList.getNombreDelParametro());  
-            	logger.info(" Parameter Type: " + respuestaList.getTipoDelParametro());
-            	logger.info(" Is Object: " + respuestaList.getIsObject());
-            	logger.info(" Is Repeated: " + respuestaList.getRepeatedParameter());
+
+                logger.info(levelLog + " Processing Values: " + respuestaList.getNombreDelParametro());
+                logger.info(levelLog + " Parameter Type: " + respuestaList.getTipoDelParametro());
+                logger.info(levelLog + " Is Object: " + respuestaList.getIsObject());
+                logger.info(levelLog + " Is Repeated: " + respuestaList.getRepeatedParameter());
 
                 if (respuestaList.getIsObject() || respuestaList.getRepeatedParameter())
                 {
-                	level++;
-                    valores = procesarRespuesta(respuestaList, valores,level);
+                    level++;
+                    valores = procesarRespuesta(respuestaList, valores, level);
                     level--;
 
                     lista.add((HashMap<String, Object>) valores.get(respuestaList.getNombreDelParametro()));
                 }
                 else
                 {
-                    
+
                     level++;
-                    valores = procesarRespuesta(respuestaList, valores,level); 
+                    valores = procesarRespuesta(respuestaList, valores, level);
                     level--;
-                    
+
                     if (!valores.isEmpty())
                     {
                         lista.add(valores.values()
@@ -1167,13 +1436,13 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
             for (EjecutarOperacionResponse respuestaMap : ejecutarOperacionesResponse.getListaDeValoresList()) {
 
-            	logger.info(" Processing Values: " + respuestaMap.getNombreDelParametro());  
-            	logger.info(" Parameter Type: " + respuestaMap.getTipoDelParametro());
-            	logger.info(" Is Object: " + respuestaMap.getIsObject());
-            	logger.info(" Is Repeated: " + respuestaMap.getRepeatedParameter());
-            	
-            	level++;
-                valores = procesarRespuesta(respuestaMap, valores,level);
+                logger.info(levelLog + " Processing Values: " + respuestaMap.getNombreDelParametro());
+                logger.info(levelLog + " Parameter Type: " + respuestaMap.getTipoDelParametro());
+                logger.info(levelLog + " Is Object: " + respuestaMap.getIsObject());
+                logger.info(levelLog + " Is Repeated: " + respuestaMap.getRepeatedParameter());
+
+                level++;
+                valores = procesarRespuesta(respuestaMap, valores, level);
                 level--;
 
             }
@@ -1185,11 +1454,11 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             String nombreParametro = ejecutarOperacionesResponse.getNombreDelParametro();
 
             String tipoDelParametro = ejecutarOperacionesResponse.getTipoDelParametro();
-             
-            logger.info(" Processing Value: " + ejecutarOperacionesResponse.getNombreDelParametro());  
-        	logger.info(" Parameter Type: " + ejecutarOperacionesResponse.getTipoDelParametro());
-        	logger.info(" Is Object: " + ejecutarOperacionesResponse.getIsObject());
-        	logger.info(" Is Repeated: " + ejecutarOperacionesResponse.getRepeatedParameter());
+
+            logger.info(levelLog + " Processing Value: " + ejecutarOperacionesResponse.getNombreDelParametro());
+            logger.info(levelLog + " Parameter Type: " + ejecutarOperacionesResponse.getTipoDelParametro());
+            logger.info(levelLog + " Is Object: " + ejecutarOperacionesResponse.getIsObject());
+            logger.info(levelLog + " Is Repeated: " + ejecutarOperacionesResponse.getRepeatedParameter());
 
             Object value = null;
 
@@ -1211,7 +1480,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     value = ejecutarOperacionesResponse.getValueAsFloat();
                     break;
                 case "java.util.Date":
-                case "org.joda.time.LocalDate": 
+                case "org.joda.time.LocalDate":
                     value = toLocalDate(ejecutarOperacionesResponse.getValueAsDate());
                     break;
                 case "java.lang.Byte":
@@ -1235,17 +1504,17 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     value = toLocalDate(ejecutarOperacionesResponse.getValueAsDate());
                     break;
                 case "java.util.Calendar":
-                	value = toLocalDateFromCalendar(ejecutarOperacionesResponse.getValueAsDate());
-                	break;
+                    value = toLocalDateFromCalendar(ejecutarOperacionesResponse.getValueAsDate());
+                    break;
                 case "NULL":
                     value = null;
                     break;
                 default:
-                    logger.info("     Parameter: " + nombreParametro + " Type:" + tipoDelParametro + "  Invalid");
+                    logger.info(levelLog + "     Parameter: " + nombreParametro + " Type:" + tipoDelParametro + "  Invalid");
                     throw new InternalConnectorException("     Parameter: " + nombreParametro + " Type:" + tipoDelParametro + "  Invalid");
             }
 
-            logger.info("     Parametro: " + nombreParametro + " Tipo del Parametro:" + tipoDelParametro + " Valor: " + (value == null ? "NULO" : value.toString()));
+            logger.info(levelLog + "     Parametro: " + nombreParametro + " Tipo del Parametro:" + tipoDelParametro + " Valor: " + (value == null ? "NULO" : value.toString()));
 
             response.put(nombreParametro, value);
 
@@ -1404,7 +1673,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
         return LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos()), ZoneId.of("UTC"))
                 .toLocalDate();
     }
-    
+
     private LocalDate toLocalDateFromCalendar(Timestamp timestamp) {
 
         return LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos()), ZoneId.of("UTC"))

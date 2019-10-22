@@ -11,22 +11,49 @@ public class GetItemPriceTestCases extends AbstractTestCases {
 
     protected final Logger logger = LoggerFactory.getLogger(GetItemPriceTestCases.class);
 
+    @SuppressWarnings({
+            "unchecked",
+            "unused"
+    })
     @Test
     public void executeTest1() throws Exception {
 
-    	String entityType = TestDataBuilder.getItemPriceEntityType();
-    	 
-        logger.info("MULESOFT - FUNCTIONAL_TEST "+ entityType + " BEGIN ");
+        String entityType = TestDataBuilder.getItemPriceEntityType();
+
+        logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " BEGIN ");
 
         // ======================
         // Get Connector Instance
-        // ====================== 
+        // ======================
 
         Map<String, Object> entityData = TestDataBuilder.getItemPriceEntityData();
 
         Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetItemPriceTestCases: ", entityType, entityData);
-       
-        logger.info("MULESOFT - FUNCTIONAL_TEST "+ entityType + " END ");
+
+        logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
+
+    }
+
+    @SuppressWarnings({
+            "unchecked",
+            "unused"
+    })
+    @Test
+    public void executeTest2() throws Exception {
+
+        String entityType = TestDataBuilder.getItemPriceEntityType();
+
+        logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " BEGIN ");
+
+        // ======================
+        // Get Connector Instance
+        // ======================
+
+        Map<String, Object> entityData = TestDataBuilder.getItemPriceInvalidItemEntityData();
+
+        Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetItemPriceTestCases: ", entityType, entityData);
+
+        logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
 
     }
 
