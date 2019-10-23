@@ -16,9 +16,10 @@ public class ExternalConnectorException extends RuntimeException {
     private String response;
     private String httpStatusReason = "";
     private int httpStatus = 0;
+    private String e1Message = null;
 
     public ExternalConnectorException(String errorMessage, String claseDeLaOperacion, String metodoDeLaOperacion, int httpStatus, String httpStatusReason, String request,
-            String response, Throwable cause) {
+            String response, String e1Message, Throwable cause) {
         super(errorMessage, cause);
         this.errorMessage = errorMessage;
         this.claseDeLaOperacion = claseDeLaOperacion;
@@ -61,4 +62,8 @@ public class ExternalConnectorException extends RuntimeException {
         return errorMessage;
     }
 
+	public String getE1Message() {
+		return e1Message;
+	}
+     
 }

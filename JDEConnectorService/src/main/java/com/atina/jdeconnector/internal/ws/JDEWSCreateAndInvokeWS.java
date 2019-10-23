@@ -16,7 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.atina.jdeconnectorservice.JDEConnectorService;
+import com.atina.jdeconnectorservice.exception.JDESingleConnectorException;
 import com.atina.jdeconnectorservice.exception.JDESingleException;
+import com.atina.jdeconnectorservice.exception.JDESingleWSException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -176,8 +178,28 @@ public class JDEWSCreateAndInvokeWS {
             String errorMessage = ((BusinessServiceException) ex.getCause()).getMessage();
 
             logger.error("Error invoking WS InvocationTargetException " + operation + " Error: " + errorMessage, ex);
+            
+            E1Message e1Message = new E1Message(context, "019FIS", errorMessage);
              
-            returnMessages.addMessage(new E1Message(context, "019FIS", errorMessage));
+            String e1MessageAsJson  = "";
+            
+            ObjectMapper mapper = new ObjectMapper();
+
+            mapper.setPropertyNamingStrategy(new MyNamingStrategy());
+        
+            mapper.configure(MapperFeature.USE_ANNOTATIONS, false);
+            
+            try {
+                
+                 e1MessageAsJson = mapper.writeValueAsString(e1Message);
+                 
+            } catch (JsonProcessingException exj) {
+                
+                throw new JDESingleWSException("Error invoking WS JsonProcessingException " + ex.getMessage(), ex, ex.getMessage());
+                
+            } 
+            
+            throw new JDESingleWSException("Error invoking WS InvocationTargetException " + ex.getMessage(), ex, e1MessageAsJson);
  
         }
         
@@ -255,11 +277,8 @@ public class JDEWSCreateAndInvokeWS {
 
              }
              
-         }
+         } 
          
-         
-        
-
         HashMap<String, Object> valorAsHashMap = new HashMap();
 
         try {

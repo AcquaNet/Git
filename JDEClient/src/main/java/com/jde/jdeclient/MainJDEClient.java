@@ -38,9 +38,9 @@ public class MainJDEClient {
 
     private static final Logger logger = LoggerFactory.getLogger(MainJDEClient.class);
     
-    private static final Boolean testWS_Logout = Boolean.TRUE;
+    private static final Boolean testWS_Logout = Boolean.FALSE;
     private static final Boolean testWS_WriteOffProcessingOptions = Boolean.FALSE;
-    private static final Boolean testWS_ItemPrice = Boolean.FALSE;
+    private static final Boolean testWS_ItemPrice = Boolean.TRUE;
     private static final Boolean testWS_PurchaseOrdersForApprover = Boolean.FALSE;
     private static final Boolean testBSFN = Boolean.FALSE;
     

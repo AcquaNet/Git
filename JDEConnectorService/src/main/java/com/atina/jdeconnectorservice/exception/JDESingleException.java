@@ -5,7 +5,7 @@
  */
 package com.atina.jdeconnectorservice.exception;
 
-import com.jdedwards.system.kernel.CallObjectErrorList;
+import com.jdedwards.system.kernel.CallObjectErrorList; 
 
 /**
  *
@@ -16,7 +16,7 @@ public class JDESingleException extends JDESingleConnectorException{
     private static final long serialVersionUID = 1997753363232807011L;
     
     private final CallObjectErrorList bsfnListError = new CallObjectErrorList();
-
+    
     public JDESingleException(String message) {
         super(message);
     }
@@ -42,5 +42,5 @@ public class JDESingleException extends JDESingleConnectorException{
     public CallObjectErrorList getBsfnListError() {
         return bsfnListError;
     }
-  
+   
 }

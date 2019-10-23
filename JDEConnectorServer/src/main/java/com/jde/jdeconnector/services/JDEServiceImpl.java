@@ -10,6 +10,8 @@ import com.atina.jdeconnector.internal.model.JDEBsfnParameter;
 import com.atina.jdeconnector.internal.model.metadata.ParameterTypeObject;
 import com.atina.jdeconnector.internal.model.metadata.ParameterTypeSimple;
 import com.atina.jdeconnectorservice.exception.JDESingleConnectionException; 
+import com.atina.jdeconnectorservice.exception.JDESingleConnectorException;
+import com.atina.jdeconnectorservice.exception.JDESingleWSException;
 import com.atina.jdeconnectorservice.service.poolconnection.JDEPoolConnections;
 import com.atina.jdeconnectorservice.service.JDESingleConnection;
 import com.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
@@ -838,6 +840,19 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             sb.append("|");
             sb.append(ex.getMessage());
             sb.append("|%ExternalServiceException%");
+
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(sb.toString())
+                    .withCause(ex)
+                    .asRuntimeException());
+
+        } catch (JDESingleWSException ex) {
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("Error Invoking WS");
+            sb.append("|");
+            sb.append(ex.getE1Message());
+            sb.append("|%WSException%");
 
             responseObserver.onError(Status.INTERNAL
                     .withDescription(sb.toString())

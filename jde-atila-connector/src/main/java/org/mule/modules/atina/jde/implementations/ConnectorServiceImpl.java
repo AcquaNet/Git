@@ -162,8 +162,9 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 String httpStatusReason = "";
                 String request = "";
                 String response = "";
+                String e1Message = "";
 
-                throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+                throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e1Message, e);
 
             }
             else
@@ -228,8 +229,9 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 String httpStatusReason = "";
                 String request = "";
                 String response = "";
+                String e1Message = "";
 
-                throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+                throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e1Message, e);
 
             }
             else
@@ -294,8 +296,9 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 String httpStatusReason = "";
                 String request = "";
                 String response = "";
+                String e1Message = "";
 
-                throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+                throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e1Message, e);
 
             }
             else
@@ -695,11 +698,29 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 String httpStatusReason = "";
                 String request = "";
                 String response = "";
+                String e1Message = "";
 
-                throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+                throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e1Message, e);
 
-            }
-            else
+            } else if (e.getMessage()
+                    .endsWith("%WSException%"))
+            {
+            	
+            	String[] tokens = StringUtils.split(e.getMessage(), "|");
+
+                String errorMessage = tokens[0];
+                String claseDeLaOperacion = tokens[1];
+                String metodoDeLaOperacion = tokens[2];
+                int httpStatus = 510;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
+                String e1Message =  tokens[1];
+
+                throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e1Message, e);
+            	
+            	
+            } else
             {
                 String[] tokens = StringUtils.split(e.getMessage(), "|");
 

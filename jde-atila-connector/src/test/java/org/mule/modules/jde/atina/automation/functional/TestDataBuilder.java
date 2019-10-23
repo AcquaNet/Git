@@ -9,6 +9,7 @@ public class TestDataBuilder {
     private static final String GET_PURCHASE_ORDER_FOR_APPROVER = "oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover";
     private static final String GET_ITEM_PRICE = "oracle.e1.bssv.JP410000.InventoryManager.getItemPrice";
     private static final String GET_WO_PO = "oracle.e1.bssv.JP000040.FinancialComplianceManager.getWriteOffProcessingOptions";
+    private static final String GET_ITEM_PRICE_AVA = "oracle.e1.bssv.JP420000.SalesOrderManager.getItemPriceAndAvailabilityV3";
 
     public static String getPurchaseOrdersForApproverEntityType() {
         return GET_PURCHASE_ORDER_FOR_APPROVER;
@@ -81,6 +82,29 @@ public class TestDataBuilder {
         tmp1.add("ZJDE0001");
 
         returnValue.put("processingVersionStandardReceiptEntry", tmp1);
+
+        return returnValue;
+
+    }
+    
+    public static String getItemPriceAvaEntityType() {
+        return GET_ITEM_PRICE_AVA;
+    }
+
+    public static Map<String, Object> getItemPriceAvaEntityData() {
+
+        final Map<String, Object> returnValue = new HashMap<String, Object>();
+
+        Map<String, Object> tmp1Item = new java.util.HashMap<String, Object>();
+        
+        Map<String, Object> tmp1 = new java.util.HashMap<String, Object>();
+        tmp1.put("itemId", new Integer(60003));
+
+        tmp1Item.put("item", tmp1);
+        
+        returnValue.put("product", tmp1Item);
+
+        returnValue.put("businessUnit", "          10");
 
         return returnValue;
 
