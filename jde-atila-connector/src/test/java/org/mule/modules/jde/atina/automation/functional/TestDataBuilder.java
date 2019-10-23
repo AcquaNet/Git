@@ -1,5 +1,7 @@
 package org.mule.modules.jde.atina.automation.functional;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -98,13 +100,24 @@ public class TestDataBuilder {
         Map<String, Object> product = new java.util.HashMap<String, Object>();
        
         Map<String, Object> itemId = new java.util.HashMap<String, Object>();
-        itemId.put("itemId", new Integer(60003));
+        itemId.put("itemId", new Integer(60290));
+         
         
-        product.put("item", itemId);
-        
+        product.put("item", itemId); 
+        product.put("quantityOrdered", BigDecimal.valueOf( 50 ));
+         
         returnValue.put("product", product);
 
-        returnValue.put("businessUnit", "          10");
+        returnValue.put("businessUnit", "          30");
+        
+        returnValue.put("currencyCode", "USD");
+        
+        returnValue.put("adjustmentScheduleCode", "NATIONAL");
+        
+        Map<String, Object> entityId = new java.util.HashMap<String, Object>();
+        entityId.put("entityId", new Integer(4242));
+        
+        returnValue.put("customer", entityId);
 
         return returnValue;
 

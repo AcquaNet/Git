@@ -1061,6 +1061,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             break;
                         case "java.lang.Double":
                         case "BDecimal":
+                        case "java.math.BigDecimal":
                             switch (className) {
                                 case "java.lang.String":
                                     valorNuevo.setValueAsDouble(Double.valueOf((String) valor.getValue())
@@ -1077,6 +1078,9 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                                     break;
                                 case "java.lang.Float":
                                     valorNuevo.setValueAsDouble(((Float) valor.getValue()).doubleValue());
+                                    break;
+                                case "java.math.BigDecimal": 
+                                    valorNuevo.setValueAsDouble(((java.math.BigDecimal) valor.getValue()).doubleValue());
                                     break;
                                 default:
                                     String msg = "ERROR: Parameter: " + valor.getKey() + " Cannot be converted from " + className + " to Double."
@@ -1098,6 +1102,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             break;
                         case "java.lang.Long":
                         case "BInteger":
+                        case "java.math.BigInteger":
                             switch (className) {
                                 case "java.lang.String":
                                     valorNuevo.setValueAsLong(Long.valueOf((String) valor.getValue())
@@ -1116,6 +1121,9 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                                 case "java.lang.Float":
                                     valorNuevo.setValueAsLong(Float.valueOf((Long) valor.getValue())
                                             .longValue());
+                                    break;
+                                case "java.math.BigInteger":
+                                    valorNuevo.setValueAsLong( ((java.math.BigInteger) valor.getValue()).longValue());
                                     break;
                                 default:
                                     String msg = "ERROR: Parameter: " + valor.getKey() + " Cannot be converted from " + className + " to Long."
@@ -1336,6 +1344,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 break;
             case "java.lang.Double":
             case "BDecimal":
+            case "java.math.BigDecimal":
                 switch (className) {
                     case "java.lang.String":
                         valorNuevo.setValueAsDouble(Double.valueOf((String) valor)
@@ -1353,6 +1362,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     case "java.lang.Float":
                         valorNuevo.setValueAsDouble(((Float) valor).doubleValue());
                         break;
+                    case "java.math.BigDecimal": 
+                        valorNuevo.setValueAsDouble(((java.math.BigDecimal) valor).doubleValue());
                     default:
                         String msg = "ERROR: Parameter: " + parameterName + " of " + className + " cannot be converted to " + parameterName;
 
@@ -1373,6 +1384,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 break;
             case "java.lang.Long":
             case "BInteger":
+            case "java.math.BigInteger":
                 switch (className) {
                     case "java.lang.String":
                         valorNuevo.setValueAsLong(Long.valueOf((String) valor)
@@ -1392,6 +1404,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                         valorNuevo.setValueAsLong(Float.valueOf((Long) valor)
                                 .longValue());
                         break;
+                    case "java.math.BigInteger": 
+                        valorNuevo.setValueAsDouble(((java.math.BigInteger) valor).longValue());
                     default:
                         String msg = "ERROR: Parameter: " + parameterName + " of " + className + " cannot be converted to " + parameterName;
                         logger.error(msg);

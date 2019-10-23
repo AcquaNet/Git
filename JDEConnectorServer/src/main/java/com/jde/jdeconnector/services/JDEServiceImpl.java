@@ -1211,11 +1211,13 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                                 valorActual = valorLista.getValuesAsByteString();
                                 break;
                             case "BDecimal":
+                            case "java.math.BigDecimal":
                                 Double valueDouble = new Double(valorLista.getValueAsDouble());
                                 String strValueD = valueDouble.toString();
                                 valorActual = new BigDecimal(strValueD);
-                                break;
+                                break; 
                             case "BInteger":
+                            case "java.math.BigInteger":
                                 Long valueLong = new Long(valorLista.getValueAsLong());
                                 String strValueL = valueLong.toString();
                                 valorActual = new BigInteger(strValueL);
