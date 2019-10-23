@@ -95,14 +95,14 @@ public class TestDataBuilder {
 
         final Map<String, Object> returnValue = new HashMap<String, Object>();
 
-        Map<String, Object> tmp1Item = new java.util.HashMap<String, Object>();
+        Map<String, Object> product = new java.util.HashMap<String, Object>();
+       
+        Map<String, Object> itemId = new java.util.HashMap<String, Object>();
+        itemId.put("itemId", new Integer(60003));
         
-        Map<String, Object> tmp1 = new java.util.HashMap<String, Object>();
-        tmp1.put("itemId", new Integer(60003));
-
-        tmp1Item.put("item", tmp1);
+        product.put("item", itemId);
         
-        returnValue.put("product", tmp1Item);
+        returnValue.put("product", product);
 
         returnValue.put("businessUnit", "          10");
 

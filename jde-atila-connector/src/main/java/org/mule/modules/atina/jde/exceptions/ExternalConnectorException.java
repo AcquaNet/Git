@@ -28,6 +28,7 @@ public class ExternalConnectorException extends RuntimeException {
         this.response = response;
         this.httpStatusReason = httpStatusReason;
         this.httpStatus = httpStatus;
+        this.e1Message = e1Message;
     }
 
     public ExternalConnectorException(String message) {
