@@ -10,7 +10,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath com.jde.jdeconnectorserver.Main -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -licencia PdvHmCHV+4Agt8UCyF5zxpKCbs+wNWWGmqPL7aKUUXW2hoo5xKNm2jzX2KWzksyjZJxOxKpgmOUpBvyt5TB09PRHv0Yyr3++hPEh+3lfvnVsnhNgCvA4QVvDkSBsYovq0ZGAIH+CyrXPmw/s0UsDDckhcTnL7ZlzruZowa4eiwY=</exec.args>
+                <exec.args>-classpath %classpath com.jde.jdeconnectorserver.Main -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -clientcod demo</exec.args>
                 <exec.executable>java</exec.executable>
                 <exec.workingdir>C:\_work\JDEConnectorCE\Projects\JDEConnectorServer</exec.workingdir>
             </properties>
@@ -25,7 +25,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath com.jde.jdeconnectorserver.Main -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -licencia PdvHmCHV+4Agt8UCyF5zxpKCbs+wNWWGmqPL7aKUUXW2hoo5xKNm2jzX2KWzksyjZJxOxKpgmOUpBvyt5TB09PRHv0Yyr3++hPEh+3lfvnVsnhNgCvA4QVvDkSBsYovq0ZGAIH+CyrXPmw/s0UsDDckhcTnL7ZlzruZowa4eiwY=</exec.args>
+                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath com.jde.jdeconnectorserver.Main -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -clientcod demo</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
                 <exec.workingdir>C:\_work\JDEConnectorCE\Projects\JDEConnectorServer</exec.workingdir>
@@ -41,7 +41,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath com.jde.jdeconnectorserver.Main -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -licencia PdvHmCHV+4Agt8UCyF5zxpKCbs+wNWWGmqPL7aKUUXW2hoo5xKNm2jzX2KWzksyjZJxOxKpgmOUpBvyt5TB09PRHv0Yyr3++hPEh+3lfvnVsnhNgCvA4QVvDkSBsYovq0ZGAIH+CyrXPmw/s0UsDDckhcTnL7ZlzruZowa4eiwY=</exec.args>
+                <exec.args>-classpath %classpath com.jde.jdeconnectorserver.Main -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -clientcod demo</exec.args>
                 <exec.executable>java</exec.executable>
                 <exec.workingdir>C:\_work\JDEConnectorCE\Projects\JDEConnectorServer</exec.workingdir>
             </properties>

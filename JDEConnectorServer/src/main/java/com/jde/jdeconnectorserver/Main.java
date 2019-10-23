@@ -56,8 +56,8 @@ public class Main {
     // PARAMETROS LICENCIA
     // -------------------------------------------------------------
      
-    @Option(name = "-licencia", usage = "Licencia Encriptada")
-    public String licencia;
+    @Option(name = "-clientcod", usage = "Client Code")
+    public String clientcod;
 
     public void iniciarAplicacion(String[] args) throws InternalServerException, InterruptedException {
 
@@ -102,41 +102,46 @@ public class Main {
         // -----------------------------------------
         //
         
-//        if(licencia == null)
-//        {
-//            mostrarAyuda();
-//            System.exit(0);
-//        }
-//        else
-//        {
-//            Licenciador lic = new Licenciador();
-//            
-//            boolean valido;
-//            
-//            try {
-//                valido = lic.verificarLicencia("swagger.dat", licencia);
-//            } catch (NoSuchPaddingException ex) {
-//                valido = false;
-//            } catch (InvalidKeyException ex) {
-//                valido = false;
-//            } catch (UnsupportedEncodingException ex) {
-//                valido = false;
-//            } catch (IllegalBlockSizeException ex) {
-//                valido = false;
-//            } catch (BadPaddingException ex) {
-//                valido = false;
-//            } catch (Exception ex) {
-//                valido = false;
-//            }
-//             
-//            if(!valido)
-//            {
-//                System.out.println("Licencia No Valida o vencida");
-//                System.out.println(licencia);
-//                System.exit(0);
-//            }
-//        }
-//         
+        if(clientcod == null)
+        {
+            mostrarAyuda();
+            System.exit(0);
+        }
+        else
+        {
+            Licenciador lic = new Licenciador();
+            
+            boolean valido;
+            
+            try {
+                
+                String newLicense = lic.getLicense(clientcod);
+                
+                valido = lic.verificarLicencia("jdelicense.dat", newLicense);
+                
+                
+                
+            } catch (NoSuchPaddingException ex) {
+                valido = false;
+            } catch (InvalidKeyException ex) {
+                valido = false;
+            } catch (UnsupportedEncodingException ex) {
+                valido = false;
+            } catch (IllegalBlockSizeException ex) {
+                valido = false;
+            } catch (BadPaddingException ex) {
+                valido = false;
+            } catch (Exception ex) {
+                valido = false;
+            }
+             
+            if(!valido)
+            {
+                System.out.println("Invalid License"); 
+                System.exit(0);
+            }
+        }
+         
         if(ipServer == null || localIp == null || portLServer == 0 )
         {
             mostrarAyuda();
