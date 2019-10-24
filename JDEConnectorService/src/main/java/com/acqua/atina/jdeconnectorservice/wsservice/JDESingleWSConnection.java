@@ -41,7 +41,7 @@ public class JDESingleWSConnection implements JDEConnection {
 
         try {
 
-            logger.info("MULESOFT - JDEConnection - Show Classpath:");
+            logger.info("JDE ATINA  JDEConnection - Show Classpath:");
 
             showClassPath();
              
@@ -62,7 +62,7 @@ public class JDESingleWSConnection implements JDEConnection {
         // ----------------------------------------------
         // Creating JDE Client Connector
         // ----------------------------------------------
-        logger.info("MULESOFT - JDEConnection - Creating JDE Client Connector with this values:");
+        logger.info("JDE ATINA  JDEConnection - Creating JDE Client Connector with this values:");
 
         logger.info("     User: " + user);
         logger.info("     Environment: " + environment);
@@ -70,21 +70,23 @@ public class JDESingleWSConnection implements JDEConnection {
 
         this.client = new JDESingleWSClientFactory().createInstance(user, password, environment, role);
 
-        logger.info("MULESOFT - JDEConnection -JDE Client Connector is done.");
+        logger.info("JDE ATINA  JDEConnection -JDE Client Connector is done.");
 
         // ----------------------------------------------
         // Startup JDE Std configuration
         // ----------------------------------------------
         
-        logger.debug("MULESOFT - JDEConnection - Startup JDE Configuration for Environment: " + environment);
+        logger.info("JDE ATINA  - JDEConnection - Startup JDE Configuration for Environment: " + environment);
 
         try {
 
             JDEBoostrap.getInstance()
-                    .setJDEDefaultFolder(environment);
+                    .setJDEDefaultFolderForMicroService(environment);
+            
+            logger.info("JDE ATINA  - JDEConnection - Folder for Interop.ini: " + JDEBoostrap.getInstance().getJdeDefaultFolder());
             
 
-            logger.debug("MULESOFT - JDEConnection - startupJDEConfiguration()  Default Folder: " + environment);
+            logger.info("JDE ATINA  - JDEConnection - startupJDEConfiguration()  Default Folder: " + environment);
 
         } catch (Exception e) {
 
@@ -94,7 +96,7 @@ public class JDESingleWSConnection implements JDEConnection {
 
         }
 
-        logger.debug("MULESOFT - JDEConnection - startupJDEConfiguration() for adding new JDE Output Handler: " + environment);
+        logger.info("JDE ATINA  - JDEConnection - startupJDEConfiguration() for adding new JDE Output Handler: " + environment);
 
         JDEBoostrap.getInstance()
                 .addNewJDEOutputHandler();
@@ -193,7 +195,7 @@ public class JDESingleWSConnection implements JDEConnection {
     
     public HashMap<String, Object> callJDEOperation(String operation, HashMap<String, Object> inputValues, Integer transactionID) throws JDESingleConnectorException {
 
-        logger.info("MULESOFT - JDEClient - Calling BSFN"); 
+        logger.info("JDE ATINA  JDEClient - Calling BSFN"); 
      
         return client.callJDEWS(operation, inputValues);
         
@@ -205,24 +207,24 @@ public class JDESingleWSConnection implements JDEConnection {
     
     private void showClassPath() throws IOException {
 
-        logger.debug("MULESOFT - JDEStartUpConfiguration - Showing resources for current thread: ");
+        logger.info("JDE ATINA  - JDEStartUpConfiguration - Showing resources for current thread: ");
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         Enumeration<URL> e = classLoader.getResources("");
 
         while (e.hasMoreElements()) {
-            logger.debug("MULESOFT - JDEStartUpConfiguration -                        : " + e.nextElement());
+            logger.info("JDE ATINA  - JDEStartUpConfiguration -                        : " + e.nextElement());
         }
 
-        logger.debug("MULESOFT - JDEStartUpConfiguration - Showing resources for current class: ");
+        logger.info("JDE ATINA  - JDEStartUpConfiguration - Showing resources for current class: ");
 
         classLoader = this.getClass().getClassLoader();
 
         e = classLoader.getResources("");
 
         while (e.hasMoreElements()) {
-            logger.debug("MULESOFT - JDEStartUpConfiguration -                        : " + e.nextElement());
+            logger.info("JDE ATINA  - JDEStartUpConfiguration -                        : " + e.nextElement());
         }
 
     }
@@ -233,32 +235,32 @@ public class JDESingleWSConnection implements JDEConnection {
 
         try {
 
-            logger.info("MULESOFT - JDEClient - Definining Folder Cache for environment: " + environment);
+            logger.info("JDE ATINA  JDEClient - Definining Folder Cache for environment: " + environment);
 
             String cacheFolderWithEnvironment = "";
  
-            logger.debug("MULESOFT - JDEClient - Temporal Ditectory: " + tmpFolder);
+            logger.info("JDE ATINA  - JDEClient - Temporal Ditectory: " + tmpFolder);
 
             cacheFolderWithEnvironment = tmpFolder.getAbsolutePath().concat(File.separator)
                 .concat(environment);
 
-            logger.info("MULESOFT - JDEClient - Folder Cache with Environmen: " + cacheFolderWithEnvironment);
+            logger.info("JDE ATINA  JDEClient - Folder Cache with Environmen: " + cacheFolderWithEnvironment);
 
             fwEnv = new File(cacheFolderWithEnvironment);
 
             if (fwEnv.exists() && fwEnv.isDirectory()) {
        
-                logger.info("MULESOFT - JDEClient - Image Folder Cache with Environment has been verified: " + cacheFolderWithEnvironment);
+                logger.info("JDE ATINA  JDEClient - Image Folder Cache with Environment has been verified: " + cacheFolderWithEnvironment);
 
             } else {
 
                 FileUtils.forceMkdir(fwEnv);
  
-                logger.debug("MULESOFT - JDEClient - Image Folder Cache with Environment has been verified and created: " + cacheFolderWithEnvironment);
+                logger.info("JDE ATINA  - JDEClient - Image Folder Cache with Environment has been verified and created: " + cacheFolderWithEnvironment);
 
             }
 
-            logger.info("MULESOFT - JDEClient - Setting Image Folder cache in: " + fwEnv.getAbsolutePath());
+            logger.info("JDE ATINA  JDEClient - Setting Image Folder cache in: " + fwEnv.getAbsolutePath());
 
         } catch (NullPointerException e) {
 

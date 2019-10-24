@@ -56,7 +56,7 @@ public class JDEBoostrap {
 
             JdeLog.addUserLogOutputHandler(JDE_OUT_HANDLER, muleHandler);
 
-            logger.info("MULESOFT - JDEStartUpConfiguration - Mule Handler added");
+            logger.info("JDE ATINA  - JDEStartUpConfiguration - Mule Handler added");
 
         }
 
@@ -86,9 +86,27 @@ public class JDEBoostrap {
 
     }
 
+    public void setJDEDefaultFolderForMicroService(String environment) throws Exception {
+         
+        if (jdeDefaultFolder == null) {
+            
+            File tmpFolder = new File(FileUtils.getTempDirectory()
+                    .getAbsolutePath());
+            
+            jdeDefaultFolder = tmpFolder.getAbsolutePath().concat(File.separator)
+                    .concat(environment);
+              
+            System.setProperty("default_path", jdeDefaultFolder);
+             
+        }
+            
+        logger.info("JDE ATINA - JDEStartUpConfiguration - Default Folder : " + jdeDefaultFolder);
+        
+    }
+    
     public void setJDEDefaultFolder(String environment) throws Exception {
 
-        logger.info("JDE ATINA - JDEStartUpConfiguration - Defining default folder for environment: " + (environment!=null?environment:"NULL"));
+        logger.info("JDE ATINA - JDEStartUpConfiguration - Set default folder for environment: " + (environment!=null?environment:"NULL"));
  
         if (jdeDefaultFolder == null) {
 
@@ -106,14 +124,14 @@ public class JDEBoostrap {
 
         System.setProperty("default_path", jdeDefaultFolder);
 
-        logger.info("MULESOFT - JDEStartUpConfiguration - Property Default Path: " + jdeDefaultFolder);
+        logger.info("JDE ATINA  - JDEStartUpConfiguration - Property Default Path: " + jdeDefaultFolder);
  
     }
 
     private void defineDefaultFolder(String environment) throws Exception {
 
         jdeDefaultFolder = "";
-
+        
         logger.info("JDE ATINA - JDEStartUpConfiguration - Defining default folder for environment: " + environment);
 
         // Get Environment Resource
