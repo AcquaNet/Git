@@ -1,0 +1,30 @@
+version: '2'
+
+services:
+    
+  jde-microserver:
+    build: docker_jdemicro
+    image: soporteacqua/jdeatina-server:1.0.0
+    environment:
+      JDE_MICROSERVER_IP: ${JDE_MICROSERVER_IP}
+      JDE_MICROSERVER_PORT: ${JDE_MICROSERVER_PORT}  
+      JDE_MICROSERVER_CODE: ${JDE_MICROSERVER_CODE}
+    container_name: jdeatina-server
+    ports:
+     - "${JDE_MICROSERVER_PORT}:${JDE_MICROSERVER_PORT}"
+    volumes:
+     - /tmp/docker/swaggerserver/logs:/var/jdeatina/logs
+    user: root
+    networks:
+      atinanet:
+        ipv4_address: 172.26.0.2
+    restart: always 
+     
+    
+networks:
+  atinanet:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.26.0.0/16
+         gateway: 172.26.0.1
