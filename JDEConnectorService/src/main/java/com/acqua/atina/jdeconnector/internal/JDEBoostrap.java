@@ -28,9 +28,9 @@ public class JDEBoostrap {
 
     public JDEBoostrap() {
 
-        logger.debug("MULESOFT - JDEStartUpConfiguration - started...");
+        logger.info("JDE ATINA - JDEStartUpConfiguration - started...");
          
-        logger.debug("MULESOFT - JDEStartUpConfiguration -      Temp Folder: " + FileUtils.getTempDirectory().getAbsolutePath());
+        logger.info("JDE ATINA - JDEStartUpConfiguration -      Temp Folder: " + FileUtils.getTempDirectory().getAbsolutePath());
  
         LocalLogicControl.getInstance().setEnabled(false);
 
@@ -72,7 +72,7 @@ public class JDEBoostrap {
 
             muleHandler = null;
 
-            logger.debug("MULESOFT - JDEStartUpConfiguration - Mule Handler Removed");
+            logger.info("JDE ATINA - JDEStartUpConfiguration - Mule Handler Removed");
 
         }
 
@@ -88,7 +88,7 @@ public class JDEBoostrap {
 
     public void setJDEDefaultFolder(String environment) throws Exception {
 
-        logger.debug("MULESOFT - JDEStartUpConfiguration - Defining default folder for environment: " + (environment!=null?environment:"NULL"));
+        logger.info("JDE ATINA - JDEStartUpConfiguration - Defining default folder for environment: " + (environment!=null?environment:"NULL"));
  
         if (jdeDefaultFolder == null) {
 
@@ -114,7 +114,7 @@ public class JDEBoostrap {
 
         jdeDefaultFolder = "";
 
-        logger.debug("MULESOFT - JDEStartUpConfiguration - Defining default folder for environment: " + environment);
+        logger.info("JDE ATINA - JDEStartUpConfiguration - Defining default folder for environment: " + environment);
 
         // Get Environment Resource
 
@@ -124,7 +124,7 @@ public class JDEBoostrap {
 
         if (environmentResource != null) {
 
-            logger.debug("MULESOFT - JDEStartUpConfiguration - Resource: " + environmentResource.toString());
+            logger.info("JDE ATINA - JDEStartUpConfiguration - Resource: " + environmentResource.toString());
  
             File environmentFolder = new File(environmentResource.getFile());
 
@@ -140,12 +140,12 @@ public class JDEBoostrap {
 
         } else {
 
-            logger.debug("MULESOFT - JDEStartUpConfiguration - Resource is null");
+            logger.info("JDE ATINA - JDEStartUpConfiguration - Resource is null");
 
             jdeDefaultFolder = getInteropIniFile();
         }
 
-        logger.debug("MULESOFT - JDEStartUpConfiguration - Default Folder : " + jdeDefaultFolder);
+        logger.info("JDE ATINA - JDEStartUpConfiguration - Default Folder : " + jdeDefaultFolder);
  
     }
 
@@ -153,7 +153,7 @@ public class JDEBoostrap {
 
         String interopIniFilePath = "";
 
-        logger.debug("MULESOFT - JDEStartUpConfiguration - Getting Interop.ini file: " + JDE_INTEROPINI_FILE);
+        logger.info("JDE ATINA - JDEStartUpConfiguration - Getting Interop.ini file: " + JDE_INTEROPINI_FILE);
 
         URL jdeInteropResource = Thread.currentThread()
             .getContextClassLoader()
@@ -161,7 +161,7 @@ public class JDEBoostrap {
 
         File jdeinteropFile = new File(jdeInteropResource.getFile());
 
-        logger.debug("MULESOFT - JDEStartUpConfiguration - Interop.ini file: " + jdeinteropFile.getAbsolutePath());
+        logger.info("JDE ATINA - JDEStartUpConfiguration - Interop.ini file: " + jdeinteropFile.getAbsolutePath());
 
         interopIniFilePath = jdeinteropFile.getParent();
 
@@ -184,7 +184,7 @@ public class JDEBoostrap {
     private String getClassPath() throws IOException
     {
 
-        logger.debug("MULESOFT - JDEStartUpConfiguration - Getting resources for current thread: ");
+        logger.info("JDE ATINA - JDEStartUpConfiguration - Getting resources for current thread: ");
 
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -209,7 +209,7 @@ public class JDEBoostrap {
     public void copyJDEIniFilesToClasspath(String environment) throws Exception
     {
 
-        logger.debug("MULESOFT - JDEStartUpConfiguration - ClassPath: " + getClassPath());
+        logger.info("JDE ATINA - JDEStartUpConfiguration - ClassPath: " + getClassPath());
 
     }
 
