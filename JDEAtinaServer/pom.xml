@@ -46,7 +46,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.acqua.jde.jdeconnectorserver.Main</mainClass>
+                            <mainClass>com.acqua.jde.jdeconnectorserver.JDEConnectorServer</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
