@@ -5,6 +5,7 @@
  */
 package com.acqua.jde.jdeconnectorserververificador;
  
+import com.acqua.jde.jdeconnectorserver.JDEConnectorServer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Licenciador {
 
-     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(Licenciador.class);
+     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(JDEConnectorServer.class);
      
     public Licenciador() {
     }

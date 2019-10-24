@@ -26,9 +26,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author jgodi
  */
-public class Main {
+public class JDEConnectorServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDEConnectorServer.class);
 
     private static String DIR_INSTALACION = "service-files";
     private static String METADATA = "metadata";
@@ -212,7 +212,7 @@ public class Main {
 
         try {
 
-            Main mainApp = new Main();
+            JDEConnectorServer mainApp = new JDEConnectorServer();
 
             mainApp.iniciarAplicacion(args);
 

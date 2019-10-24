@@ -16,6 +16,7 @@ import com.acqua.atina.jdeconnectorservice.service.poolconnection.JDEPoolConnect
 import com.acqua.atina.jdeconnectorservice.service.JDESingleConnection;
 import com.acqua.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
 import com.acqua.atina.jdeconnectorservice.wsservice.JDESingleWSConnection;
+import com.acqua.jde.jdeconnectorserver.JDEConnectorServer;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
 import com.acqua.jde.jdeconnectorserver.model.Configuracion;
@@ -59,7 +60,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
-    private static final Logger logger = LoggerFactory.getLogger(JDEServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDEConnectorServer.class);
 
     private static String SEPARADOR_CLASE_OPERACION = "_";
     private static String DIR_INSTALACION = "service-files";
