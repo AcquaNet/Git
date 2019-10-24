@@ -13,7 +13,8 @@ services:
     ports:
      - "${JDE_MICROSERVER_PORT}:${JDE_MICROSERVER_PORT}"
     volumes:
-     - /tmp/docker/swaggerserver/logs:/var/jdeatina/logs
+     - /logs:/var/jdeatinaserver/logs
+     - /config:/tmp
     user: root
     networks:
       atinanet:

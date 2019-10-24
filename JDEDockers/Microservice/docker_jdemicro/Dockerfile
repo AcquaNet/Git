@@ -27,7 +27,11 @@ ENV JAVA_HOME ${javaFolder}/${javaRootFolder}
 # ====================================
 # JDE ATINA MICRO SERVER
 # ====================================
-ENV SWAGGER_SERVER_PORT ${JDE_MICROSERVER_PORT} 
+ARG JDE_MICROSERVER_IP=${JDE_MICROSERVER_IP} 
+ARG JDE_MICROSERVER_PORT=${JDE_MICROSERVER_PORT} 
+ARG JDE_MICROSERVER_CODE=${JDE_MICROSERVER_CODE}
+ENV JDE_MICROSERVER_IP ${JDE_MICROSERVER_IP} 
+ENV JDE_MICROSERVER_PORT ${JDE_MICROSERVER_PORT} 
 ENV JDE_MICROSERVER_CODE ${JDE_MICROSERVER_CODE}
  
 # ====================================
@@ -73,7 +77,7 @@ RUN LOCALIP=$(hostname  -I | cut -f2 -d' ')
 RUN mkdir /var/jdeatinaserver
 RUN cd /var/jdeatinaserver
 COPY images/JDEAtinaServer-1.0.0.jar /var/jdeatinaserver/
-VOLUME ["/var/jdeatinaserver/logs", "/var/jdeatinaserver/jde-atina-files"]
+VOLUME ["/var/jdeatinaserver/logs", "/tmp"]
 EXPOSE $SWAGGER_SERVER_PORT 
 
 # ====================================
