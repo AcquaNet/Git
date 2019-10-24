@@ -57,7 +57,7 @@
                     <!-- MainClass in mainfest make a executable jar -->
                     <archive>
                         <manifest>
-                            <mainClass>com.jde.jdeconnectorserver.Main</mainClass>
+                            <mainClass>com.acqua.jde.jdeconnectorserver.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -80,7 +80,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.jde.jdeconnectorserver.Main</mainClass>
+                            <mainClass>com.acqua.jde.jdeconnectorserver.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
