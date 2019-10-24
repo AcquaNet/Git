@@ -46,7 +46,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.acqua.dragonfishserver.main.Main</mainClass>
+                            <mainClass>com.acqua.jde.jdeconnectorserver.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

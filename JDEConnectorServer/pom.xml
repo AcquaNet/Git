@@ -251,13 +251,7 @@
             <artifactId>jackson-datatype-joda</artifactId>
             <version>${jackson-version}</version>
         </dependency>
-        
-        <dependency>
-            <groupId>com.acqua</groupId> 
-            <artifactId>DragonFishCommon</artifactId>
-            <version>1.0.0-SNAPSHOT</version> 
-        </dependency>     
-  
+      
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
