@@ -26,26 +26,23 @@ public class GetItemPriceAndAvailabilityTestCases extends AbstractTestCases {
         // ======================
         // Get Connector Instance
         // ======================
-        
+
         Map<String, Object> entityData = TestDataBuilder.getItemPriceAvaEntityData();
-        
+
         try
         {
-        	Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetItemPriceAvaTestCases: ", entityType, entityData);
-        	
-        } catch(ExternalConnectorException e)
+            Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetItemPriceAvaTestCases: ", entityType, entityData);
+
+        } catch (ExternalConnectorException e)
         {
-        	logger.error(e.getE1Message());
-        } catch(Exception e)
+            logger.error(e.getE1Message());
+        } catch (Exception e)
         {
-        	logger.error(e.getMessage());
+            logger.error(e.getMessage());
         }
- 
 
         logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
 
     }
-
-   
 
 }

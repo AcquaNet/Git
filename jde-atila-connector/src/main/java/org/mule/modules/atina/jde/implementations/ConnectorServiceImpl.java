@@ -576,7 +576,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             // --------------------------------------------------------------
             //
 
-            ArrayList<EjecutarOperacionValores> listaValoresValidos = procesarRequest(metadataInput, entityData, metadataInputAsHashMap,0);
+            ArrayList<EjecutarOperacionValores> listaValoresValidos = procesarRequest(metadataInput, entityData, metadataInputAsHashMap, 0);
 
             valores.addAll(listaValoresValidos);
 
@@ -705,8 +705,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             } else if (e.getMessage()
                     .endsWith("%WSException%"))
             {
-            	
-            	String[] tokens = StringUtils.split(e.getMessage(), "|");
+
+                String[] tokens = StringUtils.split(e.getMessage(), "|");
 
                 String errorMessage = tokens[0];
                 String claseDeLaOperacion = tokens[1];
@@ -715,11 +715,10 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 String httpStatusReason = "";
                 String request = "";
                 String response = "";
-                String e1Message =  tokens[1];
+                String e1Message = tokens[1];
 
                 throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e1Message, e);
-            	
-            	
+
             } else
             {
                 String[] tokens = StringUtils.split(e.getMessage(), "|");
@@ -750,7 +749,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     {
 
         ArrayList<EjecutarOperacionValores> valoresARetornar = new ArrayList();
-        
+
         String levelLog = StringUtils.repeat(" > ", level);
 
         if (entityData == null)
@@ -767,16 +766,15 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
         Iterator<Map.Entry<String, Object>> iterador = values.iterator();
 
         logger.info(levelLog + "=================================================================================");
-        
+
         logger.info(levelLog + "JDE Atina Service - Processing input value Request: " + values.toString());
 
         int y = 0;
-        
+
         while (iterador.hasNext()) {
 
-        	logger.info(levelLog + "---------------------------------------------------------------------------------");
-            
-            
+            logger.info(levelLog + "---------------------------------------------------------------------------------");
+
             EjecutarOperacionValores.Builder valorNuevo = EjecutarOperacionValores.newBuilder();
 
             Map.Entry<String, Object> valor = iterador.next();
@@ -789,15 +787,14 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                         .getName();
 
                 logger.info(levelLog + "                                        Parameter No.: " + y);
-                
+
                 y++;
 
                 valorNuevo.setNombreDelParametro(valor.getKey());
 
-                
-                
                 logger.info(levelLog + "                                        Parameter Name recieved      : " + valor.getKey());
-                logger.info(levelLog + "                                        Parameter Value received     : " + valor.getValue().toString());
+                logger.info(levelLog + "                                        Parameter Value received     : " + valor.getValue()
+                        .toString());
                 logger.info(levelLog + "                                        Parameter Value Type recieved: " + className);
 
                 // --------------------------------------------------------------
@@ -840,13 +837,13 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 if (className.equals("java.util.LinkedHashMap") ||
                         className.equals("java.util.HashMap")) {
 
-                	level++;
-                	
+                    level++;
+
                     ArrayList<EjecutarOperacionValores> valoresRetornados = procesarRequest(metadataInput, (Map<String, Object>) valor.getValue(),
-                            metadataDelInput.getListaSubParametros(),level);
-                    
+                            metadataDelInput.getListaSubParametros(), level);
+
                     level--;
-                    
+
                     logger.info(levelLog + "---------------------------------------------------------------------------------");
                     logger.info(levelLog + "                                       New Value: \n" + valoresRetornados.toString());
                     logger.info(levelLog + "=================================================================================");
@@ -872,16 +869,15 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             EjecutarOperacionValores.Builder valorXNuevo = EjecutarOperacionValores.newBuilder();
 
                             level++;
-                            
+
                             ArrayList<EjecutarOperacionValores> valoresRetornados = procesarRequest(metadataInput, (Map<String, Object>) valorAProcesar,
-                                    metadataDelInput.getListaSubParametros(),level);
-                            
+                                    metadataDelInput.getListaSubParametros(), level);
+
                             level--;
-                            
+
                             logger.info(levelLog + "---------------------------------------------------------------------------------");
                             logger.info(levelLog + "                                       New Value: \n" + valoresRetornados.toString());
                             logger.info(levelLog + "=================================================================================");
-                             
 
                             valorXNuevo.addAllListaDeValores(valoresRetornados);
 
@@ -914,7 +910,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     // Los parametros se deben convertir al formato desde el formato de MULE al formato de SWAGGER
                     // ------------------------------------------------------------------------------------------------
                     // CONVERTIR AL FORMATO DEL METADATA
-                	 
+
                     switch (metadataDelInput.getParametro()
                             .getTipoDelParametroJava()) {
 
@@ -1079,7 +1075,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                                 case "java.lang.Float":
                                     valorNuevo.setValueAsDouble(((Float) valor.getValue()).doubleValue());
                                     break;
-                                case "java.math.BigDecimal": 
+                                case "java.math.BigDecimal":
                                     valorNuevo.setValueAsDouble(((java.math.BigDecimal) valor.getValue()).doubleValue());
                                     break;
                                 default:
@@ -1123,7 +1119,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                                             .longValue());
                                     break;
                                 case "java.math.BigInteger":
-                                    valorNuevo.setValueAsLong( ((java.math.BigInteger) valor.getValue()).longValue());
+                                    valorNuevo.setValueAsLong(((java.math.BigInteger) valor.getValue()).longValue());
                                     break;
                                 default:
                                     String msg = "ERROR: Parameter: " + valor.getKey() + " Cannot be converted from " + className + " to Long."
@@ -1160,8 +1156,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, null);
 
                     }
-                    
-                    
+
                     logger.info(levelLog + "---------------------------------------------------------------------------------");
                     logger.info(levelLog + "                                        New Primitive Value:\n " + valorNuevo.toString());
                     logger.info(levelLog + "=================================================================================");
@@ -1362,7 +1357,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     case "java.lang.Float":
                         valorNuevo.setValueAsDouble(((Float) valor).doubleValue());
                         break;
-                    case "java.math.BigDecimal": 
+                    case "java.math.BigDecimal":
                         valorNuevo.setValueAsDouble(((java.math.BigDecimal) valor).doubleValue());
                     default:
                         String msg = "ERROR: Parameter: " + parameterName + " of " + className + " cannot be converted to " + parameterName;
@@ -1404,7 +1399,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                         valorNuevo.setValueAsLong(Float.valueOf((Long) valor)
                                 .longValue());
                         break;
-                    case "java.math.BigInteger": 
+                    case "java.math.BigInteger":
                         valorNuevo.setValueAsDouble(((java.math.BigInteger) valor).longValue());
                     default:
                         String msg = "ERROR: Parameter: " + parameterName + " of " + className + " cannot be converted to " + parameterName;
@@ -1597,23 +1592,23 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     }
 
     @SuppressWarnings("unchecked")
-	private HashMap<String, ParametroInput> getMetadataForInputAsHashMap(String operation) throws InternalConnectorException, ExecutionException
+    private HashMap<String, ParametroInput> getMetadataForInputAsHashMap(String operation) throws InternalConnectorException, ExecutionException
     {
-    	logger.info("----------------------------------------------------------------");
-    	logger.info("Getting Metadata As Hash Map for Operation: " + operation);
-  
+        logger.info("----------------------------------------------------------------");
+        logger.info("Getting Metadata As Hash Map for Operation: " + operation);
+
         List<TipoDelParametroInput> metadataInput = (List<TipoDelParametroInput>) cacheMetadataInput.get(operation);
 
         HashMap<String, ParametroInput> returnValue = new HashMap<String, ParametroInput>();
 
         for (TipoDelParametroInput param : metadataInput)
         {
-        	logger.info("----------------------------------------------------------------");
-        	logger.info("             Parameter Name: " + param.getNombreDelParametro());
-        	logger.info("             Parameter Type: " + param.getTipoDelParametroJava());
-        	logger.info("             Parameter Is Repeated: " + param.getRepeatedParameter());
-        	logger.info("             Parameter Is Object: " + param.getIsObject());
-        	
+            logger.info("----------------------------------------------------------------");
+            logger.info("             Parameter Name: " + param.getNombreDelParametro());
+            logger.info("             Parameter Type: " + param.getTipoDelParametroJava());
+            logger.info("             Parameter Is Repeated: " + param.getRepeatedParameter());
+            logger.info("             Parameter Is Object: " + param.getIsObject());
+
             ParametroInput parametro = new ParametroInput();
 
             parametro.setParametro(param);
@@ -1621,7 +1616,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             if (param.getIsObject())
             {
 
-                parametro.setListaSubParametros(getMetadataForSubParameter(param.getSubParametroList(),1));
+                parametro.setListaSubParametros(getMetadataForSubParameter(param.getSubParametroList(), 1));
 
             }
 
@@ -1630,25 +1625,25 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
         }
 
         logger.info("----------------------------------------------------------------");
-        
+
         return returnValue;
 
     }
 
     private HashMap<String, ParametroInput> getMetadataForSubParameter(List<TipoDelParametroInput> subpar, int level)
     {
-    	String levelLog = StringUtils.repeat("  >  ", level);
+        String levelLog = StringUtils.repeat("  >  ", level);
 
         HashMap<String, ParametroInput> listaSubParametros = new HashMap<String, ParametroInput>();
 
         for (TipoDelParametroInput param : subpar)
         {
-        	logger.info(levelLog + "----------------------------------------------------------------");
-        	logger.info(levelLog + "             Parameter Name: " + param.getNombreDelParametro());
-        	logger.info(levelLog + "             Parameter Type: " + param.getTipoDelParametroJava());
-        	logger.info(levelLog + "             Parameter Is Repeated: " + param.getRepeatedParameter());
-        	logger.info(levelLog + "             Parameter Is Object: " + param.getIsObject());
-        	
+            logger.info(levelLog + "----------------------------------------------------------------");
+            logger.info(levelLog + "             Parameter Name: " + param.getNombreDelParametro());
+            logger.info(levelLog + "             Parameter Type: " + param.getTipoDelParametroJava());
+            logger.info(levelLog + "             Parameter Is Repeated: " + param.getRepeatedParameter());
+            logger.info(levelLog + "             Parameter Is Object: " + param.getIsObject());
+
             ParametroInput parametro = new ParametroInput();
 
             parametro.setParametro(param);
@@ -1659,8 +1654,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     !param.getTipoDelParametroJava()
                             .equals("BInteger"))
             {
-            	level++;
-                parametro.setListaSubParametros(getMetadataForSubParameter(param.getSubParametroList(),level));
+                level++;
+                parametro.setListaSubParametros(getMetadataForSubParameter(param.getSubParametroList(), level));
                 level--;
 
             }
