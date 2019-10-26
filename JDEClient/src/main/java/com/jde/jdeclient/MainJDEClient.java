@@ -9,6 +9,7 @@ import com.jde.jdeclient.configuracion.Configuracion;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionRequest;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
+import com.jde.jdeserverwp.servicios.GetJsonsForOperationResponse;
 import com.jde.jdeserverwp.servicios.GetMetadataRequest;
 import com.jde.jdeserverwp.servicios.GetMetadataResponse;
 import com.jde.jdeserverwp.servicios.IsConnectedRequest;
@@ -40,9 +41,11 @@ public class MainJDEClient {
     
     private static final Boolean testWS_Logout = Boolean.FALSE;
     private static final Boolean testWS_WriteOffProcessingOptions = Boolean.FALSE;
-    private static final Boolean testWS_ItemPrice = Boolean.TRUE;
+    private static final Boolean testWS_ItemPrice = Boolean.FALSE;
     private static final Boolean testWS_PurchaseOrdersForApprover = Boolean.FALSE;
     private static final Boolean testBSFN = Boolean.FALSE;
+    
+    private static final Boolean testWS_PurchaseOrdersForApproverGetJson = Boolean.TRUE;
     
 
     public void iniciarAplicacion(String[] args) throws Exception {
@@ -807,6 +810,94 @@ public class MainJDEClient {
                 throw new RuntimeException("Error Logeando", null);
 
             }
+            
+            
+        }
+        
+        if(testWS_PurchaseOrdersForApproverGetJson)
+        {
+            
+            configuracion.setWsConnection(Boolean.TRUE);
+
+            // ===========================  
+            // Crear Canal de Comunicacion  
+            // ===========================  
+            //
+            ManagedChannel channel = ManagedChannelBuilder.forAddress(configuracion.getServidorServicio(), configuracion.getPuertoServicio())
+                    .usePlaintext()
+                    .build();
+
+            // =========================== 
+            // Creacion del Stub           
+            // ===========================  
+            // 
+            JDEServiceBlockingStub stub = JDEServiceGrpc.newBlockingStub(channel);
+
+            int sessionID = 0;
+
+            // ===========================  
+            // Login                       
+            // ===========================  
+            //
+            try {
+
+                SessionResponse tokenResponse = stub.login(
+                        SessionRequest.newBuilder()
+                                .setUser(configuracion.getUser())
+                                .setPassword(configuracion.getPassword())
+                                .setEnvironment(configuracion.getEnvironment())
+                                .setRole(configuracion.getRole())
+                                .setWsconnection(configuracion.getWsConnection())
+                                .build());
+
+                sessionID = (int) tokenResponse.getSessionId();
+
+                System.out.println("Logeado con Session [" + tokenResponse.getSessionId() + "]");
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo ");
+
+                throw new RuntimeException("Error Logeando", null);
+
+            } 
+
+            // ===========================  
+            // Get Metadata                       
+            // ===========================  
+            //
+            try {
+
+                GetJsonsForOperationResponse operaciones = stub.getJsonsForOperation(
+                        GetMetadataRequest.newBuilder()
+                                .setConnectorName("WS")
+                                .setUser(configuracion.getUser())
+                                .setPassword(configuracion.getPassword())
+                                .setEnvironment(configuracion.getEnvironment())
+                                .setRole(configuracion.getRole())
+                                .setSessionId(sessionID)
+                                .setWsconnection(configuracion.getWsConnection())
+                                .setOperacionKey("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover")
+                                .build());
+
+                 logger.info("Input  ");
+                 
+                 logger.info(operaciones.getInputAsJson());
+                 
+                 logger.info("Output  ");
+                 
+                 logger.info(operaciones.getOutputAsJson());
+                
+                 
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo ");
+
+                throw new RuntimeException("Error Logeando", ex);
+
+            } 
+            
             
             
         }

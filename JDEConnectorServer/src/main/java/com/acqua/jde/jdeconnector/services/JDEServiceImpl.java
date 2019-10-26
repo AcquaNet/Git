@@ -20,8 +20,16 @@ import com.acqua.jde.jdeconnectorserver.JDEConnectorServer;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
 import com.acqua.jde.jdeconnectorserver.model.Configuracion;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.introspect.AnnotatedField;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
+import com.jde.jdeserverwp.servicios.GetJsonsForOperationResponse;
 import com.jde.jdeserverwp.servicios.GetMetadataResponse;
 import com.jde.jdeserverwp.servicios.IsConnectedResponse;
 import com.jde.jdeserverwp.servicios.JDEServiceGrpc;
@@ -52,6 +60,8 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import java.lang.reflect.Field;
 
 /**
  * https://github.com/saturnism/grpc-java-by-example/blob/master/simple-grpc-server/src/main/java/com/example/grpc/server/MyGrpcServer.java
@@ -537,7 +547,157 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         
     }
     
-     private void generateInputTreeMetadata(GetMetadataResponse.Builder responseBuilder, HashMap<String, ParameterTypeSimple> parameters) {
+    @Override
+    public void getJsonsForOperation(com.jde.jdeserverwp.servicios.GetMetadataRequest request,
+            io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.GetJsonsForOperationResponse> responseObserver) {
+        
+        
+        logger.info("JDE Connector Server. Get Metadata for Operation");
+        
+        String tipoDeOperacion = request.getConnectorName();   // BSFN or WS
+         
+        try {
+        
+           // ================================================
+           // Get Session ID
+           // ================================================
+           //
+
+            int sessionID = JDEPoolConnections.getInstance().createConnection(  request.getUser(), 
+                                                                                request.getPassword(), 
+                                                                                request.getEnvironment(), 
+                                                                                request.getRole(), 
+                                                                                (int) request.getSessionId(),
+                                                                                request.getWsconnection());
+         
+        
+            // ================================================
+            // Get Single Connection
+            // ================================================
+            // 
+
+            if (tipoDeOperacion.equals(TIPO_BSFN)) {
+
+                
+                
+
+            }
+            
+            if (tipoDeOperacion.equals(TIPO_WS)) {
+
+                JDESingleWSConnection singleConnection = (JDESingleWSConnection) JDEPoolConnections.getInstance().getSingleConnection(sessionID);
+                
+                // ================================================
+                // Get Operations
+                // ================================================
+                //
+                HashMap<String, ParameterTypeSimple> inputParameters = singleConnection.getWSInputParameter(request.getOperacionKey());
+                
+                HashMap<String, ParameterTypeSimple> outputParameters = singleConnection.getWSOutputParameter(request.getOperacionKey());
+                
+                // --------------------------------------------------
+                // Crear el Objeto Mensaje de GetMetadataResponse
+                // --------------------------------------------------
+                //
+                GetJsonsForOperationResponse.Builder responseBuilder = GetJsonsForOperationResponse.newBuilder();
+
+                // ==================================================
+                // Generar Parametro de Input
+                // ==================================================
+                // 
+                
+                HashMap<String, Object> inputValues = new HashMap<String, Object>();
+                
+                HashMap<String, Object> outputValues = new HashMap<String, Object>();
+                
+                 
+                generateJsonInput(inputValues, inputParameters);
+                
+                generateJsonInput(outputValues, outputParameters);
+                 
+                
+                // ==================================================
+                // Convert HashMap to JSON
+                // ==================================================
+                // 
+                String inputAsJson = "";
+                
+                String outputAsJson = "";
+                
+                ObjectMapper mapper = new ObjectMapper();
+
+                mapper.setPropertyNamingStrategy(new MyNamingStrategy());
+
+                mapper.configure(MapperFeature.USE_ANNOTATIONS, false);
+
+                try {
+
+                    inputAsJson = mapper.writeValueAsString(inputValues);
+                    
+                    outputAsJson  = mapper.writeValueAsString(outputValues);
+
+                } catch (JsonProcessingException ex) {
+
+                    throw new JDESingleConnectionException("Error invoking WS JsonProcessingException " + ex.getMessage(), ex);
+
+                } 
+                
+                // ==================================================
+                // Generar Parametro de Output
+                // ==================================================
+                // 
+                
+                responseBuilder.setInputAsJson(inputAsJson);
+                
+                responseBuilder.setOutputAsJson(outputAsJson); 
+           
+
+                // --------------------------------------------------
+                // Crear el Objeto Mensaje de GetMetadataResponse
+                // --------------------------------------------------
+                //  
+                responseObserver.onNext(responseBuilder.build());
+
+                responseObserver.onCompleted();
+                
+
+            }
+
+        } catch (JDESingleConnectionException ex) {
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("Error getting metadata operations");
+            sb.append("|");
+            sb.append(ex.getMessage());
+            sb.append("|%ExternalServiceException%");
+
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(sb.toString())
+                    .withCause(ex)
+                    .asRuntimeException());
+
+        } catch (Exception ex) {
+
+            String msg = "Error JDE Server: " + ex.getMessage();
+            logger.error(msg, ex);
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("Error getting metadata operations");
+            sb.append("|");
+            sb.append(ex.getMessage());
+            sb.append("|%ServiceServerException%");
+
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(sb.toString())
+                    .withCause(ex)
+                    .asRuntimeException());
+
+        }
+
+        
+    }
+    
+    private void generateInputTreeMetadata(GetMetadataResponse.Builder responseBuilder, HashMap<String, ParameterTypeSimple> parameters) {
  
          logger.info("Input Parameter");
  
@@ -634,6 +794,159 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              } 
                
              source.addSubParametro(parametrosInputN.build());
+               
+         } 
+         
+     }
+    
+     private void generateJsonInput(HashMap<String, Object> inputValues, HashMap<String, ParameterTypeSimple> parameters) {
+ 
+         logger.info("Input Parameter");
+ 
+         for (Map.Entry<String, ParameterTypeSimple> entry : parameters.entrySet()) {
+ 
+             // ---------------------------------------------------------
+             // Inicio los valores
+             // ---------------------------------------------------------
+             //
+             Object parameterValue = entry.getValue();
+             
+             String parameterName = entry.getKey(); 
+             
+             Object parameterDefaultValue = "";
+
+             if (!(parameterValue instanceof ParameterTypeObject)) {
+
+                 ParameterTypeSimple simpleParameterType = (ParameterTypeSimple) parameterValue;
+                  
+                 if(simpleParameterType.isRepeated())
+                 {
+                     ArrayList<Object> newList = new ArrayList<Object>();
+                      
+                     newList.add(simpleParameterType.getModelType());
+                     
+                     parameterDefaultValue = newList;
+                     
+                     
+                 }
+                 else
+                 {
+                     parameterDefaultValue = simpleParameterType.getModelType();
+                 }
+                  
+                 
+             } else  
+             {
+                
+                 ParameterTypeObject objectParameterType = (ParameterTypeObject) parameterValue;
+                 
+                 if(objectParameterType.isRepeated())
+                 {
+                     
+                     ArrayList<Object> newList = new ArrayList<Object>();
+                      
+                     HashMap<String, Object> inputSubValues = new HashMap<String, Object>();
+                     
+                     generateJsonInputSubParameter(inputSubValues, (HashMap<String, ParameterTypeSimple>) objectParameterType.getSubParameters());
+                     
+                     newList.add(inputSubValues);
+                     
+                     parameterDefaultValue = newList;
+                     
+                     
+                 }
+                 else
+                 {
+                     
+                     HashMap<String, Object> inputSubValues = new HashMap<String, Object>();
+                     
+                     generateJsonInputSubParameter(inputSubValues, (HashMap<String, ParameterTypeSimple>) objectParameterType.getSubParameters());
+                     
+                     parameterDefaultValue = inputSubValues;
+                     
+                        
+                 }
+                  
+                  
+             } 
+             
+             inputValues.put(parameterName, parameterDefaultValue);
+              
+
+         }
+ 
+    }
+     
+     
+     private void generateJsonInputSubParameter(HashMap<String, Object> inputValues, HashMap<String, ParameterTypeSimple> inputParameters) {
+         
+         for (Map.Entry<String, ParameterTypeSimple> entry : inputParameters.entrySet()) {
+              
+             // ---------------------------------------------------------
+             // Inicio los valores
+             // ---------------------------------------------------------
+             //
+             Object parameterValue = entry.getValue();
+             
+             String parameterName = entry.getKey();
+             
+             Object parameterDefaultValue = ""; 
+
+             if (!(parameterValue instanceof ParameterTypeObject)) {
+
+                 ParameterTypeSimple simpleParameterType = (ParameterTypeSimple) parameterValue;
+                 
+                 if(simpleParameterType.isRepeated())
+                 {
+                     ArrayList<Object> newList = new ArrayList<Object>();
+                      
+                     newList.add(simpleParameterType.getModelType());
+                     
+                     parameterDefaultValue = newList;
+                     
+                     
+                 }
+                 else
+                 {
+                     parameterDefaultValue = simpleParameterType.getModelType();
+                 }
+                 
+             } else // Another HashMap
+             {
+                   
+                 ParameterTypeObject objectParameterType = (ParameterTypeObject) parameterValue;
+                 
+                 if(objectParameterType.isRepeated())
+                 {
+                     
+                     ArrayList<Object> newList = new ArrayList<Object>();
+                      
+                     HashMap<String, Object> inputSubValues = new HashMap<String, Object>();
+                     
+                     generateJsonInputSubParameter(inputSubValues, (HashMap<String, ParameterTypeSimple>) objectParameterType.getSubParameters());
+                     
+                     newList.add(inputSubValues);
+                     
+                     parameterDefaultValue = newList;
+                     
+                     
+                 }
+                 else
+                 {
+                     
+                     HashMap<String, Object> inputSubValues = new HashMap<String, Object>();
+                     
+                     generateJsonInputSubParameter(inputSubValues, (HashMap<String, ParameterTypeSimple>) objectParameterType.getSubParameters());
+                     
+                     parameterDefaultValue = inputSubValues;
+                     
+                        
+                 }
+                 
+             } 
+             
+             inputValues.put(parameterName, parameterDefaultValue);
+             
                
          } 
          
@@ -1295,5 +1608,37 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         return returnValue;
  
     }
+    
+    public static class MyNamingStrategy extends PropertyNamingStrategy {
+
+        @Override
+        public String nameForField(MapperConfig<?> config, AnnotatedField field, String defaultName) {
+            return field.getName();
+        }
+
+        @Override
+        public String nameForGetterMethod(MapperConfig<?> config, AnnotatedMethod method, String defaultName) {
+            return convert(method, defaultName);
+        }
+
+        @Override
+        public String nameForSetterMethod(MapperConfig<?> config, AnnotatedMethod method, String defaultName) {
+            return convert(method, defaultName);
+        }
+
+        private String convert(AnnotatedMethod method, String defaultName) {
+ 
+            Class<?> clazz = method.getDeclaringClass();
+            List<Field> flds = FieldUtils.getAllFieldsList(clazz);
+            for (Field fld : flds) {
+                if (fld.getName().equalsIgnoreCase(defaultName)) {
+                    return fld.getName();
+                }
+            }
+
+            return defaultName;
+        }
+    }
+    
      
 }

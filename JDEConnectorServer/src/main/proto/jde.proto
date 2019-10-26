@@ -42,6 +42,8 @@ service JDEService {
   rpc Operaciones(OperacionesRequest) returns (OperacionesResponse) {}
   
   rpc GetMetadaParaOperacion(GetMetadataRequest) returns (GetMetadataResponse) {}
+
+  rpc GetJsonsForOperation(GetMetadataRequest) returns (GetJsonsForOperationResponse) {}
   
   rpc EjecutarOperacion(EjecutarOperacionRequest) returns (EjecutarOperacionResponse) {}
   
@@ -112,6 +114,11 @@ message GetMetadataRequest {
 message GetMetadataResponse {
   repeated TipoDelParametroInput listaDeParametrosInput = 1;
   repeated TipoDelParametroOutput listaDeParametrosOutput =2;
+}
+
+message GetJsonsForOperationResponse {
+  string inputAsJson = 1;
+  string outputAsJson =2;
 }
 
 message TipoDelParametroInput {
