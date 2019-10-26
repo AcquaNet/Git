@@ -276,9 +276,22 @@
             <artifactId>JDEConnectorService</artifactId>
             <version>1.0.0</version>
         </dependency>
+        
+        <!-- JDE Libreries -->
+           
+        <dependency>
+            <groupId>com.jdedwards</groupId>
+            <artifactId>jde-lib-wrapped</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
+            <version>1.5.7</version>
+        </dependency>
          
     </dependencies> 
-    
-    
-    
+     
 </project>

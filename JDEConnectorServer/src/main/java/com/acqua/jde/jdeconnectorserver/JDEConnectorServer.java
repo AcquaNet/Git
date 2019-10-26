@@ -5,13 +5,18 @@
  */
 package com.acqua.jde.jdeconnectorserver;
  
+import com.acqua.jde.jdeconnectorserver.classloader.DynamicURLClassLoader;
 import com.acqua.jde.jdeconnectorserver.configuration.ServerConfiguration;
 import com.acqua.jde.jdeconnectorserver.exceptions.InternalServerException;
 import com.acqua.jde.jdeconnectorserver.server.JDERestServer;
 import com.acqua.jde.jdeconnectorserververificador.Licenciador;
 import java.io.File; 
 import java.io.UnsupportedEncodingException; 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.security.InvalidKeyException; 
+import java.util.logging.Level;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -58,6 +63,16 @@ public class JDEConnectorServer {
      
     @Option(name = "-clientcod", usage = "Client Code")
     public String clientcod;
+    
+    // -------------------------------------------------------------
+    // PARAMETROS Versiones de Libreria
+    // -------------------------------------------------------------
+     
+    @Option(name = "-jdeLibWrappedVersion", usage = "jde-lib-wrapped Version")
+    public String jdeLibWrappedVersion;
+    
+    @Option(name = "-StdWebServiceVersion", usage = "StdWebService Version")
+    public String stdWebServiceVersion;
 
     public void iniciarAplicacion(String[] args) throws InternalServerException, InterruptedException {
 
@@ -154,6 +169,52 @@ public class JDEConnectorServer {
             cfg.setPortServicio(portLServer);
         }
           
+        // ================================================
+        // Agregando 
+        //    jde-lib-wrapped-1.0.0 
+        //    StdWebService-1.0.0
+        // al Classpath
+        // ================================================
+        //
+         
+        
+        
+        try {
+            
+            File jarToAdd1 = new File("/tmp/jde/lib/jde-lib-wrapped-" + jdeLibWrappedVersion + ".jar");
+            
+            File jarToAdd2 = new File("/tmp/jde/lib/StdWebService-" + stdWebServiceVersion + ".jar");
+            
+            URL urlJdeLibWrapped = jarToAdd1.toURI().toURL();
+            
+            URL urlStdWebService = jarToAdd2.toURI().toURL();
+            
+            DynamicURLClassLoader.addURL(urlJdeLibWrapped);
+            
+            DynamicURLClassLoader.addURL(urlStdWebService); 
+            
+        } catch (Exception ex) {
+            
+            logger.info("Error. Cannot load libraries:");
+            logger.info("     " + ex.getMessage());
+            logger.info("See log for more detail");
+            logger.error(ex.getMessage(), ex);
+            
+        }
+        
+        // ================================================
+        // Mostrar ClassPaht
+        // ================================================
+        //
+        logger.info("*------------------------------------------------------*");
+        logger.info("Current Class Path:");
+        
+        ClassLoader cl = ClassLoader.getSystemClassLoader();
+        URL[] urls = ((URLClassLoader)cl).getURLs();
+
+        for(URL url: urls){
+        	logger.info((url.getFile()));
+        }
         
         // ================================================
         // Mostrar Configuracion

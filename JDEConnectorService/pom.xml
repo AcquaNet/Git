@@ -110,12 +110,14 @@
             <groupId>com.jdedwards</groupId>
             <artifactId>jde-lib-wrapped</artifactId>
             <version>1.0.0</version>
+            <scope>provided</scope>
         </dependency>
         
         <dependency>
             <groupId>com.jdedwards</groupId>
             <artifactId>StdWebService</artifactId>
             <version>1.0.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Ant -->
