@@ -94,6 +94,7 @@ public class JDEBoostrap {
                     .getAbsolutePath());
             
             jdeDefaultFolder = tmpFolder.getAbsolutePath().concat(File.separator)
+                    .concat("config").concat(File.separator)
                     .concat(environment);
               
             System.setProperty("default_path", jdeDefaultFolder);

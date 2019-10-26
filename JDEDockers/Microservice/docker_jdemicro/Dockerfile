@@ -30,10 +30,15 @@ ENV JAVA_HOME ${javaFolder}/${javaRootFolder}
 ARG JDE_MICROSERVER_IP=${JDE_MICROSERVER_IP} 
 ARG JDE_MICROSERVER_PORT=${JDE_MICROSERVER_PORT} 
 ARG JDE_MICROSERVER_CODE=${JDE_MICROSERVER_CODE}
+ARG JDE_MICROSERVER_JDE_LIB_WRAPPED=${JDE_MICROSERVER_JDE_LIB_WRAPPED}
+ARG JDE_MICROSERVER_STD_WEB_SERVICE=${JDE_MICROSERVER_STD_WEB_SERVICE}
+#
 ENV JDE_MICROSERVER_IP ${JDE_MICROSERVER_IP} 
 ENV JDE_MICROSERVER_PORT ${JDE_MICROSERVER_PORT} 
 ENV JDE_MICROSERVER_CODE ${JDE_MICROSERVER_CODE}
- 
+ENV JDE_MICROSERVER_JDE_LIB_WRAPPED ${JDE_MICROSERVER_JDE_LIB_WRAPPED}
+ENV JDE_MICROSERVER_STD_WEB_SERVICE ${JDE_MICROSERVER_STD_WEB_SERVICE}
+
 # ====================================
 # Actualizacion del Ubuntu
 # ====================================
@@ -73,11 +78,17 @@ RUN LOCALIP=$(hostname  -I | cut -f2 -d' ')
 # ====================================
 # Instalacion de JDE Atina Microserver
 # ====================================
+RUN mkdir /tmp/jde
+RUN mkdir /tmp/jde/config
+RUN mkdir /tmp/jde/lib
+
+# ====================================
+# Instalacion de JDE Atina Microserver
+# ====================================
 
 RUN mkdir /var/jdeatinaserver
 RUN cd /var/jdeatinaserver
 COPY images/JDEAtinaServer-1.0.0.jar /var/jdeatinaserver/
-VOLUME ["/var/jdeatinaserver/logs", "/tmp"]
 EXPOSE $SWAGGER_SERVER_PORT 
 
 # ====================================
