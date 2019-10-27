@@ -53,11 +53,13 @@ service JDEService {
 message LogoutRequest {
   int64 sessionId = 1;
   bool  wsconnection = 2;
+  string jwtToken = 3;
 }
 
 message IsConnectedRequest {
   int64 sessionId = 1;
   bool  wsconnection = 2;
+  string jwtToken = 3;
 }
 
 message IsConnectedResponse { 
@@ -72,11 +74,13 @@ message SessionRequest {
   string role = 4;
   int64 sessionId = 5;
   bool  wsconnection = 6;
+  string jwtToken = 7;
 }
 
 // Configuracion del la Conexion a JDE
 message SessionResponse {
   int64 sessionId = 1;
+  string jwtToken = 2;
 }
 
 message OperacionesRequest {
@@ -87,11 +91,13 @@ message OperacionesRequest {
   string role = 6;
   int64 sessionId = 7;
   bool  wsconnection = 8;
+  string jwtToken = 9;
 }
 
 message OperacionesResponse {
   repeated Operacion operaciones = 1;
   int64 sessionId = 2;
+  string jwtToken = 3;
 }
  
 // Configuracion del la Conexion a JDE
@@ -109,16 +115,19 @@ message GetMetadataRequest {
   string role = 6;
   int64 sessionId = 7;
   bool  wsconnection = 8;
+  string jwtToken = 9;
 }
 
 message GetMetadataResponse {
   repeated TipoDelParametroInput listaDeParametrosInput = 1;
   repeated TipoDelParametroOutput listaDeParametrosOutput =2;
+  string jwtToken = 3;
 }
 
 message GetJsonsForOperationResponse {
   string inputAsJson = 1;
   string outputAsJson =2;
+  string jwtToken = 3;
 }
 
 message TipoDelParametroInput {
@@ -147,6 +156,7 @@ message EjecutarOperacionRequest {
   string role = 10;
   int64 sessionId = 11;
   bool  wsconnection = 12;
+  string jwtToken = 14;
 }
 
 message EjecutarOperacionValores {
@@ -186,6 +196,7 @@ message EjecutarOperacionResponse {
   string tipoDelParametro = 13;
   bool repeatedParameter = 15;
   bool isObject = 16;
+  string jwtToken = 17;
 }
 
 message BDecimal {

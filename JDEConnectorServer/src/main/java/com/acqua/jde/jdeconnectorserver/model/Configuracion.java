@@ -4,160 +4,69 @@
  * and open the template in the editor.
  */
 package com.acqua.jde.jdeconnectorserver.model;
-    
- 
+
 public class Configuracion {
 
-	private String serverName;
-	private String portNumber;
-	private String codigoConfCliente;
-	private String clavePrivadaConfCliente;
-	private String algoritmo;
-	private String user;
-	private String password;
-	private Integer expiracion;
-	private String servidorServicio;
-	private Integer puertoServicio;
-	private String tocken;
+    private String user;
+    private String password;
+    private String environment;
+    private String role;
+    private Integer sessionId;
 
-	public Configuracion() {
-		super();
-	} 
+    public Configuracion(String user, String password, String environment, String role, Integer sessionId) {
+        this.user = user;
+        this.password = password;
+        this.environment = environment;
+        this.role = role;
+        this.sessionId = sessionId;
+    }
 
-	public Configuracion(String serverName, String portNumber, String codigoConfCliente, String clavePrivadaConfCliente,
-			String algoritmo, String user, String password, Integer expiracion, String servidorServicio,
-			Integer puertoServicio) {
-		super();
-		this.serverName = serverName;
-		this.portNumber = portNumber;
-		this.codigoConfCliente = codigoConfCliente;
-		this.clavePrivadaConfCliente = clavePrivadaConfCliente;
-		this.algoritmo = algoritmo;
-		this.user = user;
-		this.password = password;
-		this.expiracion = expiracion;
-		this.servidorServicio = servidorServicio;
-		this.puertoServicio = puertoServicio;
-	}
- 
-	public String getServerName() {
-		return serverName;
-	}
+    public Configuracion() {
+        super();
+    }
 
-	public void setServerName(String serverName) {
-		this.serverName = serverName;
-	}
+    public String getUser() {
+        return user;
+    }
 
-	public String getPortNumber() {
-		return portNumber;
-	}
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-	public void setPortNumber(String portNumber) {
-		this.portNumber = portNumber;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public String getCodigoConfCliente() {
-		return codigoConfCliente;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setCodigoConfCliente(String codigoConfCliente) {
-		this.codigoConfCliente = codigoConfCliente;
-	}
+    public String getEnvironment() {
+        return environment;
+    }
 
-	public String getClavePrivadaConfCliente() {
-		return clavePrivadaConfCliente;
-	}
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
 
-	public void setClavePrivadaConfCliente(String clavePrivadaConfCliente) {
-		this.clavePrivadaConfCliente = clavePrivadaConfCliente;
-	}
+    public String getRole() {
+        return role;
+    }
 
-	public String getAlgoritmo() {
-		return algoritmo;
-	}
+    public void setRole(String role) {
+        this.role = role;
+    }
 
-	public void setAlgoritmo(String algoritmo) {
-		this.algoritmo = algoritmo;
-	}
+    public Integer getSessionId() {
+        return sessionId;
+    }
+    
+    public int getSessionIdAsInt() {
+        return Integer.parseInt(sessionId.toString());
+    }
 
-	public String getUser() {
-		return user;
-	}
-
-	public void setUser(String user) {
-		this.user = user;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public Integer getExpiracion() {
-		return expiracion;
-	}
-
-	public void setExpiracion(Integer expiracion) {
-		this.expiracion = expiracion;
-	}
-	 
-	public String getServidorServicio() {
-		return servidorServicio;
-	}
-
-	public void setServidorServicio(String servidorServicio) {
-		this.servidorServicio = servidorServicio;
-	}
-
-	public Integer getPuertoServicio() {
-		return puertoServicio;
-	}
-
-	public void setPuertoServicio(Integer puertoServicio) {
-		this.puertoServicio = puertoServicio;
-	}
-
-	public String getTocken() {
-		return tocken;
-	}
-
-	public void setTocken(String tocken) {
-		this.tocken = tocken;
-	}
-
-	@Override
-	public String toString() {
-		return "Configuracion [serverName=" + serverName + ", portNumber=" + portNumber + ", codigoConfCliente="
-				+ codigoConfCliente + ", clavePrivadaConfCliente=" + clavePrivadaConfCliente + ", algoritmo="
-				+ algoritmo + ", user=" + user + ", password=" + password + ", expiracion=" + expiracion + "]";
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((serverName == null) ? 0 : serverName.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Configuracion other = (Configuracion) obj;
-		if (serverName == null) {
-			if (other.serverName != null)
-				return false;
-		} else if (!serverName.equals(other.serverName))
-			return false;
-		return true;
-	}
-
+    public void setSessionId(Integer sessionId) {
+        this.sessionId = sessionId;
+    }
+     
 }

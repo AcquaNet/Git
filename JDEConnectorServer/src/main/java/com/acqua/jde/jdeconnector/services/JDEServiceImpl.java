@@ -9,17 +9,17 @@ package com.acqua.jde.jdeconnector.services;
 import com.acqua.atina.jdeconnector.internal.model.JDEBsfnParameter;
 import com.acqua.atina.jdeconnector.internal.model.metadata.ParameterTypeObject;
 import com.acqua.atina.jdeconnector.internal.model.metadata.ParameterTypeSimple;
-import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectionException;
-import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectorException;
+import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectionException; 
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleWSException;
 import com.acqua.atina.jdeconnectorservice.service.poolconnection.JDEPoolConnections;
 import com.acqua.atina.jdeconnectorservice.service.JDESingleConnection;
 import com.acqua.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
 import com.acqua.atina.jdeconnectorservice.wsservice.JDESingleWSConnection;
 import com.acqua.jde.jdeconnectorserver.JDEConnectorServer;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.Timestamp;
+import com.acqua.jde.jdeconnectorserver.configuration.ServerConfiguration;
 import com.acqua.jde.jdeconnectorserver.model.Configuracion;
+import com.google.protobuf.ByteString;
+import com.google.protobuf.Timestamp; 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,8 +40,13 @@ import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
 import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
 import com.jdedwards.base.datatypes.SqlDate;
 import io.grpc.Status;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -62,6 +67,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import java.lang.reflect.Field;
+import java.security.Key;
+import java.util.logging.Level;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * https://github.com/saturnism/grpc-java-by-example/blob/master/simple-grpc-server/src/main/java/com/example/grpc/server/MyGrpcServer.java
@@ -86,7 +95,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     private String claseDeLaOperacion = "";
     private String metodoDeLaOperacion = "";
     
-    private Configuracion configuracion;
+    private ServerConfiguration configuracion;
     
     private int counter;
      
@@ -108,24 +117,55 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
         
         logger.info("JDE Login: Begin Login");
-          
+        
         // -----------------------------------------
         // Generar Session
         // -----------------------------------------
         //
-         
+        
+        Configuracion config = new Configuracion();
+        
+        config.setUser(request.getUser());
+
+        config.setPassword(request.getPassword());
+
+        config.setEnvironment(request.getEnvironment());
+
+        config.setRole(request.getRole());
+
+        config.setSessionId((int) request.getSessionId());
+          
+        
         try {
+    
+            // -----------------------------------------
+            // Process JWT Token
+            // -----------------------------------------
+            //
+              
+            if(!request.getJwtToken().isEmpty())
+            {
+             
+                config = getConfigFromJWT(request.getJwtToken()); 
+                   
+            }
  
-            int sessionID = JDEPoolConnections.getInstance().createConnection(  request.getUser(), 
-                                                                                request.getPassword(), 
-                                                                                request.getEnvironment(), 
-                                                                                request.getRole(), 
-                                                                                (int) request.getSessionId(),
+            int sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
+                                                                                config.getPassword(), 
+                                                                                config.getEnvironment(), 
+                                                                                config.getRole(), 
+                                                                                config.getSessionIdAsInt(),
                                                                                 request.getWsconnection());
-           
-            SessionResponse response = SessionResponse.newBuilder().setSessionId(sessionID).build();
-   
-            responseObserver.onNext(response);
+            
+            config.setSessionId(sessionID);
+            
+            SessionResponse.Builder responseBuilder = SessionResponse.newBuilder();
+            
+            responseBuilder.setSessionId(sessionID);
+            
+            responseBuilder.setJwtToken(getJWT(config)); 
+             
+            responseObserver.onNext(responseBuilder.build());
 
             responseObserver.onCompleted();
             
@@ -165,12 +205,77 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
     } 
     
+    private Configuracion getConfigFromJWT(String jwtToken) {
+        
+        Configuracion config = new Configuracion();
+        
+        Claims claims = Jwts.parser()
+                .setSigningKey(DatatypeConverter.parseBase64Binary(configuracion.getSecretKey()))
+                .parseClaimsJws(jwtToken).getBody();
+
+        config.setUser(claims.get("user", String.class));
+
+        config.setPassword(claims.get("password", String.class));
+
+        config.setEnvironment(claims.get("environment", String.class));
+
+        config.setRole(claims.get("role", String.class));
+ 
+        config.setSessionId(claims.get("sessionId", Integer.class));
+        
+        return config;
+        
+    }
+    
+    private String getJWT(Configuracion config) {
+
+        long ttlMillis = 0;
+
+        //The JWT signature algorithm we will be using to sign the token
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+        long nowMillis = System.currentTimeMillis();
+        Date now = new Date(nowMillis);
+
+        //We will sign our JWT with our ApiKey secret 
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary("123456789012345678901234567890123456789012345678901234567890");
+        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+
+        //Let's set the JWT Claims
+        JwtBuilder builder = Jwts.builder().setId("1231231")
+                .setIssuedAt(now)
+                .setSubject("Subject")
+                .setIssuer("Issue")
+                .claim("user", config.getUser())
+                .claim("password", config.getPassword())
+                .claim("environment", config.getEnvironment())
+                .claim("role", config.getRole())
+                .claim("sessionId", config.getSessionId())
+                .signWith(signingKey, signatureAlgorithm);
+
+        return builder.compact();
+         
+    }
+    
     @Override
     public void logout(com.jde.jdeserverwp.servicios.LogoutRequest request,
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.SessionResponse> responseObserver) {
 
         
         logger.info("JDE Logout: Begin");
+        
+        Configuracion config = new Configuracion();
+        
+        config.setUser("");
+
+        config.setPassword("");
+
+        config.setEnvironment("");
+
+        config.setRole("");
+
+        config.setSessionId((int) request.getSessionId());
+        
           
         // -----------------------------------------
         // Generar Session
@@ -178,8 +283,15 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         //
          
         try {
+            
+            if(!request.getJwtToken().isEmpty())
+            {
+             
+                config = getConfigFromJWT(request.getJwtToken()); 
+                   
+            }
  
-            JDEPoolConnections.getInstance().disconnect((int) request.getSessionId());
+            JDEPoolConnections.getInstance().disconnect(config.getSessionId());
              
             SessionResponse response = SessionResponse.newBuilder().setSessionId(0).build();
    
@@ -234,11 +346,30 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         // Generar Session
         // -----------------------------------------
         //
+        
+        Configuracion config = new Configuracion();
+        
+        config.setUser("");
+
+        config.setPassword("");
+
+        config.setEnvironment("");
+
+        config.setRole("");
+
+        config.setSessionId((int) request.getSessionId());
          
         try {
- 
-            int sessionId = JDEPoolConnections.getInstance().getSingleConnection((int) request.getSessionId()).isJDEConnected();
+            
+            if(!request.getJwtToken().isEmpty())
+            {
              
+                config = getConfigFromJWT(request.getJwtToken()); 
+                   
+            }
+ 
+            int sessionId = JDEPoolConnections.getInstance().getSingleConnection(config.getSessionId()).isJDEConnected();
+            
             IsConnectedResponse response = IsConnectedResponse.newBuilder().setConnected(sessionId!=0).build();
             
             responseObserver.onNext(response);
@@ -294,17 +425,36 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         // Get Session ID
         // ================================================
         //
+       
+        Configuracion config = new Configuracion();
+        
+        config.setUser(request.getUser());
+
+        config.setPassword(request.getPassword());
+
+        config.setEnvironment(request.getEnvironment());
+
+        config.setRole(request.getRole());
+
+        config.setSessionId((int) request.getSessionId());
         
         try {
+            
+            if(!request.getJwtToken().isEmpty())
+            {
+             
+                config = getConfigFromJWT(request.getJwtToken()); 
+                   
+            }
         
-            int sessionID = JDEPoolConnections.getInstance().createConnection(  request.getUser(), 
-                                                                                request.getPassword(), 
-                                                                                request.getEnvironment(), 
-                                                                                request.getRole(), 
-                                                                                (int) request.getSessionId(),
+            int sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
+                                                                                config.getPassword(), 
+                                                                                config.getEnvironment(), 
+                                                                                config.getRole(), 
+                                                                                (int) config.getSessionIdAsInt(),
                                                                                 request.getWsconnection());
       
-          
+            config.setSessionId(sessionID);
         
             // ================================================
             // Get Single Connection
@@ -335,6 +485,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 }
 
                 responseBuilder.setSessionId(sessionID);
+                
+                responseBuilder.setJwtToken(getJWT(config));
 
                 OperacionesResponse response = responseBuilder.build();
 
@@ -387,21 +539,42 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         logger.info("JDE Connector Server. Get Metadata for Operation");
         
         String tipoDeOperacion = request.getConnectorName();   // BSFN or WS
+        
+        Configuracion config = new Configuracion();
+        
+        config.setUser(request.getUser());
+
+        config.setPassword(request.getPassword());
+
+        config.setEnvironment(request.getEnvironment());
+
+        config.setRole(request.getRole());
+
+        config.setSessionId((int) request.getSessionId());
          
         try {
+            
+            if(!request.getJwtToken().isEmpty())
+            {
+             
+                config = getConfigFromJWT(request.getJwtToken()); 
+                   
+            }
         
            // ================================================
            // Get Session ID
            // ================================================
            //
 
-            int sessionID = JDEPoolConnections.getInstance().createConnection(  request.getUser(), 
-                                                                                request.getPassword(), 
-                                                                                request.getEnvironment(), 
-                                                                                request.getRole(), 
-                                                                                (int) request.getSessionId(),
+            int sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
+                                                                                config.getPassword(), 
+                                                                                config.getEnvironment(), 
+                                                                                config.getRole(), 
+                                                                                (int) config.getSessionId(),
                                                                                 request.getWsconnection());
-         
+            
+            
+            config.setSessionId(sessionID);
         
             // ================================================
             // Get Single Connection
@@ -496,11 +669,15 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 // 
                 generateOutputTreeMetadata(responseBuilder, outputParameters);      
                 
+                responseBuilder.setJwtToken(getJWT(config));
+                
                 // --------------------------------------------------
                 // Generar Objecto Metadata
                 // --------------------------------------------------
                 // 
                 GetMetadataResponse metadataResponse = responseBuilder.build();
+                
+                
 
                 // --------------------------------------------------
                 // Crear el Objeto Mensaje de GetMetadataResponse
@@ -555,6 +732,18 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         logger.info("JDE Connector Server. Get Metadata for Operation");
         
         String tipoDeOperacion = request.getConnectorName();   // BSFN or WS
+        
+        Configuracion config = new Configuracion();
+        
+        config.setUser(request.getUser());
+
+        config.setPassword(request.getPassword());
+
+        config.setEnvironment(request.getEnvironment());
+
+        config.setRole(request.getRole());
+
+        config.setSessionId((int) request.getSessionId());
          
         try {
         
@@ -562,12 +751,19 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
            // Get Session ID
            // ================================================
            //
+           
+           if(!request.getJwtToken().isEmpty())
+            {
+             
+                config = getConfigFromJWT(request.getJwtToken()); 
+                   
+            }
 
-            int sessionID = JDEPoolConnections.getInstance().createConnection(  request.getUser(), 
-                                                                                request.getPassword(), 
-                                                                                request.getEnvironment(), 
-                                                                                request.getRole(), 
-                                                                                (int) request.getSessionId(),
+            int sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
+                                                                                config.getPassword(), 
+                                                                                config.getEnvironment(), 
+                                                                                config.getRole(), 
+                                                                                (int) config.getSessionIdAsInt(),
                                                                                 request.getWsconnection());
          
         
@@ -651,6 +847,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 
                 responseBuilder.setOutputAsJson(outputAsJson); 
            
+                responseBuilder.setJwtToken(getJWT(config));
 
                 // --------------------------------------------------
                 // Crear el Objeto Mensaje de GetMetadataResponse
@@ -1061,6 +1258,18 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         logger.info("JDE Connector Server. Get Metadata for Operation");
         
         String tipoDeOperacion = request.getConnectorName();   // BSFN or WS
+        
+        Configuracion config = new Configuracion();
+        
+        config.setUser(request.getUser());
+
+        config.setPassword(request.getPassword());
+
+        config.setEnvironment(request.getEnvironment());
+
+        config.setRole(request.getRole());
+
+        config.setSessionId((int) request.getSessionId());
          
         try {
         
@@ -1068,12 +1277,19 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
            // Get Session ID
            // ================================================
            //
+           
+           if(!request.getJwtToken().isEmpty())
+            {
+             
+                config = getConfigFromJWT(request.getJwtToken()); 
+                   
+            }
 
-            int sessionID = JDEPoolConnections.getInstance().createConnection(  request.getUser(), 
-                                                                                request.getPassword(), 
-                                                                                request.getEnvironment(), 
-                                                                                request.getRole(), 
-                                                                                (int) request.getSessionId(),
+            int sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
+                                                                                config.getPassword(), 
+                                                                                config.getEnvironment(), 
+                                                                                config.getRole(), 
+                                                                                (int) config.getSessionIdAsInt(),
                                                                                 request.getWsconnection());
          
         
@@ -1135,7 +1351,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                  
                 createOperationResponse(responseBuilder, outputParameters,returnValues,0);
                  
-                
+                responseBuilder.setJwtToken(getJWT(config));
                 
                 // --------------------------------------------------
                 // Crear el Objeto Mensaje de GetMetadataResponse
@@ -1639,6 +1855,10 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             return defaultName;
         }
     }
-    
+
+
+    public void setConfiguracion(ServerConfiguration configuracion) {
+        this.configuracion = configuracion;
+    }
      
 }

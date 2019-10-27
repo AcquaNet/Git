@@ -73,6 +73,13 @@ public class JDEConnectorServer {
     
     @Option(name = "-StdWebServiceVersion", usage = "StdWebService Version")
     public String stdWebServiceVersion;
+    
+    // -------------------------------------------------------------
+    // Secret Key
+    // -------------------------------------------------------------
+    
+    @Option(name = "-secretKey", usage = "Secret Key")
+    public String secretKey;
 
     public void iniciarAplicacion(String[] args) throws InternalServerException, InterruptedException {
 
@@ -167,6 +174,7 @@ public class JDEConnectorServer {
             cfg.setIpServicio(ipServer);
             cfg.setIpLocalServicio(localIp);
             cfg.setPortServicio(portLServer);
+            cfg.setSecretKey(secretKey);
         }
           
         // ================================================

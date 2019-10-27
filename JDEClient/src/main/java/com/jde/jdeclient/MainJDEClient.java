@@ -6,6 +6,7 @@
 package com.jde.jdeclient;
 
 import com.jde.jdeclient.configuracion.Configuracion;
+import com.jde.jdeclient.configuracion.ConfiguracionServer;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionRequest;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
@@ -26,10 +27,18 @@ import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
 import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.jsonwebtoken.JwtBuilder;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm; 
+import java.security.Key;
+import java.time.Instant;
+import java.util.Date;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  *
@@ -45,12 +54,14 @@ public class MainJDEClient {
     private static final Boolean testWS_PurchaseOrdersForApprover = Boolean.FALSE;
     private static final Boolean testBSFN = Boolean.FALSE;
     
-    private static final Boolean testWS_PurchaseOrdersForApproverGetJson = Boolean.TRUE;
+    private static final Boolean testWS_PurchaseOrdersForApproverGetJson = Boolean.FALSE;
+    
+    private static final Boolean testWS_PurchaseOrdersForApproverWithToken = Boolean.TRUE;
     
 
     public void iniciarAplicacion(String[] args) throws Exception {
 
-        Configuracion configuracion = new Configuracion();
+        ConfiguracionServer configuracion = new ConfiguracionServer();
 
         configuracion.setServidorServicio("localhost"); // Servidor Hub
         configuracion.setPuertoServicio(8085); // Puerto Servidor Hub
@@ -834,6 +845,48 @@ public class MainJDEClient {
             JDEServiceBlockingStub stub = JDEServiceGrpc.newBlockingStub(channel);
 
             int sessionID = 0;
+            
+            // ===========================  
+            // Generate JWT                       
+            // ===========================  
+            //
+            
+            long ttlMillis = 0;
+            
+             //The JWT signature algorithm we will be using to sign the token
+            SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+            
+            long nowMillis = System.currentTimeMillis();
+            Date now = new Date(nowMillis);
+            
+            
+            //We will sign our JWT with our ApiKey secret 
+            byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary("123456789012345678901234567890123456789012345678901234567890");
+            Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+            
+            
+            //Let's set the JWT Claims
+            JwtBuilder builder = Jwts.builder().setId("1231231")
+                                .setIssuedAt(now)
+                                .setSubject("Subject")
+                                .setIssuer("Issue")
+                                .claim("user", configuracion.getUser())
+                                .claim("password", configuracion.getPassword())
+                                .claim("environment", configuracion.getEnvironment())
+                                .claim("role", configuracion.getRole()) 
+                                .claim("sessionId", sessionID) 
+                                .signWith(signingKey, signatureAlgorithm);
+            
+            
+            //if it has been specified, let's add the expiration
+            if (ttlMillis >= 0) {
+                long expMillis = nowMillis + ttlMillis;
+                Date exp = new Date(expMillis);
+                builder.setExpiration(exp);
+            }
+            
+            String token =  builder.compact();
+
 
             // ===========================  
             // Login                       
@@ -846,8 +899,9 @@ public class MainJDEClient {
                                 .setUser(configuracion.getUser())
                                 .setPassword(configuracion.getPassword())
                                 .setEnvironment(configuracion.getEnvironment())
-                                .setRole(configuracion.getRole())
+                                .setRole(configuracion.getRole()) 
                                 .setWsconnection(configuracion.getWsConnection())
+                                .setJwtToken(token)
                                 .build());
 
                 sessionID = (int) tokenResponse.getSessionId();
@@ -901,8 +955,244 @@ public class MainJDEClient {
             
             
         }
+        
+        if(testWS_PurchaseOrdersForApproverWithToken)
+        {
+            configuracion.setWsConnection(Boolean.TRUE);
+
+            // ===========================  
+            // Crear Canal de Comunicacion  
+            // ===========================  
+            //
+            ManagedChannel channel = ManagedChannelBuilder.forAddress(configuracion.getServidorServicio(), configuracion.getPuertoServicio())
+                    .usePlaintext()
+                    .build();
+
+            // =========================== 
+            // Creacion del Stub           
+            // ===========================  
+            // 
+            JDEServiceBlockingStub stub = JDEServiceGrpc.newBlockingStub(channel);
+
+            int sessionID = 0;
+            
+            Configuracion config = new Configuracion();
+        
+            config.setUser(configuracion.getUser());
+
+            config.setPassword(configuracion.getPassword());
+
+            config.setEnvironment(configuracion.getEnvironment());
+
+            config.setRole(configuracion.getRole());
+
+            config.setSessionId((int) sessionID);
+            
+            
+            String token = getJWT(config);
+
+            // ===========================  
+            // Login                       
+            // ===========================  
+            //
+            try {
+
+                SessionResponse tokenResponse = stub.login(
+                        SessionRequest.newBuilder()
+                                .setUser("")
+                                .setPassword("")
+                                .setEnvironment("")
+                                .setRole("")
+                                .setJwtToken(token)
+                                .setWsconnection(configuracion.getWsConnection())
+                                .build());
+
+                sessionID = (int) tokenResponse.getSessionId();
+                
+                token = tokenResponse.getJwtToken();
+
+                System.out.println("Logeado con Session [" + tokenResponse.getSessionId() + "]");
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo ");
+
+                throw new RuntimeException("Error Logeando", null);
+
+            }
+
+            // ===========================  
+            // Get Operations                       
+            // ===========================  
+            //
+            try {
+
+                OperacionesResponse operaciones = stub.operaciones(
+                        OperacionesRequest.newBuilder()
+                                .setConnectorName("WS")
+                                .setUser("")
+                                .setPassword("")
+                                .setEnvironment("")
+                                .setRole("")
+                                .setSessionId(0)
+                                .setJwtToken(token)
+                                .setWsconnection(configuracion.getWsConnection())
+                                .build());
+                
+                token = operaciones.getJwtToken();
+
+                for(Operacion operacion: operaciones.getOperacionesList())
+                {
+
+                    System.out.println("Operacion [" + operacion.getNombreOperacion() + "]");
+
+                }
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo ");
+
+                throw new RuntimeException("Error Logeando", null);
+
+            }
+
+            // ===========================  
+            // Get Metadata                       
+            // ===========================  
+            //
+            try {
+
+                GetMetadataResponse operaciones = stub.getMetadaParaOperacion(
+                        GetMetadataRequest.newBuilder()
+                                .setConnectorName("WS")
+                                .setUser("")
+                                .setPassword("")
+                                .setEnvironment("")
+                                .setRole("")
+                                .setSessionId(0)
+                                .setJwtToken(token)
+                                .setWsconnection(configuracion.getWsConnection())
+                                .setOperacionKey("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover")
+                                .build());
+                
+                token = operaciones.getJwtToken();
+
+                 logger.info("Input  ");
+                 
+                for (TipoDelParametroInput parameter : operaciones.getListaDeParametrosInputList()) {
+                    
+                    int level = 0;
+
+                     printParameter(parameter, level);
+                     
+                       
+                }
+                
+                 logger.info("Output  ");
+                
+                for (TipoDelParametroOutput parameter : operaciones.getListaDeParametrosOutputList()) {
+
+                    int level = 0;
+
+                     printParameterOutput(parameter, level);
+
+                }
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo ");
+
+                throw new RuntimeException("Error Logeando", ex);
+
+            }
+            
+            // ===========================  
+            // Invoke WS              
+            // ===========================  
+            // 
+            
+            EjecutarOperacionValores.Builder entityId = EjecutarOperacionValores.newBuilder();
+            entityId.setNombreDelParametro("entityId");
+            entityId.setValueAsInteger(533095);
+
+            EjecutarOperacionValores.Builder approver = EjecutarOperacionValores.newBuilder();
+            approver.setNombreDelParametro("approver");
+            approver.addListaDeValores(entityId);
+            
+            EjecutarOperacionValores.Builder orderTypeCode = EjecutarOperacionValores.newBuilder();
+            orderTypeCode.setNombreDelParametro("orderTypeCode");
+            orderTypeCode.setValueAsString("OP");
+            
+            EjecutarOperacionValores.Builder businessUnitCode = EjecutarOperacionValores.newBuilder();
+            businessUnitCode.setNombreDelParametro("businessUnitCode");
+            businessUnitCode.setValueAsString("         30");
+            
+            EjecutarOperacionValores.Builder statusCodeNext = EjecutarOperacionValores.newBuilder();
+            statusCodeNext.setNombreDelParametro("statusCodeNext");
+            statusCodeNext.setValueAsString("230");
+            
+            EjecutarOperacionValores.Builder statusApproval = EjecutarOperacionValores.newBuilder();
+            statusApproval.setNombreDelParametro("statusApproval");
+            statusApproval.setValueAsString("2N");
+             
+            EjecutarOperacionResponse ejecutarOperacionesResponse = stub.ejecutarOperacion(
+                    EjecutarOperacionRequest.newBuilder()
+                            .setConnectorName("WS")
+                            .setOperacionKey("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover")
+                            .setUser("")
+                            .setPassword("")
+                            .setEnvironment("")
+                            .setRole("")
+                            .setWsconnection(configuracion.getWsConnection())
+                            .setSessionId(0)
+                            .setJwtToken(token)
+                            .addListaDeValores(approver.build())
+                            .addListaDeValores(orderTypeCode.build())
+                            .addListaDeValores(businessUnitCode.build())
+                            .addListaDeValores(statusCodeNext.build())
+                            .addListaDeValores(statusApproval.build())
+                            .build());
+
+            token = ejecutarOperacionesResponse.getJwtToken();
+            
+            ejecutarOperacionesResponse.toString();
+             
+            
+        }
 
     }
+    
+    private String getJWT(Configuracion config) {
+
+        long ttlMillis = 0;
+
+        //The JWT signature algorithm we will be using to sign the token
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+        long nowMillis = System.currentTimeMillis();
+        Date now = new Date(nowMillis);
+
+        //We will sign our JWT with our ApiKey secret 
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary("123456789012345678901234567890123456789012345678901234567890");
+        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+
+        //Let's set the JWT Claims
+        JwtBuilder builder = Jwts.builder().setId("1231231")
+                .setIssuedAt(now)
+                .setSubject("Subject")
+                .setIssuer("Issue")
+                .claim("user", config.getUser())
+                .claim("password", config.getPassword())
+                .claim("environment", config.getEnvironment())
+                .claim("role", config.getRole())
+                .claim("sessionId", config.getSessionId())
+                .signWith(signingKey, signatureAlgorithm);
+
+        return builder.compact();
+         
+    }
+    
+    
     
     private void printParameter(TipoDelParametroInput parameter, int level)
     {

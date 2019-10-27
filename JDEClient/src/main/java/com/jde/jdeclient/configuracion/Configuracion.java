@@ -7,44 +7,22 @@ package com.jde.jdeclient.configuracion;
 
 public class Configuracion {
 
-    private String servidorServicio;
-    private Integer puertoServicio;
     private String user;
     private String password;
     private String environment;
     private String role;
-    private Integer session;
-    private Boolean wsConnection;
+    private Integer sessionId;
 
-    public Configuracion() {
-        super();
-    }
-
-    public Configuracion(String servidorServicio, Integer puertoServicio, String user, String password, String environment, String role, Integer session, Boolean wsConnection) {
-        this.servidorServicio = servidorServicio;
-        this.puertoServicio = puertoServicio;
+    public Configuracion(String user, String password, String environment, String role, Integer sessionId) {
         this.user = user;
         this.password = password;
         this.environment = environment;
         this.role = role;
-        this.session = session;
-        this.wsConnection = wsConnection;
+        this.sessionId = sessionId;
     }
 
-    public String getServidorServicio() {
-        return servidorServicio;
-    }
-
-    public void setServidorServicio(String servidorServicio) {
-        this.servidorServicio = servidorServicio;
-    }
-
-    public Integer getPuertoServicio() {
-        return puertoServicio;
-    }
-
-    public void setPuertoServicio(Integer puertoServicio) {
-        this.puertoServicio = puertoServicio;
+    public Configuracion() {
+        super();
     }
 
     public String getUser() {
@@ -79,25 +57,16 @@ public class Configuracion {
         this.role = role;
     }
 
-    public Integer getSession() {
-        return session;
-    }
-
-    public void setSession(Integer session) {
-        this.session = session;
-    }
-
-    public Boolean getWsConnection() {
-        return wsConnection;
-    }
-
-    public void setWsConnection(Boolean wsConnection) {
-        this.wsConnection = wsConnection;
-    }
-
-    @Override
-    public String toString() {
-        return "Configuracion{" + "servidorServicio=" + servidorServicio + ", puertoServicio=" + puertoServicio + ", user=" + user + ", password=" + password + ", environment=" + environment + ", role=" + role + ", session=" + session + ", wsConnection=" + wsConnection + '}';
+    public Integer getSessionId() {
+        return sessionId;
     }
     
+        public int getSessionIdAsInt() {
+        return Integer.parseInt(sessionId.toString());
+    }
+
+    public void setSessionId(Integer sessionId) {
+        this.sessionId = sessionId;
+    }
+     
 }

@@ -17,12 +17,13 @@ public class ServerConfiguration{
     
     private String ipLocalServicio;
       
-    
+    private String secretKey;
 
     public ServerConfiguration() {
         this.portServicio = 8085;
         this.ipServicio = "localhost";
         this.ipLocalServicio = "0.0.0.0";  
+        this.secretKey = "";
     }
 
     public int getPortServicio() {
@@ -48,5 +49,13 @@ public class ServerConfiguration{
     public void setIpLocalServicio(String ipLocalServicio) {
         this.ipLocalServicio = ipLocalServicio;
     }
- 
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+    
 }
