@@ -12,6 +12,7 @@ import org.mule.api.annotations.Processor;
 import org.mule.api.annotations.param.Default;
 import org.mule.modules.atina.jde.config.ConnectorConfig;
 import org.mule.modules.atina.jde.datasense.AuthenticateDataSenseResolver;
+import org.mule.modules.atina.jde.datasense.GetJSONShemaDataSenseResolver;
 import org.mule.modules.atina.jde.datasense.WSDataSenseResolver;
 import org.mule.modules.atina.jde.exceptions.InternalConnectorException;
 import org.mule.modules.atina.jde.models.JDEAtilaConfiguracion;
@@ -68,11 +69,17 @@ public class JDEAtinaConnector {
     
 
     @Processor(friendlyName = "Get JSON Schema")
-    @MetaDataScope(WSDataSenseResolver.class)
+    @MetaDataScope(GetJSONShemaDataSenseResolver.class)
     public Object getJSONSchema(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) String entityType, @Default("#[payload]") Map<String, Object> entityData)
             throws InternalConnectorException, ConnectionException {
 
-        return null;
+    	logger.info("JDE Atina - GetJSONShemaDataSenseResolver WS: [" + entityType + "]");
+        
+        Object entity = invokeGetSchema(entityType, entityData);
+
+        logger.info("JDE Atina - GetJSONShemaDataSenseResolver: [" + entityType + "] Executed");
+
+        return entity;
 
     }
 
@@ -89,6 +96,15 @@ public class JDEAtinaConnector {
         Object returnValue = this.getConfig()
                 .getService()
                 .ejecutarServicio(config.getStub(), config.getConfiguracion(), entityType, entityData);
+
+        return returnValue;
+    }
+    
+    private Object invokeGetSchema(String entityType, Map<String, Object> entityData) {
+
+        Object returnValue = this.getConfig()
+                .getService()
+                .getJsonFromOperations(config.getStub(), config.getConfiguracion(), entityType, entityData);
 
         return returnValue;
     }

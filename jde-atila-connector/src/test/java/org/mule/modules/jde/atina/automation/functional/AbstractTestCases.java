@@ -86,6 +86,30 @@ public class AbstractTestCases extends AbstractTestCase<JDEAtinaConnector> {
         return returnValue;
 
     }
+    
+    @SuppressWarnings("unchecked")
+    public Object ejecucionInternaGetJson(String origin, String entityType, Map<String, Object> entityData)
+            throws Exception {
+
+        logger.info("JDE ATINA - GetJson Parameters: " + origin + " Calling: " + entityType);
+
+        hashMapper((HashMap<String, Object>) entityData, 0);
+
+        Object returnValue = null;
+
+        returnValue = getConnector().getJSONSchema(entityType, entityData);
+
+        if (returnValue instanceof HashMap) {
+
+            hashMapper((HashMap<String, Object>) returnValue, 0);
+
+        }
+
+        logger.info("JDE ATINA - FUNCTIONAL_TEST END ejecucionInterna: GetJson " + origin + " Calling: " + entityType);
+
+        return returnValue;
+
+    }
 
     @SuppressWarnings("unchecked")
     public static void hashMapper(Map<String, Object> lhm1, int level) throws ParseException {

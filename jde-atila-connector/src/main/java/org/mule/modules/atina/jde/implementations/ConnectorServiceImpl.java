@@ -30,6 +30,7 @@ import com.google.shade.protobuf.Timestamp;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionRequest;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
+import com.jde.jdeserverwp.servicios.GetJsonsForOperationResponse;
 import com.jde.jdeserverwp.servicios.GetMetadataRequest;
 import com.jde.jdeserverwp.servicios.GetMetadataResponse;
 import com.jde.jdeserverwp.servicios.IsConnectedRequest;
@@ -403,6 +404,73 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
         return operations;
     }
+    
+    @Override
+    public Object getJsonFromOperations(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion,String entityType, Map<String, Object> entityData)
+            throws InternalConnectorException {
+
+        logger.info("JDE Atina Service - ConnectorServiceImpl - getJsonFromOperations ...");
+
+        HashMap<String, String> operations = new HashMap<String, String>();
+
+        GetJsonsForOperationResponse operacionesResponse = null;
+         
+
+        try {
+        	 
+
+            operacionesResponse = stub.getJsonsForOperation(
+            		GetMetadataRequest.newBuilder()
+                            .setConnectorName("WS")
+                            .setUser(configuracion.getJdeUser())
+                            .setPassword(configuracion.getJdePassword())
+                            .setEnvironment(configuracion.getJdeEnvironment())
+                            .setRole(configuracion.getJdeRole())
+                            .setJwtToken((String) entityData.get("JDE Token"))
+                            .setSessionId(configuracion.getSessionID())
+                            .setWsconnection(configuracion.getWsConnection())
+                            .setOperacionKey(entityType)
+                            .build());
+   
+            operations.put("JDE Token", operacionesResponse.getJwtToken());
+            operations.put("JSON Schema", operacionesResponse.getInputAsJson());
+
+        } catch (StatusRuntimeException e) {
+
+            logger.error("JDE Atina Service + Error: " + e.getMessage());
+
+            String[] tokens = StringUtils.split(e.getMessage(), "|");
+
+            String errorMessage = tokens[0];
+            String claseDeLaOperacion = tokens[1];
+            String metodoDeLaOperacion = tokens[2];
+            int httpStatus = 510;
+            String httpStatusReason = "";
+            String request = "";
+            String response = "";
+
+            throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+
+        } catch (Exception e) {
+
+            logger.error("JDE Atina Service + Error: " + e.getMessage());
+
+            String[] tokens = StringUtils.split(e.getMessage(), "|");
+
+            String errorMessage = tokens[0];
+            String claseDeLaOperacion = tokens[1];
+            String metodoDeLaOperacion = tokens[2];
+            int httpStatus = 510;
+            String httpStatusReason = "";
+            String request = "";
+            String response = "";
+
+            throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+
+        }
+
+        return operations;
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -655,6 +723,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 }
 
                 returnValue = response;
+                ((HashMap<String, Object>) returnValue).put("JDE Token", (String) ejecutarOperacionesResponse.getJwtToken());
 
             } else if (ejecutarOperacionesResponse.getIsObject())
             {
@@ -676,11 +745,15 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 }
 
                 returnValue = response;
+                ((HashMap<String, Object>) returnValue).put("JDE Token", (String) ejecutarOperacionesResponse.getJwtToken());
 
             } else if (ejecutarOperacionesResponse.getTipoDelParametro()
                     .isEmpty()) {
 
                 returnValue = new HashMap<String, Object>();
+                
+                ((HashMap<String, Object>) returnValue).put("JDE Token", (String) ejecutarOperacionesResponse.getJwtToken());
+                 
 
             } else
             {
@@ -698,6 +771,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 }
 
                 returnValue = response.get(ejecutarOperacionesResponse.getNombreDelParametro());
+                ((HashMap<String, Object>) returnValue).put("JDE Token", (String) ejecutarOperacionesResponse.getJwtToken());
 
             }
 

@@ -1,13 +1,11 @@
 package org.mule.modules.atina.jde.datasense;
-
-import java.io.File;
+ 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-
-import org.apache.commons.io.FileUtils;
+ 
 import org.mule.api.annotations.MetaDataKeyRetriever;
 import org.mule.api.annotations.MetaDataOutputRetriever;
 import org.mule.api.annotations.MetaDataRetriever;
@@ -133,9 +131,7 @@ public class WSDataSenseResolver {
         //
 
         metadataOutput = generateOutputMetaData(key);
-
-        FileUtils.writeStringToFile(new File("/tmp/FileNameToWriteInput.txt"), "INPUT:" + metadataOutput.toString());
-
+  
         return new DefaultMetaData(builder.build());
 
     }

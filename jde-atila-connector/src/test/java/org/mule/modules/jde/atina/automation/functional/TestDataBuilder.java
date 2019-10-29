@@ -48,6 +48,16 @@ public class TestDataBuilder {
 
     }
     
+    public static Map<String, Object> getJSONSchemaEntityData(String token) {
+
+        final Map<String, Object> returnValue = new HashMap<String, Object>();
+
+        returnValue.put("JDE Token", token); 
+
+        return returnValue;
+
+    }
+    
 
     public static String getPurchaseOrdersForApproverEntityType() {
         return GET_PURCHASE_ORDER_FOR_APPROVER;
@@ -157,5 +167,6 @@ public class TestDataBuilder {
         return returnValue;
 
     }
+    
 
 }
