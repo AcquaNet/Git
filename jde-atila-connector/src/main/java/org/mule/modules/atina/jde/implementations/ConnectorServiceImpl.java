@@ -193,6 +193,9 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
         logger.info("JDE Atina Service - End login ");
 
         configuracion.setSessionID(tokenResponse.getSessionId());
+        
+        configuracion.setToken(tokenResponse.getJwtToken());
+        
     }
 
     @Override

@@ -67,6 +67,25 @@ public class AbstractTestCases extends AbstractTestCase<JDEAtinaConnector> {
         return returnValue;
 
     }
+    
+    public Object autorizacion(String entityType, Map<String, Object> entityData)
+            throws Exception {
+
+        logger.info("JDE ATINA - Parameters for Authorization: " + entityType);
+
+        hashMapper((HashMap<String, Object>) entityData, 0);
+
+        Object returnValue = null;
+
+        returnValue = getConnector().authenticate(entityType, entityData);
+
+         
+
+        logger.info("JDE ATINA - FUNCTIONAL_TEST END ejecucionInterna: Calling: " + entityType);
+
+        return returnValue;
+
+    }
 
     @SuppressWarnings("unchecked")
     public static void hashMapper(Map<String, Object> lhm1, int level) throws ParseException {

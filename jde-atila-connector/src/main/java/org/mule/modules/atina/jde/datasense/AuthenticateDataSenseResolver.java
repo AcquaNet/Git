@@ -54,6 +54,7 @@ public class AuthenticateDataSenseResolver {
         Map<String, String> operationsAsObject = new HashMap<String, String>();
         operationsAsObject.put("FromUserData", "Login Using User and Password");
         operationsAsObject.put("FromTokenData", "Login Using Token");
+        operationsAsObject.put("LogoutTokenData", "Logout");
 
         for (String key : operationsAsObject.keySet()) {
             logger.info("JDE Atina - WSDataSenseResolver -                  WS: " + key + " Valor Operacion: "
@@ -100,7 +101,8 @@ public class AuthenticateDataSenseResolver {
 
         }
 
-        if ("FromTokenData".equals(entityKey.getId())) {
+        if ("FromTokenData".equals(entityKey.getId()) ||
+        	"LogoutTokenData".equals(entityKey.getId())	) {
             MetaDataModel authorModel = new DefaultMetaDataBuilder().createDynamicObject("Login")
                     .addSimpleField("JDE Token", DataType.STRING)
                     .build();

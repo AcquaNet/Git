@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.modules.atina.jde.config.ConnectorConfig;
 import org.mule.modules.atina.jde.exceptions.ExternalConnectorException;
@@ -27,7 +28,82 @@ public class GetItemPriceAndAvailabilityWithTokenTestCases extends AbstractTestC
             "unchecked",
             "unused"
     })
+    
     @Test
+    public void executeValidGetItemPriceAndAvailabilityTestWithAuth() throws Exception {
+    	 
+    	logger.info("MULESOFT - FUNCTIONAL_TEST BEGIN ");
+    	
+    	// ======================
+        // Generate Token
+        // ======================
+        
+        int sessionID = 0;
+        
+        Configuracion config = new Configuracion();
+        
+        config.setUser("JDE");
+        config.setPassword("Modus2017!");
+        config.setEnvironment("JDV920");
+        config.setRole("*ALL");
+        config.setSessionId(0);
+         
+        String token = getJWT(config);
+    	 
+        // ======================
+        // Authorization
+        // ======================
+        
+    	String entityTypeAuth = TestDataBuilder.getAuthorizationFromTokenEntityType();
+    	
+    	Map<String, Object> entityDataAuth = TestDataBuilder.getAuthorizationFromTokenEntityData(token);
+    	
+    	Object result = autorizacion(entityTypeAuth, entityDataAuth);
+    	
+    	logger.info("MULESOFT - Token: " + result); 
+    	
+    	// ======================
+        // Invoke WS
+        // ======================
+    	
+		String entityType = TestDataBuilder.getItemPriceAvaEntityType();
+
+		Map<String, Object> entityData = TestDataBuilder.getItemPriceAvaEntityData();
+
+		entityData.put("JDE Token", result);
+         
+		try
+        {
+            Map<String, Object> resultItemPrice = (Map<String, Object>) ejecucionInterna("GetItemPriceAvaEntityData", entityType, entityData);
+
+        } catch (ExternalConnectorException e)
+        {
+            logger.error(e.getE1Message());
+        } catch (Exception e)
+        {
+            logger.error(e.getMessage());
+        }
+		
+		// ======================
+        // Logout
+        // ======================
+        
+    	entityTypeAuth = TestDataBuilder.getAuthorizationLogoutEntityType();
+    	
+    	entityDataAuth = TestDataBuilder.getAuthorizationFromTokenEntityData((String) result);
+    	
+    	result = autorizacion(entityTypeAuth, entityDataAuth);
+    	
+    	logger.info("MULESOFT - Token: " + result);
+    	 
+    	logger.info("MULESOFT - FUNCTIONAL_TEST END ");
+    	
+    	
+ 
+    	
+    }
+    
+    @Test 
     public void executeValidGetItemPriceAndAvailabilityTest() throws Exception {
 
         String entityType = TestDataBuilder.getItemPriceAvaEntityType();
@@ -61,7 +137,7 @@ public class GetItemPriceAndAvailabilityWithTokenTestCases extends AbstractTestC
 
         try
         {
-            Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetItemPriceAvaTestCases: ", entityType, entityData);
+            Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetItemPriceAvaEntityData", entityType, entityData);
 
         } catch (ExternalConnectorException e)
         {

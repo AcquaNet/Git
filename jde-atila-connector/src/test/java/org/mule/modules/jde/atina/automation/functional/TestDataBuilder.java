@@ -11,6 +11,43 @@ public class TestDataBuilder {
     private static final String GET_ITEM_PRICE = "oracle.e1.bssv.JP410000.InventoryManager.getItemPrice";
     private static final String GET_WO_PO = "oracle.e1.bssv.JP000040.FinancialComplianceManager.getWriteOffProcessingOptions";
     private static final String GET_ITEM_PRICE_AVA = "oracle.e1.bssv.JP420000.SalesOrderManager.getItemPriceAndAvailabilityV3";
+    
+    private static final String AUTH_FROM_TOKEN = "FromTokenData";
+    private static final String AUTH_FROM_USER = "FromUserData";
+    private static final String AUTH_LOGOUT = "LogoutTokenData";
+    
+    public static String getAuthorizationFromTokenEntityType() {
+        return AUTH_FROM_TOKEN;
+    }
+    
+    public static String getAuthorizationFromUserEntityType() {
+        return AUTH_FROM_USER;
+    }
+    
+    public static String getAuthorizationLogoutEntityType() {
+        return AUTH_LOGOUT;
+    }
+    
+    public static Map<String, Object> getAuthorizationFromTokenEntityData(String token) {
+
+        final Map<String, Object> returnValue = new HashMap<String, Object>();
+
+        returnValue.put("JDE Token", token); 
+
+        return returnValue;
+
+    }
+    
+    public static Map<String, Object> getAuthorizationFromUserEntityData(String token) {
+
+        final Map<String, Object> returnValue = new HashMap<String, Object>();
+
+        returnValue.put("JDE Token", token); 
+
+        return returnValue;
+
+    }
+    
 
     public static String getPurchaseOrdersForApproverEntityType() {
         return GET_PURCHASE_ORDER_FOR_APPROVER;
