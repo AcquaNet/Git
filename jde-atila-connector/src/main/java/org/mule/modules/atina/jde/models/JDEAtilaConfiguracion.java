@@ -10,18 +10,20 @@ public class JDEAtilaConfiguracion {
     private String microServiceName;
     private Integer microServicePort;
     private long sessionID;
+    private String token;
 
     public JDEAtilaConfiguracion() {
         super();
     }
 
-    public JDEAtilaConfiguracion(String jdeUser, String jdePassword, String jdeEnvironment, String jdeRole,
+    public JDEAtilaConfiguracion(String jdeUser, String jdePassword, String jdeEnvironment, String jdeRole, String token,
             Boolean wsConnection, String microServiceName, Integer microServicePort) {
         super();
         this.jdeUser = jdeUser;
         this.jdePassword = jdePassword;
         this.jdeEnvironment = jdeEnvironment;
         this.jdeRole = jdeRole;
+        this.token = token;
         this.wsConnection = wsConnection;
         this.microServiceName = microServiceName;
         this.microServicePort = microServicePort;
@@ -89,6 +91,14 @@ public class JDEAtilaConfiguracion {
 
     public void setSessionID(long sessionID) {
         this.sessionID = sessionID;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     @Override

@@ -139,6 +139,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             .setPassword(configuracion.getJdePassword())
                             .setEnvironment(configuracion.getJdeEnvironment())
                             .setRole(configuracion.getJdeRole())
+                            .setJwtToken(configuracion.getToken())
                             .setWsconnection(configuracion.getWsConnection())
                             .setSessionId(configuracion.getSessionID())
                             .build());
@@ -208,6 +209,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     LogoutRequest.newBuilder()
                             .setWsconnection(configuracion.getWsConnection())
                             .setSessionId(configuracion.getSessionID())
+                            .setJwtToken(configuracion.getToken())
                             .build());
 
         } catch (StatusRuntimeException e) {
@@ -275,6 +277,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     IsConnectedRequest.newBuilder()
                             .setWsconnection(configuracion.getWsConnection())
                             .setSessionId(configuracion.getSessionID())
+                            .setJwtToken(configuracion.getToken())
                             .build());
 
         } catch (StatusRuntimeException e) {
@@ -348,6 +351,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             .setPassword(configuracion.getJdePassword())
                             .setEnvironment(configuracion.getJdeEnvironment())
                             .setRole(configuracion.getJdeRole())
+                            .setJwtToken(configuracion.getToken())
                             .setSessionId(configuracion.getSessionID())
                             .setWsconnection(configuracion.getWsConnection())
                             .build());
@@ -575,6 +579,16 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             // request
             // --------------------------------------------------------------
             //
+            
+            String token = "";
+            
+            if(entityData.containsKey("JDE Token"))
+            {
+            	token = (String) entityData.get("JDE Token");
+            	
+            	entityData.remove("JDE Token");
+            	
+            }
 
             ArrayList<EjecutarOperacionValores> listaValoresValidos = procesarRequest(metadataInput, entityData, metadataInputAsHashMap, 0);
 
@@ -594,6 +608,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     .setEnvironment(configuracion.getJdeEnvironment())
                     .setRole(configuracion.getJdeRole())
                     .setSessionId(configuracion.getSessionID())
+                    .setJwtToken(token)
                     .setWsconnection(configuracion.getWsConnection())
                     .addAllListaDeValores(valores)
                     .build());
@@ -1681,6 +1696,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             .setEnvironment(configuracion.getJdeEnvironment())
                             .setRole(configuracion.getJdeRole())
                             .setSessionId(configuracion.getSessionID())
+                            .setJwtToken(configuracion.getToken())
                             .setWsconnection(configuracion.getWsConnection())
                             .setOperacionKey(operation)
                             .build());
@@ -1725,6 +1741,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             .setEnvironment(configuracion.getJdeEnvironment())
                             .setRole(configuracion.getJdeRole())
                             .setSessionId(configuracion.getSessionID())
+                            .setJwtToken(configuracion.getToken())
                             .setWsconnection(configuracion.getWsConnection())
                             .setOperacionKey(operation)
                             .build());

@@ -33,9 +33,9 @@ import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
  * Category which can differentiate between input or output MetaDataRetriever
  */
 @MetaDataCategory
-public class WSDataSenseResolver {
+public class GetJSONShemaDataSenseResolver {
 
-    private static final Logger logger = LoggerFactory.getLogger(WSDataSenseResolver.class);
+    private static final Logger logger = LoggerFactory.getLogger(GetJSONShemaDataSenseResolver.class);
 
     @Inject
     protected JDEAtinaConnector connector;
@@ -170,9 +170,7 @@ public class WSDataSenseResolver {
         DefaultMetaDataBuilder builder = new DefaultMetaDataBuilder();
 
         DynamicObjectBuilder<?> objectBuilder = builder.createDynamicObject(key.getDisplayName());
-        
-        objectBuilder.addSimpleField("JDE Token", DataType.STRING);
-
+         
         for (TipoDelParametroOutput field2 : description) {
 
             addOutputMetaDataField(objectBuilder, field2);

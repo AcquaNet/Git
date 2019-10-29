@@ -1,6 +1,7 @@
 {
   "payload-type": "map",
   "payload": {
+    "JDE Token": "string",
     "approver": {
       "entityTaxId": "string",
       "entityLongId": "string",

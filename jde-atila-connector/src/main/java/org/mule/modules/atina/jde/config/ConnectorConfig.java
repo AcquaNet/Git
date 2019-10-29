@@ -68,6 +68,13 @@ public class ConnectorConfig {
      * JDE WS Connection
      */
     @Placement(group = "JDE Configuration", order = 5)
+    @FriendlyName("JDE Token")
+    private String jdeToken;
+
+    /**
+     * JDE WS Connection
+     */
+    @Placement(group = "JDE Configuration", order = 6)
     @FriendlyName("WS Connection")
     private Boolean wsConnection;
 
@@ -153,13 +160,14 @@ public class ConnectorConfig {
             @Password final String jdePassword,
             @ConnectionKey final String jdeEnvironment,
             @ConnectionKey final String jdeRole,
+            @ConnectionKey final String jdeToken,
             @ConnectionKey final Boolean wsConnection,
             @ConnectionKey final String microServiceName,
             @ConnectionKey final Integer microServicePort) throws ConnectionException {
 
         logger.debug("JDE ATILA Connector - Config - testConnect() - Begin: Testing connection...");
 
-        this.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
+        this.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, jdeToken, wsConnection, microServiceName, microServicePort);
 
         this.disconnect();
 
@@ -172,6 +180,7 @@ public class ConnectorConfig {
             @Password final String jdePassword,
             @ConnectionKey final String jdeEnvironment,
             @ConnectionKey final String jdeRole,
+            @ConnectionKey final String jdeToken,
             @ConnectionKey final Boolean wsConnection,
             @ConnectionKey final String microServiceName,
             @ConnectionKey final Integer microServicePort) throws ConnectionException {
@@ -184,7 +193,7 @@ public class ConnectorConfig {
 
         if (this.configuracion == null) {
 
-            this.configuracion = new JDEAtilaConfiguracion(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection,
+            this.configuracion = new JDEAtilaConfiguracion(jdeUser, jdePassword, jdeEnvironment, jdeRole, jdeToken, wsConnection,
                     microServiceName, microServicePort);
 
         }

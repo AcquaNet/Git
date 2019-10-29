@@ -54,8 +54,9 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
         Boolean wsConnection = Boolean.valueOf(validCredentials.getProperty("config.wsConnection"));
         String microServiceName = validCredentials.getProperty("config.microServiceName");
         Integer microServicePort = Integer.valueOf(validCredentials.getProperty("config.microServicePort"));
+        String token = "";
 
-        configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
+        configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole,token, wsConnection, microServiceName, microServicePort);
 
         Assert.assertTrue(configJDEAtina.getConfiguracion()
                 .getSessionID() != 0);
@@ -78,10 +79,11 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
         Boolean wsConnection = Boolean.valueOf(validCredentials.getProperty("config.wsConnection"));
         String microServiceName = validCredentials.getProperty("config.microServiceName");
         Integer microServicePort = Integer.valueOf(validCredentials.getProperty("config.microServicePort"));
+        String token = "";
 
         try
         {
-            configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
+            configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, token, wsConnection, microServiceName, microServicePort);
 
         } catch (ConnectionException e)
         {
@@ -117,13 +119,14 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
         Boolean wsConnection = Boolean.valueOf(validCredentials.getProperty("config.wsConnection"));
         String microServiceName = validCredentials.getProperty("config.microServiceName");
         Integer microServicePort = Integer.valueOf(validCredentials.getProperty("config.microServicePort"));
+        String token = "";
 
         try
         {
 
             microServiceName = "Invalid";
 
-            configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
+            configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, token, wsConnection, microServiceName, microServicePort);
 
             fail("Exception not thrown");
 

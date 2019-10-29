@@ -2,6 +2,7 @@ package org.mule.modules.jde.atina.automation.runner;
 
 import org.mule.modules.atina.jde.JDEAtinaConnector;
 import org.mule.modules.jde.atina.automation.functional.GetItemPriceAndAvailabilityTestCases;
+import org.mule.modules.jde.atina.automation.functional.GetItemPriceAndAvailabilityWithTokenTestCases;
 import org.mule.modules.jde.atina.automation.functional.GetItemPriceTestCases;
 import org.mule.modules.jde.atina.automation.functional.GetPurchaseOrdersForApproverTestCases;
 import org.mule.modules.jde.atina.automation.functional.WriteOffProcessingOptionsTestCases;
@@ -14,10 +15,11 @@ import org.mule.tools.devkit.ctf.mockup.ConnectorTestContext;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-        // GetPurchaseOrdersForApproverTestCases.class,
-        // GetItemPriceTestCases.class
-        // WriteOffProcessingOptionsTestCases.class,
-        GetItemPriceAndAvailabilityTestCases.class
+//        GetPurchaseOrdersForApproverTestCases.class,
+//        GetItemPriceTestCases.class,
+//        WriteOffProcessingOptionsTestCases.class,
+//        GetItemPriceAndAvailabilityTestCases.class,
+        GetItemPriceAndAvailabilityWithTokenTestCases.class
 })
 public class FunctionalConsultaDeArticulosTestSuite {
 

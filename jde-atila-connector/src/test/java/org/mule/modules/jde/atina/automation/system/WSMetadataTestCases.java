@@ -79,8 +79,9 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
         Boolean wsConnection = Boolean.valueOf(validCredentials.getProperty("config.wsConnection"));
         String microServiceName = validCredentials.getProperty("config.microServiceName");
         Integer microServicePort = Integer.valueOf(validCredentials.getProperty("config.microServicePort"));
+        String token = "";
 
-        configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
+        configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, token, wsConnection, microServiceName, microServicePort);
 
         Assert.assertTrue(configJDEAtina.getConfiguracion()
                 .getSessionID() != 0);
@@ -149,8 +150,9 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
         Boolean wsConnection = Boolean.valueOf(validCredentials.getProperty("config.wsConnection"));
         String microServiceName = validCredentials.getProperty("config.microServiceName");
         Integer microServicePort = Integer.valueOf(validCredentials.getProperty("config.microServicePort"));
+        String token = "";
 
-        configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
+        configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, token, wsConnection, microServiceName, microServicePort);
 
         Assert.assertTrue(configJDEAtina.getConfiguracion()
                 .getSessionID() != 0);
@@ -193,8 +195,9 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
         Boolean wsConnection = Boolean.valueOf(validCredentials.getProperty("config.wsConnection"));
         String microServiceName = validCredentials.getProperty("config.microServiceName");
         Integer microServicePort = Integer.valueOf(validCredentials.getProperty("config.microServicePort"));
+        String token = "";
 
-        configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
+        configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, token, wsConnection, microServiceName, microServicePort);
 
         Assert.assertTrue(configJDEAtina.getConfiguracion()
                 .getSessionID() != 0);
@@ -234,8 +237,9 @@ public class WSMetadataTestCases extends AbstractConfigConnectTestCases {
         Boolean wsConnection = Boolean.valueOf(validCredentials.getProperty("config.wsConnection"));
         String microServiceName = validCredentials.getProperty("config.microServiceName");
         Integer microServicePort = Integer.valueOf(validCredentials.getProperty("config.microServicePort"));
+        String token = "";
 
-        configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
+        configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, token, wsConnection, microServiceName, microServicePort);
 
         Assert.assertTrue(configJDEAtina.getConfiguracion()
                 .getSessionID() != 0);
