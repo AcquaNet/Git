@@ -194,9 +194,9 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
         logger.info("JDE Atina Service - End login ");
 
         configuracion.setSessionID(tokenResponse.getSessionId());
-        
+
         configuracion.setToken(tokenResponse.getJwtToken());
-        
+
     }
 
     @Override
@@ -404,9 +404,9 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
         return operations;
     }
-    
+
     @Override
-    public Object getJsonFromOperations(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion,String entityType, Map<String, Object> entityData)
+    public Object getJsonFromOperations(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, String entityType, Map<String, Object> entityData)
             throws InternalConnectorException {
 
         logger.info("JDE Atina Service - ConnectorServiceImpl - getJsonFromOperations ...");
@@ -414,13 +414,11 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
         HashMap<String, String> operations = new HashMap<String, String>();
 
         GetJsonsForOperationResponse operacionesResponse = null;
-         
 
         try {
-        	 
 
             operacionesResponse = stub.getJsonsForOperation(
-            		GetMetadataRequest.newBuilder()
+                    GetMetadataRequest.newBuilder()
                             .setConnectorName("WS")
                             .setUser(configuracion.getJdeUser())
                             .setPassword(configuracion.getJdePassword())
@@ -431,7 +429,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             .setWsconnection(configuracion.getWsConnection())
                             .setOperacionKey(entityType)
                             .build());
-   
+
             operations.put("JDE Token", operacionesResponse.getJwtToken());
             operations.put("JSON Schema", operacionesResponse.getInputAsJson());
 
@@ -650,15 +648,15 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             // request
             // --------------------------------------------------------------
             //
-            
+
             String token = "";
-            
-            if(entityData.containsKey("JDE Token"))
+
+            if (entityData.containsKey("JDE Token"))
             {
-            	token = (String) entityData.get("JDE Token");
-            	
-            	entityData.remove("JDE Token");
-            	
+                token = (String) entityData.get("JDE Token");
+
+                entityData.remove("JDE Token");
+
             }
 
             ArrayList<EjecutarOperacionValores> listaValoresValidos = procesarRequest(metadataInput, entityData, metadataInputAsHashMap, 0);
@@ -751,9 +749,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     .isEmpty()) {
 
                 returnValue = new HashMap<String, Object>();
-                
+
                 ((HashMap<String, Object>) returnValue).put("JDE Token", (String) ejecutarOperacionesResponse.getJwtToken());
-                 
 
             } else
             {

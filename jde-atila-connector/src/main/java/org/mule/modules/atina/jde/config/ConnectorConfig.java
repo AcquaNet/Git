@@ -15,6 +15,7 @@ import org.mule.api.annotations.Disconnect;
 import org.mule.api.annotations.TestConnectivity;
 import org.mule.api.annotations.ValidateConnection;
 import org.mule.api.annotations.param.ConnectionKey;
+import org.mule.extension.annotations.param.Optional;
 import org.mule.modules.atina.jde.exceptions.ExternalConnectorException;
 import org.mule.modules.atina.jde.exceptions.InternalConnectorException;
 import org.mule.modules.atina.jde.implementations.ConnectorServiceImpl;
@@ -63,13 +64,6 @@ public class ConnectorConfig {
     @Placement(group = "JDE Configuration", order = 4)
     @FriendlyName("JDE Role")
     private String jdeRole;
-
-    /**
-     * JDE WS Connection
-     */
-    @Placement(group = "JDE Configuration", order = 5)
-    @FriendlyName("JDE Token")
-    private String jdeToken;
 
     /**
      * JDE WS Connection
@@ -160,14 +154,13 @@ public class ConnectorConfig {
             @Password final String jdePassword,
             @ConnectionKey final String jdeEnvironment,
             @ConnectionKey final String jdeRole,
-            @ConnectionKey final String jdeToken,
             @ConnectionKey final Boolean wsConnection,
             @ConnectionKey final String microServiceName,
             @ConnectionKey final Integer microServicePort) throws ConnectionException {
 
         logger.debug("JDE ATILA Connector - Config - testConnect() - Begin: Testing connection...");
 
-        this.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, jdeToken, wsConnection, microServiceName, microServicePort);
+        this.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
 
         this.disconnect();
 
@@ -180,7 +173,6 @@ public class ConnectorConfig {
             @Password final String jdePassword,
             @ConnectionKey final String jdeEnvironment,
             @ConnectionKey final String jdeRole,
-            @ConnectionKey final String jdeToken,
             @ConnectionKey final Boolean wsConnection,
             @ConnectionKey final String microServiceName,
             @ConnectionKey final Integer microServicePort) throws ConnectionException {
@@ -193,7 +185,7 @@ public class ConnectorConfig {
 
         if (this.configuracion == null) {
 
-            this.configuracion = new JDEAtilaConfiguracion(jdeUser, jdePassword, jdeEnvironment, jdeRole, jdeToken, wsConnection,
+            this.configuracion = new JDEAtilaConfiguracion(jdeUser, jdePassword, jdeEnvironment, jdeRole, "", wsConnection,
                     microServiceName, microServicePort);
 
         }

@@ -1,5 +1,5 @@
 package org.mule.modules.atina.jde.datasense;
- 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -102,7 +102,7 @@ public class AuthenticateDataSenseResolver {
         }
 
         if ("FromTokenData".equals(entityKey.getId()) ||
-        	"LogoutTokenData".equals(entityKey.getId())	) {
+                "LogoutTokenData".equals(entityKey.getId())) {
             MetaDataModel authorModel = new DefaultMetaDataBuilder().createDynamicObject("Login")
                     .addSimpleField("JDE Token", DataType.STRING)
                     .build();
@@ -111,7 +111,7 @@ public class AuthenticateDataSenseResolver {
         }
 
         metadataOutput = generateOutputMetaData(entityKey);
-        
+
         return null;
 
     }
@@ -119,31 +119,32 @@ public class AuthenticateDataSenseResolver {
     @MetaDataOutputRetriever
     public MetaData getOutputMetaData(final MetaDataKey entityKey) throws Exception {
 
-    	if (metadataOutput != null) {
+        if (metadataOutput != null) {
             return metadataOutput;
         } else {
             return generateOutputMetaData(entityKey);
         }
 
     }
-    
-	private MetaData generateOutputMetaData(final MetaDataKey entityKey) throws Exception {
 
-		logger.info("JDE Atina - WSDataSenseResolver - GetOutputMetaData for key: [" + entityKey.getId()
-				+ "] Display Name: [" + entityKey.getDisplayName() + "]");
+    private MetaData generateOutputMetaData(final MetaDataKey entityKey) throws Exception {
 
-		metadataOutput = null;
+        logger.info("JDE Atina - WSDataSenseResolver - GetOutputMetaData for key: [" + entityKey.getId()
+                + "] Display Name: [" + entityKey.getDisplayName() + "]");
 
-		// ==================================================
-		// Recupera Metadata del Servicio
-		// ==================================================
-		//
+        metadataOutput = null;
 
-		MetaDataModel authorModel = new DefaultMetaDataBuilder().createDynamicObject("Login")
-				.addSimpleField("Token", DataType.STRING).build();
+        // ==================================================
+        // Recupera Metadata del Servicio
+        // ==================================================
+        //
 
-		return new DefaultMetaData(authorModel);
+        MetaDataModel authorModel = new DefaultMetaDataBuilder().createDynamicObject("Login")
+                .addSimpleField("Token", DataType.STRING)
+                .build();
 
-	}
+        return new DefaultMetaData(authorModel);
+
+    }
 
 }

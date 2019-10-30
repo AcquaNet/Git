@@ -28,7 +28,7 @@ public interface ConnectorServiceInterface {
 
     public Object ejecutarServicio(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, String entityType, Map<String, Object> entityData);
 
-	public Object getJsonFromOperations(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, String entityType, Map<String, Object> entityData)
-			throws InternalConnectorException;
+    public Object getJsonFromOperations(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, String entityType, Map<String, Object> entityData)
+            throws InternalConnectorException;
 
 }

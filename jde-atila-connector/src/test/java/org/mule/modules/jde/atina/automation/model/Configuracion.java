@@ -55,13 +55,13 @@ public class Configuracion {
     public Integer getSessionId() {
         return sessionId;
     }
-    
-        public int getSessionIdAsInt() {
+
+    public int getSessionIdAsInt() {
         return Integer.parseInt(sessionId.toString());
     }
 
     public void setSessionId(Integer sessionId) {
         this.sessionId = sessionId;
     }
-     
+
 }

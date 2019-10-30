@@ -1,5 +1,6 @@
 package org.mule.modules.atina.jde;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.mule.api.ConnectionException;
@@ -58,23 +59,21 @@ public class JDEAtinaConnector {
             throws InternalConnectorException, ConnectionException {
 
         logger.info("JDE Atina - Invoke WS: [" + entityType + "]");
-         
+
         Object entity = invokeWebService(entityType, entityData);
 
         logger.info("JDE Atina - WS: [" + entityType + "] Executed");
 
         return entity;
     }
-    
-    
 
     @Processor(friendlyName = "Get JSON Schema")
     @MetaDataScope(GetJSONShemaDataSenseResolver.class)
     public Object getJSONSchema(@MetaDataKeyParam(affects = MetaDataKeyParamAffectsType.BOTH) String entityType, @Default("#[payload]") Map<String, Object> entityData)
             throws InternalConnectorException, ConnectionException {
 
-    	logger.info("JDE Atina - GetJSONShemaDataSenseResolver WS: [" + entityType + "]");
-        
+        logger.info("JDE Atina - GetJSONShemaDataSenseResolver WS: [" + entityType + "]");
+
         Object entity = invokeGetSchema(entityType, entityData);
 
         logger.info("JDE Atina - GetJSONShemaDataSenseResolver: [" + entityType + "] Executed");
@@ -99,7 +98,7 @@ public class JDEAtinaConnector {
 
         return returnValue;
     }
-    
+
     private Object invokeGetSchema(String entityType, Map<String, Object> entityData) {
 
         Object returnValue = this.getConfig()
@@ -111,90 +110,90 @@ public class JDEAtinaConnector {
 
     private Object authenticateUser(String entityType, Map<String, Object> entityData) {
 
-        Object returnValue = null;
+        Map<String, Object> returnValue = new HashMap<String, Object>();
 
         JDEAtilaConfiguracion currentConfiguration = config.getConfiguracion();
-        
-        if(entityType.equals("FromUserData") || entityType.equals("FromTokenData"))
+
+        if (entityType.equals("FromUserData") || entityType.equals("FromTokenData"))
         {
 
-	        if (entityData.containsKey("JDE Token") && !(((String) entityData.get("JDE Token")).isEmpty()))
-	        {
-	            JDEAtilaConfiguracion currentConfigurationToken = new JDEAtilaConfiguracion();
-	
-	            currentConfigurationToken.setJdeUser("");
-	            currentConfigurationToken.setJdePassword("");
-	            currentConfigurationToken.setJdeEnvironment("");
-	            currentConfigurationToken.setJdeRole("");
-	            currentConfigurationToken.setSessionID(config.getConfiguracion()
-	                    .getSessionID());
-	            currentConfigurationToken.setWsConnection(true);
-	            currentConfigurationToken.setToken((String) entityData.get("JDE Token"));
-	
-	            this.getConfig()
-	                    .getService()
-	                    .login(config.getStub(), currentConfigurationToken);
-	 
-	            returnValue = currentConfigurationToken.getToken();
-	
-	        } else if (entityData.containsKey("JDE User") &&
-	                entityData.containsKey("JDE Password") &&
-	                entityData.containsKey("JDE Environment") &&
-	                entityData.containsKey("JDE Role") &&
-	                entityData.containsKey("Session Id"))
-	        {
-	            JDEAtilaConfiguracion currentConfigurationToken = new JDEAtilaConfiguracion();
-	
-	            currentConfigurationToken.setJdeUser((String) entityData.get("JDE User"));
-	            currentConfigurationToken.setJdePassword((String) entityData.get("JDE Password"));
-	            currentConfigurationToken.setJdeEnvironment((String) entityData.get("JDE Environment"));
-	            currentConfigurationToken.setJdeRole((String) entityData.get("JDE Role"));
-	            currentConfigurationToken.setSessionID((long) entityData.get("Session Id"));
-	            currentConfigurationToken.setToken("");
-	            currentConfigurationToken.setWsConnection(true);
-	
-	            this.getConfig()
-	                    .getService()
-	                    .login(config.getStub(), currentConfigurationToken);
-	
-	            returnValue = currentConfigurationToken.getToken();
-	
-	        } else
-	        {
-	            this.getConfig()
-	                    .getService()
-	                    .login(config.getStub(), config.getConfiguracion());
-	            returnValue = config.getConfiguracion()
-	                    .getToken();
-	        }
-        
+            if (entityData.containsKey("JDE Token") && !(((String) entityData.get("JDE Token")).isEmpty()))
+            {
+                JDEAtilaConfiguracion currentConfigurationToken = new JDEAtilaConfiguracion();
+
+                currentConfigurationToken.setJdeUser("");
+                currentConfigurationToken.setJdePassword("");
+                currentConfigurationToken.setJdeEnvironment("");
+                currentConfigurationToken.setJdeRole("");
+                currentConfigurationToken.setSessionID(config.getConfiguracion()
+                        .getSessionID());
+                currentConfigurationToken.setWsConnection(true);
+                currentConfigurationToken.setToken((String) entityData.get("JDE Token"));
+
+                this.getConfig()
+                        .getService()
+                        .login(config.getStub(), currentConfigurationToken);
+
+                returnValue.put("Token", currentConfigurationToken.getToken());
+
+            } else if (entityData.containsKey("JDE User") &&
+                    entityData.containsKey("JDE Password") &&
+                    entityData.containsKey("JDE Environment") &&
+                    entityData.containsKey("JDE Role") &&
+                    entityData.containsKey("Session Id"))
+            {
+                JDEAtilaConfiguracion currentConfigurationToken = new JDEAtilaConfiguracion();
+
+                currentConfigurationToken.setJdeUser((String) entityData.get("JDE User"));
+                currentConfigurationToken.setJdePassword((String) entityData.get("JDE Password"));
+                currentConfigurationToken.setJdeEnvironment((String) entityData.get("JDE Environment"));
+                currentConfigurationToken.setJdeRole((String) entityData.get("JDE Role"));
+                currentConfigurationToken.setSessionID((long) entityData.get("Session Id"));
+                currentConfigurationToken.setToken("");
+                currentConfigurationToken.setWsConnection(true);
+
+                this.getConfig()
+                        .getService()
+                        .login(config.getStub(), currentConfigurationToken);
+
+                returnValue.put("Token", currentConfigurationToken.getToken());
+
+            } else
+            {
+                this.getConfig()
+                        .getService()
+                        .login(config.getStub(), config.getConfiguracion());
+
+                returnValue.put("Token", config.getConfiguracion()
+                        .getToken());
+            }
+
         }
-        
-        if(entityType.equals("LogoutTokenData"))
+
+        if (entityType.equals("LogoutTokenData"))
         {
-        	
-        	if (entityData.containsKey("JDE Token") && !(((String) entityData.get("JDE Token")).isEmpty()))
-	        {
-	            JDEAtilaConfiguracion currentConfigurationToken = new JDEAtilaConfiguracion();
-	
-	            currentConfigurationToken.setJdeUser("");
-	            currentConfigurationToken.setJdePassword("");
-	            currentConfigurationToken.setJdeEnvironment("");
-	            currentConfigurationToken.setJdeRole("");
-	            currentConfigurationToken.setSessionID(config.getConfiguracion()
-	                    .getSessionID());
-	            currentConfigurationToken.setWsConnection(true);
-	            currentConfigurationToken.setToken((String) entityData.get("JDE Token"));
-	
-	            this.getConfig()
-	                    .getService()
-	                    .logout(config.getStub(), currentConfigurationToken);
-	 
-	            returnValue = "";
-	
-	        }
-        	 
-        	
+
+            if (entityData.containsKey("JDE Token") && !(((String) entityData.get("JDE Token")).isEmpty()))
+            {
+                JDEAtilaConfiguracion currentConfigurationToken = new JDEAtilaConfiguracion();
+
+                currentConfigurationToken.setJdeUser("");
+                currentConfigurationToken.setJdePassword("");
+                currentConfigurationToken.setJdeEnvironment("");
+                currentConfigurationToken.setJdeRole("");
+                currentConfigurationToken.setSessionID(config.getConfiguracion()
+                        .getSessionID());
+                currentConfigurationToken.setWsConnection(true);
+                currentConfigurationToken.setToken((String) entityData.get("JDE Token"));
+
+                this.getConfig()
+                        .getService()
+                        .logout(config.getStub(), currentConfigurationToken);
+
+                returnValue.put("Token", "");
+
+            }
+
         }
 
         return returnValue;

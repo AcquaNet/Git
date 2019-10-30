@@ -67,7 +67,7 @@ public class AbstractTestCases extends AbstractTestCase<JDEAtinaConnector> {
         return returnValue;
 
     }
-    
+
     public Object autorizacion(String entityType, Map<String, Object> entityData)
             throws Exception {
 
@@ -79,14 +79,12 @@ public class AbstractTestCases extends AbstractTestCase<JDEAtinaConnector> {
 
         returnValue = getConnector().authenticate(entityType, entityData);
 
-         
-
         logger.info("JDE ATINA - FUNCTIONAL_TEST END ejecucionInterna: Calling: " + entityType);
 
         return returnValue;
 
     }
-    
+
     @SuppressWarnings("unchecked")
     public Object ejecucionInternaGetJson(String origin, String entityType, Map<String, Object> entityData)
             throws Exception {

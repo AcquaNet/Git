@@ -56,7 +56,7 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
         Integer microServicePort = Integer.valueOf(validCredentials.getProperty("config.microServicePort"));
         String token = "";
 
-        configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole,token, wsConnection, microServiceName, microServicePort);
+        configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
 
         Assert.assertTrue(configJDEAtina.getConfiguracion()
                 .getSessionID() != 0);
@@ -83,7 +83,7 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
 
         try
         {
-            configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, token, wsConnection, microServiceName, microServicePort);
+            configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
 
         } catch (ConnectionException e)
         {
@@ -126,7 +126,7 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
 
             microServiceName = "Invalid";
 
-            configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, token, wsConnection, microServiceName, microServicePort);
+            configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
 
             fail("Exception not thrown");
 

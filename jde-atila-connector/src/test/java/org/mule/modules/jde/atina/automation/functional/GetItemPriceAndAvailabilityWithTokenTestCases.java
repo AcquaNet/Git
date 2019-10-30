@@ -7,7 +7,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
 import org.junit.Ignore;
-import org.junit.Test; 
+import org.junit.Test;
 import org.mule.modules.atina.jde.exceptions.ExternalConnectorException;
 import org.mule.modules.jde.atina.automation.functional.TestDataBuilder;
 import org.mule.modules.jde.atina.automation.model.Configuracion;
@@ -21,217 +21,226 @@ import java.security.Key;
 
 public class GetItemPriceAndAvailabilityWithTokenTestCases extends AbstractTestCases {
 
-	protected final Logger logger = LoggerFactory.getLogger(GetItemPriceAndAvailabilityWithTokenTestCases.class);
+    protected final Logger logger = LoggerFactory.getLogger(GetItemPriceAndAvailabilityWithTokenTestCases.class);
 
-	@SuppressWarnings({ "unchecked", "unused" })
+    @SuppressWarnings({
+            "unchecked",
+            "unused"
+    })
+    @Test
+    @Ignore
+    public void executeValidGetItemPriceAndAvailabilityTestWithAuth() throws Exception {
 
-	@Test
-	@Ignore
-	public void executeValidGetItemPriceAndAvailabilityTestWithAuth() throws Exception {
+        logger.info("MULESOFT - FUNCTIONAL_TEST BEGIN ");
 
-		logger.info("MULESOFT - FUNCTIONAL_TEST BEGIN ");
+        // ======================
+        // Generate Token
+        // ======================
 
-		// ======================
-		// Generate Token
-		// ======================
+        int sessionID = 0;
 
-		int sessionID = 0;
+        Configuracion config = new Configuracion();
 
-		Configuracion config = new Configuracion();
+        config.setUser("JDE");
+        config.setPassword("Modus2017!");
+        config.setEnvironment("JDV920");
+        config.setRole("*ALL");
+        config.setSessionId(0);
 
-		config.setUser("JDE");
-		config.setPassword("Modus2017!");
-		config.setEnvironment("JDV920");
-		config.setRole("*ALL");
-		config.setSessionId(0);
+        String token = getJWT(config);
 
-		String token = getJWT(config);
+        // ======================
+        // Authorization
+        // ======================
 
-		// ======================
-		// Authorization
-		// ======================
+        String entityTypeAuth = TestDataBuilder.getAuthorizationFromTokenEntityType();
 
-		String entityTypeAuth = TestDataBuilder.getAuthorizationFromTokenEntityType();
+        Map<String, Object> entityDataAuth = TestDataBuilder.getAuthorizationFromTokenEntityData(token);
 
-		Map<String, Object> entityDataAuth = TestDataBuilder.getAuthorizationFromTokenEntityData(token);
+        Object result = autorizacion(entityTypeAuth, entityDataAuth);
 
-		Object result = autorizacion(entityTypeAuth, entityDataAuth);
+        logger.info("MULESOFT - Token: " + result);
 
-		logger.info("MULESOFT - Token: " + result);
+        // ======================
+        // Invoke WS
+        // ======================
 
-		// ======================
-		// Invoke WS
-		// ======================
+        String entityType = TestDataBuilder.getItemPriceAvaEntityType();
 
-		String entityType = TestDataBuilder.getItemPriceAvaEntityType();
+        Map<String, Object> entityData = TestDataBuilder.getItemPriceAvaEntityData();
 
-		Map<String, Object> entityData = TestDataBuilder.getItemPriceAvaEntityData();
+        entityData.put("JDE Token", result);
 
-		entityData.put("JDE Token", result);
+        try {
+            Map<String, Object> resultItemPrice = (Map<String, Object>) ejecucionInterna("GetItemPriceAvaEntityData",
+                    entityType, entityData);
 
-		try {
-			Map<String, Object> resultItemPrice = (Map<String, Object>) ejecucionInterna("GetItemPriceAvaEntityData",
-					entityType, entityData);
+        } catch (ExternalConnectorException e) {
+            logger.error(e.getE1Message());
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
 
-		} catch (ExternalConnectorException e) {
-			logger.error(e.getE1Message());
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
+        // ======================
+        // Logout
+        // ======================
 
-		// ======================
-		// Logout
-		// ======================
+        entityTypeAuth = TestDataBuilder.getAuthorizationLogoutEntityType();
 
-		entityTypeAuth = TestDataBuilder.getAuthorizationLogoutEntityType();
+        entityDataAuth = TestDataBuilder.getAuthorizationFromTokenEntityData((String) result);
 
-		entityDataAuth = TestDataBuilder.getAuthorizationFromTokenEntityData((String) result);
+        result = autorizacion(entityTypeAuth, entityDataAuth);
 
-		result = autorizacion(entityTypeAuth, entityDataAuth);
+        logger.info("MULESOFT - Token: " + result);
 
-		logger.info("MULESOFT - Token: " + result);
+        logger.info("MULESOFT - FUNCTIONAL_TEST END ");
 
-		logger.info("MULESOFT - FUNCTIONAL_TEST END ");
+    }
 
-	}
+    @Test
+    @Ignore
+    public void executeValidGetItemPriceAndAvailabilityTest() throws Exception {
 
-	@Test
-	@Ignore
-	public void executeValidGetItemPriceAndAvailabilityTest() throws Exception {
+        String entityType = TestDataBuilder.getItemPriceAvaEntityType();
 
-		String entityType = TestDataBuilder.getItemPriceAvaEntityType();
+        logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " BEGIN ");
 
-		logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " BEGIN ");
+        // ======================
+        // Generate Token
+        // ======================
 
-		// ======================
-		// Generate Token
-		// ======================
-  
-		Configuracion config = new Configuracion();
+        Configuracion config = new Configuracion();
 
-		config.setUser("JDE");
-		config.setPassword("Modus2017!");
-		config.setEnvironment("JDV920");
-		config.setRole("*ALL");
-		config.setSessionId(0);
+        config.setUser("JDE");
+        config.setPassword("Modus2017!");
+        config.setEnvironment("JDV920");
+        config.setRole("*ALL");
+        config.setSessionId(0);
 
-		String token = getJWT(config);
+        String token = getJWT(config);
 
-		// ======================
-		// Get Connector Instance
-		// ======================
+        // ======================
+        // Get Connector Instance
+        // ======================
 
-		Map<String, Object> entityData = TestDataBuilder.getItemPriceAvaEntityData();
+        Map<String, Object> entityData = TestDataBuilder.getItemPriceAvaEntityData();
 
-		entityData.put("JDE Token", token);
+        entityData.put("JDE Token", token);
 
-		try {
+        try {
 
-			ejecucionInterna("GetItemPriceAvaEntityData", entityType,
-					entityData);
+            ejecucionInterna("GetItemPriceAvaEntityData", entityType,
+                    entityData);
 
-		} catch (ExternalConnectorException e) {
-			logger.error(e.getE1Message());
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
+        } catch (ExternalConnectorException e) {
+            logger.error(e.getE1Message());
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
 
-		logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
+        logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
 
-	}
+    }
 
-	@SuppressWarnings("unused")
-	private String getJWT(Configuracion config) {
+    @SuppressWarnings("unused")
+    private String getJWT(Configuracion config) {
 
-		long ttlMillis = 0;
+        long ttlMillis = 0;
 
-		// The JWT signature algorithm we will be using to sign the token
-		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+        // The JWT signature algorithm we will be using to sign the token
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
-		long nowMillis = System.currentTimeMillis();
-		Date now = new Date(nowMillis);
+        long nowMillis = System.currentTimeMillis();
+        Date now = new Date(nowMillis);
 
-		// We will sign our JWT with our ApiKey secret
-		byte[] apiKeySecretBytes = DatatypeConverter
-				.parseBase64Binary("123456789012345678901234567890123456789012345678901234567890");
-		Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+        // We will sign our JWT with our ApiKey secret
+        byte[] apiKeySecretBytes = DatatypeConverter
+                .parseBase64Binary("123456789012345678901234567890123456789012345678901234567890");
+        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
-		// Let's set the JWT Claims
-		JwtBuilder builder = Jwts.builder().setId("1231231").setIssuedAt(now).setSubject("Subject").setIssuer("Issue")
-				.claim("user", config.getUser()).claim("password", config.getPassword())
-				.claim("environment", config.getEnvironment()).claim("role", config.getRole())
-				.claim("sessionId", config.getSessionId()).signWith(signingKey, signatureAlgorithm);
+        // Let's set the JWT Claims
+        JwtBuilder builder = Jwts.builder()
+                .setId("1231231")
+                .setIssuedAt(now)
+                .setSubject("Subject")
+                .setIssuer("Issue")
+                .claim("user", config.getUser())
+                .claim("password", config.getPassword())
+                .claim("environment", config.getEnvironment())
+                .claim("role", config.getRole())
+                .claim("sessionId", config.getSessionId())
+                .signWith(signingKey, signatureAlgorithm);
 
-		return builder.compact();
+        return builder.compact();
 
-	}
+    }
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void getValidGetItemPriceAndAvailabilityJsonTestWithAuth() throws Exception {
+    @SuppressWarnings("unchecked")
+    @Test
+    public void getValidGetItemPriceAndAvailabilityJsonTestWithAuth() throws Exception {
 
-		logger.info("MULESOFT - FUNCTIONAL_TEST BEGIN ");
+        logger.info("MULESOFT - FUNCTIONAL_TEST BEGIN ");
 
-		// ======================
-		// Generate Token
-		// ======================
- 
-		Configuracion config = new Configuracion();
+        // ======================
+        // Generate Token
+        // ======================
 
-		config.setUser("JDE");
-		config.setPassword("Modus2017!");
-		config.setEnvironment("JDV920");
-		config.setRole("*ALL");
-		config.setSessionId(0);
+        Configuracion config = new Configuracion();
 
-		String token = getJWT(config);
+        config.setUser("JDE");
+        config.setPassword("Modus2017!");
+        config.setEnvironment("JDV920");
+        config.setRole("*ALL");
+        config.setSessionId(0);
 
-		// ======================
-		// Authorization
-		// ======================
+        String token = getJWT(config);
 
-		String entityTypeAuth = TestDataBuilder.getAuthorizationFromTokenEntityType();
+        // ======================
+        // Authorization
+        // ======================
 
-		Map<String, Object> entityDataAuth = TestDataBuilder.getAuthorizationFromTokenEntityData(token);
+        String entityTypeAuth = TestDataBuilder.getAuthorizationFromTokenEntityType();
 
-		Object result = autorizacion(entityTypeAuth, entityDataAuth);
+        Map<String, Object> entityDataAuth = TestDataBuilder.getAuthorizationFromTokenEntityData(token);
 
-		logger.info("MULESOFT - Token: " + result);
+        Object result = autorizacion(entityTypeAuth, entityDataAuth);
 
-		// ======================
-		// Get WS JSON
-		// ======================
+        logger.info("MULESOFT - Token: " + result);
 
-		String entityType = TestDataBuilder.getItemPriceAvaEntityType();
+        // ======================
+        // Get WS JSON
+        // ======================
 
-		Map<String, Object> entityData = TestDataBuilder.getJSONSchemaEntityData((String) result);
+        String entityType = TestDataBuilder.getItemPriceAvaEntityType();
 
-		Map<String, Object> resultItemPrice = null;
+        Map<String, Object> entityData = TestDataBuilder.getJSONSchemaEntityData((String) result);
 
-		try {
-			resultItemPrice = (Map<String, Object>) ejecucionInternaGetJson("GetItemPriceAvaEntityData", entityType,
-					entityData);
+        Map<String, Object> resultItemPrice = null;
 
-		} catch (ExternalConnectorException e) {
-			logger.error(e.getE1Message());
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
+        try {
+            resultItemPrice = (Map<String, Object>) ejecucionInternaGetJson("GetItemPriceAvaEntityData", entityType,
+                    entityData);
 
-		// ======================
-		// Logout
-		// ======================
+        } catch (ExternalConnectorException e) {
+            logger.error(e.getE1Message());
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
 
-		entityTypeAuth = TestDataBuilder.getAuthorizationLogoutEntityType();
+        // ======================
+        // Logout
+        // ======================
 
-		entityDataAuth = TestDataBuilder.getAuthorizationFromTokenEntityData((String) resultItemPrice.get("JDE Token"));
+        entityTypeAuth = TestDataBuilder.getAuthorizationLogoutEntityType();
 
-		result = autorizacion(entityTypeAuth, entityDataAuth);
+        entityDataAuth = TestDataBuilder.getAuthorizationFromTokenEntityData((String) resultItemPrice.get("JDE Token"));
 
-		logger.info("MULESOFT - Token: " + result);
+        result = autorizacion(entityTypeAuth, entityDataAuth);
 
-		logger.info("MULESOFT - FUNCTIONAL_TEST END ");
+        logger.info("MULESOFT - Token: " + result);
 
-	}
+        logger.info("MULESOFT - FUNCTIONAL_TEST END ");
+
+    }
 
 }

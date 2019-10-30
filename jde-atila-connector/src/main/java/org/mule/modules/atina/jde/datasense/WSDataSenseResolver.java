@@ -1,11 +1,11 @@
 package org.mule.modules.atina.jde.datasense;
- 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
- 
+
 import org.mule.api.annotations.MetaDataKeyRetriever;
 import org.mule.api.annotations.MetaDataOutputRetriever;
 import org.mule.api.annotations.MetaDataRetriever;
@@ -114,7 +114,7 @@ public class WSDataSenseResolver {
         DefaultMetaDataBuilder builder = new DefaultMetaDataBuilder();
 
         DynamicObjectBuilder<?> objectBuilder = builder.createDynamicObject(key.getDisplayName());
-        
+
         objectBuilder.addSimpleField("JDE Token", DataType.STRING);
 
         for (TipoDelParametroInput field : description) {
@@ -131,7 +131,7 @@ public class WSDataSenseResolver {
         //
 
         metadataOutput = generateOutputMetaData(key);
-  
+
         return new DefaultMetaData(builder.build());
 
     }
@@ -166,7 +166,7 @@ public class WSDataSenseResolver {
         DefaultMetaDataBuilder builder = new DefaultMetaDataBuilder();
 
         DynamicObjectBuilder<?> objectBuilder = builder.createDynamicObject(key.getDisplayName());
-        
+
         objectBuilder.addSimpleField("JDE Token", DataType.STRING);
 
         for (TipoDelParametroOutput field2 : description) {

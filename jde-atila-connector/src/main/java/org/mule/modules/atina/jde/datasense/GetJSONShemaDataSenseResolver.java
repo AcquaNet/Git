@@ -1,11 +1,11 @@
 package org.mule.modules.atina.jde.datasense;
- 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
- 
+
 import org.mule.api.annotations.MetaDataKeyRetriever;
 import org.mule.api.annotations.MetaDataOutputRetriever;
 import org.mule.api.annotations.MetaDataRetriever;
@@ -93,7 +93,7 @@ public class GetJSONShemaDataSenseResolver {
                 + key.getDisplayName() + "]");
 
         metadataOutput = null;
-  
+
         // ==================================================
         // Genera Metadata Input
         // ==================================================
@@ -102,9 +102,9 @@ public class GetJSONShemaDataSenseResolver {
         DefaultMetaDataBuilder builder = new DefaultMetaDataBuilder();
 
         DynamicObjectBuilder<?> objectBuilder = builder.createDynamicObject(key.getDisplayName());
-        
+
         objectBuilder.addSimpleField("JDE Token", DataType.STRING);
-  
+
         objectBuilder.endDynamicObject();
 
         // ==================================================
@@ -113,7 +113,7 @@ public class GetJSONShemaDataSenseResolver {
         //
 
         metadataOutput = generateOutputMetaData(key);
-      
+
         return new DefaultMetaData(builder.build());
 
     }
@@ -134,20 +134,17 @@ public class GetJSONShemaDataSenseResolver {
         logger.info("JDE Atina - DataSenseResolver - getOutputMetaData for key: [" + key.getId() + "] Display Name: ["
                 + key.getDisplayName() + "]");
 
-         
         DefaultMetaDataBuilder builder = new DefaultMetaDataBuilder();
 
         DynamicObjectBuilder<?> objectBuilder = builder.createDynamicObject(key.getDisplayName());
-        
+
         objectBuilder.addSimpleField("JDE Token", DataType.STRING);
         objectBuilder.addSimpleField("JSON Schema", DataType.STRING);
-        
 
         objectBuilder.endDynamicObject();
 
         return new DefaultMetaData(builder.build());
 
     }
- 
 
 }
