@@ -78,6 +78,8 @@ RUN LOCALIP=$(hostname  -I | cut -f2 -d' ')
 # ====================================
 # Instalacion de JDE Atina Microserver
 # ====================================
+RUN mkdir /tmp/config
+RUN mkdir /tmp/lib
 RUN mkdir /tmp/jde
 RUN mkdir /tmp/jde/config
 RUN mkdir /tmp/jde/lib

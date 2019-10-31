@@ -11,8 +11,10 @@ pause
 cd C:\_work\JDEConnectorCE\Projects\JDEDockers\Microservice
 docker stop jdeatina-server
 docker rm jdeatina-server
-docker rmi soporteacqua/jdeatina-server:1.0.0
+docker rmi 92455890/jdeatina-server:1.0.0
 docker-compose up --no-start
+docker login --username 92455890 --password Anita22223636
+docker push 92455890/jdeatina-server:1.0.0
 cd C:\_work\JDEConnectorCE\Projects\JDEDockers\Microservice
 docker-compose start
 docker cp tmp/jde/config/JDV920 jdeatina-server:/tmp/config/JDV920
