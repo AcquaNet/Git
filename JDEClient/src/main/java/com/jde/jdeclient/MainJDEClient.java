@@ -988,7 +988,8 @@ public class MainJDEClient {
 
             config.setSessionId((int) sessionID);
             
-            
+            config.setTokenExpiration(0L);
+             
             String token = getJWT(config);
 
             // ===========================  
@@ -1164,7 +1165,7 @@ public class MainJDEClient {
     
     private String getJWT(Configuracion config) {
 
-        long ttlMillis = 0;
+        long ttlMillis = config.getTokenExpiration();
 
         //The JWT signature algorithm we will be using to sign the token
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -1187,6 +1188,13 @@ public class MainJDEClient {
                 .claim("role", config.getRole())
                 .claim("sessionId", config.getSessionId())
                 .signWith(signingKey, signatureAlgorithm);
+        
+        //if it has been specified, let's add the expiration
+        if (ttlMillis > 0) {
+            long expMillis = nowMillis + ttlMillis;
+            Date exp = new Date(expMillis);
+            builder.setExpiration(exp);
+        }
 
         return builder.compact();
          

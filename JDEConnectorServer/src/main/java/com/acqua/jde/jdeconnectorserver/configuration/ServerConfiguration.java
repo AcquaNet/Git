@@ -18,12 +18,15 @@ public class ServerConfiguration{
     private String ipLocalServicio;
       
     private String secretKey;
+    
+    private long tokenExpiration;
 
     public ServerConfiguration() {
         this.portServicio = 8085;
         this.ipServicio = "localhost";
         this.ipLocalServicio = "0.0.0.0";  
         this.secretKey = "";
+        this.tokenExpiration = 0L;
     }
 
     public int getPortServicio() {
@@ -57,5 +60,13 @@ public class ServerConfiguration{
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
-    
+
+    public long getTokenExpiration() {
+        return tokenExpiration;
+    }
+
+    public void setTokenExpiration(long tokenExpiration) {
+        this.tokenExpiration = tokenExpiration;
+    }
+     
 }

@@ -46,7 +46,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -57,7 +56,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +66,6 @@ import org.slf4j.LoggerFactory;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import java.lang.reflect.Field;
 import java.security.Key;
-import java.util.logging.Level;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
@@ -134,6 +131,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         config.setRole(request.getRole());
 
         config.setSessionId((int) request.getSessionId());
+        
+        config.setTokenExpiration(configuracion.getTokenExpiration());
           
         
         try {
@@ -223,13 +222,15 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
  
         config.setSessionId(claims.get("sessionId", Integer.class));
         
+        config.setTokenExpiration(this.configuracion.getTokenExpiration());
+        
         return config;
         
     }
     
     private String getJWT(Configuracion config) {
 
-        long ttlMillis = 0;
+        long ttlMillis = config.getTokenExpiration();
 
         //The JWT signature algorithm we will be using to sign the token
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -253,6 +254,13 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 .claim("sessionId", config.getSessionId())
                 .signWith(signingKey, signatureAlgorithm);
 
+        //if it has been specified, let's add the expiration
+        if (ttlMillis > 0) {
+            long expMillis = nowMillis + ttlMillis;
+            Date exp = new Date(expMillis);
+            builder.setExpiration(exp);
+        }  
+    
         return builder.compact();
          
     }
@@ -275,6 +283,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         config.setRole("");
 
         config.setSessionId((int) request.getSessionId());
+        
+        config.setTokenExpiration(configuracion.getTokenExpiration());
         
           
         // -----------------------------------------
@@ -358,6 +368,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         config.setRole("");
 
         config.setSessionId((int) request.getSessionId());
+        
+        config.setTokenExpiration(configuracion.getTokenExpiration());
          
         try {
             
@@ -437,6 +449,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         config.setRole(request.getRole());
 
         config.setSessionId((int) request.getSessionId());
+        
+        config.setTokenExpiration(configuracion.getTokenExpiration());
         
         try {
             
@@ -744,6 +758,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         config.setRole(request.getRole());
 
         config.setSessionId((int) request.getSessionId());
+        
+        config.setTokenExpiration(configuracion.getTokenExpiration());
          
         try {
         
@@ -1270,6 +1286,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         config.setRole(request.getRole());
 
         config.setSessionId((int) request.getSessionId());
+        
+        config.setTokenExpiration(configuracion.getTokenExpiration());
          
         try {
         

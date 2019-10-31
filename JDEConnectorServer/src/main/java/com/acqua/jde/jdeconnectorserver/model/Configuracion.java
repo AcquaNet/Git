@@ -12,13 +12,15 @@ public class Configuracion {
     private String environment;
     private String role;
     private Integer sessionId;
+    private long tokenExpiration;
 
-    public Configuracion(String user, String password, String environment, String role, Integer sessionId) {
+    public Configuracion(String user, String password, String environment, String role, Integer sessionId,long tokenExpiration) {
         this.user = user;
         this.password = password;
         this.environment = environment;
         this.role = role;
         this.sessionId = sessionId;
+        this.tokenExpiration = tokenExpiration;
     }
 
     public Configuracion() {
@@ -68,5 +70,13 @@ public class Configuracion {
     public void setSessionId(Integer sessionId) {
         this.sessionId = sessionId;
     }
-     
+
+    public long getTokenExpiration() {
+        return tokenExpiration;
+    }
+
+    public void setTokenExpiration(long tokenExpiration) {
+        this.tokenExpiration = tokenExpiration;
+    }
+      
 }

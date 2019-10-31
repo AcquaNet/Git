@@ -80,6 +80,9 @@ public class JDEConnectorServer {
     
     @Option(name = "-secretKey", usage = "Secret Key")
     public String secretKey;
+    
+    @Option(name = "-tokenExpiration", usage = "Token Expiration in Milliseconds")
+    public long tokenExpiration;
 
     public void iniciarAplicacion(String[] args) throws InternalServerException, InterruptedException {
 
@@ -175,6 +178,7 @@ public class JDEConnectorServer {
             cfg.setIpLocalServicio(localIp);
             cfg.setPortServicio(portLServer);
             cfg.setSecretKey(secretKey);
+            cfg.setTokenExpiration(tokenExpiration);
         }
           
         // ================================================

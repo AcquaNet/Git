@@ -15,11 +15,7 @@ import org.mule.tools.devkit.ctf.mockup.ConnectorTestContext;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-        GetPurchaseOrdersForApproverTestCases.class,
-        GetItemPriceTestCases.class,
-        WriteOffProcessingOptionsTestCases.class,
-        GetItemPriceAndAvailabilityTestCases.class,
-        GetItemPriceAndAvailabilityWithTokenTestCases.class
+        GetPurchaseOrdersForApproverTestCases.class 
 })
 public class FunctionalConsultaDeArticulosTestSuite {
 
