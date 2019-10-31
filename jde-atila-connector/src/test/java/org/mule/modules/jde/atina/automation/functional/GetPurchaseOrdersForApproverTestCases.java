@@ -17,7 +17,6 @@ public class GetPurchaseOrdersForApproverTestCases extends AbstractTestCases {
             "unused",
             "unchecked"
     })
-    
     @Test
     @Ignore
     public void executeTest1() throws Exception {
@@ -37,7 +36,7 @@ public class GetPurchaseOrdersForApproverTestCases extends AbstractTestCases {
         logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
 
     }
-    
+
     @Test
     public void executeTestInvalidOperation() throws Exception {
 
@@ -48,22 +47,21 @@ public class GetPurchaseOrdersForApproverTestCases extends AbstractTestCases {
         // ======================
         // Get Connector Instance
         // ======================
-        
+
         entityType = entityType.concat("XX");
-        
+
         Map<String, Object> entityData = TestDataBuilder.getPurchaseOrdersForApproverEntityData();
 
         try {
-        	
-        	Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetPurchaseOrdersForApproverTestCases: ", entityType, entityData);
- 
+
+            Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetPurchaseOrdersForApproverTestCases: ", entityType, entityData);
+
         } catch (ExternalConnectorException e) {
             logger.error(e.getE1Message());
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
 
-        
         logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
 
     }
