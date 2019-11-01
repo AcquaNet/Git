@@ -21,6 +21,8 @@ RUN set -x \
  && chmod -R go=u,go-w /home/ngrok \
  && chmod go= /home/ngrok
 
+RUN chmod +x entrypoint.sh 
+
 USER ngrok
 
 ARG NGROK_NGROK_TOKEN=1PCF9faaexWLy1K8gB5lVv4gzUB_B7QY8aX89BXtiKMWbXZ2
@@ -39,5 +41,4 @@ COPY ngrok.yml /home/ngrok/.ngrok2/ngrok.yml
 EXPOSE 4040
  
 WORKDIR /opt/ngrok/conf
-RUN chmod +x entrypoint.sh 
 ENTRYPOINT ["/entrypoint.sh"]
