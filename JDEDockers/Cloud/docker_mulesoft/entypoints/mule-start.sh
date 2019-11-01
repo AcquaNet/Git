@@ -53,5 +53,5 @@ echo 'Copiando actualizaciones descargadas a mule ...' >>/home/start.log
 cp -a /opt/mule/mule-standalone-${muleVersion}/appsgit/. /opt/mule/mule-standalone-${muleVersion}/apps/
 echo 'Iniciando Mule' >>/home/start.log
 #exec /opt/mule/mule-standalone-3.9.0/bin/mule -app mirrit-system-layer-${mirritVersion}:mirrit-process-layer-${mirritVersion}
-exec /opt/mule/mule-standalone-3.9.0/bin/mule -app system-layer-${mirritVersion}:mirrit-process-layer-${mirritVersion}
+exec /opt/mule/mule-standalone-3.9.0/bin/mule -app system-layer-${mirritVersion}
 echo 'Mule Iniciado' >>/home/start.log
