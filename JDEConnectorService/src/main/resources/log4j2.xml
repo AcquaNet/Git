@@ -11,33 +11,27 @@
 
     <Appenders>
         
-        <File name="file" fileName="c:/tmp/logs/file.log" append="true">
-        <PatternLayout>
-            <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%nw</Pattern>
-        </PatternLayout>
-        </File>
-        
-        <Console name="stdout" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %p %m%n"/>
-        </Console>
-        
+        <RollingFile name="file"
+			fileName="/tmp/JDEConnectorServerLog/connector-service.log"
+			filePattern="/tmp/JDEConnectorServerLog/connector-service-%i.log">
+			<PatternLayout pattern="%d [%t] %-5p %c - %m%n" />
+			<SizeBasedTriggeringPolicy size="10 MB" />
+			<DefaultRolloverStrategy max="10" />
+	</RollingFile>
+         
     </Appenders>
     
     
     <Loggers>
-  
-        
+   
         <logger name="com.atina.jdeconnectorservice.JDEConnectorService" level="DEBUG"/>
         
-         <logger name="com.atina.jdeconnector.internal.JDEHandler" level="DEBUG"/>
+        <logger name="com.atina.jdeconnector.internal.JDEHandler" level="DEBUG"/>
 
         <root level="INFO">
-            <appender-ref ref="file" />
-            <appender-ref ref="stdout" />
+            <appender-ref ref="file" /> 
         </root>
-        
-        
+         
     </Loggers>
-    
-    
+     
 </Configuration>

@@ -17,7 +17,7 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- rollover daily -->
-            <fileNamePattern>logs/jde_atina_server_%d{yyyy-MM-dd}.%i.log
+            <fileNamePattern>/tmp/JDEConnectorServerLog/jde_atina_server_%d{yyyy-MM-dd}.%i.log
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                 class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -25,15 +25,9 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder>
-            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
-        </encoder>
-    </appender>
-   
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
         </encoder>
-    </appender> 
+    </appender>
     
     <logger name="org.eclipse.jetty">
         <level value="INFO"/>
@@ -57,8 +51,7 @@
         
     <logger name="com.acqua.atina.jdeconnectorservice.wsservice.JDESingleWSClient" level="INFO"/> 
     
-    <root level="info">
-        <appender-ref ref="STDOUT" />
+    <root level="info"> 
         <appender-ref ref="FILE" />
     </root>
     
