@@ -39,5 +39,5 @@ COPY ngrok.yml /home/ngrok/.ngrok2/ngrok.yml
 EXPOSE 4040
  
 WORKDIR /opt/ngrok/conf
-RUN chmod +x /entrypoint.sh 
+RUN chmod +x entrypoint.sh 
 ENTRYPOINT ["/entrypoint.sh"]
