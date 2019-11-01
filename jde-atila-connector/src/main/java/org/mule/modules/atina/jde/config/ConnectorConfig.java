@@ -385,7 +385,7 @@ public class ConnectorConfig {
 
                 ConnectorServiceImpl servicio = (ConnectorServiceImpl) getService();
 
-                logger.info("JDE ATILA Connector - Error checking is session is still connected Done");
+                logger.info("JDE ATILA Connector - Session is still connected Done");
 
                 return servicio.isConnected(stub, this.configuracion);
 
