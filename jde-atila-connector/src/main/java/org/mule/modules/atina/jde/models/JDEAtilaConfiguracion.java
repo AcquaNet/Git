@@ -101,11 +101,17 @@ public class JDEAtilaConfiguracion {
         this.token = token;
     }
 
-    @Override
-    public String toString() {
-        return "JDEAtilaConfiguracion [jdeUser=" + jdeUser + ", jdeEnvironment=" + jdeEnvironment + ", jdeRole="
-                + jdeRole + ", wsConnection=" + wsConnection + ", microServiceName=" + microServiceName
-                + ", microServicePort=" + microServicePort + ", sessionID=" + sessionID + "]";
-    }
+	public JDEAtilaConfiguracion(String jdeUser, String jdeEnvironment, String jdeRole, Boolean wsConnection,
+			String microServiceName, Integer microServicePort, long sessionID, String token) {
+		super();
+		this.jdeUser = jdeUser;
+		this.jdeEnvironment = jdeEnvironment;
+		this.jdeRole = jdeRole;
+		this.wsConnection = wsConnection;
+		this.microServiceName = microServiceName;
+		this.microServicePort = microServicePort;
+		this.sessionID = sessionID;
+		this.token = token;
+	} 
 
 }

@@ -78,5 +78,11 @@ public class Configuracion {
     public void setTokenExpiration(long tokenExpiration) {
         this.tokenExpiration = tokenExpiration;
     }
+
+    @Override
+    public String toString() {
+        return "Configuracion{" + "user=" + user + ", environment=" + environment + ", role=" + role + ", sessionId=" + sessionId + ", tokenExpiration=" + tokenExpiration + '}';
+    }
+     
       
 }

@@ -158,6 +158,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             
             config.setSessionId(sessionID);
             
+            logger.info("JDE Login:      Session ID: " + sessionID);
+            
             SessionResponse.Builder responseBuilder = SessionResponse.newBuilder();
             
             responseBuilder.setSessionId(sessionID);
@@ -206,6 +208,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     
     private Configuracion getConfigFromJWT(String jwtToken) {
         
+        logger.info("          Get Config From JWT: " + jwtToken);
+        
         Configuracion config = new Configuracion();
         
         Claims claims = Jwts.parser()
@@ -223,6 +227,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         config.setSessionId(claims.get("sessionId", Integer.class));
         
         config.setTokenExpiration(this.configuracion.getTokenExpiration());
+        
+        logger.info("          Configuration Received: " + config.toString());
         
         return config;
         
