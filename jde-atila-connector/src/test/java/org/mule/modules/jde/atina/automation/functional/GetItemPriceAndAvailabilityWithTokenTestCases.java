@@ -28,7 +28,6 @@ public class GetItemPriceAndAvailabilityWithTokenTestCases extends AbstractTestC
             "unused"
     })
     @Test
-    @Ignore
     public void executeValidGetItemPriceAndAvailabilityTestWithAuth() throws Exception {
 
         logger.info("MULESOFT - FUNCTIONAL_TEST BEGIN ");
@@ -47,11 +46,13 @@ public class GetItemPriceAndAvailabilityWithTokenTestCases extends AbstractTestC
         config.setRole("*ALL");
         config.setSessionId(0);
 
-        String token = getJWT(config);
+        // String token = getJWT(config);
 
         // ======================
         // Authorization
         // ======================
+
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNTcyNDQ3Nzc0LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMTchIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MH0.u9olIwWVsyCQnEPz2q0ngr1Kny24RqcRCU23xHFvr3o";
 
         String entityTypeAuth = TestDataBuilder.getAuthorizationFromTokenEntityType();
 
@@ -177,6 +178,7 @@ public class GetItemPriceAndAvailabilityWithTokenTestCases extends AbstractTestC
 
     @SuppressWarnings("unchecked")
     @Test
+    @Ignore
     public void getValidGetItemPriceAndAvailabilityJsonTestWithAuth() throws Exception {
 
         logger.info("MULESOFT - FUNCTIONAL_TEST BEGIN ");

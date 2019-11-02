@@ -15,7 +15,6 @@ import org.mule.api.annotations.Disconnect;
 import org.mule.api.annotations.TestConnectivity;
 import org.mule.api.annotations.ValidateConnection;
 import org.mule.api.annotations.param.ConnectionKey;
-import org.mule.extension.annotations.param.Optional;
 import org.mule.modules.atina.jde.exceptions.ExternalConnectorException;
 import org.mule.modules.atina.jde.exceptions.InternalConnectorException;
 import org.mule.modules.atina.jde.implementations.ConnectorServiceImpl;

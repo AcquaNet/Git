@@ -71,7 +71,11 @@ public class JDESingleWSClient {
 
     public int login() throws JDESingleConnectionException {
 
-        logger.info("Connecting to JDE ..");
+        logger.info("JDESingleWSClient Connecting to JDE. Current Session ID: " + iSessionID);
+        logger.info("JDESingleWSClient Login Information: ");
+        logger.info("      User: " + this.user);
+        logger.info("      Role: " + this.role);
+        logger.info("      Environment: " + this.environment); 
 
         boolean userConnected = false;
 
@@ -82,28 +86,28 @@ public class JDESingleWSClient {
 
             if (iSessionID != 0) {
 
-                logger.info("MULESOFT - JDEConnectorService:  Previously connected to JDE. Id:" + Integer.toString(iSessionID));
+                logger.info("JDESingleWSClient - JDEConnectorService:  Previously connected to JDE. Id:" + Integer.toString(iSessionID));
 
                 userConnected = com.jdedwards.system.connector.dynamic.Connector.getInstance()
                         .isLoggedIn(iSessionID);
 
-                logger.info("MULESOFT - JDEConnectorService:  is connected to JDE? = " + userConnected);
+                logger.info("JDESingleWSClient - JDEConnectorService:  is connected to JDE? = " + userConnected);
             
                 if (!userConnected) {
 
                     iSessionID = 0;
 
-                    logger.info("The connections has been reseted");
+                    logger.info("JDESingleWSClient - The connections has been reseted");
 
                 } else {
                     
-                    logger.info("Current user is connected");
+                    logger.info("JDESingleWSClient - Current user is connected");
                     
                     if(!com.jdedwards.system.connector.dynamic.Connector.getInstance().getUserSession(iSessionID).isSbfConnectorMode())
                     {
                         iSessionID = 0;
                         
-                        logger.info("Current user is as SBF Connector Mode");
+                        logger.info("JDESingleWSClient - Current user is as SBF Connector Mode");
                     }
                      
                 }
@@ -111,13 +115,9 @@ public class JDESingleWSClient {
             }
 
             if (iSessionID == 0) {
-
-                Connector connector = com.jdedwards.system.connector.dynamic.Connector.getInstance();
  
-                iSessionID = connector.loginBase(this.user, this.password, this.environment, this.role, true, true);
-
-                logger.info("      User Connected with Id: " + Integer.toString(iSessionID));
-
+                logger.info("JDESingleWSClient Validate is there is another session opened with the same user");
+                
                 // ==============================================================
                 // Validate is there is another session opened with the same user
                 // ==============================================================
@@ -126,41 +126,58 @@ public class JDESingleWSClient {
 
                 Iterator<?> userSessions = connectionsOpen.values()
                         .iterator();
+   
+                if(userSessions.hasNext())
+                {
+                     
+                    while (userSessions.hasNext()) {
 
-                logger.info("Current user logged: ");
+                        UserSession sessionOpen = (UserSession) userSessions.next();
 
-                while (userSessions.hasNext()) {
+                        logger.info("Current user logged: ");
+                        logger.info("      User: " + sessionOpen.getUserName());
+                        logger.info("      Role: " + sessionOpen.getUserRole());
+                        logger.info("      Environment: " + sessionOpen.getUserEnvironment()); 
+                        logger.info("      isSbfConnectorMode: " + sessionOpen.isSbfConnectorMode()); 
 
-                    UserSession sessionOpen = (UserSession) userSessions.next();
-
-                    logger.info("Current user logged: ");
-                    logger.info("      User: " + sessionOpen.getUserName());
-                    logger.info("      Role: " + sessionOpen.getUserRole());
-                    logger.info("      Environment: " + sessionOpen.getUserEnvironment());
-
-                    if (sessionOpen.getUserName()
-                            .compareTo(user) == 0 && sessionOpen.getUserRole()
-                            .compareTo(role) == 0
-                            && sessionOpen.getUserEnvironment()
-                                    .compareTo(environment) == 0 &&
+                        if (sessionOpen.getUserName().trim().compareTo(user) == 0 && 
+                            sessionOpen.getUserRole().trim().compareTo(role) == 0 && 
+                            sessionOpen.getUserEnvironment().trim().compareTo(environment) == 0 &&
                             sessionOpen.isSbfConnectorMode()) {
 
-                        iSessionID = (int) sessionOpen.getSessionID();
+                            iSessionID = (int) sessionOpen.getSessionID();
 
-                        logger.info("      User Connected with Id: " + Integer.toString(iSessionID));
+                            logger.info("      User Connected with Id: " + Integer.toString(iSessionID));
 
-                        userConnected = true;
+                            userConnected = true;
+
+                            break;
+                        }
+
                     }
-
+                
+                } else
+                {
+                    logger.info("JDESingleWSClient There is not another session opened with the same user");
                 }
-
+                
+                if(!userConnected)
+                {
+                     logger.info("      There is not an user Connected with Id: " + Integer.toString(iSessionID));
+                }
+                
+                
                 // ==============================================================
                 // Validate is there is another session opened with the same user
                 // ==============================================================
                 if (userConnected) {
 
+                    logger.info("JDESingleWSClient Validate is there is another session opened with the same user locally");
+                    
                     userConnected = com.jdedwards.system.connector.dynamic.Connector.getInstance()
                             .isLoggedIn(iSessionID);
+                    
+                    logger.info("JDESingleWSClient is there is another session opened with the same user locally? " + userConnected);
 
                 }
 
@@ -169,7 +186,7 @@ public class JDESingleWSClient {
                 // ==============================================================
                 if (!userConnected) {
 
-                    logger.info("Connecting to JDE ..");
+                    logger.info("JDESingleWSClient Login again");
 
                     iSessionID = com.jdedwards.system.connector.dynamic.Connector.getInstance()
                             .loginBase(this.user, this.password, this.environment, this.role, true, true);

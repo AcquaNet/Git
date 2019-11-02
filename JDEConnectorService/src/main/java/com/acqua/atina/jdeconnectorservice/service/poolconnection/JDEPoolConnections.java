@@ -39,12 +39,12 @@ public class JDEPoolConnections {
     
     public int createConnection(String user, String password, String environment, String role, int sessionID, boolean wsConnection) throws JDESingleConnectionException {
         
-        logger.info("Creating JDE Connection: ");
-        logger.info("      User: " + user);
-        logger.info("      Role: " + role);
-        logger.info("      Environment: " + environment);
-        logger.info("      sessionID: " + sessionID);
-        logger.info("      wsConnection: " + wsConnection);
+        logger.info("           JDEPoolConnections Creating JDE Connection: ");
+        logger.info("                       User: " + user);
+        logger.info("                       Role: " + role);
+        logger.info("                       Environment: " + environment);
+        logger.info("                       sessionID: " + sessionID);
+        logger.info("                       wsConnection: " + wsConnection);
                     
         int currentSessionId = 0;
         
@@ -54,7 +54,7 @@ public class JDEPoolConnections {
             
             currentSessionId = jdeConnection.isJDEConnected();
             
-            logger.info((currentSessionId>0?"User is still connected":"User session expired"));
+            logger.info((currentSessionId>0?"                      User is still connected":"                      User session expired"));
              
         }
          
@@ -63,7 +63,7 @@ public class JDEPoolConnections {
             if(sessionID !=0)
             {
                 pool.remove(sessionID);
-                logger.info("Previous session removed from the poll connection");
+                logger.info("                      Previous session removed from the poll connection");
                 
             }
             
@@ -81,12 +81,14 @@ public class JDEPoolConnections {
             
             currentSessionId = jdeConnection.connect();
             
-            logger.info("New user session: " + currentSessionId);
+            logger.info("                      New user session: " + currentSessionId);
             
             pool.put(currentSessionId, jdeConnection);
              
         }
          
+        logger.info("           JDEPoolConnections Creating JDE Connection: Done");
+        
         return currentSessionId;
         
         

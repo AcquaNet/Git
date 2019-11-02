@@ -99,7 +99,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
     public JDEServiceImpl() {
 
-        logger.info("Iniciando Swagger Server...");
+        logger.info("Iniciando JDE Service Impl...");
 
         userDir = System.getProperty("user.dir");
 
@@ -202,7 +202,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
         } 
 
-        logger.info("Swagger Login: End Login");
+        logger.info("JDE Login: End Login");
 
     } 
     
@@ -347,7 +347,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
         } 
 
-        logger.info("Swagger Login: End Login");
+        logger.info("JDE Logout: End");
 
     } 
     
@@ -356,7 +356,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.IsConnectedResponse> responseObserver) {
 
         
-        logger.info("JDE Logout: Begin");
+        logger.info("JDE isConnected: Begin with Session ID: " + request.getSessionId());
           
         // -----------------------------------------
         // Generar Session
@@ -376,7 +376,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         config.setSessionId((int) request.getSessionId());
         
         config.setTokenExpiration(configuracion.getTokenExpiration());
-         
+          
         try {
             
             if(!request.getJwtToken().isEmpty())
@@ -389,6 +389,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             int sessionId = JDEPoolConnections.getInstance().getSingleConnection(config.getSessionId()).isJDEConnected();
             
             IsConnectedResponse response = IsConnectedResponse.newBuilder().setConnected(sessionId!=0).build();
+            
+            logger.info("JDE isConnected: " + Boolean.toString(sessionId!=0)); 
             
             responseObserver.onNext(response);
 
@@ -427,8 +429,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
         } 
 
-        logger.info("Swagger Login: End Login");
-
+         logger.info("JDE isConnected: End with Session ID: " + request.getSessionId()); 
+         
     } 
     
     @Override

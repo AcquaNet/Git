@@ -113,7 +113,7 @@ public class JDEAtinaConnector {
         Map<String, Object> returnValue = new HashMap<String, Object>();
 
         JDEAtilaConfiguracion currentConfiguration = config.getConfiguracion();
-        
+
         logger.info("JDE Atina - Authenticate User with Option: [" + entityType + "]");
         logger.info("           Current Configuration: [" + currentConfiguration.toString());
 
@@ -122,8 +122,8 @@ public class JDEAtinaConnector {
 
             if (entityData.containsKey("JDE Token") && !(((String) entityData.get("JDE Token")).isEmpty()))
             {
-            	logger.info("           Token received: [" + entityData.get("JDE Token") + "]");
-            	
+                logger.info("           Token received: [" + entityData.get("JDE Token") + "]");
+
                 JDEAtilaConfiguracion currentConfigurationToken = new JDEAtilaConfiguracion();
 
                 currentConfigurationToken.setJdeUser("");
@@ -156,7 +156,7 @@ public class JDEAtinaConnector {
                 currentConfigurationToken.setSessionID((long) entityData.get("Session Id"));
                 currentConfigurationToken.setToken("");
                 currentConfigurationToken.setWsConnection(true);
-                
+
                 logger.info("           Information received: [" + currentConfigurationToken.toString() + "]");
 
                 this.getConfig()
