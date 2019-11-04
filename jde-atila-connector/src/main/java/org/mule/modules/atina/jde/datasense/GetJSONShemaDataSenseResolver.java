@@ -16,16 +16,10 @@ import org.mule.common.metadata.MetaData;
 import org.mule.common.metadata.MetaDataKey;
 import org.mule.common.metadata.builder.DefaultMetaDataBuilder;
 import org.mule.common.metadata.builder.DynamicObjectBuilder;
-import org.mule.common.metadata.builder.MetaDataBuilder;
 import org.mule.common.metadata.datatype.DataType;
 import org.mule.modules.atina.jde.JDEAtinaConnector;
-import org.mule.modules.atina.jde.utils.EnumUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.MoreObjects;
-import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
-import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
 
 /**
  * Category which can differentiate between input or output MetaDataRetriever

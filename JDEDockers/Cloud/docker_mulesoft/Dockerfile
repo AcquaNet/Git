@@ -203,8 +203,8 @@ ENV metrics_graphite_prefix ${metrics_graphite_prefix}
 # Usado por el Entrypoint para invocar al API Ngron y recuperar el 
 # la url que genero ngrok para construir el webhook 
 # Genera la variable Shopify_Webhooks_url con ese resultado
-ARG Shopify_ngrok_server_ip=172.28.0.2
-ENV Shopify_ngrok_server_ip ${Shopify_ngrok_server_ip}
+ARG Shopify_ngrok_server_ip=${NGROK_SERVER}
+ENV Shopify_ngrok_server_ip ${NGROK_SERVER}
 #
 # ====================================
 # Start

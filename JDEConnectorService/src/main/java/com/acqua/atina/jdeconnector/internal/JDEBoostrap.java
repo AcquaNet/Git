@@ -88,14 +88,20 @@ public class JDEBoostrap {
 
     public void setJDEDefaultFolderForMicroService(String environment) throws Exception {
          
+        logger.info("JDE ATINA - JDEStartUpConfiguration - Setting Default Folder. Current Default Folder: " + (jdeDefaultFolder!=null?jdeDefaultFolder:"NULL"));
+        
         if (jdeDefaultFolder == null) {
             
             File tmpFolder = new File(FileUtils.getTempDirectory()
                     .getAbsolutePath());
             
+            logger.info("JDE ATINA - JDEStartUpConfiguration - Setting Default Folder. Temporal Folder: " + tmpFolder);
+            
             jdeDefaultFolder = tmpFolder.getAbsolutePath().concat(File.separator)
                     .concat("config").concat(File.separator)
                     .concat(environment);
+            
+            logger.info("JDE ATINA - JDEStartUpConfiguration - Setting Default Folder. New Default Folder: " + (jdeDefaultFolder!=null?jdeDefaultFolder:"NULL"));
               
             System.setProperty("default_path", jdeDefaultFolder);
              

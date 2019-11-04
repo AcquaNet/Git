@@ -12,13 +12,13 @@ echo '          IP JDE Microserver Server: ' ${JDE_ATINA_SERVER_NAME}: ${JDE_ATI
 export jde_atina_server_name=${JDE_ATINA_SERVER_NAME}
 export jde_atina_server_port=${JDE_ATINA_SERVER_PORT}
 if [  -z "$Shopify_ngrok_server_ip" ];then
-	echo 'Recuperando URL del NGROK Server =' $Shopify_ngrok_server_ip >>/home/start.log
+	echo 'Recuperando URL del NGROK Server =' $NGROK_SERVER >>/home/start.log
 else
-	echo 'Se usara NGROK Server para armar URL Webhook =' $Shopify_ngrok_server_ip >>/home/start.log
+	echo 'Se usara NGROK Server para armar URL Webhook =' $NGROK_SERVER >>/home/start.log
 	echo 'Recuperando URL de redireccion del NGROK Server hacia el Mule Server' >>/home/start.log 
 	i=0
 	sleep 5m
-	urlAPI=$(curl -s ${Shopify_ngrok_server_ip}:4040/api/tunnels | jq '.tunnels[0].public_url')
+	urlAPI=$(curl -s ${NGROK_SERVER}:4040/api/tunnels | jq '.tunnels[0].public_url')
 	echo 'URL recuperada del NGROK API Server =' $urlAPI>>/home/start.log
 	while [$urlAPI != '"https://*']
 	do
@@ -30,12 +30,12 @@ else
 	  fi
 	  echo 'Esperando 3 minutos .... ' >>/home/start.log
 	  sleep 3m
-	  urlAPI=$(curl -s ${Shopify_ngrok_server_ip}:4040/api/tunnels | jq '.tunnels[0].public_url')
+	  urlAPI=$(curl -s ${NGROK_SERVER}:4040/api/tunnels | jq '.tunnels[0].public_url')
 	  echo 'URL recuperada del NGROK API Server =' $urlAPI>>/home/start.log
 	  if [$urlAPI == '"http://*']
 		echo 'URL recuperada del NGROK API Server =' $urlAPI>>/home/start.log
 	  then
-		 urlAPI=$(curl -s ${Shopify_ngrok_server_ip}:4040/api/tunnels | jq '.tunnels[1].public_url')
+		 urlAPI=$(curl -s ${NGROK_SERVER}:4040/api/tunnels | jq '.tunnels[1].public_url')
 	  fi
 	  
 	done

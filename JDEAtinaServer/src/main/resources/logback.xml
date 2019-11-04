@@ -51,9 +51,9 @@
     
     <logger name="com.acqua.atina.jdeconnectorservice.JDEConnectorService" level="INFO"/>
     
-    <logger name="com.jdedwards.base.logging.LogOutputHandler" level="INFO"/>
+    <logger name="com.jdedwards.base.logging.LogOutputHandler" level="DEBUG"/>
     
-    <logger name="com.atina.jdeconnector.internal.JDEHandler" level="INFO"/>
+    <logger name="com.atina.jdeconnector.internal.JDEHandler" level="DEBUG"/>
         
     <logger name="com.acqua.atina.jdeconnectorservice.wsservice.JDESingleWSClient" level="INFO"/> 
     
