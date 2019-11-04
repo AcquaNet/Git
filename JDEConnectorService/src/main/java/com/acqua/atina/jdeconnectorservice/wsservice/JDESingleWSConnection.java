@@ -84,10 +84,7 @@ public class JDESingleWSConnection implements JDEConnection {
                     .setJDEDefaultFolderForMicroService(environment);
             
             logger.info("JDE ATINA  - JDEConnection - Folder for Interop.ini: " + JDEBoostrap.getInstance().getJdeDefaultFolder());
-            
-
-            logger.info("JDE ATINA  - JDEConnection - startupJDEConfiguration()  Default Folder: " + environment);
-
+             
         } catch (Exception e) {
 
             logger.error("MULESOFT - JDEConnection - startupJDEConfiguration() - Error loading jdeinterop.ini file ..." + e.getMessage(), e);

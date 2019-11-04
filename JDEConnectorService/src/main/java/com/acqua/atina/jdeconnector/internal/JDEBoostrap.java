@@ -90,109 +90,23 @@ public class JDEBoostrap {
          
         logger.info("JDE ATINA - JDEStartUpConfiguration - Setting Default Folder. Current Default Folder: " + (jdeDefaultFolder!=null?jdeDefaultFolder:"NULL"));
         
-        if (jdeDefaultFolder == null) {
-            
-            File tmpFolder = new File(FileUtils.getTempDirectory()
-                    .getAbsolutePath());
-            
-            logger.info("JDE ATINA - JDEStartUpConfiguration - Setting Default Folder. Temporal Folder: " + tmpFolder);
-            
-            jdeDefaultFolder = tmpFolder.getAbsolutePath().concat(File.separator)
-                    .concat("config").concat(File.separator)
-                    .concat(environment);
-            
-            logger.info("JDE ATINA - JDEStartUpConfiguration - Setting Default Folder. New Default Folder: " + (jdeDefaultFolder!=null?jdeDefaultFolder:"NULL"));
-              
-            System.setProperty("default_path", jdeDefaultFolder);
-             
-        }
-            
-        logger.info("JDE ATINA - JDEStartUpConfiguration - Default Folder : " + jdeDefaultFolder);
-        
-    }
-    
-    public void setJDEDefaultFolder(String environment) throws Exception {
+        File tmpFolder = new File(FileUtils.getTempDirectory()
+                .getAbsolutePath());
 
-        logger.info("JDE ATINA - JDEStartUpConfiguration - Set default folder for environment: " + (environment!=null?environment:"NULL"));
- 
-        if (jdeDefaultFolder == null) {
+        logger.info("JDE ATINA - JDEStartUpConfiguration - Setting Default Folder. Temporal Folder: " + tmpFolder);
 
-               try {
+        jdeDefaultFolder = tmpFolder.getAbsolutePath().concat(File.separator)
+                .concat("config").concat(File.separator)
+                .concat(environment);
 
-                defineDefaultFolder(environment);
-
-            } catch (Exception e) {
-
-                throw new Exception("Error defining JDE Default folder with classpath:" + getClassPath(), e);
-
-            }
-
-        }
+        logger.info("JDE ATINA - JDEStartUpConfiguration - Setting Default Folder. New Default Folder: " + (jdeDefaultFolder != null ? jdeDefaultFolder : "NULL"));
 
         System.setProperty("default_path", jdeDefaultFolder);
-
-        logger.info("JDE ATINA  - JDEStartUpConfiguration - Property Default Path: " + jdeDefaultFolder);
- 
-    }
-
-    private void defineDefaultFolder(String environment) throws Exception {
-
-        jdeDefaultFolder = "";
-        
-        logger.info("JDE ATINA - JDEStartUpConfiguration - Defining default folder for environment: " + environment);
-
-        // Get Environment Resource
-
-        URL environmentResource = Thread.currentThread()
-            .getContextClassLoader()
-            .getResource(environment);
-
-        if (environmentResource != null) {
-
-            logger.info("JDE ATINA - JDEStartUpConfiguration - Resource: " + environmentResource.toString());
- 
-            File environmentFolder = new File(environmentResource.getFile());
-
-            if (!environmentFolder.exists()) {
-
-                jdeDefaultFolder = getInteropIniFile();
-
-            } else {
-
-                jdeDefaultFolder = environmentFolder.getAbsolutePath();
-
-            }
-
-        } else {
-
-            logger.info("JDE ATINA - JDEStartUpConfiguration - Resource is null");
-
-            jdeDefaultFolder = getInteropIniFile();
-        }
-
+            
         logger.info("JDE ATINA - JDEStartUpConfiguration - Default Folder : " + jdeDefaultFolder);
- 
+        
     }
-
-    private String getInteropIniFile() throws Exception {
-
-        String interopIniFilePath = "";
-
-        logger.info("JDE ATINA - JDEStartUpConfiguration - Getting Interop.ini file: " + JDE_INTEROPINI_FILE);
-
-        URL jdeInteropResource = Thread.currentThread()
-            .getContextClassLoader()
-            .getResource(JDE_INTEROPINI_FILE);
-
-        File jdeinteropFile = new File(jdeInteropResource.getFile());
-
-        logger.info("JDE ATINA - JDEStartUpConfiguration - Interop.ini file: " + jdeinteropFile.getAbsolutePath());
-
-        interopIniFilePath = jdeinteropFile.getParent();
-
-        return interopIniFilePath;
-    }
-
+      
     public String getJdeDefaultFolder() {
         return jdeDefaultFolder;
     }

@@ -82,7 +82,7 @@ public class JDESingleConnection implements JDEConnection{
         try {
 
             JDEBoostrap.getInstance()
-                    .setJDEDefaultFolder(environment);
+                    .setJDEDefaultFolderForMicroService(environment);
             
 
             logger.debug("MULESOFT - JDEConnection - startupJDEConfiguration()  Default Folder: " + environment);
