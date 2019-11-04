@@ -233,7 +233,7 @@ public class JDEConnectorServer {
         logger.info("*------------------------------------------------------*");
         logger.info("Directorio de Trabajo: " + currentUsersHomeDir);
         logger.info("Directorio Instalacion: " + directorioDeInstalacion.getAbsolutePath());
-        logger.info("Directorio Metadata: " + metadataDir.getAbsolutePath()); 
+        logger.info("Version: " + metadataDir.getAbsolutePath()); 
 
         mostrarConfiguracion(cfg);
    
