@@ -3,7 +3,7 @@ version: '2'
 services:
   mule-server:
     build: docker_mulesoft
-    image: soporteacqua/mule-server:1.0.2
+    image: 92455890/mule-server:1.0.0
     environment:
       jdeAtinaVersion: ${jdeAtinaVersion}
       JDE_USER: ${JDE_USER}
@@ -24,8 +24,7 @@ services:
       metrics_graphite_server: ${metrics_graphite_server}
       metrics_graphite_port: ${metrics_graphite_port}
     container_name: mule-server
-    depends_on:
-     - graphite-server 
+    depends_on: 
      - ngrok-server
     ports:
      - "8083:8083"
@@ -35,60 +34,15 @@ services:
      - /tmp/docker/mule-server/logs:/opt/mule/mule-standalone-390/logs
      - /tmp/docker/mule-server/apps:/opt/mule/mule-standalone-390/apps
     links:
-     - graphite-server:graphite-server
      - ngrok-server:ngrok-server
     user: root
     networks:
       integradornet:
         ipv4_address: 172.28.0.5
-    
-  graphite-server:
-    image: kamon/grafana_graphite
-    ports:
-      - "2003:2003"
-      - "2004:2004"
-      - "8080:80"
-      - "8081:81"
-      - "8125:8125"
-      - "8126:8126"
-    container_name: graphite-server
-    user: root
-    networks:
-      integradornet:
-        ipv4_address: 172.28.0.3
-    restart: always
-       
-  html-server:
-    build: docker_html_server
-    image: soporteacqua/html-server:1.0.2
-    environment:
-      PROTO_SHOPIFY: ${PROTO_SHOPIFY}
-      URL_SHOPIFY: ${URL_SHOPIFY}
-      NAME_SHOPIFY: ${NAME_SHOPIFY}
-      PROTO_SHOPIFY_ADMIN: ${PROTO_SHOPIFY_ADMIN}
-      URL_SHOPIFY_ADMIN: ${URL_SHOPIFY_ADMIN}
-      NAME_SHOPIFY_ADMIN: ${NAME_SHOPIFY_ADMIN}
-      PROTO_MULE_CONSOLE: ${PROTO_MULE_CONSOLE}
-      URL_MULE_CONSOLE: ${URL_MULE_CONSOLE}
-      NAME_MULE_CONSOLE: ${NAME_MULE_CONSOLE}
-      PROTO_METRICS_CONSOLE: ${PROTO_METRICS_CONSOLE}
-      URL_METRICS_CONSOLE: ${URL_METRICS_CONSOLE}
-      NAME_METRICS_CONSOLE: ${NAME_METRICS_CONSOLE}
-      PROTO_SEC_CONSOLE: ${PROTO_METRICS_CONSOLE}
-      URL_SEC_CONSOLE: ${URL_SEC_CONSOLE}
-      NAME_SEC_CONSOLE: ${NAME_SEC_CONSOLE}
-    ports:
-      - "80:80"
-    container_name: html-server
-    user: root
-    networks:
-      integradornet:
-        ipv4_address: 172.28.0.6
-    restart: always    
 
   ngrok-server:
     build: docker_ngrok
-    image: soporteacqua/ngrok-server:1.0.2
+    image: 92455890/ngrok-server:1.0.0
     environment:
       NGROK_NGROK_TOKEN: ${NGROK_NGROK_TOKEN}
       NGROK_MULE_SERVER_HOST: ${NGROK_MULE_SERVER_HOST}

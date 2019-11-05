@@ -78,32 +78,32 @@ public class JDEBoostrap {
 
     }
 
-    public synchronized void loadJDEServersOnInetAddressCache()
+    public synchronized void loadJDEServersOnInetAddressCache(boolean forceUseOCMFile)
         throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {
 
         JDEJavaDNSCacheLoader.getInstance()
-            .loadJDEServersInInetAddressCache();
+            .loadJDEServersInInetAddressCache(forceUseOCMFile);
 
     }
 
     public void setJDEDefaultFolderForMicroService(String environment) throws Exception {
          
-        logger.info("JDE ATINA - JDEStartUpConfiguration - Setting Default Folder. Current Default Folder: " + (jdeDefaultFolder!=null?jdeDefaultFolder:"NULL"));
+        logger.info("JDE ATINA -                             JDEStartUpConfiguration - Setting Default Folder. Current Default Folder: " + (jdeDefaultFolder!=null?jdeDefaultFolder:"NULL"));
         
         File tmpFolder = new File(FileUtils.getTempDirectory()
                 .getAbsolutePath());
 
-        logger.info("JDE ATINA - JDEStartUpConfiguration - Setting Default Folder. Temporal Folder: " + tmpFolder);
+        logger.info("JDE ATINA -                             JDEStartUpConfiguration - Setting Default Folder. Temporal Folder: " + tmpFolder);
 
         jdeDefaultFolder = tmpFolder.getAbsolutePath().concat(File.separator)
                 .concat("config").concat(File.separator)
                 .concat(environment);
 
-        logger.info("JDE ATINA - JDEStartUpConfiguration - Setting Default Folder. New Default Folder: " + (jdeDefaultFolder != null ? jdeDefaultFolder : "NULL"));
+        logger.info("JDE ATINA -                             JDEStartUpConfiguration - Setting Default Folder. New Default Folder: " + (jdeDefaultFolder != null ? jdeDefaultFolder : "NULL"));
 
         System.setProperty("default_path", jdeDefaultFolder);
             
-        logger.info("JDE ATINA - JDEStartUpConfiguration - Default Folder : " + jdeDefaultFolder);
+        logger.info("JDE ATINA -                             JDEStartUpConfiguration - Default Folder : " + jdeDefaultFolder);
         
     }
       

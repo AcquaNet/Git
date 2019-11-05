@@ -1,8 +1,0 @@
-22 Aug 2019 09:28:58,079 [WARN  ]  - [JDBJ]            LocalLogicControl.loadControlFile(): local logic control file not found in classpath: LocalLogicCatalog.xml Corrective Action :Validate that the local logic control file 'LocalLogicCatalog.xml', which is used to determine which logic (NER, BSFN, etc) run locally, properly exists within the classpath, typically in WEB-INF/classes 
-22 Aug 2019 09:29:01,369 [WARN  ]  - [JAS]             SecurityServer already exists, no override allowed 
-22 Aug 2019 09:29:30,691 [WARN  ]  - [JAS]             SecurityServer already exists, no override allowed 
-22 Aug 2019 10:04:53,974 [WARN  ]  - [JAS]             SecurityServer already exists, no override allowed 
-22 Aug 2019 10:05:05,156 [WARN  ]  - [JAS]             SecurityServer already exists, no override allowed 
-22 Aug 2019 10:19:06,293 [WARN  ]  - [JDBJ]            LocalLogicControl.loadControlFile(): local logic control file not found in classpath: LocalLogicCatalog.xml Corrective Action :Validate that the local logic control file 'LocalLogicCatalog.xml', which is used to determine which logic (NER, BSFN, etc) run locally, properly exists within the classpath, typically in WEB-INF/classes 
-22 Aug 2019 10:20:19,275 [WARN  ]  - [JAS]             SecurityServer already exists, no override allowed 
-22 Aug 2019 10:35:32,207 [WARN  ]  - [JDBJ]            LocalLogicControl.loadControlFile(): local logic control file not found in classpath: LocalLogicCatalog.xml Corrective Action :Validate that the local logic control file 'LocalLogicCatalog.xml', which is used to determine which logic (NER, BSFN, etc) run locally, properly exists within the classpath, typically in WEB-INF/classes 

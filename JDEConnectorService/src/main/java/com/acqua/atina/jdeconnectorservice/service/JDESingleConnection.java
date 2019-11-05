@@ -103,7 +103,7 @@ public class JDESingleConnection implements JDEConnection{
         try {
 
             JDEBoostrap.getInstance()
-                    .loadJDEServersOnInetAddressCache();
+                    .loadJDEServersOnInetAddressCache(true);
 
         } catch (IOException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 

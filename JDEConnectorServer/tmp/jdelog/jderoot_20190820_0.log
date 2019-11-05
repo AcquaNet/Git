@@ -1,9 +1,0 @@
-20 Aug 2019 18:47:08,084 [MANDATORY]  - [JDBJ]            This server is using Automatic Package discovery. 
-20 Aug 2019 18:47:08,085 [MANDATORY]  - [JDBJ]            The serialized object database will be maintained by the system. 
-20 Aug 2019 18:47:14,941 [MANDATORY]  - [JDBJ]            Discovery: Serialized objects have been found up to date. 
-20 Aug 2019 18:47:14,942 [MANDATORY]  - [JDBJ]            Discovered enterprise server on host jdesrvlogic, port 6017. 
-20 Aug 2019 18:47:14,942 [MANDATORY]  - [JDBJ]            Discovered package DV920FC in Central Objects - DV920. 
-20 Aug 2019 18:47:14,944 [MANDATORY]  - [JDBJ]            ---------- Current  serialized objects ---------- 
-20 Aug 2019 18:47:14,944 [MANDATORY]  - [JDBJ]            Manifest: SO Manifest. Pathcode: DV920, derived from base package: DV920FC, last updated: (Audit: user = JDE, host = jdeweblogic, port = 6017, Timestamp = Thu Apr 05 12:53:00 ART 2018) 
-20 Aug 2019 18:47:14,944 [MANDATORY]  - [JDBJ]            Package: SO Package Manifest. Name = DV920FC, Built = Thu Apr 05 11:51:24 ART 2018, Deployed = Thu Apr 05 11:51:24 ART 2018, Detected = Thu Apr 05 12:53:00 ART 2018, # updates = 0 
-20 Aug 2019 18:47:14,944 [MANDATORY]  - [JDBJ]            Discovery: The system is now in sync with the deployed package. 

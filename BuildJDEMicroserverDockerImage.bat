@@ -53,12 +53,12 @@ ECHO Press Enter to continue
 ECHO ==========================================================
 PAUSE >nul
 ECHO Moving image to Docker Hub
-docker login --username 92455890 --password Anita22223636
-docker push 92455890/jdeatina-server:1.0.0
+#docker login --username 92455890 --password Anita22223636
+#docker push 92455890/jdeatina-server:1.0.0
 ECHO Starting Server...
 cd C:\_work\JDEConnectorCE\Projects\JDEDockers\Microservice
+docker cp tmp/jde/config/JDV920 jdeatina-microserver:/tmp/jde/config
+docker cp tmp/jde/config/JDV920 jdeatina-microserver:/tmp/jde
+docker cp tmp/jde/lib jdeatina-microserver:/tmp/jde
 docker-compose start
-docker cp tmp/jde/config/JDV920 jdeatina-server:/tmp/config
-docker cp tmp/jde/config/JDV920 jdeatina-server:/tmp
-docker cp tmp/jde/lib jdeatina-server:/tmp/jde
 pause

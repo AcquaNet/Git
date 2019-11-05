@@ -14,8 +14,6 @@ import com.acqua.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.util.Enumeration; 
 import java.util.HashMap;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -41,19 +39,17 @@ public class JDESingleWSConnection implements JDEConnection {
 
         try {
 
-            logger.info("JDE ATINA  JDEConnection - Show Classpath:");
-
-            showClassPath();
-             
+            logger.info("JDE ATINA  JDESingleWSConnection - for User [" + user + "/"  + environment + "/"  + role + "]" );
+ 
             this.tmpFolder = new File(FileUtils.getTempDirectory()
                 .getAbsolutePath());
             
             this.tmpCache = defineTmpFolderCache(tmpFolder,environment);
                
 
-        } catch (IOException e) {
+        } catch (Exception e) {
 
-            logger.error("MULESOFT - JDEConnection - Error showing Classpath:" + e.getMessage());
+            logger.error("MULESOFT - JDESingleWSConnection - Error showing Classpath:" + e.getMessage());
 
             throw new JDESingleConnectionException(e.getMessage(), e);
 
@@ -62,7 +58,7 @@ public class JDESingleWSConnection implements JDEConnection {
         // ----------------------------------------------
         // Creating JDE Client Connector
         // ----------------------------------------------
-        logger.info("JDE ATINA  JDEConnection - Creating JDE Client Connector with this values:");
+        logger.info("JDE ATINA  JDESingleWSConnection - Creating JDE Client Connector with this values:");
 
         logger.info("     User: " + user);
         logger.info("     Environment: " + environment);
@@ -70,30 +66,30 @@ public class JDESingleWSConnection implements JDEConnection {
 
         this.client = new JDESingleWSClientFactory().createInstance(user, password, environment, role);
 
-        logger.info("JDE ATINA  JDEConnection -JDE Client Connector is done.");
+        logger.info("JDE ATINA  JDESingleWSConnection - JDE Client Connector is done.");
 
         // ----------------------------------------------
         // Startup JDE Std configuration
         // ----------------------------------------------
         
-        logger.info("JDE ATINA  - JDEConnection - Startup JDE Configuration for Environment: " + environment);
+        logger.info("JDE ATINA  - JDESingleWSConnection - Startup JDE Configuration for Environment: " + environment);
 
         try {
 
             JDEBoostrap.getInstance()
                     .setJDEDefaultFolderForMicroService(environment);
             
-            logger.info("JDE ATINA  - JDEConnection - Folder for Interop.ini: " + JDEBoostrap.getInstance().getJdeDefaultFolder());
+            logger.info("JDE ATINA  - JDESingleWSConnection - Folder for Interop.ini: " + JDEBoostrap.getInstance().getJdeDefaultFolder());
              
         } catch (Exception e) {
 
-            logger.error("MULESOFT - JDEConnection - startupJDEConfiguration() - Error loading jdeinterop.ini file ..." + e.getMessage(), e);
+            logger.error("MULESOFT - JDESingleWSConnection - startupJDEConfiguration() - Error loading jdeinterop.ini file ..." + e.getMessage(), e);
 
             throw new JDESingleConnectionException("Error loading jdeinterop.ini file:" + e.getMessage(), e);
 
         }
 
-        logger.info("JDE ATINA  - JDEConnection - startupJDEConfiguration() for adding new JDE Output Handler: " + environment);
+        logger.info("JDE ATINA  - JDESingleWSConnection - startupJDEConfiguration() for adding new JDE Output Handler: " + environment);
 
         JDEBoostrap.getInstance()
                 .addNewJDEOutputHandler();
@@ -101,7 +97,7 @@ public class JDESingleWSConnection implements JDEConnection {
         try {
 
             JDEBoostrap.getInstance()
-                    .loadJDEServersOnInetAddressCache();
+                    .loadJDEServersOnInetAddressCache(true);
 
         } catch (IOException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 
@@ -196,68 +192,41 @@ public class JDESingleWSConnection implements JDEConnection {
      
         return client.callJDEWS(operation, inputValues);
         
-    } 
-    
-    // ====================================================================================
-    // PRIVATE operations
-    // ====================================================================================
-    
-    private void showClassPath() throws IOException {
-
-        logger.info("JDE ATINA  - JDEStartUpConfiguration - Showing resources for current thread: ");
-
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-
-        Enumeration<URL> e = classLoader.getResources("");
-
-        while (e.hasMoreElements()) {
-            logger.info("JDE ATINA  - JDEStartUpConfiguration -                        : " + e.nextElement());
-        }
-
-        logger.info("JDE ATINA  - JDEStartUpConfiguration - Showing resources for current class: ");
-
-        classLoader = this.getClass().getClassLoader();
-
-        e = classLoader.getResources("");
-
-        while (e.hasMoreElements()) {
-            logger.info("JDE ATINA  - JDEStartUpConfiguration -                        : " + e.nextElement());
-        }
-
-    }
+    }  
     
     private File defineTmpFolderCache(File tmpFolder, String environment) throws JDESingleConnectionException {
 
         File fwEnv = null;
-
+        
+        logger.info("---------------------------------------------------------------------------" );
+        logger.info("JDE ATINA  - JDESingleWSConnection - Temporal Ditectory: " + tmpFolder);
+        logger.info("                                            Environment: " + environment);
+        
         try {
-
-            logger.info("JDE ATINA  JDEClient - Definining Folder Cache for environment: " + environment);
-
-            String cacheFolderWithEnvironment = "";
  
-            logger.info("JDE ATINA  - JDEClient - Temporal Ditectory: " + tmpFolder);
-
+            String cacheFolderWithEnvironment = "";
+  
             cacheFolderWithEnvironment = tmpFolder.getAbsolutePath().concat(File.separator)
                 .concat(environment);
-
-            logger.info("JDE ATINA  JDEClient - Folder Cache with Environmen: " + cacheFolderWithEnvironment);
+      
+            logger.info("                                        Temporal Folder: " + cacheFolderWithEnvironment);
 
             fwEnv = new File(cacheFolderWithEnvironment);
 
             if (fwEnv.exists() && fwEnv.isDirectory()) {
        
                 logger.info("JDE ATINA  JDEClient - Image Folder Cache with Environment has been verified: " + cacheFolderWithEnvironment);
+                 
+                logger.info("                      Temporal Folder has been verified: " + cacheFolderWithEnvironment);
 
             } else {
 
                 FileUtils.forceMkdir(fwEnv);
- 
-                logger.info("JDE ATINA  - JDEClient - Image Folder Cache with Environment has been verified and created: " + cacheFolderWithEnvironment);
-
+                
+                logger.info("          Temporal Folder has been verified and created: " + cacheFolderWithEnvironment);
+                  
             }
-
-            logger.info("JDE ATINA  JDEClient - Setting Image Folder cache in: " + fwEnv.getAbsolutePath());
+ 
 
         } catch (NullPointerException e) {
 

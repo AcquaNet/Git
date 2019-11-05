@@ -1,0 +1,109 @@
+version: '2'
+
+services:
+  mule-server:
+    build: docker_mulesoft
+    image: soporteacqua/mule-server:1.0.2
+    environment:
+      jdeAtinaVersion: ${jdeAtinaVersion}
+      JDE_USER: ${JDE_USER}
+      JDE_PASSWORD: ${JDE_PASSWORD}
+      JDE_ENVIRONMENT: ${JDE_ENVIRONMENT}
+      JDE_ROLE: ${JDE_ROLE}
+      JDE_ATINA_SERVER_NAME: ${JDE_ATINA_SERVER_NAME}
+      JDE_ATINA_SERVER_PORT: ${JDE_ATINA_SERVER_PORT} 
+      dragon_shopify_smtp_host: ${dragon_shopify_smtp_host}
+      dragon_shopify_smtp_port: ${dragon_shopify_smtp_port}
+      dragon_shopify_smtp_user: ${dragon_shopify_smtp_user}
+      dragon_shopify_smtp_pass: ${dragon_shopify_smtp_pass}
+      dragon_shopify_smtp_email_from: ${dragon_shopify_smtp_email_from}
+      dragon_shopify_smtp_email_to: ${dragon_shopify_smtp_email_to} 
+      dragon_shopify_smtp_email_errorSubject: ${dragon_shopify_smtp_email_errorSubject}
+      dragon_shopify_smtp_email_msgSubject: ${dragon_shopify_smtp_email_msgSubject}
+      metrics_graphite_enable: ${metrics_graphite_enable}
+      metrics_graphite_server: ${metrics_graphite_server}
+      metrics_graphite_port: ${metrics_graphite_port}
+    container_name: mule-server
+    depends_on:
+     - graphite-server 
+     - ngrok-server
+    ports:
+     - "8083:8083"
+     - "8088:8081"
+     - "8161:8161"
+    volumes:
+     - /tmp/docker/mule-server/logs:/opt/mule/mule-standalone-390/logs
+     - /tmp/docker/mule-server/apps:/opt/mule/mule-standalone-390/apps
+    links:
+     - graphite-server:graphite-server
+     - ngrok-server:ngrok-server
+    user: root
+    networks:
+      integradornet:
+        ipv4_address: 172.28.0.5
+    
+  graphite-server:
+    image: kamon/grafana_graphite
+    ports:
+      - "2003:2003"
+      - "2004:2004"
+      - "8080:80"
+      - "8081:81"
+      - "8125:8125"
+      - "8126:8126"
+    container_name: graphite-server
+    user: root
+    networks:
+      integradornet:
+        ipv4_address: 172.28.0.3
+    restart: always
+       
+  html-server:
+    build: docker_html_server
+    image: soporteacqua/html-server:1.0.2
+    environment:
+      PROTO_SHOPIFY: ${PROTO_SHOPIFY}
+      URL_SHOPIFY: ${URL_SHOPIFY}
+      NAME_SHOPIFY: ${NAME_SHOPIFY}
+      PROTO_SHOPIFY_ADMIN: ${PROTO_SHOPIFY_ADMIN}
+      URL_SHOPIFY_ADMIN: ${URL_SHOPIFY_ADMIN}
+      NAME_SHOPIFY_ADMIN: ${NAME_SHOPIFY_ADMIN}
+      PROTO_MULE_CONSOLE: ${PROTO_MULE_CONSOLE}
+      URL_MULE_CONSOLE: ${URL_MULE_CONSOLE}
+      NAME_MULE_CONSOLE: ${NAME_MULE_CONSOLE}
+      PROTO_METRICS_CONSOLE: ${PROTO_METRICS_CONSOLE}
+      URL_METRICS_CONSOLE: ${URL_METRICS_CONSOLE}
+      NAME_METRICS_CONSOLE: ${NAME_METRICS_CONSOLE}
+      PROTO_SEC_CONSOLE: ${PROTO_METRICS_CONSOLE}
+      URL_SEC_CONSOLE: ${URL_SEC_CONSOLE}
+      NAME_SEC_CONSOLE: ${NAME_SEC_CONSOLE}
+    ports:
+      - "80:80"
+    container_name: html-server
+    user: root
+    networks:
+      integradornet:
+        ipv4_address: 172.28.0.6
+    restart: always    
+
+  ngrok-server:
+    build: docker_ngrok
+    image: soporteacqua/ngrok-server:1.0.2
+    environment:
+      NGROK_NGROK_TOKEN: ${NGROK_NGROK_TOKEN}
+      NGROK_MULE_SERVER_HOST: ${NGROK_MULE_SERVER_HOST}
+      NGROK_MULE_SERVER_PORT: ${NGROK_MULE_SERVER_PORT}
+    ports:
+      - "4040:4040"
+    container_name: ngrok-server
+    networks:
+      integradornet:
+        ipv4_address: 172.28.0.2    
+    
+networks:
+  integradornet:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.28.0.0/16
+         gateway: 172.28.0.1

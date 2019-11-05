@@ -13,6 +13,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.PrivilegedAction;
 import java.security.Security;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -44,27 +45,37 @@ public class JDEJavaDNSCacheLoader {
         private static final JDEJavaDNSCacheLoader INSTANCE = new JDEJavaDNSCacheLoader();
     }
 
-    public void loadJDEServersInInetAddressCache()
+    public void loadJDEServersInInetAddressCache(boolean forceUseOCMFile)
         throws IOException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 
+        logger.info("Loading JDE Inet Address...");
+        
         if (this.ocmServers == null) {
 
             logger.info("Loading OCM Servers in DNS Cache ...");
 
             String networkaddressCacheTTL = System.getProperty("networkaddress.cache.ttl");
-
+             
             if (networkaddressCacheTTL != null) {
                 logger.info("Property 'networkaddress.cache.ttl' value is " + networkaddressCacheTTL);
+            } else
+            {
+                logger.info("           System networkaddress.cache.ttl: NULL"); 
             }
 
             showPolicy();
 
             ocmServers = (Map<String, String>)JDEPropertyReader.getInstance()
                 .getOCMServers();
+            
+            logger.info("       OCM Server loaded");
+            
 
         }
 
         if (this.ocmServers != null && !ocmServers.isEmpty()) {
+            
+            logger.info("Loading JDE Inet Address...");
 
             if (ocmServers.size() > 0) {
 
@@ -91,22 +102,32 @@ public class JDEJavaDNSCacheLoader {
 
                     boolean jdeServerValid = false;
 
-                    logger.debug("MULESOFT - DNSCacheLoader: loadOCMServerInDNSCache: Validation JDE Server Name: [" + jdeServerName + "] ... ");
+                    logger.info("MULESOFT - DNSCacheLoader: loadOCMServerInDNSCache: Validation JDE Server Name: [" + jdeServerName + "] ... ");
 
-                    try {
+                    if(!forceUseOCMFile)
+                    {
+                        try {
 
-                        ipJDEServer = InetAddress.getByName(jdeServerName);
+                            logger.info("         Resolving ip for : [" + jdeServerName + "]");
 
-                        byte[] ip = ipJDEServer.getAddress();
+                            ipJDEServer = InetAddress.getByName(jdeServerName);
 
-                        logger.info("         JDE Server: [" + jdeServerName + "] has IP [" + getIPString(ip) + "]");
+                            logger.info("         InetAddress : [" + ipJDEServer.toString() + "]");
 
-                        jdeServerValid = true;
+                            byte[] ip = ipJDEServer.getAddress();
 
-                    } catch (UnknownHostException e) { // NOSONAR
+                            logger.info("         Bytes for IP: [" + Arrays.toString(ip) + "]");
 
-                        logger.info("         JDE Server: [" + jdeServerName + "] hasn't IP. Msg:" + e.getMessage());
+                            logger.info("         JDE Server: [" + jdeServerName + "] has IP [" + getIPString(ip) + "]");
 
+                            jdeServerValid = true;
+
+                        } catch (UnknownHostException e) { // NOSONAR
+
+                            logger.info("         JDE Server: [" + jdeServerName + "] hasn't IP. Msg:" + e.getMessage());
+
+                        }
+                    
                     }
 
                     // get IP address from FQDN or IP

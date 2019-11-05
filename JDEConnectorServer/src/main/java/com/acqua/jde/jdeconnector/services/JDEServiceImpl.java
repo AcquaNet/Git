@@ -113,6 +113,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.SessionResponse> responseObserver) {
 
         
+        logger.info("-------------------------------------------------------------------------------");
         logger.info("JDE Login: Begin Login");
         
         // -----------------------------------------
@@ -134,7 +135,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         
         config.setTokenExpiration(configuracion.getTokenExpiration());
           
-        
+        logger.info("              Request Received: " + config.toString());
+         
         try {
     
             // -----------------------------------------
@@ -146,6 +148,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             {
              
                 config = getConfigFromJWT(request.getJwtToken()); 
+                
+                logger.info("              Token converted: " + config.toString());
                    
             }
  
@@ -158,7 +162,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             
             config.setSessionId(sessionID);
             
-            logger.info("JDE Login:      Session ID: " + sessionID);
+            logger.info("              Session ID: " + sessionID);
             
             SessionResponse.Builder responseBuilder = SessionResponse.newBuilder();
             

@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JDEConnectorServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(JDEConnectorServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDERestServer.class);
 
     private static String DIR_INSTALACION = "service-files";
     private static String METADATA = "metadata";
@@ -92,11 +92,7 @@ public class JDEConnectorServer {
         // Argumentos
         // 
         String currentUsersHomeDir = System.getProperty("user.dir");
-        
-        File directorioDeInstalacion = new File(currentUsersHomeDir + File.separator + DIR_INSTALACION);
-        
-        File metadataDir = new File(directorioDeInstalacion + File.separator + METADATA);
-
+          
         // ================================================
         // Parseo de Comandos
         // ================================================
@@ -140,9 +136,13 @@ public class JDEConnectorServer {
                 
                 String newLicense = lic.getLicense(clientcod);
                 
+                logger.info("------------------------------------------------------");
+                logger.info("Checking License...");
+                
                 valido = lic.verificarLicencia("jdelicense.dat", newLicense);
                 
-                
+                logger.info("License has been checked");
+                 
                 
             } catch (NoSuchPaddingException ex) {
                 valido = false;
@@ -191,6 +191,9 @@ public class JDEConnectorServer {
         
         try {
             
+            logger.info("------------------------------------------------------");
+            logger.info("Loading libraries...");
+            
             File jarToAdd1 = new File("/tmp/jde/lib/jde-lib-wrapped-" + jdeLibWrappedVersion + ".jar");
             
             File jarToAdd2 = new File("/tmp/jde/lib/StdWebService-" + stdWebServiceVersion + ".jar");
@@ -202,6 +205,10 @@ public class JDEConnectorServer {
             DynamicURLClassLoader.addURL(urlJdeLibWrapped);
             
             DynamicURLClassLoader.addURL(urlStdWebService); 
+            
+            logger.info("Libraries loaded: ");
+            logger.info("          " + urlJdeLibWrapped.toString());
+            logger.info("          " + urlStdWebService.toString());
             
         } catch (Exception ex) {
             
@@ -231,9 +238,8 @@ public class JDEConnectorServer {
         // ================================================
         //
         logger.info("*------------------------------------------------------*");
-        logger.info("Directorio de Trabajo: " + currentUsersHomeDir);
-        logger.info("Directorio Instalacion: " + directorioDeInstalacion.getAbsolutePath());
-        logger.info("Version: " + metadataDir.getAbsolutePath()); 
+        logger.info("Directorio de Trabajo: " + currentUsersHomeDir); 
+        logger.info("Version: " + "1.0.0"); 
 
         mostrarConfiguracion(cfg);
    

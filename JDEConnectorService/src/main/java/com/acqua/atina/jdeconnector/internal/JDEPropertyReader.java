@@ -153,6 +153,8 @@ public class JDEPropertyReader {
 
     public void resetUpdated() {
 
+        logger.info("                             JDEPropertyReader Reseting values...");
+        
         this.updated = null;
         this.serverName = null;
         if (ocmServers != null) {
@@ -168,17 +170,23 @@ public class JDEPropertyReader {
         this.validateEnterprisesServicesWith = VALIDATE_SERVICES_BOTH;
         this.validateEnterprisesServicesUBEName = VALIDATE_SERVICES_UBENAME;
         this.threadsToGetMetadata = 2;
+        
+        logger.info("                             JDEPropertyReader cleared...");
 
     }
 
     private void readConfigFile() throws IOException {
 
+        logger.info("                             JDEPropertyReader Reading Config File...");
+        
         InputStream inputStreamXMLBase;
 
         String defaulFolder = JDEBoostrap.getInstance()
             .getJdeDefaultFolder();
 
         File interopFile = new File(defaulFolder + File.separator + JDE_INTEROP_INI);
+        
+        logger.info("                             JDEPropertyReader          Config File: " + interopFile.getAbsolutePath());
 
         try {
 
@@ -261,10 +269,10 @@ public class JDEPropertyReader {
                 // Server Name and Port
 
                 if (l.startsWith("[INTEROP]")) {
-
-                    logger.debug("BEGIN [INTEROP]");
-
+ 
                     serverFound = true;
+                    
+                    logger.info("                             BEGIN [INTEROP]");
 
                 }
 
@@ -272,7 +280,7 @@ public class JDEPropertyReader {
 
                     this.serverName = l.substring(17);
 
-                    logger.debug("Server=" + this.serverName);
+                    logger.info("                                 Server=" + this.serverName);
 
                 }
 
@@ -280,7 +288,7 @@ public class JDEPropertyReader {
 
                     this.serverName = l.substring(13);
 
-                    logger.debug("Server=" + this.serverName);
+                    logger.info("                                 Server=" + this.serverName);
 
                 }
 
@@ -288,15 +296,15 @@ public class JDEPropertyReader {
 
                     this.serverPort = Integer.parseInt(l.substring(5));
 
-                    logger.debug("Port=" + this.serverPort);
+                    logger.info("                                 Port=" + this.serverPort);
 
                 }
 
                 if (l.startsWith("[") && !l.startsWith("[INTEROP]") && serverFound) {
-
-                    logger.debug("END [INTEROP]");
-
+  
                     serverFound = false;
+                    
+                    logger.info("                             END [INTEROP]");
 
                 }
 
@@ -304,7 +312,7 @@ public class JDEPropertyReader {
 
                 if (l.startsWith("[OCM_SERVERS]")) {
 
-                    logger.debug("BEGIN [OCM_SERVERS]");
+                    logger.info("                             BEGIN [OCM_SERVERS]");
 
                     ocmServerFound = true;
 
@@ -312,7 +320,10 @@ public class JDEPropertyReader {
 
                 if (!l.startsWith("[") && ocmServerFound && !l.startsWith("#") && l.contains("=")) {
 
+                    logger.info("                                 Value: [" + l + "]");
+                    
                     String lines[] = l.split("=");
+                    
                     if (lines.length != 0) {
                         ocmServers.put(lines[0].trim(), lines[1].trim());
                     }
@@ -321,7 +332,7 @@ public class JDEPropertyReader {
 
                 if (l.startsWith("[") && ocmServerFound && !l.startsWith("[OCM_SERVERS]")) {
 
-                    logger.debug("END [OCM_SERVERS]");
+                    logger.info("                             END [OCM_SERVERS]");
 
                     ocmServerFound = false;
 
@@ -335,7 +346,7 @@ public class JDEPropertyReader {
 
         } catch (IOException e) {
 
-            logger.error("MULESOFT - JDEConnectorService:  - getDefinition() Error jdeinterop.ini");
+            logger.error("                             JDEPropertyReader Error: " + e.getMessage());
 
             throw e;
 

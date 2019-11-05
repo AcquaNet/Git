@@ -1,47 +1,47 @@
 @echo off
 ECHO ==========================================================
-ECHO "Building JDE Connector Service...
+ECHO "Building JDE Atila Connector
 ECHO ==========================================================
-cd C:\_work\JDEConnectorCE\Projects\JDEConnectorService
+cd C:\_work\JDEConnectorCE\Projects\jde-atila-connector
+CALL mvn clean install -DskipTests
+ECHO ==========================================================
+ECHO Press Enter to continue
+ECHO ==========================================================
+PAUSE >nul
+ECHO ==========================================================
+ECHO "Building JDE Common Library
+ECHO ==========================================================
+cd C:\_work\JDEConnectorCE\ProjectsPlatforms\common
 CALL mvn clean install
 ECHO ==========================================================
 ECHO Press Enter to continue
 ECHO ==========================================================
 PAUSE >nul
 ECHO ==========================================================
-ECHO "Building JDE Connector Server...
+ECHO "Building JDE System Layer
 ECHO ==========================================================
-cd C:\_work\JDEConnectorCE\Projects\JDEConnectorServer
-CALL mvn clean install
-ECHO ==========================================================
-ECHO Press Enter to continue
-ECHO ==========================================================
-PAUSE >nul
-del C:\Users\jgodi\.m2\repository\com\jdedwards\JDEConnectorServer\1.0.0\JDEConnectorServer-1.0.0.jar
-copy C:\Users\jgodi\.m2\repository\com\jdedwards\JDEConnectorServer\1.0.0\JDEConnectorServer-1.0.0-jar-with-dependencies.jar C:\Users\jgodi\.m2\repository\com\jdedwards\JDEConnectorServer\1.0.0\JDEConnectorServer-1.0.0.jar
-ECHO ==========================================================
-ECHO "Building JDE Atina Server...
-ECHO ==========================================================
-cd C:\_work\JDEConnectorCE\Projects\JDEAtinaServer
-CALL mvn clean install
+cd C:\_work\JDEConnectorCE\ProjectsPlatforms\system-layer
+CALL mvn clean package
 ECHO ==========================================================
 ECHO Press Enter to continue
 ECHO ==========================================================
 PAUSE >nul
 ECHO ==========================================================
-ECHO "Building JDE Microservice...
+ECHO Pushing mule app to Github
 ECHO ==========================================================
-ECHO "Copying JDEAtinaServer-1.0.0.jar to Docker workspace...
-copy  C:\Users\jgodi\.m2\repository\com\jdedwards\JDEAtinaServer\1.0.0\JDEAtinaServer-1.0.0.jar C:\_work\JDEConnectorCE\Projects\JDEDockers\Microservice\docker_jdemicro\images
-ECHO "JDEAtinaServer-1.0.0.jar copied to Docker workspace...
+cd C:\_work\JDEConnectorCE\Delivery\Docker
+git checkout mule
+xcopy C:\_work\JDEConnectorCE\ProjectsPlatforms\system-layer\target\system-layer-1.0.0.zip
+REM git commit -a -m "Update Mule App"
+REM git push -u origin mule
 ECHO ==========================================================
-ECHO Press Enter to continue
+ECHO Press Enter to continue PUSH TAG
 ECHO ==========================================================
 PAUSE >nul
 ECHO ==========================================================
-ECHO "Creating JDE Microservice Docker
+ECHO "Creating JDE Mule Cloud
 ECHO ==========================================================
-cd C:\_work\JDEConnectorCE\Projects\JDEDockers\Microservice
+cd C:\_work\JDEConnectorCE\Projects\JDEDockers\Cloud
 ECHO Removing curren jdeatina-server...
 docker stop jdeatina-server
 docker rm jdeatina-server
