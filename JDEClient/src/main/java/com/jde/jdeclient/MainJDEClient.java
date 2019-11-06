@@ -27,6 +27,8 @@ import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
 import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.internal.DnsNameResolverProvider;
+import io.grpc.util.RoundRobinLoadBalancerFactory;
 import io.jsonwebtoken.JwtBuilder;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm; 
+import java.net.InetAddress;
 import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
@@ -63,8 +66,10 @@ public class MainJDEClient {
 
         ConfiguracionServer configuracion = new ConfiguracionServer();
 
-        configuracion.setServidorServicio("localhost"); // Servidor Hub
-        configuracion.setPuertoServicio(8085); // Puerto Servidor Hub
+        //configuracion.setServidorServicio("192.168.99.100"); // Servidor Hub
+        //configuracion.setPuertoServicio(8085);
+        configuracion.setServidorServicio("c7629931.ngrok.io"); // Servidor Hub
+        configuracion.setPuertoServicio(80); // Puerto Servidor Hub
 
         configuracion.setUser("JDE");
         configuracion.setPassword("Modus2017!");
@@ -960,13 +965,25 @@ public class MainJDEClient {
         {
             configuracion.setWsConnection(Boolean.TRUE);
 
-            // ===========================  
-            // Crear Canal de Comunicacion  
+            configuracion.setServidorServicio("fedfaa75.ngrok.io"); // Servidor Hub
+            configuracion.setPuertoServicio(80); // Puerto Servidor Hub
+        
+            // ===========================
+            // Crear Canal de Comunicacion
             // ===========================  
             //
+            InetAddress ipJDEServer = InetAddress.getByName(configuracion.getServidorServicio());
+            
+            byte[] ip = ipJDEServer.getAddress();
+
+              String ipS = getIPString(ip);
+             
             ManagedChannel channel = ManagedChannelBuilder.forAddress(configuracion.getServidorServicio(), configuracion.getPuertoServicio())
                     .usePlaintext()
+                    .nameResolverFactory(new DnsNameResolverProvider())  // this is on by default
                     .build();
+            
+             
 
             // =========================== 
             // Creacion del Stub           
@@ -1016,7 +1033,7 @@ public class MainJDEClient {
 
             } catch (Exception ex) {
 
-                logger.error("Error ejecutando metodo ");
+                logger.error("Error ejecutando metodo " + ex.getMessage());
 
                 throw new RuntimeException("Error Logeando", null);
 
@@ -1256,6 +1273,28 @@ public class MainJDEClient {
 
         }
 
+    }
+    
+    private String getIPString(byte[] ipInBytes) {
+
+        StringBuilder ipSB = new StringBuilder();
+
+        int temp = 0;
+
+        for (int i = 0, j = ipInBytes.length; i < j; i++) {
+
+            temp = (int)(ipInBytes[i] & 255);
+
+            if (i != 3) {
+                ipSB.append(temp)
+                    .append(".");
+            } else {
+                ipSB.append(temp);
+            }
+        }
+
+        logger.info("IP: " + ipSB.toString());
+        return ipSB.toString();
     }
 
 }

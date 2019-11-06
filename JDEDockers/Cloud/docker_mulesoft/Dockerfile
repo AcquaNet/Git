@@ -132,7 +132,7 @@ ENV mule_env=dev
 # ------------------------------------------------
 #
 ARG jde_user=${JDE_USER}
-ARG jde_password=${JDE_PASSWORD}!
+ARG jde_password=${JDE_PASSWORD}
 ARG jde_environment=${JDE_ENVIRONMENT}
 ARG jde_role=${JDE_ROLE}
 #

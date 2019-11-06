@@ -1,16 +1,25 @@
 #!/bin/bash
 cd /home
 echo '---------------------------------------------'>/home/start.log
-echo 'INICIANDO MULE SERVER' >>/home/start.log
+echo 'Starting Mule Server' >>/home/start.log
 export app_version=$(cat /opt/mule/build-date.txt)
-echo '            Fecha del Build del MuleServer: ' $app_version >>/home/start.log
+echo '            Build date: ' $app_version >>/home/start.log
 echo '------------------------------------------------------------------------------------'>>/home/start.log 
 echo '          IP Metrics Server: ' ${metrics_graphite_server}>>/home/start.log
 metrics_graphite_server=${metrics_graphite_server}
 echo '------------------------------------------------------------------------------------'>>/home/start.log 
-echo '          IP JDE Microserver Server: ' ${JDE_ATINA_SERVER_NAME}: ${JDE_ATINA_SERVER_PORT}>>/home/start.log
+echo '          IP JDE Atina Microserver: ' ${JDE_ATINA_SERVER_NAME}: ${JDE_ATINA_SERVER_PORT}>>/home/start.log
 export jde_atina_server_name=${JDE_ATINA_SERVER_NAME}
 export jde_atina_server_port=${JDE_ATINA_SERVER_PORT}
+echo '------------------------------------------------------------------------------------'>>/home/start.log 
+export jde_user=${JDE_USER}
+export jde_password=${JDE_PASSWORD}
+export jde_environment=${JDE_ENVIRONMENT}
+export jde_role=${JDE_ROLE}
+echo '            JDE User: ' $jde_user >>/home/start.log 
+echo '            JDE Environment: ' $jde_environment >>/home/start.log
+echo '            JDE Role: ' $jde_role >>/home/start.log
+echo '------------------------------------------------------------------------------------'>>/home/start.log 
 if [  -z "$Shopify_ngrok_server_ip" ];then
 	echo 'Recuperando URL del NGROK Server =' $NGROK_SERVER >>/home/start.log
 else
