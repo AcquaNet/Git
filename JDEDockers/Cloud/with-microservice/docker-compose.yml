@@ -28,7 +28,7 @@ services:
      - ngrok-server
     ports:
      - "8083:8083"
-     - "8088:8081"
+     - "8081:8081"
      - "8161:8161"
     volumes:
      - /tmp/docker/mule-server/logs:/opt/mule/mule-standalone-390/logs

@@ -10,5 +10,5 @@ echo 'ngrok authtoken '  $NGROK_NGROK_TOKEN ' ejecutado' >>/home/ngrok/start-ngr
 set -x
 echo 'NGROK_MULE_SERVER_HOST: '  $NGROK_MULE_SERVER_HOST >>/home/ngrok/start-ngrok-server.log
 echo 'NGROK Ejecutando... ngrok http https://'$NGROK_MULE_SERVER_HOST ':'$NGROK_MULE_SERVER_PORT>>/home/ngrok/start-ngrok-server.log
-ngrok http https://$NGROK_MULE_SERVER_HOST:$NGROK_MULE_SERVER_PORT
+ngrok http http://$NGROK_MULE_SERVER_HOST:$NGROK_MULE_SERVER_PORT
 exec "$@"
