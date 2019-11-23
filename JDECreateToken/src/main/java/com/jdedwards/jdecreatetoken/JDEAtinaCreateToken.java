@@ -12,9 +12,7 @@ import java.awt.Toolkit;
 import java.io.Console;
 import java.security.Key;
 import java.util.Date;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Scanner; 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.awt.datatransfer.*;
@@ -62,7 +60,12 @@ public class JDEAtinaCreateToken {
         String token = "";
 
         String secretKey = ".";
-
+        
+        System.out.println("---------------------------------------------------");
+        System.out.println(conf.toString());
+        System.out.println(conf.getPassword());
+        System.out.println("---------------------------------------------------");
+        
         boolean exit = false;
 
         while (!exit) {

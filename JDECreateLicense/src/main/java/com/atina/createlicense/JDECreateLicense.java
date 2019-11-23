@@ -71,7 +71,7 @@ public class JDECreateLicense {
         }
 
         try {
-            publicKey = ac.getPublic("KeyPair/swagger.dat");
+            publicKey = ac.getPublic("KeyPair/publickey.dat");
         } catch (Exception ex) {
             existeClave = false;
         }
