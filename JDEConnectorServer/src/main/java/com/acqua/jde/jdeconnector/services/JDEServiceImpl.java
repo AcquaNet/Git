@@ -175,6 +175,10 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             responseObserver.onCompleted();
             
         } catch (JDESingleConnectionException ex) {
+            
+            
+            String msg = "Error WS Server: " + ex.getMessage();
+            logger.error(msg, ex);
              
             StringBuilder sb = new StringBuilder();
             sb.append("Error Creating Connection");
