@@ -67,8 +67,7 @@
 						<include>**/*TestSuite.java</include>
 					</includes>
 
-					<argLine>-Djavax.xml.parsers.DocumentBuilderFactory=com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl
-						-Duser.timezone=GMT ${jacoco.ut.agent}</argLine>
+					<argLine>-Duser.timezone=GMT ${jacoco.ut.agent}</argLine>
 
 				</configuration>
 			</plugin>
@@ -202,11 +201,30 @@
 	</dependencies>
 
 	<repositories>
+	
 		<repository>
 			<id>mulesoft-releases</id>
 			<name>MuleSoft Releases Repository</name>
 			<url>http://repository.mulesoft.org/releases/</url>
 			<layout>default</layout>
+		</repository>
+		
+		<!-- Acqua-IT repositories -->
+
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>acquanet-central</id>
+			<name>libs-release</name>
+			<url>http://157.245.236.175:8081/artifactory/libs-release</url>
+		</repository>
+
+		<repository>
+			<snapshots />
+			<id>acquanet-snapshots</id>
+			<name>libs-snapshot</name>
+			<url>http://157.245.236.175:8081/artifactory/libs-snapshot</url>
 		</repository>
 
 	</repositories>
