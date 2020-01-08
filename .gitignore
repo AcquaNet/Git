@@ -8,3 +8,5 @@ JDEDockers/Microservice/docker_jdemicro/java64/j2re-image-x86_64-u232-b01-201907
 JDEDockers/Microservice/docker_jdemicro/images/JDEAtinaServer-1.0.0.jar
 JDEDockers/Microservice/tmp/
 /JDECreateToken/target/
+/JDECreatePOJO/target/
+/JDEGeneretaResponseJavaClass/target/
