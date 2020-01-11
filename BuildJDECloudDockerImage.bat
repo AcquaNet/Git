@@ -41,15 +41,13 @@ PAUSE >nul
 ECHO ==========================================================
 ECHO "Creating JDE Mule Cloud
 ECHO ==========================================================
-CD C:\_work\JDEConnectorCE\Projects\JDEDockers\Cloud\with-microservice
+CD C:\_work\JDEConnectorCE\Projects\JDEDockers\Cloud
 ECHO Removing curren jdeatina-server...
 docker stop ngrok-server
 docker stop mule-server
-docker stop jdeatina-microserver 
 docker rm ngrok-server
 docker rm mule-server
 docker rm jdeatina-microserver 
-docker rmi 92455890/jdeatina-microserver:1.0.0
 docker rmi 92455890/ngrok-server:1.0.0
 docker rmi 92455890/jdeatina-server:1.0.0
 ECHO ==========================================================
@@ -71,6 +69,6 @@ docker push 92455890/ngrok-server:1.0.0
 ECHO Starting Server...
 cd C:\_work\JDEConnectorCE\Projects\JDEDockers\Microservice
 docker-compose start
-docker cp tmp/jde/config/JDV920 jdeatina-server:/tmp/config/JDV920
-docker cp tmp/jde/lib jdeatina-server:/tmp/jde
+docker cp tmp/jde/config/JDV920 jdeatina-microserver:/tmp/config/JDV920
+docker cp tmp/jde/lib jdeatina-microserver:/tmp/jde
 pause

@@ -102,6 +102,20 @@ RUN chown -R activemq:activemq /opt/activemq
 RUN chmod u=rwx,g=rxs,o= /opt/activemq
 RUN rm apache-activemq-${APP_VERSION}-bin.tar.gz
 RUN rm -r apache-activemq-${APP_VERSION}
+
+# ====================================
+# Install MAVEN
+# ====================================
+RUN cd /opt/
+RUN wget http://www-eu.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
+RUN tar -xvzf apache-maven-3.3.9-bin.tar.gz
+RUN mv apache-maven-3.3.9 maven
+#RUN nano /etc/profile.d/mavenenv.sh
+RUN export M2_HOME=/opt/maven
+RUN export PATH=${M2_HOME}/bin:${PATH}
+#RUN chmod +x /etc/profile.d/mavenenv.sh
+#RUN source /etc/profile.d/mavenenv.sh
+
 #	
 # ====================================
 # Instalacion de Mule Server

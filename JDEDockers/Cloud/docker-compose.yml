@@ -37,7 +37,7 @@ services:
      - ngrok-server:ngrok-server
     user: root
     networks:
-      integradornet:
+      atinacloud:
         ipv4_address: 172.28.0.5
 
   ngrok-server:
@@ -48,14 +48,14 @@ services:
       NGROK_MULE_SERVER_HOST: ${NGROK_MULE_SERVER_HOST}
       NGROK_MULE_SERVER_PORT: ${NGROK_MULE_SERVER_PORT}
     ports:
-      - "4040:4040"
+      - "4041:4040"
     container_name: ngrok-server
     networks:
-      integradornet:
+      atinacloud:
         ipv4_address: 172.28.0.2    
     
 networks:
-  integradornet:
+  atinacloud:
     driver: bridge
     ipam:
      config:
