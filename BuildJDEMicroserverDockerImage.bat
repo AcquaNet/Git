@@ -43,9 +43,12 @@ ECHO "Creating JDE Microservice Docker
 ECHO ==========================================================
 cd C:\_work\JDEConnectorCE\Projects\JDEDockers\Microservice
 ECHO Removing curren jdeatina-server...
-docker stop jdeatina-server
-docker rm jdeatina-server
-docker rmi 92455890/jdeatina-server:1.0.0
+docker stop jdeatina-microserver
+docker stop ngrok-microserver
+docker rm jdeatina-microserver
+docker rm ngrok-microserver
+docker rmi 92455890/jdeatina-microserver:1.0.0
+docker rmi 92455890/ngrok-microserver:1.0.0
 ECHO Start Building
 docker-compose up --no-start
 ECHO ==========================================================
@@ -53,8 +56,9 @@ ECHO Press Enter to continue
 ECHO ==========================================================
 PAUSE >nul
 ECHO Moving image to Docker Hub
-#docker login --username 92455890 --password Anita22223636
-#docker push 92455890/jdeatina-server:1.0.0
+docker login --username 92455890 --password Anita22223636
+docker push 92455890/jdeatina-microserver:1.0.0
+docker push 92455890/ngrok-microserver:1.0.0
 ECHO Starting Server...
 cd C:\_work\JDEConnectorCE\Projects\JDEDockers\Microservice
 docker cp tmp/jde/config/JDV920 jdeatina-microserver:/tmp/jde/config
