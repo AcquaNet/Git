@@ -49,7 +49,7 @@ docker rm ngrok-server
 docker rm mule-server
 docker rm jdeatina-microserver 
 docker rmi 92455890/ngrok-server:1.0.0
-docker rmi 92455890/jdeatina-server:1.0.0
+docker rmi 92455890/mule-server:1.0.0
 ECHO ==========================================================
 ECHO Press Enter to continue PUSH TAG
 ECHO ==========================================================
@@ -62,13 +62,6 @@ ECHO ==========================================================
 PAUSE >nul
 ECHO Moving image to Docker Hub
 docker login --username 92455890 --password Anita22223636
-docker push 92455890/jdeatina-microserver:1.0.0
 docker push 92455890/mule-server:1.0.0
 docker push 92455890/ngrok-server:1.0.0
-
-ECHO Starting Server...
-cd C:\_work\JDEConnectorCE\Projects\JDEDockers\Microservice
-docker-compose start
-docker cp tmp/jde/config/JDV920 jdeatina-microserver:/tmp/config/JDV920
-docker cp tmp/jde/lib jdeatina-microserver:/tmp/jde
 pause

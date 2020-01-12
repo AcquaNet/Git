@@ -69,8 +69,8 @@ RUN apt-get install -y git
 # ====================================
 # Instalacion de Java Original
 # ====================================
-RUN apt-get install -y openjdk-8-jre
-
+#RUN apt-get install -y openjdk-8-jre
+RUN apt-get install -y openjdk-8-jdk
 # ====================================
 # Instalacion ActiveMQ
 # ====================================
@@ -106,16 +106,19 @@ RUN rm -r apache-activemq-${APP_VERSION}
 # ====================================
 # Install MAVEN
 # ====================================
-RUN cd /opt/
-RUN wget http://www-eu.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
-RUN tar -xvzf apache-maven-3.3.9-bin.tar.gz
-RUN mv apache-maven-3.3.9 maven
-#RUN nano /etc/profile.d/mavenenv.sh
-RUN export M2_HOME=/opt/maven
-RUN export PATH=${M2_HOME}/bin:${PATH}
-#RUN chmod +x /etc/profile.d/mavenenv.sh
-#RUN source /etc/profile.d/mavenenv.sh
-
+ARG MAVEN_VERSION=3.6.3
+ARG USER_HOME_DIR="/root"
+ARG SHA=c35a1803a6e70a126e80b2b3ae33eed961f83ed74d18fcd16909b2d44d7dada3203f1ffe726c17ef8dcca2dcaa9fca676987befeadc9b9f759967a8cb77181c0
+ARG BASE_URL=https://apache.osuosl.org/maven/maven-3/${MAVEN_VERSION}/binaries
+RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
+  && curl -fsSL -o /tmp/apache-maven.tar.gz ${BASE_URL}/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
+  && echo "${SHA}  /tmp/apache-maven.tar.gz" | sha512sum -c - \
+  && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1 \
+  && rm -f /tmp/apache-maven.tar.gz \
+  && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+ENV MAVEN_HOME /usr/share/maven
+ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
+COPY images/settings-docker.xml /usr/share/maven/ref/
 #	
 # ====================================
 # Instalacion de Mule Server
@@ -129,11 +132,6 @@ VOLUME ["/opt/mule/mule-standalone-${muleVersion}/logs", "/opt/mule/mule-standal
 COPY images/wrapper.conf /opt/mule/mule-standalone-${muleVersion}/conf
 RUN rm /opt/mule/mule-standalone-${muleVersion}.tar.gz
 RUN date +%Y%m%d%H%M%S >/opt/mule/build-date.txt
-
-# ====================================
-# Instalacion Aplicaciones desde GIT
-# ====================================
-RUN git clone -b ${jdeAtinaVersion} --single-branch --branch mule https://github.com/AcquaNet/JDEAtina.git /opt/mule/mule-standalone-${muleVersion}/appsgit
   
 # ==========================================
 # Configuracion de Variables de la App Mule

@@ -23,6 +23,8 @@ services:
       metrics_graphite_enable: ${metrics_graphite_enable}
       metrics_graphite_server: ${metrics_graphite_server}
       metrics_graphite_port: ${metrics_graphite_port}
+      REPOSITORY_PROTOCOL: ${REPOSITORY_PROTOCOL}
+      REPOSITORY_URL: ${REPOSITORY_URL}
     container_name: mule-server
     depends_on: 
      - ngrok-server

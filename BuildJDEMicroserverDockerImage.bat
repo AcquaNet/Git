@@ -59,6 +59,5 @@ ECHO Starting Server...
 cd C:\_work\JDEConnectorCE\Projects\JDEDockers\Microservice
 docker cp tmp/jde/config/JDV920 jdeatina-microserver:/tmp/jde/config
 docker cp tmp/jde/config/JDV920 jdeatina-microserver:/tmp/jde
-docker cp tmp/jde/lib jdeatina-microserver:/tmp/jde
 docker-compose start
 pause

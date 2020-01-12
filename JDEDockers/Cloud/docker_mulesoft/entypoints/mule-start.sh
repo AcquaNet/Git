@@ -52,15 +52,21 @@ else
 	Shopify_Webhooks_url=$(echo $urlAPI | grep -o -P '(?<="https://).*(?=.ngrok.io")').ngrok.io
 fi
 echo 'Shopify_Webhooks_url a configurar: ' $Shopify_Webhooks_url >>/home/start.log
+#echo 'Actualizando la Aplicaciones mule desde Github.' >>/home/start.log	
+#cd /opt/mule/mule-standalone-${muleVersion}/appsgit
+#git config --global user.email soporte@acqua.net
+#git config --global user.name  soporte
+#git pull --force >>/home/start.log
+#echo 'Copiando actualizaciones descargadas a mule ...' >>/home/start.log
+#cp -a /opt/mule/mule-standalone-${muleVersion}/appsgit/. /opt/mule/mule-standalone-${muleVersion}/apps/
+#echo 'Actualizando la Aplicaciones mule desde Repository.' >>/home/start.log	
 echo '------------------------------------------------------------------------------------'>>/home/start.log
-echo 'Actualizando la Aplicaciones mule desde Github.' >>/home/start.log	
-cd /opt/mule/mule-standalone-${muleVersion}/appsgit
-git config --global user.email soporte@acqua.net
-git config --global user.name  soporte
-git pull --force >>/home/start.log
-echo 'Copiando actualizaciones descargadas a mule ...' >>/home/start.log
-cp -a /opt/mule/mule-standalone-${muleVersion}/appsgit/. /opt/mule/mule-standalone-${muleVersion}/apps/
+echo 'Download system-layer'>>/home/start.log
+#mvn org.apache.maven.plugins:maven-dependency-plugin:2.4:get -DremoteRepositories=${REPOSITORY_PROTOCOL}://${REPOSITORY_URL} -Dartifact=com.atina.jde:system-layer:1.0.0 -Ddest=/opt/mule/mule-standalone-${muleVersion}/apps/system-layer-1.0.0.zip >>/home/start.log
+echo 'Download Process-layer'>>/home/start.log
+#mvn org.apache.maven.plugins:maven-dependency-plugin:2.4:get -DremoteRepositories=${REPOSITORY_PROTOCOL}://${REPOSITORY_URL} -Dartifact=com.atina.jde:process-layer:1.0.0 -Ddest=/opt/mule/mule-standalone-${muleVersion}/apps/process-layer-1.0.0.zip >>/home/start.log
+echo '------------------------------------------------------------------------------------'>>/home/start.log
 echo 'Iniciando Mule' >>/home/start.log
-exec /opt/mule/mule-standalone-3.9.0/bin/mule -app mirrit-system-layer-${mirritVersion}:mirrit-process-layer-${mirritVersion}
-#exec /opt/mule/mule-standalone-3.9.0/bin/mule -app system-layer-${mirritVersion}
+#exec /opt/mule/mule-standalone-3.9.0/bin/mule -app mirrit-system-layer-${mirritVersion}:mirrit-process-layer-${mirritVersion}
+exec /opt/mule/mule-standalone-3.9.0/bin/mule
 echo 'Mule Iniciado' >>/home/start.log
