@@ -1,0 +1,21 @@
+sudo apt-get install git mercurial zip bzip2 unzip tar curl
+sudo apt-get install ccache make gcc g++ ca-certificates ca-certificates-java
+sudo apt-get install libx11-dev libxext-dev libxrender-dev libxtst-dev libxt-dev
+sudo apt-get install libasound2-dev libcups2-dev libfreetype6-dev
+sudo apt-get install build-essential ruby ruby-dev
+sudo apt-get install openjdk-8-jdk
+sudo gem install fpm
+sudo apt-get install libfontconfig1-dev
+mkdir openjdkathome
+git clone https://github.com/hgomez/obuildfactory.git (https://github.com/AcquaNet/obuildfactory)
+XUSE_NEW_BUILD_SYSTEM=true XBUILD=true ./obuildfactory/openjdk8/linux/standalone-job.sh
+
+gedit /home/javier/openjdkathome/sources/openjdk8/jdk/src/share/classes/java/net/URLClassLoader.java
+gedit /home/javier/openjdkathome/sources/openjdk8/jdk/src/share/native/java/lang/ClassLoader.c
+
+
+XUSE_NEW_BUILD_SYSTEM=true XBUILD=true ./obuildfactory/openjdk8/linux/standalone-job.sh
+
+sudo cp /home/javier/openjdkathome/OBF_DROP_DIR/openjdk8/j2re-image-x86_64-u232-b01-20190729.tar.bz2 /media/sf_Shared/
+
+sudo cp file:///home/javier/openjdkathome/OBF_DROP_DIR/openjdk8/j2re-image-x86_64-u232-b01-20190729.tar.bz2 /media/sf_Shared
