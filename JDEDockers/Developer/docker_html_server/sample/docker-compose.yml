@@ -1,0 +1,30 @@
+# Sample application
+app:
+  image: tutum/hello-world:latest
+  environment:
+    # Environment variables used by registrator to register services in consul
+    SERVICE_NAME: app
+    SERVICE_TAGS: sample
+  ports:
+    - 80
+
+# Nginx Load Balancer
+lb:
+  image: 1science/nginx:1.9.6-consul
+  ports:
+    - 80:80
+  volumes:
+    - ./etc/consul-template:/etc/consul-template
+  # Change this section to point on your Consul
+  environment:
+    CONSUL_URL: localhost:8500
+  net: "host"
+
+# Registrator to register on local Consul
+registrator:
+  image: gliderlabs/registrator:latest
+  volumes:
+    - /var/run/docker.sock:/tmp/docker.sock
+  # Change this section to point on your Consul
+  command: consul://localhost:8500
+  net: "host"
