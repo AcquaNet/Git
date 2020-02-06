@@ -8,26 +8,26 @@ echo '--------------------------------------------------------------------------
 echo '          IP Metrics Server: ' ${metrics_graphite_server}>>/home/start.log
 metrics_graphite_server=${metrics_graphite_server}
 echo '------------------------------------------------------------------------------------'>>/home/start.log 
-echo '          IP JDE Atina Microserver: ' ${JDE_ATINA_SERVER_NAME}: ${JDE_ATINA_SERVER_PORT}>>/home/start.log
-export jde_atina_server_name=${JDE_ATINA_SERVER_NAME}
-export jde_atina_server_port=${JDE_ATINA_SERVER_PORT}
+echo '          IP JDE Atina Microserver: ' ${JDE_CONNECTOR_MICROSERVER_NAME}: ${JDE_CONNECTOR_MICROSERVER_PORT}>>/home/start.log
+export jde_atina_server_name=${JDE_CONNECTOR_MICROSERVER_NAME}
+export jde_atina_server_port=${JDE_CONNECTOR_MICROSERVER_PORT}
 echo '------------------------------------------------------------------------------------'>>/home/start.log 
-export jde_user=${JDE_USER}
-export jde_password=${JDE_PASSWORD}
-export jde_environment=${JDE_ENVIRONMENT}
-export jde_role=${JDE_ROLE}
+export jde_user=${JDE_CONNECTOR_USER}
+export jde_password=${JDE_CONNECTOR_PASSWORD}
+export jde_environment=${JDE_CONNECTOR_ENVIRONMENT}
+export jde_role=${JDE_CONNECTOR_ROLE}
 echo '            JDE User: ' $jde_user >>/home/start.log 
 echo '            JDE Environment: ' $jde_environment >>/home/start.log
 echo '            JDE Role: ' $jde_role >>/home/start.log
 echo '------------------------------------------------------------------------------------'>>/home/start.log 
 if [  -z "$Shopify_ngrok_server_ip" ];then
-	echo 'Recuperando URL del NGROK Server =' $NGROK_SERVER >>/home/start.log
+	echo 'Recuperando URL del NGROK Server =' $NGROK_MULE_SERVER >>/home/start.log
 else
-	echo 'Se usara NGROK Server para armar URL Webhook =' $NGROK_SERVER >>/home/start.log
+	echo 'Se usara NGROK Server para armar URL Webhook =' $NGROK_MULE_SERVER >>/home/start.log
 	echo 'Recuperando URL de redireccion del NGROK Server hacia el Mule Server' >>/home/start.log 
 	i=0
 	sleep 5m
-	urlAPI=$(curl -s ${NGROK_SERVER}:4040/api/tunnels | jq '.tunnels[0].public_url')
+	urlAPI=$(curl -s ${NGROK_MULE_SERVER}:4040/api/tunnels | jq '.tunnels[0].public_url')
 	echo 'URL recuperada del NGROK API Server =' $urlAPI>>/home/start.log
 	while [$urlAPI != '"https://*']
 	do
@@ -39,12 +39,12 @@ else
 	  fi
 	  echo 'Esperando 3 minutos .... ' >>/home/start.log
 	  sleep 3m
-	  urlAPI=$(curl -s ${NGROK_SERVER}:4040/api/tunnels | jq '.tunnels[0].public_url')
+	  urlAPI=$(curl -s ${NGROK_MULE_SERVER}:4040/api/tunnels | jq '.tunnels[0].public_url')
 	  echo 'URL recuperada del NGROK API Server =' $urlAPI>>/home/start.log
 	  if [$urlAPI == '"http://*']
 		echo 'URL recuperada del NGROK API Server =' $urlAPI>>/home/start.log
 	  then
-		 urlAPI=$(curl -s ${NGROK_SERVER}:4040/api/tunnels | jq '.tunnels[1].public_url')
+		 urlAPI=$(curl -s ${NGROK_MULE_SERVER}:4040/api/tunnels | jq '.tunnels[1].public_url')
 	  fi
 	  
 	done
@@ -62,11 +62,11 @@ echo 'Shopify_Webhooks_url a configurar: ' $Shopify_Webhooks_url >>/home/start.l
 #echo 'Actualizando la Aplicaciones mule desde Repository.' >>/home/start.log	
 echo '------------------------------------------------------------------------------------'>>/home/start.log
 echo 'Download system-layer'>>/home/start.log
-#mvn org.apache.maven.plugins:maven-dependency-plugin:2.4:get -DremoteRepositories=${REPOSITORY_PROTOCOL}://${REPOSITORY_URL} -Dartifact=com.atina.jde:system-layer:1.0.0 -Ddest=/opt/mule/mule-standalone-${muleVersion}/apps/system-layer-1.0.0.zip >>/home/start.log
+mvn org.apache.maven.plugins:maven-dependency-plugin:2.4:get -DremoteRepositories=${REPOSITORY_PROTOCOL}://${REPOSITORY_URL} -Dartifact=com.atina.jde:system-layer:1.0.0 -Ddest=/opt/mule/mule-standalone-${muleVersion}/apps/system-layer-1.0.0.zip >>/home/start.log
 echo 'Download Process-layer'>>/home/start.log
-#mvn org.apache.maven.plugins:maven-dependency-plugin:2.4:get -DremoteRepositories=${REPOSITORY_PROTOCOL}://${REPOSITORY_URL} -Dartifact=com.atina.jde:process-layer:1.0.0 -Ddest=/opt/mule/mule-standalone-${muleVersion}/apps/process-layer-1.0.0.zip >>/home/start.log
+mvn org.apache.maven.plugins:maven-dependency-plugin:2.4:get -DremoteRepositories=${REPOSITORY_PROTOCOL}://${REPOSITORY_URL} -Dartifact=com.atina.jde:process-layer:1.0.0 -Ddest=/opt/mule/mule-standalone-${muleVersion}/apps/process-layer-1.0.0.zip >>/home/start.log
 echo '------------------------------------------------------------------------------------'>>/home/start.log
 echo 'Iniciando Mule' >>/home/start.log
-#exec /opt/mule/mule-standalone-3.9.0/bin/mule -app mirrit-system-layer-${mirritVersion}:mirrit-process-layer-${mirritVersion}
-exec /opt/mule/mule-standalone-3.9.0/bin/mule
+exec /opt/mule/mule-standalone-3.9.0/bin/mule -app system-layer-${mirritVersion}:process-layer-${mirritVersion}
+#exec /opt/mule/mule-standalone-3.9.0/bin/mule
 echo 'Mule Iniciado' >>/home/start.log

@@ -6,12 +6,12 @@ services:
     image: 92455890/mule-server:1.0.0
     environment:
       jdeAtinaVersion: ${jdeAtinaVersion}
-      JDE_USER: ${JDE_USER}
-      JDE_PASSWORD: ${JDE_PASSWORD}
-      JDE_ENVIRONMENT: ${JDE_ENVIRONMENT}
-      JDE_ROLE: ${JDE_ROLE}
-      JDE_ATINA_SERVER_NAME: ${JDE_ATINA_SERVER_NAME}
-      JDE_ATINA_SERVER_PORT: ${JDE_ATINA_SERVER_PORT} 
+      JDE_CONNECTOR_USER: ${JDE_CONNECTOR_USER}
+      JDE_CONNECTOR_PASSWORD: ${JDE_CONNECTOR_PASSWORD}
+      JDE_CONNECTOR_ENVIRONMENT: ${JDE_CONNECTOR_ENVIRONMENT}
+      JDE_CONNECTOR_ROLE: ${JDE_CONNECTOR_ROLE}
+      JDE_CONNECTOR_MICROSERVER_NAME: ${JDE_CONNECTOR_MICROSERVER_NAME}
+      JDE_CONNECTOR_MICROSERVER_PORT: ${JDE_CONNECTOR_MICROSERVER_PORT} 
       dragon_shopify_smtp_host: ${dragon_shopify_smtp_host}
       dragon_shopify_smtp_port: ${dragon_shopify_smtp_port}
       dragon_shopify_smtp_user: ${dragon_shopify_smtp_user}
@@ -30,6 +30,7 @@ services:
      - ngrok-server
     ports:
      - "8083:8083"
+     - "8084:8084"
      - "8088:8081"
      - "8161:8161"
     volumes:
@@ -40,13 +41,13 @@ services:
     user: root
     networks:
       atinacloud:
-        ipv4_address: 172.28.0.5
+        ipv4_address: 172.28.0.3
 
   ngrok-server:
-    build: docker_ngrok
+    build: docker_mulesoft_ngrok
     image: 92455890/ngrok-server:1.0.0
     environment:
-      NGROK_NGROK_TOKEN: ${NGROK_NGROK_TOKEN}
+      NGROK_MULE_SERVER_TOKEN: ${NGROK_MULE_SERVER_TOKEN}
       NGROK_MULE_SERVER_HOST: ${NGROK_MULE_SERVER_HOST}
       NGROK_MULE_SERVER_PORT: ${NGROK_MULE_SERVER_PORT}
     ports:

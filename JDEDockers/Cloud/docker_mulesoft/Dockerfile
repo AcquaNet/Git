@@ -14,9 +14,18 @@ ENV mirritVersion ${jdeAtinaVersion}
 # JRE 64 Bits
 # ------------------------------------------------------------------
 # JRE 64
-ARG javaFolder=/var/java
-ARG javaImage=j2re-image-x86_64-u232-b01-20190729.tar.bz2
-ARG javaRootFolder=j2re-image
+#ARG javaFolder=/var/java
+#ARG javaImage=j2re-image-x86_64-u232-b01-20190729.tar.bz2
+#ARG javaRootFolder=j2re-image
+#ENV javaFolder ${javaFolder}
+#ENV javaRootFolder ${javaRootFolder} 
+# ------------------------------------------------------------------
+# JDK 64 Bits
+# ------------------------------------------------------------------
+#  
+ARG javaFolder=/usr/lib/jvm
+ARG javaImage=java-1.8.0-openjdk-amd64
+ARG javaRootFolder=java-1.8.0-openjdk-amd64
 ENV javaFolder ${javaFolder}
 ENV javaRootFolder ${javaRootFolder} 
 #
@@ -29,7 +38,7 @@ ARG muleVersion=3.9.0
 # ====================================
 # JAVA
 # ====================================
-ENV JAVA_HOME ${javaFolder}/j2re-image
+ENV JAVA_HOME ${javaFolder}/${javaImage} 
 #
 # ====================================
 # MULE SERVER
@@ -143,15 +152,15 @@ ENV mule_env=dev
 # JDE User
 # ------------------------------------------------
 #
-ARG jde_user=${JDE_USER}
-ARG jde_password=${JDE_PASSWORD}
-ARG jde_environment=${JDE_ENVIRONMENT}
-ARG jde_role=${JDE_ROLE}
+ARG jde_user=${JDE_CONNECTOR_USER}
+ARG jde_password=${JDE_CONNECTOR_PASSWORD}
+ARG jde_environment=${JDE_CONNECTOR_ENVIRONMENT}
+ARG jde_role=${JDE_CONNECTOR_ROLE}
 #
-ENV jde_user ${JDE_USER}
-ENV jde_password ${JDE_PASSWORD}
-ENV jde_environment ${JDE_ENVIRONMENT}
-ENV jde_role ${JDE_ROLE}
+ENV jde_user ${JDE_CONNECTOR_USER}
+ENV jde_password ${JDE_CONNECTOR_PASSWORD}
+ENV jde_environment ${JDE_CONNECTOR_ENVIRONMENT}
+ENV jde_role ${JDE_CONNECTOR_ROLE}
 #
 # ------------------------------------------------
 # SMTP
@@ -176,11 +185,11 @@ ENV dragon_shopify_smtp_email_errorSubject ${dragon_shopify_smtp_email_errorSubj
 ENV dragon_shopify_smtp_email_msgSubject ${dragon_shopify_smtp_email_msgSubject}
 #
 # Atina Microservice
-ARG jde_atina_server_name=${JDE_ATINA_SERVER_NAME}
-ARG jde_atina_server_port=${JDE_ATINA_SERVER_PORT}
+ARG jde_atina_server_name=${JDE_CONNECTOR_MICROSERVER_NAME}
+ARG jde_atina_server_port=${JDE_CONNECTOR_MICROSERVER_PORT}
 #
-ENV jde_atina_server_name=${JDE_ATINA_SERVER_NAME}
-ENV jde_atina_server_port=${JDE_ATINA_SERVER_PORT}
+ENV jde_atina_server_name=${JDE_CONNECTOR_MICROSERVER_NAME}
+ENV jde_atina_server_port=${JDE_CONNECTOR_MICROSERVER_PORT}
 #
 #Active MQ 
 #
@@ -215,8 +224,8 @@ ENV metrics_graphite_prefix ${metrics_graphite_prefix}
 # Usado por el Entrypoint para invocar al API Ngron y recuperar el 
 # la url que genero ngrok para construir el webhook 
 # Genera la variable Shopify_Webhooks_url con ese resultado
-ARG Shopify_ngrok_server_ip=${NGROK_SERVER}
-ENV Shopify_ngrok_server_ip ${NGROK_SERVER}
+ARG Shopify_ngrok_server_ip=${NGROK_MULE_SERVER}
+ENV Shopify_ngrok_server_ip ${NGROK_MULE_SERVER}
 #
 # ====================================
 # Start
