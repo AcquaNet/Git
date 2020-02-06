@@ -316,14 +316,14 @@
          
     </dependencies> 
     
-    <distributionManagement>
+        <distributionManagement>
 	
-        <repository>
-            <id>AcquaNet-central</id>
-            <name>jfrog-releases</name>
-            <url>http://157.245.236.175:8081/artifactory/libs-release-local</url>
-        </repository>
+		<repository>
+			<id>acquanet-central</id>
+			<name>jfrog-releases</name>
+			<url>http://157.245.236.175:8081/artifactory/libs-release-local</url>
+		</repository>
 		
-    </distributionManagement>
+	</distributionManagement>
      
 </project>

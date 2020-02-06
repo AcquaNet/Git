@@ -117,7 +117,7 @@
                         </goals>
 
                         <configuration>
-                            <outputDirectory>${basedir}/../JDEDockers/Microservice/docker_jdemicro/images</outputDirectory>
+                            <outputDirectory>${basedir}/../JDEDockers/Microservice/docker_jdemicroserver/images</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>/target</directory>
