@@ -1624,15 +1624,19 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     value = ejecutarOperacionesResponse.getValueAsString();
                     break;
                 case "java.lang.Integer":
+                case "int":
                     value = ejecutarOperacionesResponse.getValueAsInteger();
                     break;
                 case "java.lang.Boolean":
+                case "boolean":
                     value = ejecutarOperacionesResponse.getValueAsBoolean();
                     break;
                 case "java.lang.Long":
+                case "long":
                     value = ejecutarOperacionesResponse.getValueAsLong();
                     break;
                 case "java.lang.Float":
+                case "float":
                     value = ejecutarOperacionesResponse.getValueAsFloat();
                     break;
                 case "java.util.Date":
@@ -1646,6 +1650,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             .decode(bytesEncoded);
                     break;
                 case "java.lang.Double":
+                case "double":
                     value = ejecutarOperacionesResponse.getValueAsDouble();
                     break;
                 case "BDecimal":

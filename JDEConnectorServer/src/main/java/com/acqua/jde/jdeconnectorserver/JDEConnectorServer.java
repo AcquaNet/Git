@@ -270,6 +270,7 @@ public class JDEConnectorServer {
         logger.info("          IP del Servicio = [" + cfg.getIpServicio() + "]");
         logger.info("          Puerto del Servicio = [" + Integer.toString(cfg.getPortServicio()) + "]");
         logger.info("          IP local del Servicio = [" + cfg.getIpLocalServicio() + "]");
+        logger.info("          Expiracion = [" + Long.toString(cfg.getTokenExpiration()) + "]");
         
     }
 

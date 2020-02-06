@@ -1597,16 +1597,28 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                                     newOperationResponse.setValueAsString((String) value);
                                     break;
                                 case "java.lang.Integer":
+                                case "int":
                                     newOperationResponse.setValueAsInteger((int) value);
                                     break;
                                 case "java.lang.Boolean":
+                                case "boolean":
                                     newOperationResponse.setValueAsBoolean((boolean) value);
                                     break;
                                 case "java.lang.Long":
-                                    newOperationResponse.setValueAsLong((long) value);
+                                case "long":
+                                    if(value instanceof java.lang.Integer)
+                                    {
+                                        newOperationResponse.setValueAsLong(Long.valueOf((java.lang.Integer) value));
+                                        
+                                    } else
+                                    {
+                                        newOperationResponse.setValueAsLong((long) value);
+                                    }
+                                    
                                     break;
                                 case "java.math.BigDecimal":
                                 case "java.lang.Double":
+                                case "double":
                                     
                                     if(value instanceof java.lang.Integer)
                                     {
@@ -1619,6 +1631,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                                    
                                     break;
                                 case "java.lang.Float":
+                                case "float":
                                     newOperationResponse.setValueAsFloat((float) value);
                                     break;
                                 case "java.util.Date":
@@ -1833,11 +1846,13 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                             valorActual = valor.getValuesAsByteString();
                             break;
                         case "BDecimal":
+                        case "java.math.BigDecimal":
                             Double valueDouble = new Double(valor.getValueAsDouble());
                             String strValueD = valueDouble.toString();
                             valorActual = new BigDecimal(strValueD);
                             break;
                         case "BInteger":
+                        case "java.math.BigInteger":
                             Long valueLong = new Long(valor.getValueAsLong());
                             String strValueL = valueLong.toString();
                             valorActual = new BigInteger(strValueL);
