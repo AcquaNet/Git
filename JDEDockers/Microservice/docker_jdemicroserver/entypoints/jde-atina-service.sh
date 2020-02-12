@@ -1,9 +1,9 @@
 #!/bin/bash
 echo '----------------------------------------------------' >/tmp/start.log
 echo 'Updating Librarie StdWebService' >>/tmp/start.log
-#mvn org.apache.maven.plugins:maven-dependency-plugin:2.4:get -DremoteRepositories=$REPOSITORY_PROTOCOL://$REPOSITORY_URL -Dartifact=com.jdedwards:StdWebService:1.0.0 -Ddest=/tmp/jde/StdWebService-1.0.0.jar >>/tmp/start.log
+mvn org.apache.maven.plugins:maven-dependency-plugin:2.4:get -DremoteRepositories=$REPOSITORY_PROTOCOL://$REPOSITORY_URL -Dartifact=com.jdedwards:StdWebService:1.0.0 -Ddest=/tmp/jde/StdWebService-1.0.0.jar >>/tmp/start.log
 echo 'Updating Librarie jde-lib-wrapped' >>/tmp/start.log
-#Smvn org.apache.maven.plugins:maven-dependency-plugin:2.4:get -DremoteRepositories=$REPOSITORY_PROTOCOL://$REPOSITORY_URL -Dartifact=com.jdedwards:jde-lib-wrapped:1.0.0 -Ddest=/tmp/jde/jde-lib-wrapped-1.0.0.jar	>>/tmp/start.log
+mvn org.apache.maven.plugins:maven-dependency-plugin:2.4:get -DremoteRepositories=$REPOSITORY_PROTOCOL://$REPOSITORY_URL -Dartifact=com.jdedwards:jde-lib-wrapped:1.0.0 -Ddest=/tmp/jde/jde-lib-wrapped-1.0.0.jar	>>/tmp/start.log
 echo '----------------------------------------------------' >>/tmp/start.log
 echo '----------------------------------------------------' >>/tmp/start.log
 echo 'Starting JDE Microservice' >>/tmp/start.log
