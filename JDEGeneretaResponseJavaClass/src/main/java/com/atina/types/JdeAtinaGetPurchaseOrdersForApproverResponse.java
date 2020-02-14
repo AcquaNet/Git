@@ -15,17 +15,17 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class JdeAtinaGetPurchaseOrdersForApproverResponse {
 
     @JsonProperty("e1MessageList")
-    private E1MessageList e1MessageList;
+    private E1MessageList__1 e1MessageList;
     @JsonProperty("purchaseOrdersForApproverResults")
     private List<PurchaseOrdersForApproverResult> purchaseOrdersForApproverResults = new ArrayList<PurchaseOrdersForApproverResult>();
 
     @JsonProperty("e1MessageList")
-    public E1MessageList getE1MessageList() {
+    public E1MessageList__1 getE1MessageList() {
         return e1MessageList;
     }
 
     @JsonProperty("e1MessageList")
-    public void setE1MessageList(E1MessageList e1MessageList) {
+    public void setE1MessageList(E1MessageList__1 e1MessageList) {
         this.e1MessageList = e1MessageList;
     }
 

@@ -41,7 +41,7 @@ services:
     user: root
     networks:
       atinacloud:
-        ipv4_address: 172.28.0.3
+        ipv4_address: 172.27.0.3
 
   ngrok-server:
     build: docker_mulesoft_ngrok
@@ -52,15 +52,17 @@ services:
       NGROK_MULE_SERVER_PORT: ${NGROK_MULE_SERVER_PORT}
     ports:
       - "4041:4040"
+      - "80:80"
+      - "443:443"
     container_name: ngrok-server
     networks:
       atinacloud:
-        ipv4_address: 172.28.0.2    
+        ipv4_address: 172.27.0.2    
     
 networks:
   atinacloud:
     driver: bridge
     ipam:
      config:
-       - subnet: 172.28.0.0/16
-         gateway: 172.28.0.1
+       - subnet: 172.27.0.0/16
+         gateway: 172.27.0.1

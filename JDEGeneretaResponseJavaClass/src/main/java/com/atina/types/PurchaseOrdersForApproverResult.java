@@ -98,7 +98,7 @@ public class PurchaseOrdersForApproverResult {
     @JsonProperty("currencyCodeForeign")
     private String currencyCodeForeign;
     @JsonProperty("supplier")
-    private Supplier supplier;
+    private Supplier__1 supplier;
     @JsonProperty("holdCodeHeldOrders")
     private String holdCodeHeldOrders;
     @JsonProperty("businessUnitCode")
@@ -150,7 +150,7 @@ public class PurchaseOrdersForApproverResult {
     @JsonProperty("stateCodeShipTo")
     private String stateCodeShipTo;
     @JsonProperty("shipTo")
-    private ShipTo shipTo;
+    private ShipTo__1 shipTo;
 
     @JsonProperty("citySupplier")
     public String getCitySupplier() {
@@ -353,12 +353,12 @@ public class PurchaseOrdersForApproverResult {
     }
 
     @JsonProperty("supplier")
-    public Supplier getSupplier() {
+    public Supplier__1 getSupplier() {
         return supplier;
     }
 
     @JsonProperty("supplier")
-    public void setSupplier(Supplier supplier) {
+    public void setSupplier(Supplier__1 supplier) {
         this.supplier = supplier;
     }
 
@@ -613,12 +613,12 @@ public class PurchaseOrdersForApproverResult {
     }
 
     @JsonProperty("shipTo")
-    public ShipTo getShipTo() {
+    public ShipTo__1 getShipTo() {
         return shipTo;
     }
 
     @JsonProperty("shipTo")
-    public void setShipTo(ShipTo shipTo) {
+    public void setShipTo(ShipTo__1 shipTo) {
         this.shipTo = shipTo;
     }
 

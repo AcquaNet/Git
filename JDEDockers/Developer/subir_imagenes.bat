@@ -4,3 +4,4 @@ docker push 92455890/jdeatina-microserver:1.0.0
 docker push 92455890/ngrok-microserver:1.0.0
 docker push 92455890/mule-server:1.0.0
 docker push 92455890/ngrok-server:1.0.0
+pause
