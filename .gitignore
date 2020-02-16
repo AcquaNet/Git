@@ -10,3 +10,7 @@ JDEDockers/Microservice/tmp/
 /JDECreateToken/target/
 /JDECreatePOJO/target/
 /JDEGeneretaResponseJavaClass/target/
+JDEDockers/Cloud/mulelog/
+JDEDockers/Developer/jdelog/
+JDEDockers/Developer/microserverlog/jde_atina_server_2020-02-14.0.log
+JDEDockers/Developer/mulelog/

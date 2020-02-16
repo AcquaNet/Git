@@ -115,6 +115,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         
         logger.info("-------------------------------------------------------------------------------");
         logger.info("JDE Login: Begin Login");
+        logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
         
         // -----------------------------------------
         // Generar Session
@@ -179,6 +180,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             
             String msg = "Error WS Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
              
             StringBuilder sb = new StringBuilder();
             sb.append("Error Creating Connection");
@@ -196,6 +198,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             
             String msg = "Error WS Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
             
             StringBuilder sb = new StringBuilder();
             sb.append("Error Creating Connection");
@@ -209,8 +212,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                     .asRuntimeException());
              
         } 
-
+ 
         logger.info("JDE Login: End Login");
+        logger.info("-------------------------------------------------------------------------------");
 
     } 
     
@@ -283,8 +287,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     public void logout(com.jde.jdeserverwp.servicios.LogoutRequest request,
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.SessionResponse> responseObserver) {
 
-        
+        logger.info("-------------------------------------------------------------------------------");
         logger.info("JDE Logout: Begin");
+        logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
         
         Configuracion config = new Configuracion();
         
@@ -325,6 +330,10 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             
         } catch (JDESingleConnectionException ex) {
              
+            String msg = "Error WS Server: " + ex.getMessage();
+            logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
+            
             StringBuilder sb = new StringBuilder();
             sb.append("Error with Logout");
             sb.append("|");
@@ -341,6 +350,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             
             String msg = "Error WS Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
             
             StringBuilder sb = new StringBuilder();
             sb.append("Error with Logout");
@@ -356,6 +366,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         } 
 
         logger.info("JDE Logout: End");
+        logger.info("-------------------------------------------------------------------------------");
 
     } 
     
@@ -364,8 +375,10 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.IsConnectedResponse> responseObserver) {
 
         
+        logger.info("-------------------------------------------------------------------------------");
         logger.info("JDE isConnected: Begin with Session ID: " + request.getSessionId());
-          
+        logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
+        
         // -----------------------------------------
         // Generar Session
         // -----------------------------------------
@@ -407,6 +420,10 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             
         } catch (JDESingleConnectionException ex) {
              
+            String msg = "Error WS Server: " + ex.getMessage();
+            logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
+            
             StringBuilder sb = new StringBuilder();
             sb.append("Error with Logout");
             sb.append("|");
@@ -423,6 +440,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             
             String msg = "Error WS Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
             
             StringBuilder sb = new StringBuilder();
             sb.append("Error with Logout");
@@ -438,6 +456,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         } 
 
          logger.info("JDE isConnected: End with Session ID: " + request.getSessionId()); 
+         logger.info("-------------------------------------------------------------------------------");
          
     } 
     
@@ -445,7 +464,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     public void operaciones(com.jde.jdeserverwp.servicios.OperacionesRequest request,
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.OperacionesResponse> responseObserver) {
         
+        logger.info("-------------------------------------------------------------------------------");
         logger.info("JDE Connector Server. Getting operations");
+        logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
 
         String tipoDeOperacion = request.getConnectorName();   // BSFN or WS
 
@@ -528,6 +549,10 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         }
         catch (JDESingleConnectionException ex) {
              
+            String msg = "Error JDE Server: " + ex.getMessage();
+            logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
+            
             StringBuilder sb = new StringBuilder();
             sb.append("Error getting operations");
             sb.append("|");
@@ -544,6 +569,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             
             String msg = "Error JDE Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
             
             StringBuilder sb = new StringBuilder();
             sb.append("Error getting operations");
@@ -558,6 +584,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
         } 
 
+        logger.info("-------------------------------------------------------------------------------");
         
     }
     
@@ -565,8 +592,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     public void getMetadaParaOperacion(com.jde.jdeserverwp.servicios.GetMetadataRequest request,
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.GetMetadataResponse> responseObserver) {
         
-        
+        logger.info("-------------------------------------------------------------------------------");
         logger.info("JDE Connector Server. Get Metadata for Operation");
+        logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
         
         String tipoDeOperacion = request.getConnectorName();   // BSFN or WS
         
@@ -722,6 +750,10 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
         } catch (JDESingleConnectionException ex) {
 
+            String msg = "Error JDE Server: " + ex.getMessage();
+            logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
+            
             StringBuilder sb = new StringBuilder();
             sb.append("Error getting metadata operations");
             sb.append("|");
@@ -737,6 +769,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
             String msg = "Error JDE Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
 
             StringBuilder sb = new StringBuilder();
             sb.append("Error getting metadata operations");
@@ -751,6 +784,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
         }
 
+        logger.info("-------------------------------------------------------------------------------");
         
     }
     
@@ -758,8 +792,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     public void getJsonsForOperation(com.jde.jdeserverwp.servicios.GetMetadataRequest request,
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.GetJsonsForOperationResponse> responseObserver) {
         
-        
+        logger.info("-------------------------------------------------------------------------------");
         logger.info("JDE Connector Server. Get Metadata for Operation");
+        logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
         
         String tipoDeOperacion = request.getConnectorName();   // BSFN or WS
         
@@ -894,6 +929,10 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
         } catch (JDESingleConnectionException ex) {
 
+            String msg = "Error JDE Server: " + ex.getMessage();
+            logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
+            
             StringBuilder sb = new StringBuilder();
             sb.append("Error getting metadata operations");
             sb.append("|");
@@ -909,6 +948,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
             String msg = "Error JDE Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
 
             StringBuilder sb = new StringBuilder();
             sb.append("Error getting metadata operations");
@@ -923,6 +963,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
         }
 
+        logger.info("-------------------------------------------------------------------------------");
         
     }
     
@@ -1287,7 +1328,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.EjecutarOperacionResponse> responseObserver) {
         
         
-        logger.info("JDE Connector Server. Get Metadata for Operation");
+        logger.info("-------------------------------------------------------------------------------");
+        logger.info("JDE Connector Server. Execute Operation");
+        logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID())); 
         
         String tipoDeOperacion = request.getConnectorName();   // BSFN or WS
         
@@ -1399,6 +1442,10 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
         } catch (JDESingleConnectionException ex) {
 
+            String msg = "Error JDE Server: " + ex.getMessage();
+            logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
+            
             StringBuilder sb = new StringBuilder();
             sb.append("Error getting metadata operations");
             sb.append("|");
@@ -1412,6 +1459,10 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
         } catch (JDESingleWSException ex) {
 
+            String msg = "Error JDE Server: " + ex.getMessage();
+            logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
+            
             StringBuilder sb = new StringBuilder();
             sb.append("Error Invoking WS");
             sb.append("|");
@@ -1427,6 +1478,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
             String msg = "Error JDE Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
 
             StringBuilder sb = new StringBuilder();
             sb.append("Error getting metadata operations");
@@ -1441,7 +1493,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
         }
          
-         
+        logger.info("-------------------------------------------------------------------------------");
+        
     }
     
     private void createOperationResponse(EjecutarOperacionResponse.Builder response, HashMap<String, ParameterTypeSimple> metadataParameters, HashMap<String, Object> valuesReturned, int level) throws IOException {

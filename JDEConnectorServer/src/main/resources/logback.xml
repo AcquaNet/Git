@@ -41,19 +41,19 @@
         <level value="INFO"/>
     </logger>  
     
-    <logger name="com.acqua.jde.jdeconnectorserver.JDEConnectorServer" level="INFO"/> 
+    <logger name="com.acqua.jde.jdeconnectorserver.JDEConnectorServer" level="DEBUG"/> 
     
-    <logger name="com.acqua.jde.jdeconnectorserver.server.JDERestServer" level="INFO"> 
+    <logger name="com.acqua.jde.jdeconnectorserver.server.JDERestServer" level="DEBUG"> 
         <appender-ref ref="STDOUT" />
     </logger> 
     
-    <logger name="com.acqua.atina.jdeconnectorservice.JDEConnectorService" level="INFO"/>
+    <logger name="com.acqua.atina.jdeconnectorservice.JDEConnectorService" level="DEBUG"/>
     
     <logger name="com.jdedwards.base.logging.LogOutputHandler" level="DEBUG"/>
     
     <logger name="com.atina.jdeconnector.internal.JDEHandler" level="DEBUG"/>
         
-    <logger name="com.acqua.atina.jdeconnectorservice.wsservice.JDESingleWSClient" level="INFO"/> 
+    <logger name="com.acqua.atina.jdeconnectorservice.wsservice.JDESingleWSClient" level="DEBUG"/> 
     
     <root level="info"> 
         <appender-ref ref="FILE" />

@@ -15,12 +15,16 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.InvalidKeyException; 
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import org.apache.commons.lang.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option; 
+import com.jcabi.manifests.Manifests;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +39,8 @@ public class JDEConnectorServer {
 
     private static String DIR_INSTALACION = "service-files";
     private static String METADATA = "metadata";
-
+    private static String BUILDID = "2016-02-16-001";
+    
     @Option(name = "-help", usage = "Ayuda")
     public boolean help;
 
@@ -272,8 +277,16 @@ public class JDEConnectorServer {
         logger.info("          IP local del Servicio = [" + cfg.getIpLocalServicio() + "]");
         logger.info("          Expiracion = [" + Long.toString(cfg.getTokenExpiration()) + "]");
         
+        if(Manifests.exists("timestamp"))
+        {
+            logger.info("          Last Build = [" + Manifests.read("timestamp") + "]");
+        } else
+        {
+            logger.info("          Last Build = [" + BUILDID + "]");
+        }
+         
     }
-
+      
     private void mostrarAyuda() {
 
         logger.info("------------------------------------------------------");

@@ -27,7 +27,16 @@
 	    
     <Loggers>
 	    	  
-		 
+	<logger name="com.acqua.jde.jdeconnectorserver.JDEConnectorServer" level="DEBUG"/> 
+    
+        <logger name="com.acqua.atina.jdeconnectorservice.JDEConnectorService" level="DEBUG"/>
+
+        <logger name="com.jdedwards.base.logging.LogOutputHandler" level="DEBUG"/>
+
+        <logger name="com.atina.jdeconnector.internal.JDEHandler" level="DEBUG"/>
+
+        <logger name="com.acqua.atina.jdeconnectorservice.wsservice.JDESingleWSClient" level="DEBUG"/> 
+
         <AsyncRoot level="INFO">
             <AppenderRef ref="file" />
              <AppenderRef ref="console" />

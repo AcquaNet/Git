@@ -54,12 +54,14 @@ message LogoutRequest {
   int64 sessionId = 1;
   bool  wsconnection = 2;
   string jwtToken = 3;
+  int64 transactionID = 4;
 }
 
 message IsConnectedRequest {
   int64 sessionId = 1;
   bool  wsconnection = 2;
   string jwtToken = 3;
+  int64 transactionID = 4;
 }
 
 message IsConnectedResponse { 
@@ -75,6 +77,7 @@ message SessionRequest {
   int64 sessionId = 5;
   bool  wsconnection = 6;
   string jwtToken = 7;
+  int64 transactionID = 8;
 }
 
 // Configuracion del la Conexion a JDE
@@ -92,6 +95,7 @@ message OperacionesRequest {
   int64 sessionId = 7;
   bool  wsconnection = 8;
   string jwtToken = 9;
+  int64 transactionID = 10;
 }
 
 message OperacionesResponse {
@@ -116,6 +120,7 @@ message GetMetadataRequest {
   int64 sessionId = 7;
   bool  wsconnection = 8;
   string jwtToken = 9;
+  int64 transactionID = 10;
 }
 
 message GetMetadataResponse {
@@ -157,6 +162,7 @@ message EjecutarOperacionRequest {
   int64 sessionId = 11;
   bool  wsconnection = 12;
   string jwtToken = 14;
+  int64 transactionID = 15;
 }
 
 message EjecutarOperacionValores {

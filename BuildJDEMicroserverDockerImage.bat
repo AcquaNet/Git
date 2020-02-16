@@ -1,5 +1,10 @@
 @echo off
 ECHO ==========================================================
+ECHO "Building Shader para Conector
+ECHO ==========================================================
+cd C:\_work\JDEConnectorCE\Projects\jde-gRPC-Shader
+CALL mvn clean deploy
+ECHO ==========================================================
 ECHO "Building JDE Connector Service...
 ECHO ==========================================================
 cd C:\_work\JDEConnectorCE\Projects\JDEConnectorService
