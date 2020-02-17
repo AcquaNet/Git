@@ -1,0 +1,2 @@
+mvn deploy:deploy-file -DgroupId=com.atina -DartifactId=JDEAtinaServer -Dversion=1.0.0 -DrepositoryId=acquanet-central -Dpackaging=jar -Dfile=target\JDEAtinaServer-1.0.0.jar -Durl=http://157.245.236.175:8081/artifactory/libs-release
+pause
