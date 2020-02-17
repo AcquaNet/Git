@@ -19,3 +19,4 @@ JDEDockers/Microservice/docker_jdemicroserver/images/JDEAtinaServer-1.0.0.jar
 JDEDockers/Microservice/docker_jdemicroserver/java64/j2re-image-x86_64-u232-b01-20190729.tar.bz2
 JDEDockers/Microservice/docker_jdemicroserver/java64/j2sdk-image-x86_64-u232-b01-20190729.tar.bz2
 JDEDockers/Microservice/docker_jdemicroserver_ngrok/images/ngrok-stable-linux-amd64.zip
+JDEDockers/Developer/microserverlog/
