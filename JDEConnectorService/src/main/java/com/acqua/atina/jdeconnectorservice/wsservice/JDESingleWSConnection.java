@@ -50,7 +50,7 @@ public class JDESingleWSConnection implements JDEConnection {
 
         } catch (Exception e) {
 
-            logger.error("MULESOFT - JDESingleWSConnection - Error showing Classpath:" + e.getMessage());
+            logger.error("ATINA - JDESingleWSConnection - Error showing Classpath:" + e.getMessage());
 
             throw new JDESingleConnectionException(e.getMessage(), e);
 
@@ -84,7 +84,7 @@ public class JDESingleWSConnection implements JDEConnection {
              
         } catch (Exception e) {
 
-            logger.error("MULESOFT - JDESingleWSConnection - startupJDEConfiguration() - Error loading jdeinterop.ini file ..." + e.getMessage(), e);
+            logger.error("ATINA - JDESingleWSConnection - startupJDEConfiguration() - Error loading jdeinterop.ini file ..." + e.getMessage(), e);
 
             throw new JDESingleConnectionException("Error loading jdeinterop.ini file:" + e.getMessage(), e);
 
@@ -102,7 +102,7 @@ public class JDESingleWSConnection implements JDEConnection {
 
         } catch (IOException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 
-            logger.error("MULESOFT - JDEConnection - testConnect() - Error loading DNS Cache ..." + e.getMessage(), e);
+            logger.error("ATINA - JDEConnection - testConnect() - Error loading DNS Cache ..." + e.getMessage(), e);
             throw new JDESingleConnectionException("JDE Conexion Error" + e.getMessage(), e);
 
         }
@@ -231,12 +231,12 @@ public class JDESingleWSConnection implements JDEConnection {
 
         } catch (NullPointerException e) {
 
-            logger.error("MULESOFT - JDEClient -  Folder Specs Image Cache Error..." + e.getMessage(), e);
+            logger.error("ATINA - JDEClient -  Folder Specs Image Cache Error..." + e.getMessage(), e);
             throw new JDESingleConnectionException("Folder Specs Image Cache Error: Null Pointer Exception", e);
 
         } catch (IOException e) {
 
-            logger.error("MULESOFT - JDEClient - Error Generating Cache Folder..." + e.getMessage(), e);
+            logger.error("ATINA - JDEClient - Error Generating Cache Folder..." + e.getMessage(), e);
             throw new JDESingleConnectionException("Folder Specs Image Cache Error: Cannot create Folder Cache", e);
 
         }

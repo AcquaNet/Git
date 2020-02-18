@@ -75,12 +75,12 @@ public class JDESingleClient {
             
             if (iSessionID != 0) {
 
-                logger.info("MULESOFT - JDEConnectorService:  Previously connected to JDE. Id:" + Integer.toString(iSessionID));
+                logger.info("ATINA - JDEConnectorService:  Previously connected to JDE. Id:" + Integer.toString(iSessionID));
 
                 userConnected = com.jdedwards.system.connector.dynamic.Connector.getInstance()
                         .isLoggedIn(iSessionID);
 
-                logger.info("MULESOFT - JDEConnectorService:  is connected to JDE? = " + userConnected);
+                logger.info("ATINA - JDEConnectorService:  is connected to JDE? = " + userConnected);
 
                 if (!userConnected) {
 
@@ -201,7 +201,7 @@ public class JDESingleClient {
 
             }
 
-            logger.debug("MULESOFT - JDEConnectorService:  Disconnecting from JDE. Id: " + Integer.toString(iSessionID));
+            logger.debug("ATINA - JDEConnectorService:  Disconnecting from JDE. Id: " + Integer.toString(iSessionID));
 
             Connector connector = com.jdedwards.system.connector.dynamic.Connector.getInstance();
             
@@ -217,12 +217,12 @@ public class JDESingleClient {
             JDEConnectionLocker.getInstance()
                 .releaseWriteLock();
 
-            logger.debug("MULESOFT - JDEConnectorService:  Disconnected from JDE");
+            logger.debug("ATINA - JDEConnectorService:  Disconnected from JDE");
 
             iSessionID = 0;
 
         } else {
-            logger.debug("MULESOFT - JDEConnectorService:  Previously disconnected from JDE. Id:" + Integer.toString(iSessionID));
+            logger.debug("ATINA - JDEConnectorService:  Previously disconnected from JDE. Id:" + Integer.toString(iSessionID));
 
         }
         
@@ -243,7 +243,7 @@ public class JDESingleClient {
 
             if (userConnected) {
 
-                logger.debug("MULESOFT - JDEConnectorService:  Additional Control for session:" + Integer.toString(iSessionID));
+                logger.debug("ATINA - JDEConnectorService:  Additional Control for session:" + Integer.toString(iSessionID));
 
                 Integer localInteger = Integer.valueOf(iSessionID);
 
@@ -254,7 +254,7 @@ public class JDESingleClient {
 
                 if (!userConnected) {
 
-                    logger.debug("MULESOFT - JDEConnectorService:  The connection will be reseted");
+                    logger.debug("ATINA - JDEConnectorService:  The connection will be reseted");
 
                     com.jdedwards.system.connector.dynamic.Connector.getInstance()
                         .logoff(iSessionID);
@@ -267,11 +267,11 @@ public class JDESingleClient {
 
         }
 
-        logger.debug("MULESOFT - JDEConnectorService:  Is Connected to JDE?:" + (userConnected));
+        logger.debug("ATINA - JDEConnectorService:  Is Connected to JDE?:" + (userConnected));
 
         if (userConnected) {
 
-            logger.debug("MULESOFT - JDEConnectorService:  Connected to JDE Id: " + Integer.toString(iSessionID));
+            logger.debug("ATINA - JDEConnectorService:  Connected to JDE Id: " + Integer.toString(iSessionID));
 
         }
 

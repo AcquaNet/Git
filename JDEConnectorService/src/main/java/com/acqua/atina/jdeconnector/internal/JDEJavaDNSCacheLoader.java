@@ -102,7 +102,7 @@ public class JDEJavaDNSCacheLoader {
 
                     boolean jdeServerValid = false;
 
-                    logger.info("MULESOFT - DNSCacheLoader: loadOCMServerInDNSCache: Validation JDE Server Name: [" + jdeServerName + "] ... ");
+                    logger.info("ATINA - DNSCacheLoader: loadOCMServerInDNSCache: Validation JDE Server Name: [" + jdeServerName + "] ... ");
 
                     if(!forceUseOCMFile)
                     {
@@ -196,7 +196,7 @@ public class JDEJavaDNSCacheLoader {
             logger.info("Cache Policy: " + cachePolicy);
 
         } else {
-            logger.debug("MULESOFT - DNSCacheLoader: loadOCMServerInDNSCache: Cache Policy doesn't exist");
+            logger.debug("ATINA - DNSCacheLoader: loadOCMServerInDNSCache: Cache Policy doesn't exist");
         }
 
     }

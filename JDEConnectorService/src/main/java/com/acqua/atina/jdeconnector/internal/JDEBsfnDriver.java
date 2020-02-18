@@ -110,7 +110,7 @@ public class JDEBsfnDriver {
         
         File functionsFile = new File(cacheFolder + File.separator + FUNTIONS_LIST);
 
-        logger.info("MULESOFT - SpecsGenerator: BussinessFunctionList() Checking file: " + cacheFolder + File.separator + FUNTIONS_LIST);
+        logger.info("ATINA - SpecsGenerator: BussinessFunctionList() Checking file: " + cacheFolder + File.separator + FUNTIONS_LIST);
 
         if (functionsFile.exists()) {
 
@@ -124,29 +124,29 @@ public class JDEBsfnDriver {
 
                 bsfnList = mapper.readValue(functionsFile, TreeSet.class);
  
-                logger.info("MULESOFT - SpecsGenerator: BussinessFunctionList() File Readed");
+                logger.info("ATINA - SpecsGenerator: BussinessFunctionList() File Readed");
 
             } catch (JsonParseException e) {
                 
-                logger.error("MULESOFT - SpecsGenerator: Error parsing file", e);
+                logger.error("ATINA - SpecsGenerator: Error parsing file", e);
                 
                 throw new JDESingleException("Fail to read functions: " + e.getMessage(), e);
                 
             } catch (JsonMappingException e) {
                 
-                logger.error("MULESOFT - SpecsGenerator: Error Mapping JSON file", e);
+                logger.error("ATINA - SpecsGenerator: Error Mapping JSON file", e);
                 
                 throw new JDESingleException("Fail to read functions: " + e.getMessage(), e);
                 
             } catch (IOException e) {
                 
-                logger.error("MULESOFT - SpecsGenerator: Error reading functions file", e);
+                logger.error("ATINA - SpecsGenerator: Error reading functions file", e);
                 
                 throw new JDESingleException("Fail to read functions: " + e.getMessage(), e);
 
             } catch (Exception ex) {
 
-                logger.error("MULESOFT - SpecsGenerator: Error reading functions file", ex);
+                logger.error("ATINA - SpecsGenerator: Error reading functions file", ex);
                  
                 throw new  JDESingleException("Fail to connect to Oneworld Database " + ex.getMessage(), ex);
 
@@ -200,12 +200,12 @@ public class JDEBsfnDriver {
 
                         mapper.writeValue(functionsFile, bsfnList);
 
-                        logger.info("MULESOFT - SpecsGenerator: BussinessFunctionList() Functions saved on "
+                        logger.info("ATINA - SpecsGenerator: BussinessFunctionList() Functions saved on "
                                 + functionsFile.getAbsoluteFile());
 
                     } catch (Exception e) {
 
-                        logger.error("MULESOFT - SpecsGenerator: BussinessFunctionList() Error saving functions on "
+                        logger.error("ATINA - SpecsGenerator: BussinessFunctionList() Error saving functions on "
                                 + functionsFile.getAbsoluteFile());
  
 
@@ -253,7 +253,7 @@ public class JDEBsfnDriver {
 
         File functioXMLCache = null;
 
-        logger.debug("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Function: " + bsfnName);
+        logger.debug("ATINA - JDEConnectorService:  - getBSFNParameterList() Function: " + bsfnName);
 
         // ===================================================
         // Verify Function XML File
@@ -265,7 +265,7 @@ public class JDEBsfnDriver {
             
             functionXMLFile = tmpFolderCache.getAbsolutePath() + File.separator + bsfnName + ".xml";
 
-            logger.debug("MULESOFT - JDEConnectorService:  - getBSFNParameterList() XML File: " + functionXMLFile);
+            logger.debug("ATINA - JDEConnectorService:  - getBSFNParameterList() XML File: " + functionXMLFile);
 
             functioXMLCache = new File(functionXMLFile);
 
@@ -291,7 +291,7 @@ public class JDEBsfnDriver {
  
          if (flagReadCache) {
 
-             logger.debug("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Reading parameters from xml specs... ");
+             logger.debug("ATINA - JDEConnectorService:  - getBSFNParameterList() Reading parameters from xml specs... ");
 
              try {
 
@@ -301,16 +301,16 @@ public class JDEBsfnDriver {
 
                  flagReadCache = false;
 
-                 logger.error("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Error reading xml specs.", e);
+                 logger.error("ATINA - JDEConnectorService:  - getBSFNParameterList() Error reading xml specs.", e);
 
              }
 
-             logger.debug("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Ready parameters from xml specs.");
+             logger.debug("ATINA - JDEConnectorService:  - getBSFNParameterList() Ready parameters from xml specs.");
 
              // Validate Spec
              if (specSource != null && validateSpecs) {
 
-                 logger.debug("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Validate Spec.");
+                 logger.debug("ATINA - JDEConnectorService:  - getBSFNParameterList() Validate Spec.");
 
                  SpecImageValidator validator = new com.jdedwards.system.connector.dynamic.util.SpecImageValidator(specSource);
 
@@ -321,7 +321,7 @@ public class JDEBsfnDriver {
                      
                  } catch (SpecFailureException ex) {
                      
-                     logger.debug("MULESOFT - JDEConnectorService:  - getBSFNParameterList() BSFN Changed.");
+                     logger.debug("ATINA - JDEConnectorService:  - getBSFNParameterList() BSFN Changed.");
 
                      flagReadCache = false;
                      
@@ -329,7 +329,7 @@ public class JDEBsfnDriver {
 
                  if (validationResult != null && validationResult.hasDifference()) {
 
-                     logger.debug("MULESOFT - JDEConnectorService:  - getBSFNParameterList() BSFN Changed.");
+                     logger.debug("ATINA - JDEConnectorService:  - getBSFNParameterList() BSFN Changed.");
 
                      flagReadCache = false;
 
@@ -347,7 +347,7 @@ public class JDEBsfnDriver {
 
              if (session != 0) {
 
-                 logger.debug("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Reading parameters from database specs... ");
+                 logger.debug("ATINA - JDEConnectorService:  - getBSFNParameterList() Reading parameters from database specs... ");
 
                  try {
 
@@ -355,17 +355,17 @@ public class JDEBsfnDriver {
 
                  } catch (Exception e) {
 
-                     logger.error("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Error reading database specs. Error: " + e.getMessage());
+                     logger.error("ATINA - JDEConnectorService:  - getBSFNParameterList() Error reading database specs. Error: " + e.getMessage());
 
                      throw new JDESingleException(e.getMessage(), e);
 
                  }
 
-                 logger.debug("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Ready parameters from database specs.");
+                 logger.debug("ATINA - JDEConnectorService:  - getBSFNParameterList() Ready parameters from database specs.");
 
              } else {
 
-                 logger.error("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Error reading xml from database.");
+                 logger.error("ATINA - JDEConnectorService:  - getBSFNParameterList() Error reading xml from database.");
 
                  throw new JDESingleException("There is not connection to read database specs. ");
 
@@ -385,7 +385,7 @@ public class JDEBsfnDriver {
 
          } catch (Exception e) {
 
-             logger.error("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Error reading specs from source.");
+             logger.error("ATINA - JDEConnectorService:  - getBSFNParameterList() Error reading specs from source.");
 
              throw new JDESingleException("Error reading specs from source", e);
 
@@ -427,7 +427,7 @@ public class JDEBsfnDriver {
 
                  } catch (Exception e) {
 
-                     logger.error("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Error deleting specs into cache directory.");
+                     logger.error("ATINA - JDEConnectorService:  - getBSFNParameterList() Error deleting specs into cache directory.");
 
                      throw new JDESingleException("Error deleting specs into cache directory", e);
 
@@ -480,7 +480,7 @@ public class JDEBsfnDriver {
 
              } catch (IOException e) {
 
-                 logger.error("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Error saving specs into cache directory.");
+                 logger.error("ATINA - JDEConnectorService:  - getBSFNParameterList() Error saving specs into cache directory.");
 
                  throw new JDESingleException("Error saving specs into cache directory", e);
 
@@ -488,7 +488,7 @@ public class JDEBsfnDriver {
 
          }
 
-         logger.debug("MULESOFT - JDEConnectorService:  - getBSFNParameterList() Ready.");
+         logger.debug("ATINA - JDEConnectorService:  - getBSFNParameterList() Ready.");
 
          return returnValue;
  
@@ -538,7 +538,7 @@ public class JDEBsfnDriver {
         // Reading Specs
         // ===================================================
         
-        logger.debug("MULESOFT - JDEConnectorService:  - callBSFN() Reading parameters from xml specs... ");
+        logger.debug("ATINA - JDEConnectorService:  - callBSFN() Reading parameters from xml specs... ");
         
         
         
@@ -552,7 +552,7 @@ public class JDEBsfnDriver {
             
         }
 
-        logger.debug("MULESOFT - JDEConnectorService:  - callBSFN() Ready parameters from xml specs.");
+        logger.debug("ATINA - JDEConnectorService:  - callBSFN() Ready parameters from xml specs.");
         
         // ------------------------------
         // Process Valid Specs
@@ -564,7 +564,7 @@ public class JDEBsfnDriver {
             // Get BSFN Method 
             // ------------------------------
          
-            logger.debug("MULESOFT - JDEConnectorService:  - callBSFN() Getting Specs: " + bsfnName);
+            logger.debug("ATINA - JDEConnectorService:  - callBSFN() Getting Specs: " + bsfnName);
 
             BSFNMethod method;
              
@@ -582,7 +582,7 @@ public class JDEBsfnDriver {
             // Create JDE CallObject
             // ------------------------------
             
-            logger.debug("MULESOFT - JDEConnectorService:  - callBSFN() Creating Call Object: " + bsfnName);
+            logger.debug("ATINA - JDEConnectorService:  - callBSFN() Creating Call Object: " + bsfnName);
 
             ExecutableMethod callobject;
 
@@ -599,7 +599,7 @@ public class JDEBsfnDriver {
                      
                      if (inputObject.get(parameter.getName()) != null) {
                           
-                        logger.debug("MULESOFT - JDEConnectorService:  - callBSFN() Preparing Parameter: " + parameter.getName() + " value: "
+                        logger.debug("ATINA - JDEConnectorService:  - callBSFN() Preparing Parameter: " + parameter.getName() + " value: "
                                      + inputObject.get(parameter.getName()) + " JDE Type: " + inputObject.get(parameter.getName()) + " Java Class: "
                                      + (inputObject.get(parameter.getName())
                                          .getClass()
@@ -654,30 +654,30 @@ public class JDEBsfnDriver {
 
             try {
 
-                logger.debug("MULESOFT - JDEConnectorService:  - callBSFN() Calling BSFN Parameters: ");
+                logger.debug("ATINA - JDEConnectorService:  - callBSFN() Calling BSFN Parameters: ");
 
                 if (transaction != null) {
 
-                    logger.debug("MULESOFT - JDEConnectorService:  - callBSFN() Calling using Transaction...");
+                    logger.debug("ATINA - JDEConnectorService:  - callBSFN() Calling using Transaction...");
 
                     bsfnListError = callobject.executeBSFN(transaction);
 
-                    logger.debug("MULESOFT - JDEConnectorService:  - callBSFN() Called using Transaction...");
+                    logger.debug("ATINA - JDEConnectorService:  - callBSFN() Called using Transaction...");
 
                 } else {
 
-                    logger.debug("MULESOFT - JDEConnectorService:  - callBSFN() Calling without Transaction...");
+                    logger.debug("ATINA - JDEConnectorService:  - callBSFN() Calling without Transaction...");
 
                     bsfnListError = callobject.executeBSFN(session);
 
-                    logger.debug("MULESOFT - JDEConnectorService:  - callBSFN() Called without Transaction...");
+                    logger.debug("ATINA - JDEConnectorService:  - callBSFN() Called without Transaction...");
 
                 }
 
             } catch (Exception e) {
 
-                logger.error("MULESOFT - JDEConnectorService: callBSFN() Error calling BSFN: " + bsfnName);
-                logger.error("MULESOFT - JDEConnectorService: callBSFN() Error: " + e.getMessage(), e);
+                logger.error("ATINA - JDEConnectorService: callBSFN() Error calling BSFN: " + bsfnName);
+                logger.error("ATINA - JDEConnectorService: callBSFN() Error: " + e.getMessage(), e);
          
                 throw new JDESingleException(getBSFNErrorMessage(bsfnName, inputObject, e.getMessage()), e);
 
@@ -778,7 +778,7 @@ public class JDEBsfnDriver {
 
                         } else {
 
-                            logger.debug("MULESOFT - JDEConnectorService:  - callBSFN() Returning Parameter: " + parameter.getName() + " value: [NULL]");
+                            logger.debug("ATINA - JDEConnectorService:  - callBSFN() Returning Parameter: " + parameter.getName() + " value: [NULL]");
                             outputParameters.put(parameter.getName(), null);
 
                         }
@@ -903,7 +903,7 @@ public class JDEBsfnDriver {
         } catch (JDBException e) {
 
             logger.error(
-                    "MULESOFT - ERROR SpecsGenerator: BussinessFunctionList() Error Reading Functions from F9862",
+                    "ATINA - ERROR SpecsGenerator: BussinessFunctionList() Error Reading Functions from F9862",
                     e);
 
             throw new JDESingleException("Fail to fetch functions " + e.getMessage(),
@@ -915,7 +915,7 @@ public class JDEBsfnDriver {
 
                 localJDBResultSet.close();
 
-                logger.info("MULESOFT - SpecsGenerator: BussinessFunctionList() Connections closed");
+                logger.info("ATINA - SpecsGenerator: BussinessFunctionList() Connections closed");
 
             }
 
@@ -969,20 +969,20 @@ public class JDEBsfnDriver {
         if (parameters != null && !parameters.keySet()
             .isEmpty()) {
 
-            logger.debug("MULESOFT - JDEConnectorService:  -  Parameter Begin");
+            logger.debug("ATINA - JDEConnectorService:  -  Parameter Begin");
 
             for (String parameter : parameters.keySet()) {
 
                 if (parameter != null && parameters.get(parameter) != null) {
-                    logger.debug("MULESOFT - JDEConnectorService:  - Parameter  entityData Key/Value:" + parameter + " [" + parameters.get(parameter) + "]");
+                    logger.debug("ATINA - JDEConnectorService:  - Parameter  entityData Key/Value:" + parameter + " [" + parameters.get(parameter) + "]");
                 } else {
-                    logger.debug("MULESOFT - JDEConnectorService:  - Parameter  entityData Key/Value:" + parameter + " []");
+                    logger.debug("ATINA - JDEConnectorService:  - Parameter  entityData Key/Value:" + parameter + " []");
 
                 }
 
             }
 
-            logger.debug("MULESOFT - JDEConnectorService:  - Parameter End");
+            logger.debug("ATINA - JDEConnectorService:  - Parameter End");
 
         }
 

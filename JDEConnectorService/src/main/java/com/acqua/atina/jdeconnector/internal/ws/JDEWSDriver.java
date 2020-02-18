@@ -84,7 +84,7 @@ public class JDEWSDriver {
 
         File functionsFile = new File(cacheFolder + File.separator + WS_LIST);
 
-        logger.info("MULESOFT - SpecsGenerator: BussinessFunctionList() Checking file: " + cacheFolder + File.separator + WS_LIST);
+        logger.info("ATINA - SpecsGenerator: BussinessFunctionList() Checking file: " + cacheFolder + File.separator + WS_LIST);
 
         if (functionsFile.exists()) {
 
@@ -98,29 +98,29 @@ public class JDEWSDriver {
 
                 wsList = mapper.readValue(functionsFile, TreeSet.class);
 
-                logger.info("MULESOFT - SpecsGenerator: BussinessFunctionList() File Readed");
+                logger.info("ATINA - SpecsGenerator: BussinessFunctionList() File Readed");
 
             } catch (JsonParseException e) {
 
-                logger.error("MULESOFT - SpecsGenerator: Error parsing file", e);
+                logger.error("ATINA - SpecsGenerator: Error parsing file", e);
 
                 throw new JDESingleException("Fail to read functions: " + e.getMessage(), e);
 
             } catch (JsonMappingException e) {
 
-                logger.error("MULESOFT - SpecsGenerator: Error Mapping JSON file", e);
+                logger.error("ATINA - SpecsGenerator: Error Mapping JSON file", e);
 
                 throw new JDESingleException("Fail to read functions: " + e.getMessage(), e);
 
             } catch (IOException e) {
 
-                logger.error("MULESOFT - SpecsGenerator: Error reading functions file", e);
+                logger.error("ATINA - SpecsGenerator: Error reading functions file", e);
 
                 throw new JDESingleException("Fail to read functions: " + e.getMessage(), e);
 
             } catch (Exception ex) {
 
-                logger.error("MULESOFT - SpecsGenerator: Error reading functions file", ex);
+                logger.error("ATINA - SpecsGenerator: Error reading functions file", ex);
 
                 throw new JDESingleException("Fail to connect to Oneworld Database " + ex.getMessage(), ex);
 
@@ -152,12 +152,12 @@ public class JDEWSDriver {
 
                     mapper.writeValue(functionsFile, wsList);
 
-                    logger.info("MULESOFT - SpecsGenerator: BussinessFunctionList() Functions saved on "
+                    logger.info("ATINA - SpecsGenerator: BussinessFunctionList() Functions saved on "
                             + functionsFile.getAbsoluteFile());
 
                 } catch (Exception e) {
 
-                    logger.error("MULESOFT - SpecsGenerator: BussinessFunctionList() Error saving functions on "
+                    logger.error("ATINA - SpecsGenerator: BussinessFunctionList() Error saving functions on "
                             + functionsFile.getAbsoluteFile());
 
                     throw new JDESingleException("Fail to save functions " + e.getMessage(), e);

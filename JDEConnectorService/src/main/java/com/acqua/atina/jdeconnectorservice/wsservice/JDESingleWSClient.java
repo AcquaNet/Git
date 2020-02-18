@@ -265,7 +265,7 @@ public class JDESingleWSClient {
 
             }
 
-            logger.debug("MULESOFT - JDEConnectorService:  Disconnecting from JDE. Id: " + Integer.toString(iSessionID));
+            logger.debug("ATINA - JDEConnectorService:  Disconnecting from JDE. Id: " + Integer.toString(iSessionID));
 
             Connector connector = com.jdedwards.system.connector.dynamic.Connector.getInstance();
  
@@ -276,14 +276,14 @@ public class JDESingleWSClient {
             JDEConnectionLocker.getInstance()
                 .releaseWriteLock();
 
-            logger.debug("MULESOFT - JDEConnectorService:  Disconnected from JDE");
+            logger.debug("ATINA - JDEConnectorService:  Disconnected from JDE");
 
             iSessionID = 0;
             
             userPreference = null;
 
         } else {
-            logger.debug("MULESOFT - JDEConnectorService:  Previously disconnected from JDE. Id:" + Integer.toString(iSessionID));
+            logger.debug("ATINA - JDEConnectorService:  Previously disconnected from JDE. Id:" + Integer.toString(iSessionID));
 
         }
          
@@ -303,7 +303,7 @@ public class JDESingleWSClient {
 
             if (userConnected) {
 
-                logger.debug("MULESOFT - JDEConnectorService:  Additional Control for session:" + Integer.toString(iSessionID));
+                logger.debug("ATINA - JDEConnectorService:  Additional Control for session:" + Integer.toString(iSessionID));
 
                 Integer localInteger = Integer.valueOf(iSessionID);
 
@@ -314,7 +314,7 @@ public class JDESingleWSClient {
 
                 if (!userConnected) {
 
-                    logger.debug("MULESOFT - JDEConnectorService:  The connection will be reseted");
+                    logger.debug("ATINA - JDEConnectorService:  The connection will be reseted");
 
                     com.jdedwards.system.connector.dynamic.Connector.getInstance()
                         .logoff(iSessionID);
@@ -329,11 +329,11 @@ public class JDESingleWSClient {
 
         }
 
-        logger.debug("MULESOFT - JDEConnectorService:  Is Connected to JDE?:" + (userConnected));
+        logger.debug("ATINA - JDEConnectorService:  Is Connected to JDE?:" + (userConnected));
 
         if (userConnected) {
 
-            logger.debug("MULESOFT - JDEConnectorService:  Connected to JDE Id: " + Integer.toString(iSessionID));
+            logger.debug("ATINA - JDEConnectorService:  Connected to JDE Id: " + Integer.toString(iSessionID));
 
         }
 
