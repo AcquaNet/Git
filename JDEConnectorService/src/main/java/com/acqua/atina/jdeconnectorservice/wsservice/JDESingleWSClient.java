@@ -8,11 +8,12 @@ package com.acqua.atina.jdeconnectorservice.wsservice;
 import com.jdedwards.system.connector.dynamic.ServerFailureException;
 import com.jdedwards.system.connector.dynamic.UserSession;
 import com.acqua.atina.jdeconnector.internal.JDEConnectionLocker;
-import com.acqua.atina.jdeconnector.internal.JDETransactions; 
+import com.acqua.atina.jdeconnector.internal.JDETransactions;
 import com.acqua.atina.jdeconnector.internal.model.metadata.ParameterTypeSimple;
 import com.acqua.atina.jdeconnector.internal.ws.JDEWSDriver;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectorException;  
+import com.jdedwards.base.resource.UserPreference;
 import com.jdedwards.system.connector.dynamic.Connector;
 import com.jdedwards.system.connector.dynamic.InvalidLoginException;
 import com.jdedwards.system.security.SecurityToken;
@@ -21,8 +22,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator; 
 import java.util.Map;
-import java.util.Set; 
-import oracle.e1.bssvfoundation.base.IContext;
+import java.util.Set;
 import oracle.e1.bssvfoundation.impl.security.E1Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +51,12 @@ public class JDESingleWSClient {
     private File tmpFolder;
     
     private File tmpFolderCache;
+    
+    // =========================
+    // User Preference
+    // =========================
+    
+    private UserPreference userPreference; 
      
     // =========================
     // Session Parameters
@@ -95,6 +101,7 @@ public class JDESingleWSClient {
                 if (!userConnected) {
 
                     iSessionID = 0;
+                    userPreference = null;
 
                     logger.info("JDESingleWSClient - The connections has been reseted");
 
@@ -105,6 +112,7 @@ public class JDESingleWSClient {
                     if(!com.jdedwards.system.connector.dynamic.Connector.getInstance().getUserSession(iSessionID).isSbfConnectorMode())
                     {
                         iSessionID = 0;
+                        userPreference = null;
                         
                         logger.info("JDESingleWSClient - Current user is as SBF Connector Mode");
                     }
@@ -191,6 +199,8 @@ public class JDESingleWSClient {
                             .loginBase(this.user, this.password, this.environment, this.role, true, true);
 
                     logger.info("      User Connected with Id: " + Integer.toString(iSessionID));
+                    
+                    userConnected = true;
                 }
 
                 // ==============================================================
@@ -213,6 +223,13 @@ public class JDESingleWSClient {
                     // -----------------------------------------
                     //
                     e1ppal = new E1Principal("JDE", secToken, "JDV920", "*ALL", iSessionID);
+                    
+                    // -----------------------------------------
+                    // GET User Preference
+                    // -----------------------------------------
+                     
+                    userPreference = userSession.getUserPreference();
+                     
 
                 }
 
@@ -262,6 +279,8 @@ public class JDESingleWSClient {
             logger.debug("MULESOFT - JDEConnectorService:  Disconnected from JDE");
 
             iSessionID = 0;
+            
+            userPreference = null;
 
         } else {
             logger.debug("MULESOFT - JDEConnectorService:  Previously disconnected from JDE. Id:" + Integer.toString(iSessionID));
@@ -301,6 +320,8 @@ public class JDESingleWSClient {
                         .logoff(iSessionID);
 
                     iSessionID = 0;
+                    
+                    userPreference = null;
 
                 }
 
@@ -373,6 +394,10 @@ public class JDESingleWSClient {
         this.tmpFolderCache = tmpFolderCache;
     }
 
+    public UserPreference getUserPreference() {
+        return userPreference;
+    } 
+    
     //************************************************************************
     // Bootstrap
     //************************************************************************

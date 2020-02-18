@@ -7,6 +7,7 @@ package com.acqua.atina.jdeconnectorservice.service.poolconnection;
 
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectorException;
+import com.jdedwards.base.resource.UserPreference;
 import java.util.HashMap; 
 import java.util.Set;
 
@@ -22,5 +23,6 @@ public interface JDEConnection {
     public boolean isWSConnection();
     public Set<String> getOperationList() throws JDESingleConnectorException;
     public HashMap<String, Object> callJDEOperation(String bsfnName, HashMap<String, Object> inputObject, Integer transactionID) throws JDESingleConnectorException;
+    public UserPreference getUserPreference();
     
 }

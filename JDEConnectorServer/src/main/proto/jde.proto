@@ -84,6 +84,7 @@ message SessionRequest {
 message SessionResponse {
   int64 sessionId = 1;
   string jwtToken = 2;
+  string addressBookNumber = 3;
 }
 
 message OperacionesRequest {

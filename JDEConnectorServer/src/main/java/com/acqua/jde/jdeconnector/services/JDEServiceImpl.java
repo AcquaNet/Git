@@ -165,11 +165,17 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             
             logger.info("              Session ID: " + sessionID);
             
+            String addressBookNumber = JDEPoolConnections.getInstance().getSingleConnection(sessionID).getUserPreference().getAddrNum();
+            
+            logger.info("              Address Book No: " + addressBookNumber);
+        
             SessionResponse.Builder responseBuilder = SessionResponse.newBuilder();
             
             responseBuilder.setSessionId(sessionID);
             
             responseBuilder.setJwtToken(getJWT(config)); 
+            
+            responseBuilder.setAddressBookNumber(addressBookNumber);
              
             responseObserver.onNext(responseBuilder.build());
 

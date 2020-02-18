@@ -11,6 +11,7 @@ import com.acqua.atina.jdeconnectorservice.JDEConnectorService;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectorException;
 import com.acqua.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
+import com.jdedwards.base.resource.UserPreference;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -269,6 +270,11 @@ public class JDESingleConnection implements JDEConnection{
     @Override
     public boolean isWSConnection() {
         return false;
+    }
+
+    @Override
+    public UserPreference getUserPreference() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
       

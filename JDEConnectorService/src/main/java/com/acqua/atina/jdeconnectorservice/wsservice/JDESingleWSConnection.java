@@ -11,6 +11,7 @@ import com.acqua.atina.jdeconnectorservice.exception.JDESingleException;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectorException;
 import com.acqua.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
+import com.jdedwards.base.resource.UserPreference;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -243,7 +244,10 @@ public class JDESingleWSConnection implements JDEConnection {
         return fwEnv;
 
     }
-
     
+    public UserPreference getUserPreference(){
+        return this.client.getUserPreference();
+    }
+ 
       
 }
