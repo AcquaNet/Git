@@ -33,7 +33,7 @@ import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
 @MetaDataCategory
 public class WSDataSenseResolver {
 
-    private static final Logger logger = LoggerFactory.getLogger(WSDataSenseResolver.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDEAtinaConnector.class);
 
     @Inject
     protected JDEAtinaConnector connector;

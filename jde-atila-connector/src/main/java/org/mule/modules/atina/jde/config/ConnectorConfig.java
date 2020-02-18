@@ -15,6 +15,7 @@ import org.mule.api.annotations.Disconnect;
 import org.mule.api.annotations.TestConnectivity;
 import org.mule.api.annotations.ValidateConnection;
 import org.mule.api.annotations.param.ConnectionKey;
+import org.mule.modules.atina.jde.JDEAtinaConnector;
 import org.mule.modules.atina.jde.exceptions.ExternalConnectorException;
 import org.mule.modules.atina.jde.exceptions.InternalConnectorException;
 import org.mule.modules.atina.jde.implementations.ConnectorServiceImpl;
@@ -33,7 +34,7 @@ import io.grpc.ManagedChannelBuilder;
 @ConnectionManagement(friendlyName = "Configuration", configElementName = "config")
 public class ConnectorConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConnectorConfig.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDEAtinaConnector.class);
 
     /**
      * JDE User

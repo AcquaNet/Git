@@ -139,7 +139,8 @@ public class JDEAtinaConnector {
                         .getService()
                         .login(config.getStub(), currentConfigurationToken);
 
-                returnValue.put("Token", currentConfigurationToken.getToken());
+                returnValue.put("token", currentConfigurationToken.getToken());
+                returnValue.put("userAddressBookNo", currentConfigurationToken.getAddressBookNumber());
 
             } else if (entityData.containsKey("JDE User") &&
                     entityData.containsKey("JDE Password") &&
@@ -163,7 +164,8 @@ public class JDEAtinaConnector {
                         .getService()
                         .login(config.getStub(), currentConfigurationToken);
 
-                returnValue.put("Token", currentConfigurationToken.getToken());
+                returnValue.put("token", currentConfigurationToken.getToken());
+                returnValue.put("userAddressBookNo", currentConfigurationToken.getAddressBookNumber());
 
             } else
             {
@@ -171,7 +173,7 @@ public class JDEAtinaConnector {
                         .getService()
                         .login(config.getStub(), config.getConfiguracion());
 
-                returnValue.put("Token", config.getConfiguracion()
+                returnValue.put("token", config.getConfiguracion()
                         .getToken());
             }
 
@@ -197,7 +199,7 @@ public class JDEAtinaConnector {
                         .getService()
                         .logout(config.getStub(), currentConfigurationToken);
 
-                returnValue.put("Token", "");
+                returnValue.put("token", "");
 
             }
 

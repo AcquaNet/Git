@@ -11,6 +11,7 @@ public class JDEAtilaConfiguracion {
     private Integer microServicePort;
     private long sessionID;
     private String token;
+    private String addressBookNumber;
 
     public JDEAtilaConfiguracion() {
         super();
@@ -112,6 +113,14 @@ public class JDEAtilaConfiguracion {
         this.microServicePort = microServicePort;
         this.sessionID = sessionID;
         this.token = token;
+    }
+
+    public String getAddressBookNumber() {
+        return addressBookNumber;
+    }
+
+    public void setAddressBookNumber(String addressBookNumber) {
+        this.addressBookNumber = addressBookNumber;
     }
 
 }

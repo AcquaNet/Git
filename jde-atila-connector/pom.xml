@@ -149,7 +149,7 @@
 			<groupId>com.atina</groupId>
 			<artifactId>JDEGPRCShaded</artifactId>
 			<version>1.0.0</version>
-		</dependency>
+		</dependency> 
 		 
 		<!-- gRPC -->
 

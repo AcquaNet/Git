@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 @MetaDataCategory
 public class GetJSONShemaDataSenseResolver {
 
-    private static final Logger logger = LoggerFactory.getLogger(GetJSONShemaDataSenseResolver.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDEAtinaConnector.class);
 
     @Inject
     protected JDEAtinaConnector connector;

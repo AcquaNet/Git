@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 @MetaDataCategory
 public class AuthenticateDataSenseResolver {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticateDataSenseResolver.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDEAtinaConnector.class);
 
     @Inject
     protected JDEAtinaConnector connector;
@@ -140,7 +140,8 @@ public class AuthenticateDataSenseResolver {
         //
 
         MetaDataModel authorModel = new DefaultMetaDataBuilder().createDynamicObject("Login")
-                .addSimpleField("Token", DataType.STRING)
+                .addSimpleField("token", DataType.STRING)
+                .addSimpleField("userAddressBookNo", DataType.STRING)
                 .build();
 
         return new DefaultMetaData(authorModel);

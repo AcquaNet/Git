@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
+import org.mule.modules.atina.jde.JDEAtinaConnector;
 import org.mule.modules.atina.jde.exceptions.ExternalConnectorException;
 import org.mule.modules.atina.jde.exceptions.InternalConnectorException;
 import org.mule.modules.atina.jde.interfaces.ConnectorServiceInterface;
@@ -52,7 +53,7 @@ import org.slf4j.LoggerFactory;
 
 public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConnectorServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDEAtinaConnector.class);
 
     private JDEServiceBlockingStub stub;
     private JDEAtilaConfiguracion configuracion;
@@ -194,6 +195,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
         logger.info("JDE Atina Service - End login ");
 
         configuracion.setSessionID(tokenResponse.getSessionId());
+
+        configuracion.setAddressBookNumber(tokenResponse.getAddressBookNumber());
 
         configuracion.setToken(tokenResponse.getJwtToken());
 
