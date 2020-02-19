@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.atila.metadata.utils;
+package com.atina.metadata.utils;
 
-import com.atila.metadata.utils.ArchiveUtil;
+import com.atina.metadata.utils.ArchiveUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.jar.JarFile;
