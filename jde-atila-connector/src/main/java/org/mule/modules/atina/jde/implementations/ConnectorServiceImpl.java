@@ -1043,6 +1043,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             }
                             break;
                         case "java.lang.Integer":
+                        case "int":
                             switch (className) {
                                 case "java.lang.String":
                                     valorNuevo.setValueAsInteger(Integer.parseInt((String) valor.getValue()));

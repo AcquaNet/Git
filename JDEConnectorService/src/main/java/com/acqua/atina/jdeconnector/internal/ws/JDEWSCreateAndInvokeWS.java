@@ -6,17 +6,14 @@
 package com.acqua.atina.jdeconnector.internal.ws;
 
 import com.acqua.atina.jdeconnector.internal.model.metadata.E1ReturnWSValue;
-import com.acqua.atina.jdeconnector.internal.model.metadata.Model;
 import com.acqua.atina.jdeconnector.internal.model.metadata.ModelType;
 import com.acqua.atina.jdeconnector.internal.model.metadata.Models;
 import com.acqua.atina.jdeconnector.internal.model.metadata.Operation;
 import com.acqua.atina.jdeconnector.internal.model.metadata.Operations;
-import com.acqua.atina.jdeconnector.internal.model.metadata.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.acqua.atina.jdeconnectorservice.JDEConnectorService;
-import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectorException;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleException;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleWSException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,15 +32,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import oracle.e1.bssvfoundation.base.IContext;
 import oracle.e1.bssvfoundation.base.MessageValueObject;
-import oracle.e1.bssvfoundation.base.PublishedBusinessService;
 import oracle.e1.bssvfoundation.connection.IConnection;
 import oracle.e1.bssvfoundation.exception.BusinessServiceException;
 import oracle.e1.bssvfoundation.impl.base.Context;
-import oracle.e1.bssvfoundation.impl.connection.SBFConnection;
-import oracle.e1.bssvfoundation.impl.connection.SBFConnectionManager;
 import oracle.e1.bssvfoundation.impl.security.E1Principal;  
 import oracle.e1.bssvfoundation.util.E1Message;
 import oracle.e1.bssvfoundation.util.E1MessageList;
@@ -66,11 +59,15 @@ public class JDEWSCreateAndInvokeWS {
                                                         Object inputVOObject) {
 
         
+        logger.info("                                    Invoke: " + operation);
+        
         // ------------------------------------------
         // Get Metadata for Operation
         // ------------------------------------------
         //
         Operation metadataOperation = operaciones.getOperations().get(operation);
+        
+        logger.info("                                    Metadata Operation Done");
         
         // ------------------------------------------
         // Get Context
@@ -100,17 +97,29 @@ public class JDEWSCreateAndInvokeWS {
         // Load Class
         // -------------------------------------------------------------
         //
+        
+        logger.info("                                    Loading Package: " + metadataOperation.getOperationModelPackage());
+        logger.info("                                    Loading Class: " + metadataOperation.getOperationClass());
+        
         Class wsClass = loadClass(metadataOperation.getOperationModelPackage()+"."+metadataOperation.getOperationClass());
+        
+        logger.info("                                    Loading Class Done");
         
         // -------------------------------------------------------------
         // Instance Class
         // -------------------------------------------------------------
         //
+        logger.info("                                    Instancing Class");
+        
         Object instanceLoaded = instanceClass(metadataOperation.getOperationModelPackage()+"."+metadataOperation.getOperationClass());
+        
+        logger.info("                                    Instancing Class Done");
         
         // -------------------------------------------------------------
         // Get Method
         // -------------------------------------------------------------
+        
+        logger.info("                                    Getting Method...");
         
         Method metodo = null;
         
@@ -138,6 +147,8 @@ public class JDEWSCreateAndInvokeWS {
            
         }
         
+        logger.info("                                    Getting Method Done");
+        
         // -------------------------------------------------------------
         // Invoke Method
         // -------------------------------------------------------------
@@ -155,7 +166,11 @@ public class JDEWSCreateAndInvokeWS {
             parametrosDeInputDelMetodo[1] = null; 
             parametrosDeInputDelMetodo[2] = inputVOObject;
 
+            logger.info("                                    Invoking Method...");
+            
             returnValue = metodo.invoke(instanceLoaded, parametrosDeInputDelMetodo);
+            
+            logger.info("                                    Invoking Method Done");
 
         } catch (IllegalAccessException ex) {
 
@@ -207,6 +222,8 @@ public class JDEWSCreateAndInvokeWS {
         // Convert Output Object to HashMap
         // ================================================
         //
+        
+        logger.info("                                    Converting Output to HashMap...");
         
         ObjectMapper mapper = new ObjectMapper();
 
@@ -268,6 +285,8 @@ public class JDEWSCreateAndInvokeWS {
              try {
 
                  jsonInString = mapper.writeValueAsString(returnValue);
+                 
+                 logger.info("                                    Converting Output Json: " + jsonInString);
 
              } catch (JsonProcessingException ex) {
 
@@ -293,6 +312,8 @@ public class JDEWSCreateAndInvokeWS {
             throw new JDESingleException("Error generating output hashmap " + ex.getMessage(),ex);
         } 
 
+        logger.info("                                    Converting Output Done...");
+        
         return valorAsHashMap;
     }
     

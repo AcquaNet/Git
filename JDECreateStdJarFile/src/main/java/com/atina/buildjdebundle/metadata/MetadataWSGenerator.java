@@ -794,8 +794,8 @@ public class MetadataWSGenerator {
         }
         else
         {
-            logger.error("Java Class Name not found: " + simple);
-            return simple + "%";
+            logger.info("Java Class Name without prefix: " + simple);
+            return this.packageName + "." + simple;
         } 
          
     }

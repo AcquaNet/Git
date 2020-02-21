@@ -5,7 +5,7 @@
  */
 package com.acqua.atina.jdeconnector.internal.ws;
 
-import com.atila.metadata.metadata.driver.MetadataWSDriver;
+import com.atina.metadata.metadata.driver.MetadataWSDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +27,7 @@ import com.acqua.atina.jdeconnector.internal.model.metadata.ParameterTypeObject;
 import com.acqua.atina.jdeconnector.internal.model.metadata.ParameterTypeSimple;
 import com.acqua.atina.jdeconnectorservice.JDEConnectorService;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,6 +36,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 import oracle.e1.bssvfoundation.impl.security.E1Principal;
+import org.mule.util.StringUtils;
 
 /**
  *
@@ -185,15 +187,25 @@ public class JDEWSDriver {
         // Get Input Parameter Type
         // ================================================
         // 
+        logger.info("----------------------------------------------------");
+        logger.info("Get Input Parameter For : " + operation);
+        
         String inputModel = this.operaciones.getInputValueObject(operation);
 
         if (!inputModel.isEmpty()) {
 
-            returnValue = processModel(models, models.getModelo(inputModel));
+            logger.info("Getting Input Model : " + inputModel);
+            
+            returnValue = processModel(models, models.getModelo(inputModel),0);
+            
+            logHashMapAsJson(returnValue);
+             
+            logger.info("Getting Input Model Done");
 
         }
         else
         {
+            logger.error("Operation without Input Parameter: " + operation);
             throw new JDESingleException("Operation without Input Parameter");
         }
 
@@ -208,30 +220,62 @@ public class JDEWSDriver {
         // Get Input Parameter Type
         // ================================================
         // 
+        logger.info("----------------------------------------------------");
+        logger.info("Get Output Parameter For : " + operation);
+        
         String inputModel = this.operaciones.getOutputValueObject(operation);
 
         if (!inputModel.isEmpty()) {
-
-            returnValue = processModel(models, models.getModelo(inputModel));
+            
+             logger.info("Getting Output Model : " + inputModel);
+               
+            returnValue = processModel(models, models.getModelo(inputModel),0);
+            
+            logHashMapAsJson(returnValue);
+            
+            logger.info("Getting Output Model Done");
 
         }
         else
         {
+            logger.error("Operation without Output Parameter: " + operation);
+            
             throw new JDESingleException("Operation without Output Parameter");
         }
 
         return returnValue;
     }
     
+    private void logHashMapAsJson(HashMap returnValue) {
+
+        String e1ReturnValueAsJson = "";
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        mapper.configure(MapperFeature.USE_ANNOTATIONS, false);
+
+        try {
+
+            e1ReturnValueAsJson = mapper.writeValueAsString(returnValue);
+
+            logger.info("         Input Model : " + e1ReturnValueAsJson);
+
+        } catch (JsonProcessingException exj) {
+
+            logger.error("Error converting Input Model to String: " + exj.getMessage());
+
+        }
+
+    }
       
-      private HashMap<String, ParameterTypeSimple> processModel(Models models, Model parameters) throws JDESingleException {
+      private HashMap<String, ParameterTypeSimple> processModel(Models models, Model parameters, int level) throws JDESingleException {
       
         HashMap<String, ParameterTypeSimple> returnValue = new HashMap<String, ParameterTypeSimple>();
 
+        level++;
+        
         if (parameters != null) {
-            
-            logger.info("Process Model " + parameters.toString());
-
+             
             Collection<ModelType> param = parameters.getParametersType().values();
 
             for (ModelType modelType : param) {
@@ -252,7 +296,7 @@ public class JDEWSDriver {
                     
                     ParameterTypeObject parameterObject = new ParameterTypeObject(modelType.getParameterType(),modelType.getParameterSequence(),modelType.isRepetead());
 
-                    parameterObject.addParameterType(modelType.getParameterName(), processModel(models, models.getModelo(modelType.getParameterType())));
+                    parameterObject.addParameterType(modelType.getParameterName(), processModel(models, models.getModelo(modelType.getParameterType()),level));
                 
                     returnValue.put(modelType.getParameterName(), parameterObject);
 
@@ -261,7 +305,7 @@ public class JDEWSDriver {
             }
 
         }
-
+        
         return returnValue;
     }
       
@@ -273,7 +317,11 @@ public class JDEWSDriver {
         // Get Input Object
         // ================================================
         //
+        logger.info("Call JDE WS. Operation: " + operation); 
+        
         String inputModelClass = this.operaciones.getInputValueObject(operation);
+        
+        logger.info("Call JDE WS. Input Model Class: " + inputModelClass);
         
         Model inputModelMetadata = models.getModelo(inputModelClass);
         

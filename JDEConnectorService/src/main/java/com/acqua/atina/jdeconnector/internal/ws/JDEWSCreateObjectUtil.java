@@ -14,11 +14,15 @@ import org.slf4j.LoggerFactory;
 import com.acqua.atina.jdeconnectorservice.JDEConnectorService;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleException;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Map; 
+import java.util.Set;
 import org.mule.util.ClassUtils;
 
 /**
@@ -28,6 +32,13 @@ import org.mule.util.ClassUtils;
 public class JDEWSCreateObjectUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(JDEConnectorService.class);
+    
+    private static final Set<String> PRIMITIVE_TYPES = new HashSet(Arrays.asList(
+    "boolean", "byte", "char", "float", "int", "long", "short", "double"));
+    
+    public static boolean isPrimitiveType(String clazz) {
+        return PRIMITIVE_TYPES.contains(clazz);
+    }
 
     public static Object generateObject(String inputModelClass, Models models, Model model, HashMap<String, Object> inputParameters) {
 
@@ -35,13 +46,23 @@ public class JDEWSCreateObjectUtil {
         // Load Class
         // -------------------------------------------------------------
         //
+        
+        logger.info("JDEWSCreateObjectUtil: Generata Java Object: " + inputModelClass);
+        
         Class inputValueClass = loadClass(inputModelClass);
+        
+        logger.info("JDEWSCreateObjectUtil: Generata Java Object Done");
 
         // -------------------------------------------------------------
         // Instance Class
         // -------------------------------------------------------------
         //
+        
+        logger.info("JDEWSCreateObjectUtil: Instancing Java Object " + inputModelClass);
+        
         Object instanceLoaded = instanceClass(inputModelClass);
+        
+        logger.info("JDEWSCreateObjectUtil: Instancing Java Object " + inputModelClass + " Done");
 
         // -------------------------------------------------------------
         // For Each Parameter
@@ -73,21 +94,49 @@ public class JDEWSCreateObjectUtil {
             // Set Model Type
             // -----------------------------------
             
+            logger.info("JDEWSCreateObjectUtil:                   ----------------------------------------------------------------");
+            logger.info("JDEWSCreateObjectUtil:                   Parameter: " + inputParameter.getKey());
+            
             ModelType currentModelType = (ModelType) model.getParametersType().get(inputParameter.getKey());
              
             String variableName = currentModelType.getParameterName();
-            
             String parameterType = currentModelType.getParameterType();
+            boolean repeated = currentModelType.isRepetead();
+            
+            logger.info("JDEWSCreateObjectUtil:                   Parameter Name: " + variableName);
+            logger.info("JDEWSCreateObjectUtil:                   Parameter Type: " + parameterType);
+            logger.info("JDEWSCreateObjectUtil:                   Parameter Repeated: " + repeated);
+            logger.info("JDEWSCreateObjectUtil:                   Parameter Seq: " + currentModelType.getParameterSequence());
              
-
             // Check Parameter Type
             if (models.isModel(parameterType)) {
                 
                 Model newModel = models.getModelo(parameterType);
-                      
-                Object parameterInstance = generateObject(parameterType,models, newModel, (HashMap<String, Object>) inputParameter.getValue());
                 
-                setValue(inputValueClass,instanceLoaded, variableName, parameterType, parameterInstance, i, currentModelType.isRepetead());
+                Object parameterInstance = null;
+                
+                if(currentModelType.isRepetead())
+                {
+                    ArrayList parameterInstanceList = new ArrayList();
+                    
+                    for(Object value:(ArrayList) inputParameter.getValue())
+                    {
+                        Object parameterInstanceObject = generateObject(parameterType,models, newModel, (HashMap<String, Object>) value);
+                        
+                        parameterInstanceList.add(parameterInstanceObject);
+                        
+                    }
+                    
+                    setValue(inputValueClass,instanceLoaded, variableName, parameterType, parameterInstanceList, i, currentModelType.isRepetead());
+                    
+                }
+                else
+                {
+                    parameterInstance = generateObject(parameterType,models, newModel, (HashMap<String, Object>) inputParameter.getValue());
+                    setValue(inputValueClass,instanceLoaded, variableName, parameterType, parameterInstance, i, currentModelType.isRepetead());
+                } 
+                
+                
 
             } else {
                  
@@ -96,7 +145,7 @@ public class JDEWSCreateObjectUtil {
                  
             }
 
-            logger.info("Error getting class " + inputParameter.getClass().getName());
+            logger.info("JDEWSCreateObjectUtil:                   Value Stted");
             
             i++;
 
@@ -202,17 +251,12 @@ public class JDEWSCreateObjectUtil {
 
             Class<?>[] parametroClasss = null;
             
-            if(repeated)
-            {
-                parametroClasss = new Class[1];
-                parametroClasss[0] = Array.newInstance(Class.forName(variableClass), 0).getClass();;
-            } 
-            else
-            {
-                parametroClasss = new Class[1];
-                parametroClasss[0] = Class.forName(variableClass);
-            }
-  
+            parametroClasss = new Class[1];
+            
+            Field field = cls.getDeclaredField(variableName);
+            
+            parametroClasss[0] = field.getType();
+           
             Method metodo = ClassUtils.getMethod(cls, setterName, parametroClasss, true);
 
             if (metodo == null) {
@@ -228,47 +272,75 @@ public class JDEWSCreateObjectUtil {
             {
                 ArrayList   values = (ArrayList) valueObject;
                 
-                parametrosDeInputDelMetodo = new Object[1];
+                if(values.size() > 0)
+                {
+                  
+                    Object[] newArray2 = arrayListToArray(values);
+                    parametrosDeInputDelMetodo = new Object[1];
+                    parametrosDeInputDelMetodo[0] = newArray2;
+  
+                    metodo.invoke(instanceLoaded, parametrosDeInputDelMetodo);
                 
-                //Object[] newArray = values.toArray(new String[values.size()]); 
-                
-                Object[] newArray2 = arrayListToArray(values);
-                
-                parametrosDeInputDelMetodo[0] = newArray2;
-                 
+                }
                 
             } else
             {
                 parametrosDeInputDelMetodo = new Object[1];
-                parametrosDeInputDelMetodo[0] = valueObject;
+                
+                if(isPrimitiveType(variableClass))
+                {
+                    switch (variableClass) {
+                        
+                        case "int":
+                            
+                            int value = ((Integer)valueObject).intValue();  
+                            parametrosDeInputDelMetodo[0] = value;
+                             metodo.invoke(instanceLoaded, value);
+                             break;
+                                    
+                    }
+                     
+                    
+                } else
+                {
+                    parametrosDeInputDelMetodo[0] = valueObject;
+                    metodo.invoke(instanceLoaded, parametrosDeInputDelMetodo);
+                }
+                 
             }
               
-            metodo.invoke(instanceLoaded, parametrosDeInputDelMetodo);
+            
 
-        } catch (ClassNotFoundException ex) {
+        }  catch (IllegalAccessException ex) {
 
-            logger.error("Class not found " + variableClass + " Error: " + ex.getMessage(), ex);
+            logger.error("Error setting value. Illegal Access Exception " + variableClass + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleException("Class not found : " + ex.getMessage(), ex);
-
-        } catch (IllegalAccessException ex) {
-
-            logger.error("Class not found " + variableClass + " Error: " + ex.getMessage(), ex);
-
-            throw new JDESingleException("Class not found : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error setting value. Illegal Access Exception " + ex.getMessage(), ex);
 
         } catch (IllegalArgumentException ex) {
 
-            logger.error("Class not found " + variableClass + " Error: " + ex.getMessage(), ex);
+            logger.error("Error setting value. Illegal Argument Exception " + variableClass + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleException("Class not found : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error setting value. Illegal Argument Exception " + ex.getMessage(), ex);
 
         } catch (InvocationTargetException ex) {
 
-            logger.error("Class not found " + variableClass + " Error: " + ex.getMessage(), ex);
+            logger.error("Error setting value. Invocation Target Exception " + variableClass + " Error: " + ex.getMessage(), ex);
 
-            throw new JDESingleException("Class not found : " + ex.getMessage(), ex);
+            throw new JDESingleException("Error setting value. Invocation Target Exception " + ex.getMessage(), ex);
 
+        } catch (NoSuchFieldException ex) {
+            
+            logger.error("Error setting value. No Such Field Exception " + variableClass + " Error: " + ex.getMessage(), ex);
+
+            throw new JDESingleException("Error setting value. No Such Field Exception " + ex.getMessage(), ex);
+            
+        } catch (SecurityException ex) {
+            
+            logger.error("Error setting value. Security Exception " + variableClass + " Error: " + ex.getMessage(), ex);
+
+            throw new JDESingleException("Error setting value. Security Exception: " + ex.getMessage(), ex);
+            
         }
 
     }

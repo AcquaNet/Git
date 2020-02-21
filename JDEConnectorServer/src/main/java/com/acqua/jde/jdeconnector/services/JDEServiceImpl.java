@@ -113,7 +113,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.SessionResponse> responseObserver) {
 
         
-        logger.info("-------------------------------------------------------------------------------");
+        logger.info("======================================================================================");
         logger.info("JDE Login: Begin Login");
         logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
         
@@ -293,7 +293,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     public void logout(com.jde.jdeserverwp.servicios.LogoutRequest request,
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.SessionResponse> responseObserver) {
 
-        logger.info("-------------------------------------------------------------------------------");
+        logger.info("======================================================================================");
         logger.info("JDE Logout: Begin");
         logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
         
@@ -381,7 +381,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.IsConnectedResponse> responseObserver) {
 
         
-        logger.info("-------------------------------------------------------------------------------");
+        logger.info("======================================================================================");
         logger.info("JDE isConnected: Begin with Session ID: " + request.getSessionId());
         logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
         
@@ -470,7 +470,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     public void operaciones(com.jde.jdeserverwp.servicios.OperacionesRequest request,
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.OperacionesResponse> responseObserver) {
         
-        logger.info("-------------------------------------------------------------------------------");
+        logger.info("======================================================================================");
         logger.info("JDE Connector Server. Getting operations");
         logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
 
@@ -598,7 +598,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     public void getMetadaParaOperacion(com.jde.jdeserverwp.servicios.GetMetadataRequest request,
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.GetMetadataResponse> responseObserver) {
         
-        logger.info("-------------------------------------------------------------------------------");
+        logger.info("======================================================================================");
         logger.info("JDE Connector Server. Get Metadata for Operation");
         logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
         
@@ -798,7 +798,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     public void getJsonsForOperation(com.jde.jdeserverwp.servicios.GetMetadataRequest request,
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.GetJsonsForOperationResponse> responseObserver) {
         
-        logger.info("-------------------------------------------------------------------------------");
+        logger.info("======================================================================================");
         logger.info("JDE Connector Server. Get Metadata for Operation");
         logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
         
@@ -1334,7 +1334,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.EjecutarOperacionResponse> responseObserver) {
         
         
-        logger.info("-------------------------------------------------------------------------------");
+        logger.info("======================================================================================");
         logger.info("JDE Connector Server. Execute Operation");
         logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID())); 
         
@@ -1413,12 +1413,21 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 // Convert Input Value as Hash Map
                 // -----------------------------------------------------
                 //
+                logger.info("----------------------------------------------------------"); 
+                logger.info("Converting Input ..."); 
+                
                 HashMap<String, Object> inputValues = convertirInputEnHashMap(valoresEnviadosPorElConectorParaInvocacion, inputParameters, 0);
                  
+                logger.info("Converting Input Done"); 
+                
+                logger.info("----------------------------------------------------------"); 
+                logger.info("Calling Operation ..."); 
+                
                 HashMap<String, Object> returnValues = singleConnection.callJDEOperation(request.getOperacionKey(), inputValues, sessionID);
                 
-                logger.info("Converting Input into HashMap. Parameter Name: ");
-                
+                logger.info("----------------------------------------------------------"); 
+                logger.info("Preparing Response ..."); 
+                  
                 // =========================================================
                 // Preparar Response
                 // =========================================================
@@ -1757,6 +1766,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         
         HashMap<String, Object> returnValue = new HashMap<String, Object>();
         
+        boolean errorFound = false;
+        
         for (EjecutarOperacionValores valor : values) {
 
             // Nombre del Parametro
@@ -1765,168 +1776,188 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
  
             logger.info("Converting Input into HashMap. Parameter Name: " + nombreDelParametro);
             
-            // Get Metadata
-  
-            ParameterTypeSimple parameterMetadata = metadataFromInput.get(nombreDelParametro);
+            if(metadataFromInput.containsKey(nombreDelParametro))
+            {
             
-            logger.info("    Type: " + parameterMetadata.getModelType());
-            logger.info("    Repeated: " + parameterMetadata.isRepeated());  
-            
-            if (parameterMetadata instanceof ParameterTypeObject) {
-                 
-                
-                if(parameterMetadata.isRepeated())
-                {
-                    
-                    ArrayList<Object> listaDeValores = new ArrayList();
-                    
-                    List<EjecutarOperacionValores> valores = valor.getListaDeValoresList();
-                    
-                    for (EjecutarOperacionValores valorLista : valores) {
-                        
-                        level ++;
-                        
-                        listaDeValores.add(convertirInputEnHashMap(valorLista.getListaDeValoresList(), metadataFromInput,level));
-                        
-                        level--;
-                        
+                // Get Metadata
+
+                ParameterTypeSimple parameterMetadata = metadataFromInput.get(nombreDelParametro);
+
+                logger.info("    Type: " + parameterMetadata.getModelType());
+                logger.info("    Repeated: " + parameterMetadata.isRepeated());  
+                logger.info("    Value: " + valor.toString());  
+                logger.info("    Level: " + level);
+
+                if (parameterMetadata instanceof ParameterTypeObject) {
+
+
+                    if(parameterMetadata.isRepeated())
+                    {
+
+                        ArrayList<Object> listaDeValores = new ArrayList();
+
+                        List<EjecutarOperacionValores> valores = valor.getListaDeValoresList();
+
+                        for (EjecutarOperacionValores valorLista : valores) {
+
+                            level ++;
+
+                            listaDeValores.add(convertirInputEnHashMap(valorLista.getListaDeValoresList(), ((ParameterTypeObject) parameterMetadata).getSubParameters(),level));
+
+                            level--;
+
+                        }
+
+                        returnValue.put(nombreDelParametro, listaDeValores);
+
                     }
-                    
-                    returnValue.put(nombreDelParametro, listaDeValores);
-                    
-                }
-                else
-                {
-                    // The value is an Object
-                    
-                    returnValue.put(nombreDelParametro, convertirInputEnHashMap(valor.getListaDeValoresList(), ((ParameterTypeObject) parameterMetadata).getSubParameters(), level+1));
-                
-                    
-                }
-                 
+                    else
+                    {
+                        // The value is an Object
 
-            } else {
+                        returnValue.put(nombreDelParametro, convertirInputEnHashMap(valor.getListaDeValoresList(), ((ParameterTypeObject) parameterMetadata).getSubParameters(), level+1));
 
-                if (parameterMetadata.isRepeated()) {
 
-                    ArrayList<Object> listaDeValores = new ArrayList();
-                    
-                    List<EjecutarOperacionValores> valores = valor.getListaDeValoresList();
-                    
-                    for (EjecutarOperacionValores valorLista : valores) {
-                        
+                    }
+
+
+                } else {
+
+                    if (parameterMetadata.isRepeated()) {
+
+                        ArrayList<Object> listaDeValores = new ArrayList();
+
+                        List<EjecutarOperacionValores> valores = valor.getListaDeValoresList();
+
+                        for (EjecutarOperacionValores valorLista : valores) {
+
+                            Object valorActual = null;
+
+                            switch (parameterMetadata.getModelType()) {
+
+                                case "java.lang.String":
+                                    valorActual = valorLista.getValueAsString();
+                                    break;
+                                case "java.lang.Integer":
+                                case "int":
+                                    valorActual = valorLista.getValueAsInteger();
+                                    break;
+                                case "java.lang.Boolean":
+                                    valorActual = valorLista.getValueAsBoolean();
+                                    break;
+                                case "java.lang.Long":
+                                    valorActual = valorLista.getValueAsLong();
+                                    break;
+                                case "java.lang.Double":
+                                    valorActual = valorLista.getValueAsDouble();
+                                    break;
+                                case "java.lang.Float":
+                                    valorActual = valorLista.getValueAsFloat();
+                                    break;
+                                case "java.util.Date":
+                                    // Convertir de TimeStamp to Date
+                                    com.google.protobuf.Timestamp ts = valorLista.getValueAsDate();
+                                    Instant valorTM = Instant.ofEpochSecond(ts.getSeconds(), ts.getNanos());
+                                    valorActual = Date.from(valorTM);
+                                    break;
+                                case "java.lang.Byte":
+                                    valorActual = valorLista.getValuesAsByteString();
+                                    break;
+                                case "BDecimal":
+                                case "java.math.BigDecimal":
+                                    Double valueDouble = new Double(valorLista.getValueAsDouble());
+                                    String strValueD = valueDouble.toString();
+                                    valorActual = new BigDecimal(strValueD);
+                                    break; 
+                                case "BInteger":
+                                case "java.math.BigInteger":
+                                    Long valueLong = new Long(valorLista.getValueAsLong());
+                                    String strValueL = valueLong.toString();
+                                    valorActual = new BigInteger(strValueL);
+                                    break;
+                                default:
+                                    logger.error("Error convirtiendo tipoDelParametroDeInput: " + parameterMetadata.getModelType());
+                                    errorFound = true;
+                                    break;
+
+                            }
+
+                            listaDeValores.add(valorActual);
+
+                        }
+
+                        returnValue.put(nombreDelParametro, listaDeValores);
+
+
+                    } else {
+
                         Object valorActual = null;
 
                         switch (parameterMetadata.getModelType()) {
 
                             case "java.lang.String":
-                                valorActual = valorLista.getValueAsString();
+                                valorActual = valor.getValueAsString();
                                 break;
                             case "java.lang.Integer":
-                                valorActual = valorLista.getValueAsInteger();
+                            case "int":
+                                valorActual = valor.getValueAsInteger();
                                 break;
                             case "java.lang.Boolean":
-                                valorActual = valorLista.getValueAsBoolean();
+                                valorActual = valor.getValueAsBoolean();
                                 break;
                             case "java.lang.Long":
-                                valorActual = valorLista.getValueAsLong();
+                                valorActual = valor.getValueAsLong();
                                 break;
                             case "java.lang.Double":
-                                valorActual = valorLista.getValueAsDouble();
+                                valorActual = valor.getValueAsDouble();
                                 break;
                             case "java.lang.Float":
-                                valorActual = valorLista.getValueAsFloat();
+                                valorActual = valor.getValueAsFloat();
                                 break;
                             case "java.util.Date":
                                 // Convertir de TimeStamp to Date
-                                com.google.protobuf.Timestamp ts = valorLista.getValueAsDate();
+                                com.google.protobuf.Timestamp ts = valor.getValueAsDate();
                                 Instant valorTM = Instant.ofEpochSecond(ts.getSeconds(), ts.getNanos());
                                 valorActual = Date.from(valorTM);
                                 break;
                             case "java.lang.Byte":
-                                valorActual = valorLista.getValuesAsByteString();
+                                valorActual = valor.getValuesAsByteString();
                                 break;
                             case "BDecimal":
                             case "java.math.BigDecimal":
-                                Double valueDouble = new Double(valorLista.getValueAsDouble());
+                                Double valueDouble = new Double(valor.getValueAsDouble());
                                 String strValueD = valueDouble.toString();
                                 valorActual = new BigDecimal(strValueD);
-                                break; 
+                                break;
                             case "BInteger":
                             case "java.math.BigInteger":
-                                Long valueLong = new Long(valorLista.getValueAsLong());
+                                Long valueLong = new Long(valor.getValueAsLong());
                                 String strValueL = valueLong.toString();
                                 valorActual = new BigInteger(strValueL);
                                 break;
                             default:
-                                logger.info("Error convirtiendo tipoDelParametroDeInput: " + parameterMetadata.getModelType());
+                                logger.error("Error convirtiendo tipoDelParametroDeInput: " + parameterMetadata.getModelType());
+                                errorFound = true;
                                 break;
 
                         }
 
-                        listaDeValores.add(valorActual);
-                        
-                    }
-                    
-                    returnValue.put(nombreDelParametro, listaDeValores);
-                    
-                    
-                } else {
-
-                    Object valorActual = null;
-
-                    switch (parameterMetadata.getModelType()) {
-
-                        case "java.lang.String":
-                            valorActual = valor.getValueAsString();
-                            break;
-                        case "java.lang.Integer":
-                            valorActual = valor.getValueAsInteger();
-                            break;
-                        case "java.lang.Boolean":
-                            valorActual = valor.getValueAsBoolean();
-                            break;
-                        case "java.lang.Long":
-                            valorActual = valor.getValueAsLong();
-                            break;
-                        case "java.lang.Double":
-                            valorActual = valor.getValueAsDouble();
-                            break;
-                        case "java.lang.Float":
-                            valorActual = valor.getValueAsFloat();
-                            break;
-                        case "java.util.Date":
-                            // Convertir de TimeStamp to Date
-                            com.google.protobuf.Timestamp ts = valor.getValueAsDate();
-                            Instant valorTM = Instant.ofEpochSecond(ts.getSeconds(), ts.getNanos());
-                            valorActual = Date.from(valorTM);
-                            break;
-                        case "java.lang.Byte":
-                            valorActual = valor.getValuesAsByteString();
-                            break;
-                        case "BDecimal":
-                        case "java.math.BigDecimal":
-                            Double valueDouble = new Double(valor.getValueAsDouble());
-                            String strValueD = valueDouble.toString();
-                            valorActual = new BigDecimal(strValueD);
-                            break;
-                        case "BInteger":
-                        case "java.math.BigInteger":
-                            Long valueLong = new Long(valor.getValueAsLong());
-                            String strValueL = valueLong.toString();
-                            valorActual = new BigInteger(strValueL);
-                            break;
-                        default:
-                            logger.info("Error convirtiendo tipoDelParametroDeInput: " + parameterMetadata.getModelType());
-                            break;
+                        returnValue.put(nombreDelParametro, valorActual);
 
                     }
-
-                    returnValue.put(nombreDelParametro, valorActual);
-
                 }
+            
+            } else
+            {
+                errorFound = true;
+                logger.error("                        Parameter Name: " + nombreDelParametro + " has not a valid name inside metadata");
             }
 
+        }
+        
+        if(errorFound)
+        {
+            throw new JDESingleConnectionException("Error Converting Input as HashMap ",null);
         }
         
         return returnValue;
