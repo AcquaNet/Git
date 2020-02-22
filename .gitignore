@@ -21,3 +21,10 @@ JDEDockers/Microservice/docker_jdemicroserver/java64/j2sdk-image-x86_64-u232-b01
 JDEDockers/Microservice/docker_jdemicroserver_ngrok/images/ngrok-stable-linux-amd64.zip
 JDEDockers/Developer/microserverlog/
 JDEConnectorServer/.idea/
+JDEConnectorService/.idea/
+JDEConnectorWSService/.settings/
+JDEConnectorServer/.settings/
+JDEConnectorServer/.project
+JDEConnectorServer/.classpath
+JDEConnectorWSService/.classpath
+JDEConnectorWSService/.project

@@ -264,7 +264,8 @@ public class Main {
         // Creacion de Parametros de Output
         // -----------------------------------------
         
-        ConfirmPurchaseOrderApproveReject outputArproveReject = null;
+        @SuppressWarnings("unused")
+		ConfirmPurchaseOrderApproveReject outputArproveReject = null;
 
         // -----------------------------------------
         // Ingreso de Parametros de Input
