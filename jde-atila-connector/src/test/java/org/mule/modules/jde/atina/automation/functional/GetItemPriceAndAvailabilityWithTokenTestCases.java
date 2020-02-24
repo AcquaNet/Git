@@ -1,6 +1,7 @@
 package org.mule.modules.jde.atina.automation.functional;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -70,7 +71,7 @@ public class GetItemPriceAndAvailabilityWithTokenTestCases extends AbstractTestC
 
         Map<String, Object> entityData = TestDataBuilder.getItemPriceAvaEntityData();
 
-        entityData.put("JDE Token", result);
+        entityData.put("JDE Token", ((HashMap) result).get("token"));
 
         try {
             Map<String, Object> resultItemPrice = (Map<String, Object>) ejecucionInterna("GetItemPriceAvaEntityData",
@@ -88,11 +89,11 @@ public class GetItemPriceAndAvailabilityWithTokenTestCases extends AbstractTestC
 
         entityTypeAuth = TestDataBuilder.getAuthorizationLogoutEntityType();
 
-        entityDataAuth = TestDataBuilder.getAuthorizationFromTokenEntityData((String) result);
+        entityDataAuth = TestDataBuilder.getAuthorizationFromTokenEntityData((String) ((HashMap) result).get("token"));
 
         result = autorizacion(entityTypeAuth, entityDataAuth);
 
-        logger.info("MULESOFT - Token: " + result);
+        logger.info("MULESOFT - Token: " + ((HashMap) result).get("token"));
 
         logger.info("MULESOFT - FUNCTIONAL_TEST END ");
 
