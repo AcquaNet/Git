@@ -40,6 +40,7 @@ public class JDEConnectorServer {
     private static String DIR_INSTALACION = "service-files";
     private static String METADATA = "metadata";
     private static String BUILDID = "2016-02-16-001";
+    private static boolean LOAD_LIBRARY = true;
     
     @Option(name = "-help", usage = "Ayuda")
     public boolean help;
@@ -193,35 +194,38 @@ public class JDEConnectorServer {
         //
          
         
+        if(LOAD_LIBRARY)
+        {
+            try {
+
+                logger.info("------------------------------------------------------");
+                logger.info("Loading libraries...");
+
+                File jarToAdd1 = new File("/tmp/jde/lib/jde-lib-wrapped-" + jdeLibWrappedVersion + ".jar");
+                 
+                File jarToAdd2 = new File("/tmp/jde/lib/StdWebService-" + stdWebServiceVersion + ".jar");
+
+                URL urlJdeLibWrapped = jarToAdd1.toURI().toURL();
+
+                URL urlStdWebService = jarToAdd2.toURI().toURL();
+
+                DynamicURLClassLoader.addURL(urlJdeLibWrapped);
+
+                DynamicURLClassLoader.addURL(urlStdWebService); 
+
+                logger.info("Libraries loaded: ");
+                logger.info("          " + urlJdeLibWrapped.toString());
+                logger.info("          " + urlStdWebService.toString());
+
+            } catch (Exception ex) {
+
+                logger.info("Error. Cannot load libraries:");
+                logger.info("     " + ex.getMessage());
+                logger.info("See log for more detail");
+                logger.error(ex.getMessage(), ex);
+
+            }
         
-        try {
-            
-            logger.info("------------------------------------------------------");
-            logger.info("Loading libraries...");
-            
-            File jarToAdd1 = new File("/tmp/jde/lib/jde-lib-wrapped-" + jdeLibWrappedVersion + ".jar");
-            
-            File jarToAdd2 = new File("/tmp/jde/lib/StdWebService-" + stdWebServiceVersion + ".jar");
-            
-            URL urlJdeLibWrapped = jarToAdd1.toURI().toURL();
-            
-            URL urlStdWebService = jarToAdd2.toURI().toURL();
-            
-            DynamicURLClassLoader.addURL(urlJdeLibWrapped);
-            
-            DynamicURLClassLoader.addURL(urlStdWebService); 
-            
-            logger.info("Libraries loaded: ");
-            logger.info("          " + urlJdeLibWrapped.toString());
-            logger.info("          " + urlStdWebService.toString());
-            
-        } catch (Exception ex) {
-            
-            logger.info("Error. Cannot load libraries:");
-            logger.info("     " + ex.getMessage());
-            logger.info("See log for more detail");
-            logger.error(ex.getMessage(), ex);
-            
         }
         
         // ================================================
