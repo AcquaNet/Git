@@ -11,6 +11,7 @@ public class TestDataBuilder {
     private static final String GET_ITEM_PRICE = "oracle.e1.bssv.JP410000.InventoryManager.getItemPrice";
     private static final String GET_WO_PO = "oracle.e1.bssv.JP000040.FinancialComplianceManager.getWriteOffProcessingOptions";
     private static final String GET_ITEM_PRICE_AVA = "oracle.e1.bssv.JP420000.SalesOrderManager.getItemPriceAndAvailabilityV3";
+    private static final String GET_AB_MO = "oracle.e1.bssv.JPR01MO1.RI_AddressBookMediaObjectManager.getAddressBookMO";
 
     private static final String AUTH_FROM_TOKEN = "FromTokenData";
     private static final String AUTH_FROM_USER = "FromUserData";
@@ -162,6 +163,43 @@ public class TestDataBuilder {
         entityId.put("entityId", new Integer(4242));
 
         returnValue.put("customer", entityId);
+
+        return returnValue;
+
+    }
+    
+    public static String getABMediaObjectEntityType() {
+        return GET_AB_MO;
+    }
+
+    public static Map<String, Object> getABMediaObjectEntityData() {
+
+        final Map<String, Object> returnValue = new HashMap<String, Object>();
+        
+        ArrayList<Map<String, Object>> moItems = new ArrayList<Map<String, Object>>();
+ 
+        Map<String, Object> moItem = new java.util.HashMap<String, Object>();
+         
+        moItem.put("szItemName", "");
+        moItem.put("szData", new ArrayList<Object>());
+        moItem.put("szMoType", "");
+        moItem.put("moSeqNo", new Integer(0));
+        
+        moItems.add(moItem);
+        
+        
+        Map<String, Object> mediaObject = new java.util.HashMap<String, Object>();
+        mediaObject.put("mnAddressNumber", new Integer(7701));
+        mediaObject.put("moItems", moItems);
+         
+
+        Map<String, Object> entityId = new java.util.HashMap<String, Object>();
+        entityId.put("entityId", new Integer(7701));
+        entityId.put("entityTaxId", "");
+        entityId.put("entityLongId", "");
+
+        returnValue.put("mediaObject", mediaObject);
+        returnValue.put("entity", entityId);
 
         return returnValue;
 

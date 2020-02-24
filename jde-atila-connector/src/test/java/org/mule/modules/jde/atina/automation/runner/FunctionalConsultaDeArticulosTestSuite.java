@@ -1,6 +1,7 @@
 package org.mule.modules.jde.atina.automation.runner;
 
 import org.mule.modules.atina.jde.JDEAtinaConnector;
+import org.mule.modules.jde.atina.automation.functional.GetABMediaObjectTestCases;
 import org.mule.modules.jde.atina.automation.functional.GetItemPriceAndAvailabilityTestCases;
 import org.mule.modules.jde.atina.automation.functional.GetItemPriceAndAvailabilityWithTokenTestCases;
 import org.mule.modules.jde.atina.automation.functional.GetItemPriceTestCases;
@@ -20,6 +21,7 @@ import org.mule.tools.devkit.ctf.mockup.ConnectorTestContext;
         WriteOffProcessingOptionsTestCases.class,
         GetPurchaseOrdersForApproverTestCases.class,
         GetItemPriceAndAvailabilityWithTokenTestCases.class
+        GetABMediaObjectTestCases.class
 })
 public class FunctionalConsultaDeArticulosTestSuite {
 
