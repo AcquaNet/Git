@@ -1556,6 +1556,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                     logger.info(levelLog + "    Type: " + parameterMetadata.getModelType());
                     logger.info(levelLog + "    Real Type: " + value.getClass().getName()); 
                     logger.info(levelLog + "    Repeated: " + parameterMetadata.isRepeated());
+                    logger.info(levelLog + "    Value: " + value.toString());
 
                     if (parameterMetadata instanceof ParameterTypeObject) {
                          
@@ -1613,8 +1614,17 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                         }
 
                     } else {
-
-                        if (parameterMetadata.isRepeated()) {
+                    	
+                    	if (parameterMetadata.isRepeated() && parameterMetadata.getModelType().equals("byte")) {
+                    		
+                    		newOperationResponse.setNombreDelParametro(nombreDelParametro); 
+                            newOperationResponse.setTipoDelParametro(parameterMetadata.getModelType()); 
+                            newOperationResponse.setNullValue(false); 
+                            newOperationResponse.setIsObject(false);
+                            newOperationResponse.setValueAsString((String) value);
+                            
+                    		
+                    	} else if (parameterMetadata.isRepeated() && !parameterMetadata.getModelType().equals("byte")) {
 
                             newOperationResponse.setNombreDelParametro(nombreDelParametro);
 
