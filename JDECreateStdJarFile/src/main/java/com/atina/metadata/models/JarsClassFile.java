@@ -8,6 +8,8 @@ package com.atina.metadata.models;
 import com.atina.metadata.models.JarClassFile;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  *
@@ -49,11 +51,31 @@ public class JarsClassFile {
     public void setMetadataDriver(String metadataDriver) {
         this.metadataDriver = metadataDriver;
     } 
+    
+    public void sort() {
+         
+        Collections.sort(jars, JarsClassFile.jarComp);
+        
+    } 
      
     @Override
     public String toString() {
         return "JarsFile{" + "jars=" + Arrays.toString(jars.toArray()) + '}';
     }
  
+    
+    public static Comparator<JarClassFile> jarComp = new Comparator<JarClassFile>() {
+
+	public int compare(JarClassFile s1, JarClassFile s2) {
+	   String jar1 = s1.getName().toUpperCase();
+	   String jar2 = s2.getName().toUpperCase();
+
+	   //ascending order
+	   return jar1.compareTo(jar2);
+
+	   //descending order
+	   //return StudentName2.compareTo(StudentName1);
+    }};
+    
      
 }

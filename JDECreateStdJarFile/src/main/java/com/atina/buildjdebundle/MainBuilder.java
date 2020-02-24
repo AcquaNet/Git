@@ -2020,6 +2020,8 @@ public class MainBuilder {
         JarsToShade.setMetadataFolder(jarMetadata);
         JarsToShade.setMetadataDriver(metadataDriver);
         
+        JarsToShade.sort();
+        
         try {
 
              // -----------------------------------------------
