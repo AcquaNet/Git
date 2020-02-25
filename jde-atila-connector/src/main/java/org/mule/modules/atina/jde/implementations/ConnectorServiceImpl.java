@@ -1545,7 +1545,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
         logger.info(levelLog + " Is Object: " + ejecutarOperacionesResponse.getIsObject());
         logger.info(levelLog + " Is Repeated: " + ejecutarOperacionesResponse.getRepeatedParameter());
 
-        if (ejecutarOperacionesResponse.getRepeatedParameter()) {
+        if (ejecutarOperacionesResponse.getRepeatedParameter() && !ejecutarOperacionesResponse.getTipoDelParametro().equals("byte")) {
 
             String nombreParametro = ejecutarOperacionesResponse.getNombreDelParametro();
 
@@ -1588,6 +1588,18 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
             response.put(nombreParametro, lista);
 
+        } else if (ejecutarOperacionesResponse.getRepeatedParameter() && ejecutarOperacionesResponse.getTipoDelParametro().equals("byte")) {
+        	
+        	logger.info(levelLog + " Processing Value: " + ejecutarOperacionesResponse.getNombreDelParametro());
+            logger.info(levelLog + " Parameter Type: " + ejecutarOperacionesResponse.getTipoDelParametro());
+            logger.info(levelLog + " Is Object: " + ejecutarOperacionesResponse.getIsObject());
+            logger.info(levelLog + " Is Repeated: " + ejecutarOperacionesResponse.getRepeatedParameter());
+            Object value = ejecutarOperacionesResponse.getValueAsString();
+            
+            logger.info(levelLog + "     Parametro: " + ejecutarOperacionesResponse.getNombreDelParametro() + " Tipo del Parametro:" + ejecutarOperacionesResponse.getTipoDelParametro() + " Valor: " + (value == null ? "NULO" : value.toString()));
+
+            response.put(ejecutarOperacionesResponse.getNombreDelParametro(), value);
+        	
         } else if (ejecutarOperacionesResponse.getIsObject()) {
 
             String nombreParametro = ejecutarOperacionesResponse.getNombreDelParametro();
