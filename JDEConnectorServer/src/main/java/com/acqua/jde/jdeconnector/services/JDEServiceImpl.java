@@ -1621,6 +1621,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                             newOperationResponse.setTipoDelParametro(parameterMetadata.getModelType()); 
                             newOperationResponse.setNullValue(false); 
                             newOperationResponse.setIsObject(false);
+                            newOperationResponse.setRepeatedParameter(true);
                             newOperationResponse.setValueAsString((String) value);
                             
                     		
