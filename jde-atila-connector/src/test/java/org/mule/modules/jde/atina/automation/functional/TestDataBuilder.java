@@ -172,7 +172,7 @@ public class TestDataBuilder {
         return GET_AB_MO;
     }
 
-    public static Map<String, Object> getABMediaObjectEntityData() {
+    public static Map<String, Object> getABMediaObjectWithImageAndURLEntityData() {
 
         final Map<String, Object> returnValue = new HashMap<String, Object>();
         
@@ -195,7 +195,73 @@ public class TestDataBuilder {
 
         Map<String, Object> entityId = new java.util.HashMap<String, Object>();
         entityId.put("entityId", new Integer(7701));
+        entityId.put("entityTaxId", "256136888");
+        entityId.put("entityLongId", "");
+
+        returnValue.put("mediaObject", mediaObject);
+        returnValue.put("entity", entityId);
+
+        return returnValue;
+
+    }
+    
+    public static Map<String, Object> getABMediaObjectWithTextEntityData() {
+
+        final Map<String, Object> returnValue = new HashMap<String, Object>();
+        
+        ArrayList<Map<String, Object>> moItems = new ArrayList<Map<String, Object>>();
+ 
+        Map<String, Object> moItem = new java.util.HashMap<String, Object>();
+         
+        moItem.put("szItemName", "");
+        moItem.put("szData", new ArrayList<Object>());
+        moItem.put("szMoType", "");
+        moItem.put("moSeqNo", new Integer(0));
+        
+        moItems.add(moItem);
+        
+        
+        Map<String, Object> mediaObject = new java.util.HashMap<String, Object>();
+        mediaObject.put("mnAddressNumber", new Integer(3333));
+        mediaObject.put("moItems", moItems);
+         
+
+        Map<String, Object> entityId = new java.util.HashMap<String, Object>();
+        entityId.put("entityId", new Integer(3333));
         entityId.put("entityTaxId", "");
+        entityId.put("entityLongId", "");
+
+        returnValue.put("mediaObject", mediaObject);
+        returnValue.put("entity", entityId);
+
+        return returnValue;
+
+    }
+    
+    public static Map<String, Object> getABMediaObjectWithImageJPGEntityData() {
+
+        final Map<String, Object> returnValue = new HashMap<String, Object>();
+        
+        ArrayList<Map<String, Object>> moItems = new ArrayList<Map<String, Object>>();
+ 
+        Map<String, Object> moItem = new java.util.HashMap<String, Object>();
+         
+        moItem.put("szItemName", "");
+        moItem.put("szData", new ArrayList<Object>());
+        moItem.put("szMoType", "");
+        moItem.put("moSeqNo", new Integer(0));
+        
+        moItems.add(moItem);
+        
+        
+        Map<String, Object> mediaObject = new java.util.HashMap<String, Object>();
+        mediaObject.put("mnAddressNumber", new Integer(7703));
+        mediaObject.put("moItems", moItems);
+         
+
+        Map<String, Object> entityId = new java.util.HashMap<String, Object>();
+        entityId.put("entityId", new Integer(7703));
+        entityId.put("entityTaxId", "481560670");
         entityId.put("entityLongId", "");
 
         returnValue.put("mediaObject", mediaObject);
