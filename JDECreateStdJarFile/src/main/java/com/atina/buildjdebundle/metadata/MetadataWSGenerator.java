@@ -26,6 +26,7 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.ModifierSet;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.body.VariableDeclaratorId;
 import static com.github.javaparser.ast.internal.Utils.isNullOrEmpty;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import java.io.IOException;
@@ -529,11 +530,23 @@ public class MetadataWSGenerator {
                     
                     String varType = n.getType().toString();
                     
+                    List<VariableDeclarator> vars = n.getVariables();
+                    String varName = null;
+                    
+                    if(vars.size()==1)
+                    {
+                        varName = ((VariableDeclarator) vars.get(0)).getId().toString(); 
+                    }
+                    
                     if(varType.contains("[]"))
                     {
                         varType = varType.substring(0, varType.length() - 2);
                         tipoDelModelo.setRepetead(true);
-                    } else if (varType.contains("<"))
+                    } else if(varName.contains("[]"))
+                    {
+                        tipoDelModelo.setRepetead(true);
+                    }
+                    else if (varType.contains("<"))
                     {
                         varType = varType.substring(varType.indexOf("<") + 1, varType.indexOf(">"));
                         tipoDelModelo.setRepetead(true);
