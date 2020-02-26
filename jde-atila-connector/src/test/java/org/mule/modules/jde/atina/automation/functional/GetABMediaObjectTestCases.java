@@ -35,8 +35,7 @@ public class GetABMediaObjectTestCases extends AbstractTestCases {
             "unchecked",
             "unused"
     })
-    @Test
-    @Ignore
+    @Test 
     public void validateMediaImageAndURL() throws Exception {
 
         String entityType = TestDataBuilder.getABMediaObjectEntityType();
@@ -107,8 +106,7 @@ public class GetABMediaObjectTestCases extends AbstractTestCases {
             "unchecked",
             "unused"
     })
-    @Test
-    @Ignore
+    @Test 
     public void validateMediaText() throws Exception {
 
         String entityType = TestDataBuilder.getABMediaObjectEntityType();
@@ -171,8 +169,7 @@ public class GetABMediaObjectTestCases extends AbstractTestCases {
             "unchecked",
             "unused"
     })
-    @Test
-    @Ignore
+    @Test 
     public void validateMediaTextJPG() throws Exception {
 
         String entityType = TestDataBuilder.getABMediaObjectEntityType();
@@ -231,7 +228,8 @@ public class GetABMediaObjectTestCases extends AbstractTestCases {
 
     }
     
-    @Test 
+    @SuppressWarnings("unchecked")
+	@Test  
     public void validateMediaInvalidEntityAndValidMediaObject() throws Exception {
 
         String entityType = TestDataBuilder.getABMediaObjectEntityType();
@@ -280,6 +278,43 @@ public class GetABMediaObjectTestCases extends AbstractTestCases {
 
             }
 
+            logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
+
+        } catch (ExternalConnectorException e) {
+            logger.error(e.getE1Message());
+            throw new Exception(e.getMessage(), e);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new Exception(e.getMessage(), e);
+        }
+
+        logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
+
+    }
+    
+    @SuppressWarnings("unchecked")
+	@Test
+    public void validateMediaAddImageAsMediaObject() throws Exception {
+
+        String entityType = TestDataBuilder.addABMediaObjectEntityType();
+
+        logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " BEGIN ");
+
+        // ======================
+        // Get Connector Instance
+        // ======================
+
+        Map<String, Object> entityData = TestDataBuilder.addABMediaObjectImageEntityData();
+
+        try {
+            Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetABMediaObjectTestCases: ",
+                    entityType, entityData);
+
+            Integer addressBook = (Integer) ((Map<String, Object>)((Map<String, Object>) result.get("entityAddress")).get("entity")).get("entityId");
+            
+            assertTrue (addressBook.intValue()>0);
+              
             logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
 
         } catch (ExternalConnectorException e) {

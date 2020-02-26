@@ -1146,7 +1146,16 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             }
                             break;
                         case "java.lang.Byte":
-                            valorNuevo.setValuesAsByteString((ByteString) valor.getValue());
+                        case "byte":
+                        	if(metadataDelInput.getParametro().getRepeatedParameter())
+                        	{
+                        		valorNuevo.setValueAsString((String) valor.getValue());
+                        	}
+                        	else
+                        	{
+                        		valorNuevo.setValuesAsByteString((ByteString) valor.getValue());
+                        	}
+                            
                             break;
                         case "java.lang.Double":
                         case "BDecimal":

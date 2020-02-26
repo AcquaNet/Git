@@ -270,16 +270,30 @@ public class JDEWSCreateObjectUtil {
             
             if(repeated)
             {
-                ArrayList   values = (ArrayList) valueObject;
                 
-                if(values.size() > 0)
+                if(variableClass.equals("byte"))
                 {
-                  
-                    Object[] newArray2 = arrayListToArray(values);
+                    byte[] byteData = ((String) valueObject).getBytes();
+                     
                     parametrosDeInputDelMetodo = new Object[1];
-                    parametrosDeInputDelMetodo[0] = newArray2;
-  
+                    parametrosDeInputDelMetodo[0] = byteData;
                     metodo.invoke(instanceLoaded, parametrosDeInputDelMetodo);
+                    
+                } else
+                {
+                    
+                    ArrayList   values = (ArrayList) valueObject;
+
+                    if(values.size() > 0)
+                    {
+
+                        Object[] newArray2 = arrayListToArray(values);
+                        parametrosDeInputDelMetodo = new Object[1];
+                        parametrosDeInputDelMetodo[0] = newArray2;
+
+                        metodo.invoke(instanceLoaded, parametrosDeInputDelMetodo);
+
+                    }
                 
                 }
                 

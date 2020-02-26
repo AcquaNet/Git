@@ -1845,7 +1845,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
                 } else {
 
-                    if (parameterMetadata.isRepeated()) {
+                    if (parameterMetadata.isRepeated() && !parameterMetadata.getModelType().equals("byte")) {
 
                         ArrayList<Object> listaDeValores = new ArrayList();
 
@@ -1911,7 +1911,14 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                         returnValue.put(nombreDelParametro, listaDeValores);
 
 
-                    } else {
+                    } else if (parameterMetadata.isRepeated() && parameterMetadata.getModelType().equals("byte")) {
+                    	
+                    	String valorActual = valor.getValueAsString(); 
+                    	returnValue.put(nombreDelParametro, valorActual);
+                    	 
+                    }
+                    
+                    else {
 
                         Object valorActual = null;
 
