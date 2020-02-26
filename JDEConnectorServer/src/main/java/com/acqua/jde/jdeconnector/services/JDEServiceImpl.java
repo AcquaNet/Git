@@ -973,6 +973,189 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         
     }
     
+    @Override
+    public void ejecutarOperacion(com.jde.jdeserverwp.servicios.EjecutarOperacionRequest request,
+            io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.EjecutarOperacionResponse> responseObserver) {
+        
+        
+        logger.info("======================================================================================");
+        logger.info("JDE Connector Server. Execute Operation");
+        logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID())); 
+        
+        String tipoDeOperacion = request.getConnectorName();   // BSFN or WS
+        
+        Configuracion config = new Configuracion();
+        
+        config.setUser(request.getUser());
+
+        config.setPassword(request.getPassword());
+
+        config.setEnvironment(request.getEnvironment());
+
+        config.setRole(request.getRole());
+
+        config.setSessionId((int) request.getSessionId());
+        
+        config.setTokenExpiration(configuracion.getTokenExpiration());
+         
+        try {
+        
+           // ================================================
+           // Get Session ID
+           // ================================================
+           //
+           
+           if(!request.getJwtToken().isEmpty())
+            {
+             
+                config = getConfigFromJWT(request.getJwtToken()); 
+                   
+            }
+
+            int sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
+                                                                                config.getPassword(), 
+                                                                                config.getEnvironment(), 
+                                                                                config.getRole(), 
+                                                                                (int) config.getSessionIdAsInt(),
+                                                                                request.getWsconnection());
+         
+        
+            // ================================================
+            // Get Single Connection
+            // ================================================
+            // 
+
+            if (tipoDeOperacion.equals(TIPO_BSFN)) {
+
+                JDESingleConnection singleConnection = (JDESingleConnection) JDEPoolConnections.getInstance().getSingleConnection(sessionID);
+                
+                 
+                
+
+            }
+            
+            if (tipoDeOperacion.equals(TIPO_WS)) {
+
+                JDESingleWSConnection singleConnection = (JDESingleWSConnection) JDEPoolConnections.getInstance().getSingleConnection(sessionID);
+                
+                // ================================================
+                // Get Operations
+                // ================================================
+                //
+                HashMap<String, ParameterTypeSimple> inputParameters = singleConnection.getWSInputParameter(request.getOperacionKey());
+                
+                HashMap<String, ParameterTypeSimple> outputParameters = singleConnection.getWSOutputParameter(request.getOperacionKey());
+                
+                
+                // =========================================================
+                // Obtenere la Lista de Valores Enviado por el Conector
+                // =========================================================
+                //
+                List<EjecutarOperacionValores> valoresEnviadosPorElConectorParaInvocacion = request.getListaDeValoresList();
+                
+                // -----------------------------------------------------
+                // Convert Input Value as Hash Map
+                // -----------------------------------------------------
+                //
+                logger.info("----------------------------------------------------------"); 
+                logger.info("Converting Input ..."); 
+                
+                HashMap<String, Object> inputValues = convertirInputEnHashMap(valoresEnviadosPorElConectorParaInvocacion, inputParameters, 0);
+                 
+                logger.info("Converting Input Done"); 
+                
+                logger.info("----------------------------------------------------------"); 
+                logger.info("Calling Operation ..."); 
+                
+                HashMap<String, Object> returnValues = singleConnection.callJDEOperation(request.getOperacionKey(), inputValues, sessionID);
+                
+                logger.info("----------------------------------------------------------"); 
+                logger.info("Preparing Response ..."); 
+                  
+                // =========================================================
+                // Preparar Response
+                // =========================================================
+                //
+                
+                EjecutarOperacionResponse.Builder responseBuilder = EjecutarOperacionResponse.newBuilder();
+                
+                responseBuilder.setNombreDelParametro("response");
+                responseBuilder.setTipoDelParametro("Object");
+                responseBuilder.setRepeatedParameter(false);
+                responseBuilder.setNullValue(false);
+                responseBuilder.setIsObject(true);
+                 
+                createOperationResponse(responseBuilder, outputParameters,returnValues,0);
+                 
+                responseBuilder.setJwtToken(getJWT(config));
+                
+                // --------------------------------------------------
+                // Crear el Objeto Mensaje de GetMetadataResponse
+                // --------------------------------------------------
+                //  
+                responseObserver.onNext(responseBuilder.build());
+
+                responseObserver.onCompleted();
+
+            }
+
+        } catch (JDESingleConnectionException ex) {
+
+            String msg = "Error JDE Server: " + ex.getMessage();
+            logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
+            
+            StringBuilder sb = new StringBuilder();
+            sb.append("Error getting metadata operations");
+            sb.append("|");
+            sb.append(ex.getMessage());
+            sb.append("|%ExternalServiceException%");
+
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(sb.toString())
+                    .withCause(ex)
+                    .asRuntimeException());
+
+        } catch (JDESingleWSException ex) {
+
+            String msg = "Error JDE Server: " + ex.getMessage();
+            logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
+            
+            StringBuilder sb = new StringBuilder();
+            sb.append("Error Invoking WS");
+            sb.append("|");
+            sb.append(ex.getE1Message());
+            sb.append("|%WSException%");
+
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(sb.toString())
+                    .withCause(ex)
+                    .asRuntimeException());
+
+        } catch (Exception ex) {
+
+            String msg = "Error JDE Server: " + ex.getMessage();
+            logger.error(msg, ex);
+            logger.info("-------------------------------------------------------------------------------");
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("Error getting metadata operations");
+            sb.append("|");
+            sb.append(ex.getMessage());
+            sb.append("|%ServiceServerException%");
+
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(sb.toString())
+                    .withCause(ex)
+                    .asRuntimeException());
+
+        }
+         
+        logger.info("-------------------------------------------------------------------------------");
+        
+    }
+    
     private void generateInputTreeMetadata(GetMetadataResponse.Builder responseBuilder, HashMap<String, ParameterTypeSimple> parameters) {
  
          logger.info("Input Parameter");
@@ -1329,188 +1512,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
          
      } 
      
-    @Override
-    public void ejecutarOperacion(com.jde.jdeserverwp.servicios.EjecutarOperacionRequest request,
-            io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.EjecutarOperacionResponse> responseObserver) {
-        
-        
-        logger.info("======================================================================================");
-        logger.info("JDE Connector Server. Execute Operation");
-        logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID())); 
-        
-        String tipoDeOperacion = request.getConnectorName();   // BSFN or WS
-        
-        Configuracion config = new Configuracion();
-        
-        config.setUser(request.getUser());
-
-        config.setPassword(request.getPassword());
-
-        config.setEnvironment(request.getEnvironment());
-
-        config.setRole(request.getRole());
-
-        config.setSessionId((int) request.getSessionId());
-        
-        config.setTokenExpiration(configuracion.getTokenExpiration());
-         
-        try {
-        
-           // ================================================
-           // Get Session ID
-           // ================================================
-           //
-           
-           if(!request.getJwtToken().isEmpty())
-            {
-             
-                config = getConfigFromJWT(request.getJwtToken()); 
-                   
-            }
-
-            int sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
-                                                                                config.getPassword(), 
-                                                                                config.getEnvironment(), 
-                                                                                config.getRole(), 
-                                                                                (int) config.getSessionIdAsInt(),
-                                                                                request.getWsconnection());
-         
-        
-            // ================================================
-            // Get Single Connection
-            // ================================================
-            // 
-
-            if (tipoDeOperacion.equals(TIPO_BSFN)) {
-
-                JDESingleConnection singleConnection = (JDESingleConnection) JDEPoolConnections.getInstance().getSingleConnection(sessionID);
-                
-                 
-                
-
-            }
-            
-            if (tipoDeOperacion.equals(TIPO_WS)) {
-
-                JDESingleWSConnection singleConnection = (JDESingleWSConnection) JDEPoolConnections.getInstance().getSingleConnection(sessionID);
-                
-                // ================================================
-                // Get Operations
-                // ================================================
-                //
-                HashMap<String, ParameterTypeSimple> inputParameters = singleConnection.getWSInputParameter(request.getOperacionKey());
-                
-                HashMap<String, ParameterTypeSimple> outputParameters = singleConnection.getWSOutputParameter(request.getOperacionKey());
-                
-                
-                // =========================================================
-                // Obtenere la Lista de Valores Enviado por el Conector
-                // =========================================================
-                //
-                List<EjecutarOperacionValores> valoresEnviadosPorElConectorParaInvocacion = request.getListaDeValoresList();
-                
-                // -----------------------------------------------------
-                // Convert Input Value as Hash Map
-                // -----------------------------------------------------
-                //
-                logger.info("----------------------------------------------------------"); 
-                logger.info("Converting Input ..."); 
-                
-                HashMap<String, Object> inputValues = convertirInputEnHashMap(valoresEnviadosPorElConectorParaInvocacion, inputParameters, 0);
-                 
-                logger.info("Converting Input Done"); 
-                
-                logger.info("----------------------------------------------------------"); 
-                logger.info("Calling Operation ..."); 
-                
-                HashMap<String, Object> returnValues = singleConnection.callJDEOperation(request.getOperacionKey(), inputValues, sessionID);
-                
-                logger.info("----------------------------------------------------------"); 
-                logger.info("Preparing Response ..."); 
-                  
-                // =========================================================
-                // Preparar Response
-                // =========================================================
-                //
-                
-                EjecutarOperacionResponse.Builder responseBuilder = EjecutarOperacionResponse.newBuilder();
-                
-                responseBuilder.setNombreDelParametro("response");
-                responseBuilder.setTipoDelParametro("Object");
-                responseBuilder.setRepeatedParameter(false);
-                responseBuilder.setNullValue(false);
-                responseBuilder.setIsObject(true);
-                 
-                createOperationResponse(responseBuilder, outputParameters,returnValues,0);
-                 
-                responseBuilder.setJwtToken(getJWT(config));
-                
-                // --------------------------------------------------
-                // Crear el Objeto Mensaje de GetMetadataResponse
-                // --------------------------------------------------
-                //  
-                responseObserver.onNext(responseBuilder.build());
-
-                responseObserver.onCompleted();
-
-            }
-
-        } catch (JDESingleConnectionException ex) {
-
-            String msg = "Error JDE Server: " + ex.getMessage();
-            logger.error(msg, ex);
-            logger.info("-------------------------------------------------------------------------------");
-            
-            StringBuilder sb = new StringBuilder();
-            sb.append("Error getting metadata operations");
-            sb.append("|");
-            sb.append(ex.getMessage());
-            sb.append("|%ExternalServiceException%");
-
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription(sb.toString())
-                    .withCause(ex)
-                    .asRuntimeException());
-
-        } catch (JDESingleWSException ex) {
-
-            String msg = "Error JDE Server: " + ex.getMessage();
-            logger.error(msg, ex);
-            logger.info("-------------------------------------------------------------------------------");
-            
-            StringBuilder sb = new StringBuilder();
-            sb.append("Error Invoking WS");
-            sb.append("|");
-            sb.append(ex.getE1Message());
-            sb.append("|%WSException%");
-
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription(sb.toString())
-                    .withCause(ex)
-                    .asRuntimeException());
-
-        } catch (Exception ex) {
-
-            String msg = "Error JDE Server: " + ex.getMessage();
-            logger.error(msg, ex);
-            logger.info("-------------------------------------------------------------------------------");
-
-            StringBuilder sb = new StringBuilder();
-            sb.append("Error getting metadata operations");
-            sb.append("|");
-            sb.append(ex.getMessage());
-            sb.append("|%ServiceServerException%");
-
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription(sb.toString())
-                    .withCause(ex)
-                    .asRuntimeException());
-
-        }
-         
-        logger.info("-------------------------------------------------------------------------------");
-        
-    }
+    
     
     private void createOperationResponse(EjecutarOperacionResponse.Builder response, HashMap<String, ParameterTypeSimple> metadataParameters, HashMap<String, Object> valuesReturned, int level) throws IOException {
 
