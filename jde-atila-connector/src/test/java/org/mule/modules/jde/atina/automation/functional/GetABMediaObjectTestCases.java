@@ -148,6 +148,16 @@ public class GetABMediaObjectTestCases extends AbstractTestCases {
                     }
 
                 }
+                
+                if (dataType.equals("TEXT")) {
+
+                    decoder((String) imageObject.get("szData"), "/tmp/" + imageObject.get("szItemName"));
+       
+                    String htmlText = rtfToHtml(new FileReader(new File("/tmp/" + imageObject.get("szItemName"))));
+                    
+                    logger.info("MULESOFT - HTMO : " + htmlText + " END ");
+
+                }
 
             }
 
