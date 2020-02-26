@@ -131,7 +131,8 @@ public class MainBuilder {
 //                
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JP420000\\valueobject\\ShowPriceHistoryDetail.java");
                           
-                mt.generateMetadata("C:\\tmp\\sbfjars\\JPR01MO1\\valueobject\\ABGT_Publish.java");
+//                mt.generateMetadata("C:\\tmp\\sbfjars\\JPR01MO1\\valueobject\\ABGT_Publish.java");
+                mt.generateMetadata("C:\\tmp\\sbfjars\\JPR01MO1\\valueobject\\RI_ShowAddressBook.java");
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JP430000\\valueobject\\ConfirmPurchaseOrderAcknowledge.java");
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JP430000\\valueobject\\ConfirmPurchaseOrderAcknowledgeDetail.java");
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JP430000\\valueobject\\ConfirmPurchaseOrderAcknowledgeHeader.java");

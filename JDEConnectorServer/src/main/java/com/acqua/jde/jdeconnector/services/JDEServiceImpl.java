@@ -1758,6 +1758,15 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                     
                     newOperationResponse.setNullValue(true); 
                     
+                    if (parameterMetadata instanceof ParameterTypeObject) {
+                    	
+                    	newOperationResponse.setIsObject(true);
+                    	
+                    } else
+                    {
+                    	newOperationResponse.setIsObject(false);
+                    }
+                    
                 }
                 
                 // ---------------------------------------------------

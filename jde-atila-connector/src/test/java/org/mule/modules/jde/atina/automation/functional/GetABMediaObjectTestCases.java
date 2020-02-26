@@ -29,235 +29,311 @@ import java.util.Base64;
 
 public class GetABMediaObjectTestCases extends AbstractTestCases {
 
-	protected final Logger logger = LoggerFactory.getLogger(GetABMediaObjectTestCases.class);
+    protected final Logger logger = LoggerFactory.getLogger(GetABMediaObjectTestCases.class);
 
-	@SuppressWarnings({ "unchecked", "unused" })
-	@Test
-	@Ignore
-	public void validateMediaImageAndURL() throws Exception {
+    @SuppressWarnings({
+            "unchecked",
+            "unused"
+    })
+    @Test
+    @Ignore
+    public void validateMediaImageAndURL() throws Exception {
 
-		String entityType = TestDataBuilder.getABMediaObjectEntityType();
+        String entityType = TestDataBuilder.getABMediaObjectEntityType();
 
-		logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " BEGIN ");
+        logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " BEGIN ");
 
-		// ======================
-		// Get Connector Instance
-		// ======================
+        // ======================
+        // Get Connector Instance
+        // ======================
 
-		Map<String, Object> entityData = TestDataBuilder.getABMediaObjectWithImageAndURLEntityData();
+        Map<String, Object> entityData = TestDataBuilder.getABMediaObjectWithImageAndURLEntityData();
 
-		try {
-			Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetABMediaObjectTestCases: ",
-					entityType, entityData);
+        try {
+            Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetABMediaObjectTestCases: ",
+                    entityType, entityData);
 
-			Map<String, Object> images = (Map<String, Object>) result.get("mediaObject");
+            Map<String, Object> images = (Map<String, Object>) result.get("mediaObject");
 
-			ArrayList<Map<String, Object>> moItems = (ArrayList<Map<String, Object>>) images.get("moItems");
+            ArrayList<Map<String, Object>> moItems = (ArrayList<Map<String, Object>>) images.get("moItems");
 
-			for (Map<String, Object> imageObject : moItems) {
+            for (Map<String, Object> imageObject : moItems) {
 
-				logger.info(
-						"MULESOFT - FUNCTIONAL_TEST   ----------------------------------------------------------------");
-				logger.info("MULESOFT - FUNCTIONAL_TEST   szItemName: " + imageObject.get("szItemName") + "  ");
-				logger.info("MULESOFT - FUNCTIONAL_TEST   szData: " + imageObject.get("szData") + "  ");
-				logger.info("MULESOFT - FUNCTIONAL_TEST   szMoType: " + imageObject.get("szMoType") + "  ");
-				logger.info("MULESOFT - FUNCTIONAL_TEST   moSeqNo: " + imageObject.get("moSeqNo") + "  ");
+                logger.info(
+                        "MULESOFT - FUNCTIONAL_TEST   ----------------------------------------------------------------");
+                logger.info("MULESOFT - FUNCTIONAL_TEST   szItemName: " + imageObject.get("szItemName") + "  ");
+                logger.info("MULESOFT - FUNCTIONAL_TEST   szData: " + imageObject.get("szData") + "  ");
+                logger.info("MULESOFT - FUNCTIONAL_TEST   szMoType: " + imageObject.get("szMoType") + "  ");
+                logger.info("MULESOFT - FUNCTIONAL_TEST   moSeqNo: " + imageObject.get("moSeqNo") + "  ");
 
-				String dataType = (String) imageObject.get("szMoType");
+                String dataType = (String) imageObject.get("szMoType");
 
-				if (dataType.equals("IMAGE")) {
-					decoder((String) imageObject.get("szData"), "/tmp/image.gif");
+                if (dataType.equals("IMAGE")) {
+                    decoder((String) imageObject.get("szData"), "/tmp/image.gif");
 
-					if (ImageIO.read(new File("/tmp/image.gif")) == null) {
-						fail("File is not a image");
-					}
+                    if (ImageIO.read(new File("/tmp/image.gif")) == null) {
+                        fail("File is not a image");
+                    }
 
-				}
+                }
 
-				if (dataType.equals("TEXT")) {
-					fail("File is not a image");
+                if (dataType.equals("TEXT")) {
+                    fail("File is not a image");
 
-				}
+                }
 
-				if (dataType.equals("URL") && !isValidURL((String) imageObject.get("szItemName"))) {
-					fail("URL not valid");
-				}
+                if (dataType.equals("URL") && !isValidURL((String) imageObject.get("szItemName"))) {
+                    fail("URL not valid");
+                }
 
-			}
+            }
 
-			logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
+            logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
 
-		} catch (ExternalConnectorException e) {
-			logger.error(e.getE1Message());
-			throw new Exception(e.getMessage(), e);
+        } catch (ExternalConnectorException e) {
+            logger.error(e.getE1Message());
+            throw new Exception(e.getMessage(), e);
 
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			throw new Exception(e.getMessage(), e);
-		}
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new Exception(e.getMessage(), e);
+        }
 
-		logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
+        logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
 
-	}
-	
-	@SuppressWarnings({ "unchecked", "unused" })
-	@Test
-	@Ignore
-	public void validateMediaText() throws Exception {
+    }
 
-		String entityType = TestDataBuilder.getABMediaObjectEntityType();
+    @SuppressWarnings({
+            "unchecked",
+            "unused"
+    })
+    @Test
+    @Ignore
+    public void validateMediaText() throws Exception {
 
-		logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " BEGIN ");
+        String entityType = TestDataBuilder.getABMediaObjectEntityType();
 
-		// ======================
-		// Get Connector Instance
-		// ======================
+        logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " BEGIN ");
 
-		Map<String, Object> entityData = TestDataBuilder.getABMediaObjectWithTextEntityData();
+        // ======================
+        // Get Connector Instance
+        // ======================
 
-		try {
-			Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetABMediaObjectTestCases: ",
-					entityType, entityData);
+        Map<String, Object> entityData = TestDataBuilder.getABMediaObjectWithTextEntityData();
 
-			Map<String, Object> images = (Map<String, Object>) result.get("mediaObject");
+        try {
+            Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetABMediaObjectTestCases: ",
+                    entityType, entityData);
 
-			ArrayList<Map<String, Object>> moItems = (ArrayList<Map<String, Object>>) images.get("moItems");
+            Map<String, Object> images = (Map<String, Object>) result.get("mediaObject");
 
-			for (Map<String, Object> imageObject : moItems) {
+            ArrayList<Map<String, Object>> moItems = (ArrayList<Map<String, Object>>) images.get("moItems");
 
-				logger.info(
-						"MULESOFT - FUNCTIONAL_TEST   ----------------------------------------------------------------");
-				logger.info("MULESOFT - FUNCTIONAL_TEST   szItemName: " + imageObject.get("szItemName") + "  ");
-				logger.info("MULESOFT - FUNCTIONAL_TEST   szData: " + imageObject.get("szData") + "  ");
-				logger.info("MULESOFT - FUNCTIONAL_TEST   szMoType: " + imageObject.get("szMoType") + "  ");
-				logger.info("MULESOFT - FUNCTIONAL_TEST   moSeqNo: " + imageObject.get("moSeqNo") + "  ");
+            for (Map<String, Object> imageObject : moItems) {
 
-				String dataType = (String) imageObject.get("szMoType");
-  
-				if (dataType.equals("IMAGE")) {
-					
-					decoder((String) imageObject.get("szData"), "/tmp/" + imageObject.get("szItemName"));
+                logger.info(
+                        "MULESOFT - FUNCTIONAL_TEST   ----------------------------------------------------------------");
+                logger.info("MULESOFT - FUNCTIONAL_TEST   szItemName: " + imageObject.get("szItemName") + "  ");
+                logger.info("MULESOFT - FUNCTIONAL_TEST   szData: " + imageObject.get("szData") + "  ");
+                logger.info("MULESOFT - FUNCTIONAL_TEST   szMoType: " + imageObject.get("szMoType") + "  ");
+                logger.info("MULESOFT - FUNCTIONAL_TEST   moSeqNo: " + imageObject.get("moSeqNo") + "  ");
 
-					if (ImageIO.read(new File((String) imageObject.get("szItemName"))) == null) {
-						fail("File is not a image");
-					}
+                String dataType = (String) imageObject.get("szMoType");
 
-				}
- 
-			}
+                if (dataType.equals("IMAGE")) {
 
-			logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
+                    decoder((String) imageObject.get("szData"), "/tmp/" + imageObject.get("szItemName"));
 
-		} catch (ExternalConnectorException e) {
-			logger.error(e.getE1Message());
-			throw new Exception(e.getMessage(), e);
+                    if (ImageIO.read(new File((String) imageObject.get("szItemName"))) == null) {
+                        fail("File is not a image");
+                    }
 
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			throw new Exception(e.getMessage(), e);
-		}
+                }
 
-		logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
+            }
 
-	}
-	
-	@SuppressWarnings({ "unchecked", "unused" })
-	@Test 
-	public void validateMediaTextJPG() throws Exception {
+            logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
 
-		String entityType = TestDataBuilder.getABMediaObjectEntityType();
+        } catch (ExternalConnectorException e) {
+            logger.error(e.getE1Message());
+            throw new Exception(e.getMessage(), e);
 
-		logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " BEGIN ");
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new Exception(e.getMessage(), e);
+        }
 
-		// ======================
-		// Get Connector Instance
-		// ======================
+        logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
 
-		Map<String, Object> entityData = TestDataBuilder.getABMediaObjectWithImageJPGEntityData();
+    }
 
-		try {
-			Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetABMediaObjectTestCases: ",
-					entityType, entityData);
+    @SuppressWarnings({
+            "unchecked",
+            "unused"
+    })
+    @Test
+    @Ignore
+    public void validateMediaTextJPG() throws Exception {
 
-			Map<String, Object> images = (Map<String, Object>) result.get("mediaObject");
+        String entityType = TestDataBuilder.getABMediaObjectEntityType();
 
-			ArrayList<Map<String, Object>> moItems = (ArrayList<Map<String, Object>>) images.get("moItems");
+        logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " BEGIN ");
 
-			for (Map<String, Object> imageObject : moItems) {
+        // ======================
+        // Get Connector Instance
+        // ======================
 
-				logger.info(
-						"MULESOFT - FUNCTIONAL_TEST   ----------------------------------------------------------------");
-				logger.info("MULESOFT - FUNCTIONAL_TEST   szItemName: " + imageObject.get("szItemName") + "  ");
-				logger.info("MULESOFT - FUNCTIONAL_TEST   szData: " + imageObject.get("szData") + "  ");
-				logger.info("MULESOFT - FUNCTIONAL_TEST   szMoType: " + imageObject.get("szMoType") + "  ");
-				logger.info("MULESOFT - FUNCTIONAL_TEST   moSeqNo: " + imageObject.get("moSeqNo") + "  ");
+        Map<String, Object> entityData = TestDataBuilder.getABMediaObjectWithImageJPGEntityData();
 
-				String dataType = (String) imageObject.get("szMoType");
-  
-				if (dataType.equals("IMAGE")) {
-					
-					decoder((String) imageObject.get("szData"), "/tmp/" + imageObject.get("szItemName"));
+        try {
+            Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetABMediaObjectTestCases: ",
+                    entityType, entityData);
 
-					if (ImageIO.read(new File((String) imageObject.get("szItemName"))) == null) {
-						fail("File is not a image");
-					}
+            Map<String, Object> images = (Map<String, Object>) result.get("mediaObject");
 
-				}
-				 
-			}
+            ArrayList<Map<String, Object>> moItems = (ArrayList<Map<String, Object>>) images.get("moItems");
 
-			logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
+            for (Map<String, Object> imageObject : moItems) {
 
-		} catch (ExternalConnectorException e) {
-			logger.error(e.getE1Message());
-			throw new Exception(e.getMessage(), e);
+                logger.info(
+                        "MULESOFT - FUNCTIONAL_TEST   ----------------------------------------------------------------");
+                logger.info("MULESOFT - FUNCTIONAL_TEST   szItemName: " + imageObject.get("szItemName") + "  ");
+                logger.info("MULESOFT - FUNCTIONAL_TEST   szData: " + imageObject.get("szData") + "  ");
+                logger.info("MULESOFT - FUNCTIONAL_TEST   szMoType: " + imageObject.get("szMoType") + "  ");
+                logger.info("MULESOFT - FUNCTIONAL_TEST   moSeqNo: " + imageObject.get("moSeqNo") + "  ");
 
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			throw new Exception(e.getMessage(), e);
-		}
+                String dataType = (String) imageObject.get("szMoType");
 
-		logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
+                if (dataType.equals("IMAGE")) {
 
-	}
+                    decoder((String) imageObject.get("szData"), "/tmp/" + imageObject.get("szItemName"));
 
-	public static void decoder(String base64Image, String pathFile) {
-		try (FileOutputStream imageOutFile = new FileOutputStream(pathFile)) {
-			// Converting a Base64 String into Image byte array
-			byte[] imageByteArray = Base64.getDecoder().decode(base64Image);
-			imageOutFile.write(imageByteArray);
-		} catch (FileNotFoundException e) {
-			System.out.println("Image not found" + e);
-		} catch (IOException ioe) {
-			System.out.println("Exception while reading the Image " + ioe);
-		}
-	}
+                    if (ImageIO.read(new File((String) imageObject.get("szItemName"))) == null) {
+                        fail("File is not a image");
+                    }
 
-	public static boolean isValidURL(String urlString) {
-		try {
-			URL url = new URL(urlString);
-			url.toURI();
-			return true;
-		} catch (Exception exception) {
-			return false;
-		}
-	}
-	
-	public static String rtfToHtml(Reader rtf) throws IOException {
-	    JEditorPane p = new JEditorPane();
-	    p.setContentType("text/rtf");
-	    EditorKit kitRtf = p.getEditorKitForContentType("text/rtf");
-	    try {
-	        kitRtf.read(rtf, p.getDocument(), 0);
-	        kitRtf = null;
-	        EditorKit kitHtml = p.getEditorKitForContentType("text/html");
-	        Writer writer = new StringWriter();
-	        kitHtml.write(writer, p.getDocument(), 0, p.getDocument().getLength());
-	        return writer.toString();
-	    } catch (BadLocationException e) {
-	        e.printStackTrace();
-	    }
-	    return null;
-	}
-	
+                }
+
+            }
+
+            logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
+
+        } catch (ExternalConnectorException e) {
+            logger.error(e.getE1Message());
+            throw new Exception(e.getMessage(), e);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new Exception(e.getMessage(), e);
+        }
+
+        logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
+
+    }
+    
+    @Test 
+    public void validateMediaInvalidEntityAndValidMediaObject() throws Exception {
+
+        String entityType = TestDataBuilder.getABMediaObjectEntityType();
+
+        logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " BEGIN ");
+
+        // ======================
+        // Get Connector Instance
+        // ======================
+
+        Map<String, Object> entityData = TestDataBuilder.getABMediaObjectWithInvalidEntityEntityData();
+
+        try {
+            Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetABMediaObjectTestCases: ",
+                    entityType, entityData);
+
+            Map<String, Object> addressBook = (Map<String, Object>) result.get("addressBook");
+            
+            assertTrue (addressBook.isEmpty());
+            
+            
+            Map<String, Object> images = (Map<String, Object>) result.get("mediaObject");
+
+            ArrayList<Map<String, Object>> moItems = (ArrayList<Map<String, Object>>) images.get("moItems");
+
+            for (Map<String, Object> imageObject : moItems) {
+
+                logger.info(
+                        "MULESOFT - FUNCTIONAL_TEST   ----------------------------------------------------------------");
+                logger.info("MULESOFT - FUNCTIONAL_TEST   szItemName: " + imageObject.get("szItemName") + "  ");
+                logger.info("MULESOFT - FUNCTIONAL_TEST   szData: " + imageObject.get("szData") + "  ");
+                logger.info("MULESOFT - FUNCTIONAL_TEST   szMoType: " + imageObject.get("szMoType") + "  ");
+                logger.info("MULESOFT - FUNCTIONAL_TEST   moSeqNo: " + imageObject.get("moSeqNo") + "  ");
+
+                String dataType = (String) imageObject.get("szMoType");
+
+                if (dataType.equals("IMAGE")) {
+
+                    decoder((String) imageObject.get("szData"), "/tmp/" + imageObject.get("szItemName"));
+
+                    if (ImageIO.read(new File((String) imageObject.get("szItemName"))) == null) {
+                        fail("File is not a image");
+                    }
+
+                }
+
+            }
+
+            logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
+
+        } catch (ExternalConnectorException e) {
+            logger.error(e.getE1Message());
+            throw new Exception(e.getMessage(), e);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new Exception(e.getMessage(), e);
+        }
+
+        logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
+
+    }
+
+    public static void decoder(String base64Image, String pathFile) {
+        try (FileOutputStream imageOutFile = new FileOutputStream(pathFile)) {
+            // Converting a Base64 String into Image byte array
+            byte[] imageByteArray = Base64.getDecoder()
+                    .decode(base64Image);
+            imageOutFile.write(imageByteArray);
+        } catch (FileNotFoundException e) {
+            System.out.println("Image not found" + e);
+        } catch (IOException ioe) {
+            System.out.println("Exception while reading the Image " + ioe);
+        }
+    }
+
+    public static boolean isValidURL(String urlString) {
+        try {
+            URL url = new URL(urlString);
+            url.toURI();
+            return true;
+        } catch (Exception exception) {
+            return false;
+        }
+    }
+
+    public static String rtfToHtml(Reader rtf) throws IOException {
+        JEditorPane p = new JEditorPane();
+        p.setContentType("text/rtf");
+        EditorKit kitRtf = p.getEditorKitForContentType("text/rtf");
+        try {
+            kitRtf.read(rtf, p.getDocument(), 0);
+            kitRtf = null;
+            EditorKit kitHtml = p.getEditorKitForContentType("text/html");
+            Writer writer = new StringWriter();
+            kitHtml.write(writer, p.getDocument(), 0, p.getDocument()
+                    .getLength());
+            return writer.toString();
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
