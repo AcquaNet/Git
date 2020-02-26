@@ -2,6 +2,7 @@ package org.mule.modules.jde.atina.automation.functional;
 
 import static org.junit.Assert.*;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -35,7 +36,7 @@ public class GetABMediaObjectTestCases extends AbstractTestCases {
             "unchecked",
             "unused"
     })
-    @Test 
+    @Test
     public void validateMediaImageAndURL() throws Exception {
 
         String entityType = TestDataBuilder.getABMediaObjectEntityType();
@@ -106,7 +107,7 @@ public class GetABMediaObjectTestCases extends AbstractTestCases {
             "unchecked",
             "unused"
     })
-    @Test 
+    @Test
     public void validateMediaText() throws Exception {
 
         String entityType = TestDataBuilder.getABMediaObjectEntityType();
@@ -169,7 +170,7 @@ public class GetABMediaObjectTestCases extends AbstractTestCases {
             "unchecked",
             "unused"
     })
-    @Test 
+    @Test
     public void validateMediaTextJPG() throws Exception {
 
         String entityType = TestDataBuilder.getABMediaObjectEntityType();
@@ -205,7 +206,12 @@ public class GetABMediaObjectTestCases extends AbstractTestCases {
 
                     decoder((String) imageObject.get("szData"), "/tmp/" + imageObject.get("szItemName"));
 
-                    if (ImageIO.read(new File((String) imageObject.get("szItemName"))) == null) {
+                    String fileName = "/tmp/" + (String) imageObject.get("szItemName");
+                    File imageFile = new File(fileName);
+
+                    BufferedImage image = ImageIO.read(imageFile);
+
+                    if (image == null) {
                         fail("File is not a image");
                     }
 
@@ -227,9 +233,9 @@ public class GetABMediaObjectTestCases extends AbstractTestCases {
         logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
 
     }
-    
+
     @SuppressWarnings("unchecked")
-	@Test  
+    @Test
     public void validateMediaInvalidEntityAndValidMediaObject() throws Exception {
 
         String entityType = TestDataBuilder.getABMediaObjectEntityType();
@@ -247,10 +253,9 @@ public class GetABMediaObjectTestCases extends AbstractTestCases {
                     entityType, entityData);
 
             Map<String, Object> addressBook = (Map<String, Object>) result.get("addressBook");
-            
-            assertTrue (addressBook.isEmpty());
-            
-            
+
+            assertTrue(addressBook.isEmpty());
+
             Map<String, Object> images = (Map<String, Object>) result.get("mediaObject");
 
             ArrayList<Map<String, Object>> moItems = (ArrayList<Map<String, Object>>) images.get("moItems");
@@ -292,9 +297,9 @@ public class GetABMediaObjectTestCases extends AbstractTestCases {
         logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
 
     }
-    
+
     @SuppressWarnings("unchecked")
-	@Test
+    @Test
     public void validateMediaAddImageAsMediaObject() throws Exception {
 
         String entityType = TestDataBuilder.addABMediaObjectEntityType();
@@ -311,10 +316,10 @@ public class GetABMediaObjectTestCases extends AbstractTestCases {
             Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetABMediaObjectTestCases: ",
                     entityType, entityData);
 
-            Integer addressBook = (Integer) ((Map<String, Object>)((Map<String, Object>) result.get("entityAddress")).get("entity")).get("entityId");
-            
-            assertTrue (addressBook.intValue()>0);
-              
+            Integer addressBook = (Integer) ((Map<String, Object>) ((Map<String, Object>) result.get("entityAddress")).get("entity")).get("entityId");
+
+            assertTrue(addressBook.intValue() > 0);
+
             logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
 
         } catch (ExternalConnectorException e) {

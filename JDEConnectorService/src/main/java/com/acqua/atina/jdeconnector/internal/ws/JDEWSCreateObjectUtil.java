@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map; 
@@ -273,10 +274,10 @@ public class JDEWSCreateObjectUtil {
                 
                 if(variableClass.equals("byte"))
                 {
-                    byte[] byteData = ((String) valueObject).getBytes();
+                    byte[] imageByteArray = Base64.getDecoder().decode((String) valueObject);
                      
                     parametrosDeInputDelMetodo = new Object[1];
-                    parametrosDeInputDelMetodo[0] = byteData;
+                    parametrosDeInputDelMetodo[0] = imageByteArray;
                     metodo.invoke(instanceLoaded, parametrosDeInputDelMetodo);
                     
                 } else
