@@ -126,10 +126,10 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     }
 
     @Override
-    public void login(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion)
+    public void login(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, Long transactionID)
             throws InternalConnectorException, ExternalConnectorException {
 
-        logger.info("JDE Atina Service - Login... ");
+        logger.info("JDE Atina Service - Login with Transaction ID " + transactionID);
 
         SessionResponse tokenResponse = null;
 
@@ -144,6 +144,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             .setJwtToken(configuracion.getToken())
                             .setWsconnection(configuracion.getWsConnection())
                             .setSessionId(configuracion.getSessionID())
+                            .setTransactionID(transactionID)
                             .build());
 
         } catch (StatusRuntimeException e) {
@@ -203,7 +204,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     }
 
     @Override
-    public void logout(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion)
+    public void logout(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, Long transactionID)
             throws InternalConnectorException, ExternalConnectorException {
 
         logger.info("JDE Atina Service - Logout... ");
@@ -217,6 +218,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             .setWsconnection(configuracion.getWsConnection())
                             .setSessionId(configuracion.getSessionID())
                             .setJwtToken(configuracion.getToken())
+                            .setTransactionID(transactionID)
                             .build());
 
         } catch (StatusRuntimeException e) {
@@ -271,7 +273,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     }
 
     @Override
-    public boolean isConnected(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion)
+    public boolean isConnected(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, Long transactionID)
             throws InternalConnectorException, ExternalConnectorException {
 
         logger.info("JDE Atina Service - isConnected... ");
@@ -285,6 +287,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             .setWsconnection(configuracion.getWsConnection())
                             .setSessionId(configuracion.getSessionID())
                             .setJwtToken(configuracion.getToken())
+                            .setTransactionID(transactionID)
                             .build());
 
         } catch (StatusRuntimeException e) {
@@ -361,6 +364,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             .setJwtToken(configuracion.getToken())
                             .setSessionId(configuracion.getSessionID())
                             .setWsconnection(configuracion.getWsConnection())
+                            .setTransactionID(0L)
                             .build());
 
             for (Operacion operacion : operacionesResponse.getOperacionesList()) {
@@ -414,6 +418,16 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
         logger.info("JDE Atina Service - ConnectorServiceImpl - getJsonFromOperations ...");
 
+        Long transactionID = 0L;
+
+        if (entityData.containsKey("Transaction ID"))
+        {
+            transactionID = (Long) entityData.get("Transaction ID");
+
+            entityData.remove("Transaction ID");
+
+        }
+
         HashMap<String, String> operations = new HashMap<String, String>();
 
         GetJsonsForOperationResponse operacionesResponse = null;
@@ -431,6 +445,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             .setSessionId(configuracion.getSessionID())
                             .setWsconnection(configuracion.getWsConnection())
                             .setOperacionKey(entityType)
+                            .setTransactionID(transactionID)
                             .build());
 
             operations.put("JDE Token", operacionesResponse.getJwtToken());
@@ -662,6 +677,16 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
             }
 
+            Long transactionID = 0L;
+
+            if (entityData.containsKey("Transaction ID"))
+            {
+                transactionID = (Long) entityData.get("Transaction ID");
+
+                entityData.remove("Transaction ID");
+
+            }
+
             ArrayList<EjecutarOperacionValores> listaValoresValidos = procesarRequest(metadataInput, entityData, metadataInputAsHashMap, 0);
 
             valores.addAll(listaValoresValidos);
@@ -681,6 +706,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     .setRole(configuracion.getJdeRole())
                     .setSessionId(configuracion.getSessionID())
                     .setJwtToken(token)
+                    .setTransactionID(transactionID)
                     .setWsconnection(configuracion.getWsConnection())
                     .addAllListaDeValores(valores)
                     .build());

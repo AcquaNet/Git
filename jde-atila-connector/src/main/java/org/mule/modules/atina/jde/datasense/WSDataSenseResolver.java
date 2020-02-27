@@ -116,6 +116,7 @@ public class WSDataSenseResolver {
         DynamicObjectBuilder<?> objectBuilder = builder.createDynamicObject(key.getDisplayName());
 
         objectBuilder.addSimpleField("JDE Token", DataType.STRING);
+        objectBuilder.addSimpleField("Transaction ID", DataType.LONG);
 
         for (TipoDelParametroInput field : description) {
 

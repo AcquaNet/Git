@@ -96,6 +96,7 @@ public class AuthenticateDataSenseResolver {
                     .addSimpleField("JDE Environment", DataType.STRING)
                     .addSimpleField("JDE Role", DataType.STRING)
                     .addSimpleField("Session Id", DataType.INTEGER)
+                    .addSimpleField("Transaction ID", DataType.LONG)
                     .build();
             return new DefaultMetaData(authorModel);
 
@@ -105,6 +106,7 @@ public class AuthenticateDataSenseResolver {
                 "LogoutTokenData".equals(entityKey.getId())) {
             MetaDataModel authorModel = new DefaultMetaDataBuilder().createDynamicObject("Login")
                     .addSimpleField("JDE Token", DataType.STRING)
+                    .addSimpleField("Transaction ID", DataType.LONG)
                     .build();
             return new DefaultMetaData(authorModel);
 

@@ -116,6 +116,7 @@ public class JDEAtinaConnector {
 
         logger.info("JDE Atina - Authenticate User with Option: [" + entityType + "]");
         logger.info("           Current Configuration: [" + currentConfiguration.toString());
+        logger.info("           Transaction ID: [" + entityData.get("Transaction ID"));
 
         if (entityType.equals("FromUserData") || entityType.equals("FromTokenData"))
         {
@@ -137,7 +138,7 @@ public class JDEAtinaConnector {
 
                 this.getConfig()
                         .getService()
-                        .login(config.getStub(), currentConfigurationToken);
+                        .login(config.getStub(), currentConfigurationToken, (Long) entityData.get("Transaction ID"));
 
                 returnValue.put("token", currentConfigurationToken.getToken());
                 returnValue.put("userAddressBookNo", currentConfigurationToken.getAddressBookNumber());
@@ -154,7 +155,8 @@ public class JDEAtinaConnector {
                 currentConfigurationToken.setJdePassword((String) entityData.get("JDE Password"));
                 currentConfigurationToken.setJdeEnvironment((String) entityData.get("JDE Environment"));
                 currentConfigurationToken.setJdeRole((String) entityData.get("JDE Role"));
-                currentConfigurationToken.setSessionID((long) entityData.get("Session Id"));
+                currentConfigurationToken.setSessionID(config.getConfiguracion()
+                        .getSessionID());
                 currentConfigurationToken.setToken("");
                 currentConfigurationToken.setWsConnection(true);
 
@@ -162,7 +164,7 @@ public class JDEAtinaConnector {
 
                 this.getConfig()
                         .getService()
-                        .login(config.getStub(), currentConfigurationToken);
+                        .login(config.getStub(), currentConfigurationToken, (Long) entityData.get("Transaction ID"));
 
                 returnValue.put("token", currentConfigurationToken.getToken());
                 returnValue.put("userAddressBookNo", currentConfigurationToken.getAddressBookNumber());
@@ -171,7 +173,7 @@ public class JDEAtinaConnector {
             {
                 this.getConfig()
                         .getService()
-                        .login(config.getStub(), config.getConfiguracion());
+                        .login(config.getStub(), config.getConfiguracion(), (Long) entityData.get("Transaction ID"));
 
                 returnValue.put("token", config.getConfiguracion()
                         .getToken());
@@ -197,7 +199,7 @@ public class JDEAtinaConnector {
 
                 this.getConfig()
                         .getService()
-                        .logout(config.getStub(), currentConfigurationToken);
+                        .logout(config.getStub(), currentConfigurationToken, (Long) entityData.get("Transaction ID"));
 
                 returnValue.put("token", "");
 

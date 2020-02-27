@@ -12,11 +12,11 @@ import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
 
 public interface ConnectorServiceInterface {
 
-    public abstract void login(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion) throws InternalConnectorException;
+    public abstract void login(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, Long transactionID) throws InternalConnectorException;
 
-    public abstract void logout(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion) throws InternalConnectorException;
+    public abstract void logout(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, Long transactionID) throws InternalConnectorException;
 
-    public abstract boolean isConnected(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion) throws InternalConnectorException;
+    public abstract boolean isConnected(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, Long transactionID) throws InternalConnectorException;
 
     public abstract Map<String, String> getMetadataOperations(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion) throws InternalConnectorException;
 

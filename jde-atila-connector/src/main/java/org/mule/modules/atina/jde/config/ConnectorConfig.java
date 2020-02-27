@@ -209,7 +209,7 @@ public class ConnectorConfig {
 
             ConnectorServiceImpl servicio = (ConnectorServiceImpl) getService();
 
-            servicio.login(stub, this.configuracion);
+            servicio.login(stub, this.configuracion, 0L);
 
             logger.info("JDE ATILA Connector - JDE Logged");
 
@@ -282,7 +282,7 @@ public class ConnectorConfig {
 
                 ConnectorServiceImpl servicio = (ConnectorServiceImpl) getService();
 
-                servicio.logout(stub, this.configuracion);
+                servicio.logout(stub, this.configuracion, 0L);
 
                 logger.info("JDE ATILA Connector - JDE Disconnected");
 
@@ -387,7 +387,7 @@ public class ConnectorConfig {
 
                 logger.info("JDE ATILA Connector - Session is still connected Done");
 
-                return servicio.isConnected(stub, this.configuracion);
+                return servicio.isConnected(stub, this.configuracion, 0L);
 
             } catch (ExternalConnectorException e) {
 

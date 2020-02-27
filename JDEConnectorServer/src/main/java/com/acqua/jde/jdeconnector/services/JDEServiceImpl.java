@@ -113,9 +113,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.SessionResponse> responseObserver) {
 
         
-        logger.info("======================================================================================");
-        logger.info("JDE Login: Begin Login");
-        logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
+    	logger.info("BEGIN ID: " + request.getTransactionID() +  "======================================================================================");
+        logger.info("JDE ATINA Login");
         
         // -----------------------------------------
         // Generar Session
@@ -186,6 +185,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             
             String msg = "Error WS Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("END Atina Transaction ID: " + request.getTransactionID());
             logger.info("-------------------------------------------------------------------------------");
              
             StringBuilder sb = new StringBuilder();
@@ -204,6 +204,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             
             String msg = "Error WS Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("END Atina Transaction ID: " + request.getTransactionID());
             logger.info("-------------------------------------------------------------------------------");
             
             StringBuilder sb = new StringBuilder();
@@ -293,9 +294,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     public void logout(com.jde.jdeserverwp.servicios.LogoutRequest request,
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.SessionResponse> responseObserver) {
 
-        logger.info("======================================================================================");
-        logger.info("JDE Logout: Begin");
-        logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
+    	logger.info("BEGIN ID: " + request.getTransactionID() +  "======================================================================================");
+        logger.info("JDE ATINA Logout"); 
         
         Configuracion config = new Configuracion();
         
@@ -338,6 +338,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
             String msg = "Error WS Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("END Atina Transaction ID: " + request.getTransactionID());
             logger.info("-------------------------------------------------------------------------------");
             
             StringBuilder sb = new StringBuilder();
@@ -356,6 +357,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             
             String msg = "Error WS Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("END Atina Transaction ID: " + request.getTransactionID());
             logger.info("-------------------------------------------------------------------------------");
             
             StringBuilder sb = new StringBuilder();
@@ -371,7 +373,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
         } 
 
-        logger.info("JDE Logout: End");
+        logger.info("END Atina Transaction ID: " + request.getTransactionID());
         logger.info("-------------------------------------------------------------------------------");
 
     } 
@@ -381,9 +383,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.IsConnectedResponse> responseObserver) {
 
         
-        logger.info("======================================================================================");
-        logger.info("JDE isConnected: Begin with Session ID: " + request.getSessionId());
-        logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
+    	logger.info("BEGIN ID: " + request.getTransactionID() +  "======================================================================================");
+        logger.info("JDE ATINA  isConnected with Session ID: " + request.getSessionId()); 
         
         // -----------------------------------------
         // Generar Session
@@ -428,6 +429,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
             String msg = "Error WS Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("END Atina Transaction ID: " + request.getTransactionID());
             logger.info("-------------------------------------------------------------------------------");
             
             StringBuilder sb = new StringBuilder();
@@ -446,6 +448,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             
             String msg = "Error WS Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("END Atina Transaction ID: " + request.getTransactionID());
             logger.info("-------------------------------------------------------------------------------");
             
             StringBuilder sb = new StringBuilder();
@@ -461,7 +464,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
         } 
 
-         logger.info("JDE isConnected: End with Session ID: " + request.getSessionId()); 
+         logger.info("END Atina Transaction ID: " + request.getTransactionID()); 
          logger.info("-------------------------------------------------------------------------------");
          
     } 
@@ -470,10 +473,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     public void operaciones(com.jde.jdeserverwp.servicios.OperacionesRequest request,
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.OperacionesResponse> responseObserver) {
         
-        logger.info("======================================================================================");
-        logger.info("JDE Connector Server. Getting operations");
-        logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
-
+    	logger.info("BEGIN ID: " + request.getTransactionID() +  "======================================================================================");
+        logger.info("JDE ATINA Getting operations");
+          
         String tipoDeOperacion = request.getConnectorName();   // BSFN or WS
 
         // ================================================
@@ -557,6 +559,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
             String msg = "Error JDE Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("END Atina Transaction ID: " + request.getTransactionID()); 
             logger.info("-------------------------------------------------------------------------------");
             
             StringBuilder sb = new StringBuilder();
@@ -575,6 +578,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             
             String msg = "Error JDE Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("END Atina Transaction ID: " + request.getTransactionID()); 
             logger.info("-------------------------------------------------------------------------------");
             
             StringBuilder sb = new StringBuilder();
@@ -590,6 +594,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
         } 
 
+        logger.info("END Atina Transaction ID: " + request.getTransactionID()); 
         logger.info("-------------------------------------------------------------------------------");
         
     }
@@ -598,9 +603,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     public void getMetadaParaOperacion(com.jde.jdeserverwp.servicios.GetMetadataRequest request,
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.GetMetadataResponse> responseObserver) {
         
-        logger.info("======================================================================================");
-        logger.info("JDE Connector Server. Get Metadata for Operation");
-        logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
+    	logger.info("BEGIN ID: " + request.getTransactionID() +  "======================================================================================");
+        logger.info("JDE ATINA Get Metadata for Operation"); 
         
         String tipoDeOperacion = request.getConnectorName();   // BSFN or WS
         
@@ -758,6 +762,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
             String msg = "Error JDE Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("END Atina Transaction ID: " + request.getTransactionID()); 
             logger.info("-------------------------------------------------------------------------------");
             
             StringBuilder sb = new StringBuilder();
@@ -775,6 +780,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
             String msg = "Error JDE Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("END Atina Transaction ID: " + request.getTransactionID()); 
             logger.info("-------------------------------------------------------------------------------");
 
             StringBuilder sb = new StringBuilder();
@@ -798,9 +804,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     public void getJsonsForOperation(com.jde.jdeserverwp.servicios.GetMetadataRequest request,
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.GetJsonsForOperationResponse> responseObserver) {
         
-        logger.info("======================================================================================");
-        logger.info("JDE Connector Server. Get Metadata for Operation");
-        logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID()));
+    	logger.info("BEGIN ID: " + request.getTransactionID() +  "======================================================================================");
+        logger.info("JDE ATINA Get JSON for Operation"); 
         
         String tipoDeOperacion = request.getConnectorName();   // BSFN or WS
         
@@ -937,6 +942,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
             String msg = "Error JDE Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("END Atina Transaction ID: " + request.getTransactionID()); 
             logger.info("-------------------------------------------------------------------------------");
             
             StringBuilder sb = new StringBuilder();
@@ -954,6 +960,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
             String msg = "Error JDE Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("END Atina Transaction ID: " + request.getTransactionID()); 
             logger.info("-------------------------------------------------------------------------------");
 
             StringBuilder sb = new StringBuilder();
@@ -978,9 +985,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.EjecutarOperacionResponse> responseObserver) {
         
         
-        logger.info("======================================================================================");
-        logger.info("JDE Connector Server. Execute Operation");
-        logger.info("Atina Transaction ID: " + Long.toString(request.getTransactionID())); 
+        logger.info("BEGIN ID: " + request.getTransactionID() +  "======================================================================================");
+        logger.info("JDE ATINA Execute Operation" + request.getOperacionKey());
         
         String tipoDeOperacion = request.getConnectorName();   // BSFN or WS
         
@@ -1103,6 +1109,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
             String msg = "Error JDE Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("END Atina Transaction ID: " + request.getTransactionID());
             logger.info("-------------------------------------------------------------------------------");
             
             StringBuilder sb = new StringBuilder();
@@ -1120,6 +1127,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
             String msg = "Error JDE Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("END Atina Transaction ID: " + request.getTransactionID());
             logger.info("-------------------------------------------------------------------------------");
             
             StringBuilder sb = new StringBuilder();
@@ -1137,6 +1145,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
             String msg = "Error JDE Server: " + ex.getMessage();
             logger.error(msg, ex);
+            logger.info("END Atina Transaction ID: " + request.getTransactionID());
             logger.info("-------------------------------------------------------------------------------");
 
             StringBuilder sb = new StringBuilder();
@@ -1152,6 +1161,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
         }
          
+        logger.info("END Atina Transaction ID: " + request.getTransactionID());
         logger.info("-------------------------------------------------------------------------------");
         
     }
