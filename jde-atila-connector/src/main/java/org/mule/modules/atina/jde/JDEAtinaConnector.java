@@ -1,5 +1,6 @@
 package org.mule.modules.atina.jde;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import org.mule.api.annotations.param.MetaDataKeyParam;
 import org.mule.api.annotations.param.MetaDataKeyParamAffectsType;
 import org.mule.api.annotations.MetaDataScope;
 import org.mule.api.annotations.Processor;
+import org.mule.api.annotations.display.Summary;
 import org.mule.api.annotations.param.Default;
 import org.mule.modules.atina.jde.config.ConnectorConfig;
 import org.mule.modules.atina.jde.datasense.AuthenticateDataSenseResolver;
@@ -79,6 +81,16 @@ public class JDEAtinaConnector {
         logger.info("JDE Atina - GetJSONShemaDataSenseResolver: [" + entityType + "] Executed");
 
         return entity;
+
+    }
+
+    @Processor(friendlyName = "Get Log From Microserver")
+    public File getLogFromMicroserver(@Summary("Name of channel to create") Long transactionID)
+            throws InternalConnectorException, ConnectionException {
+
+        logger.info("JDE Atina - Get Log From Microserver Transaction ID: [" + transactionID + "]");
+
+        return new File("/tmp/jde/JDEConnectorServerLog/jde_atina_server_2020-02-27.0.log");
 
     }
 

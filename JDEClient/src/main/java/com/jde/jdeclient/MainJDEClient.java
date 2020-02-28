@@ -5,8 +5,12 @@
  */
 package com.jde.jdeclient;
 
+import com.google.common.io.ByteSink;
+import com.google.protobuf.ByteString;
 import com.jde.jdeclient.configuracion.Configuracion;
 import com.jde.jdeclient.configuracion.ConfiguracionServer;
+import com.jde.jdeserverwp.servicios.CapturarLogRequest;
+import com.jde.jdeserverwp.servicios.CapturarLogResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionRequest;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
@@ -28,6 +32,9 @@ import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.internal.DnsNameResolverProvider;
+import io.grpc.stub.ClientCallStreamObserver;
+import io.grpc.stub.ClientResponseObserver;
+import io.grpc.stub.StreamObserver;
 import io.grpc.util.RoundRobinLoadBalancerFactory;
 import io.jsonwebtoken.JwtBuilder;
 import java.util.List;
@@ -35,11 +42,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm; 
+import io.jsonwebtoken.SignatureAlgorithm;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.InetAddress;
+import java.nio.file.Path;
 import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Iterator;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
@@ -50,36 +61,36 @@ import javax.xml.bind.DatatypeConverter;
 public class MainJDEClient {
 
     private static final Logger logger = LoggerFactory.getLogger(MainJDEClient.class);
-    
+
     private static final Boolean testWS_Logout = Boolean.FALSE;
     private static final Boolean testWS_WriteOffProcessingOptions = Boolean.FALSE;
     private static final Boolean testWS_ItemPrice = Boolean.FALSE;
     private static final Boolean testWS_PurchaseOrdersForApprover = Boolean.FALSE;
     private static final Boolean testBSFN = Boolean.FALSE;
-    
+
     private static final Boolean testWS_PurchaseOrdersForApproverGetJson = Boolean.FALSE;
-    
-    private static final Boolean testWS_PurchaseOrdersForApproverWithToken = Boolean.TRUE;
-    
+
+    private static final Boolean testWS_PurchaseOrdersForApproverWithToken = Boolean.FALSE;
+
+    private static final Boolean test_log_capture = Boolean.TRUE;
 
     public void iniciarAplicacion(String[] args) throws Exception {
 
         ConfiguracionServer configuracion = new ConfiguracionServer();
 
-        //configuracion.setServidorServicio("192.168.99.100"); // Servidor Hub
-        //configuracion.setPuertoServicio(8085);
-        configuracion.setServidorServicio("c7629931.ngrok.io"); // Servidor Hub
-        configuracion.setPuertoServicio(80); // Puerto Servidor Hub
+        configuracion.setServidorServicio("192.168.99.100"); // Servidor Hub
+        configuracion.setPuertoServicio(8085);
+//        configuracion.setServidorServicio("c7629931.ngrok.io"); // Servidor Hub
+//        configuracion.setPuertoServicio(80); // Puerto Servidor Hub
 
         configuracion.setUser("JDE");
         configuracion.setPassword("Modus2017!");
         configuracion.setEnvironment("JDV920");
         configuracion.setRole("*ALL");
         configuracion.setSession(new Integer(0));
-        
-        if(testBSFN)
-        {
-         
+
+        if (testBSFN) {
+
             configuracion.setWsConnection(Boolean.FALSE);
 
             // ===========================  
@@ -142,9 +153,8 @@ public class MainJDEClient {
                                 .setWsconnection(configuracion.getWsConnection())
                                 .build());
 
-                for(Operacion operacion: operaciones.getOperacionesList())
-                {
- 
+                for (Operacion operacion : operaciones.getOperacionesList()) {
+
                     logger.info("Operacion [" + operacion.getNombreOperacion() + "]");
 
                 }
@@ -177,9 +187,9 @@ public class MainJDEClient {
 
                 for (TipoDelParametroInput parameter : operaciones.getListaDeParametrosInputList()) {
 
-                    logger.info("Operacion [" + parameter.getNombreDelParametro() + "]");  
-                    logger.info("Operacion [" + parameter.getTipoDelParametroJava() + "]");  
-                     
+                    logger.info("Operacion [" + parameter.getNombreDelParametro() + "]");
+                    logger.info("Operacion [" + parameter.getTipoDelParametroJava() + "]");
+
                 }
 
             } catch (Exception ex) {
@@ -189,11 +199,10 @@ public class MainJDEClient {
                 throw new RuntimeException("Error Logeando", ex);
 
             }
-        
+
         }
-        
-        if(testWS_PurchaseOrdersForApprover)
-        {
+
+        if (testWS_PurchaseOrdersForApprover) {
             configuracion.setWsConnection(Boolean.TRUE);
 
             // ===========================  
@@ -256,8 +265,7 @@ public class MainJDEClient {
                                 .setWsconnection(configuracion.getWsConnection())
                                 .build());
 
-                for(Operacion operacion: operaciones.getOperacionesList())
-                {
+                for (Operacion operacion : operaciones.getOperacionesList()) {
 
                     System.out.println("Operacion [" + operacion.getNombreOperacion() + "]");
 
@@ -289,24 +297,23 @@ public class MainJDEClient {
                                 .setOperacionKey("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover")
                                 .build());
 
-                 logger.info("Input  ");
-                 
+                logger.info("Input  ");
+
                 for (TipoDelParametroInput parameter : operaciones.getListaDeParametrosInputList()) {
-                    
+
                     int level = 0;
 
-                     printParameter(parameter, level);
-                     
-                       
+                    printParameter(parameter, level);
+
                 }
-                
-                 logger.info("Output  ");
-                
+
+                logger.info("Output  ");
+
                 for (TipoDelParametroOutput parameter : operaciones.getListaDeParametrosOutputList()) {
 
                     int level = 0;
 
-                     printParameterOutput(parameter, level);
+                    printParameterOutput(parameter, level);
 
                 }
 
@@ -317,12 +324,11 @@ public class MainJDEClient {
                 throw new RuntimeException("Error Logeando", ex);
 
             }
-            
+
             // ===========================  
             // Invoke WS              
             // ===========================  
             // 
-            
             EjecutarOperacionValores.Builder entityId = EjecutarOperacionValores.newBuilder();
             entityId.setNombreDelParametro("entityId");
             entityId.setValueAsInteger(533095);
@@ -330,23 +336,23 @@ public class MainJDEClient {
             EjecutarOperacionValores.Builder approver = EjecutarOperacionValores.newBuilder();
             approver.setNombreDelParametro("approver");
             approver.addListaDeValores(entityId);
-            
+
             EjecutarOperacionValores.Builder orderTypeCode = EjecutarOperacionValores.newBuilder();
             orderTypeCode.setNombreDelParametro("orderTypeCode");
             orderTypeCode.setValueAsString("OP");
-            
+
             EjecutarOperacionValores.Builder businessUnitCode = EjecutarOperacionValores.newBuilder();
             businessUnitCode.setNombreDelParametro("businessUnitCode");
             businessUnitCode.setValueAsString("         30");
-            
+
             EjecutarOperacionValores.Builder statusCodeNext = EjecutarOperacionValores.newBuilder();
             statusCodeNext.setNombreDelParametro("statusCodeNext");
             statusCodeNext.setValueAsString("230");
-            
+
             EjecutarOperacionValores.Builder statusApproval = EjecutarOperacionValores.newBuilder();
             statusApproval.setNombreDelParametro("statusApproval");
             statusApproval.setValueAsString("2N");
-             
+
             EjecutarOperacionResponse ejecutarOperacionesResponse = stub.ejecutarOperacion(
                     EjecutarOperacionRequest.newBuilder()
                             .setConnectorName("WS")
@@ -365,17 +371,13 @@ public class MainJDEClient {
                             .build());
 
             ejecutarOperacionesResponse.toString();
-            
-            
-            
-            
+
         }
-        
-        if(testWS_ItemPrice)
-        {
-            
+
+        if (testWS_ItemPrice) {
+
             String operationKey = "oracle.e1.bssv.JP410000.InventoryManager.getItemPrice";
-            
+
             configuracion.setWsConnection(Boolean.TRUE);
 
             // ===========================  
@@ -438,8 +440,7 @@ public class MainJDEClient {
                                 .setWsconnection(configuracion.getWsConnection())
                                 .build());
 
-                for(Operacion operacion: operaciones.getOperacionesList())
-                {
+                for (Operacion operacion : operaciones.getOperacionesList()) {
 
                     System.out.println("Operacion [" + operacion.getNombreOperacion() + "]");
 
@@ -471,24 +472,23 @@ public class MainJDEClient {
                                 .setOperacionKey(operationKey)
                                 .build());
 
-                 logger.info("Input  ");
-                 
+                logger.info("Input  ");
+
                 for (TipoDelParametroInput parameter : operaciones.getListaDeParametrosInputList()) {
-                    
+
                     int level = 0;
 
-                     printParameter(parameter, level);
-                     
-                       
+                    printParameter(parameter, level);
+
                 }
-                
-                 logger.info("Output  ");
-                
+
+                logger.info("Output  ");
+
                 for (TipoDelParametroOutput parameter : operaciones.getListaDeParametrosOutputList()) {
 
                     int level = 0;
 
-                     printParameterOutput(parameter, level);
+                    printParameterOutput(parameter, level);
 
                 }
 
@@ -499,12 +499,11 @@ public class MainJDEClient {
                 throw new RuntimeException("Error Logeando", ex);
 
             }
-            
+
             // ===========================  
             // Invoke WS              
             // ===========================  
             // 
-            
             EjecutarOperacionValores.Builder itemId = EjecutarOperacionValores.newBuilder();
             itemId.setNombreDelParametro("itemId");
             itemId.setValueAsInteger(60003);
@@ -512,11 +511,11 @@ public class MainJDEClient {
             EjecutarOperacionValores.Builder item = EjecutarOperacionValores.newBuilder();
             item.setNombreDelParametro("item");
             item.addListaDeValores(itemId);
-            
+
             EjecutarOperacionValores.Builder branchPlantList = EjecutarOperacionValores.newBuilder();
             branchPlantList.setNombreDelParametro("branchPlantList");
             branchPlantList.setValueAsString("          10");
-             
+
             EjecutarOperacionResponse ejecutarOperacionesResponse = stub.ejecutarOperacion(
                     EjecutarOperacionRequest.newBuilder()
                             .setConnectorName("WS")
@@ -529,18 +528,17 @@ public class MainJDEClient {
                             .setSessionId(sessionID)
                             .addListaDeValores(item.build())
                             .addListaDeValores(branchPlantList.build())
-                            .build()); 
-            
+                            .build());
+
             logger.info("Resonpse  ");
             logger.info(ejecutarOperacionesResponse.toString());
-             
+
         }
-        
-        if(testWS_WriteOffProcessingOptions)
-        {
-            
+
+        if (testWS_WriteOffProcessingOptions) {
+
             String operationKey = "oracle.e1.bssv.JP000040.FinancialComplianceManager.getWriteOffProcessingOptions";
-            
+
             configuracion.setWsConnection(Boolean.TRUE);
 
             // ===========================  
@@ -603,8 +601,7 @@ public class MainJDEClient {
                                 .setWsconnection(configuracion.getWsConnection())
                                 .build());
 
-                for(Operacion operacion: operaciones.getOperacionesList())
-                {
+                for (Operacion operacion : operaciones.getOperacionesList()) {
 
                     System.out.println("Operacion [" + operacion.getNombreOperacion() + "]");
 
@@ -636,24 +633,23 @@ public class MainJDEClient {
                                 .setOperacionKey(operationKey)
                                 .build());
 
-                 logger.info("Input  ");
-                 
+                logger.info("Input  ");
+
                 for (TipoDelParametroInput parameter : operaciones.getListaDeParametrosInputList()) {
-                    
+
                     int level = 0;
 
-                     printParameter(parameter, level);
-                     
-                       
+                    printParameter(parameter, level);
+
                 }
-                
-                 logger.info("Output  ");
-                
+
+                logger.info("Output  ");
+
                 for (TipoDelParametroOutput parameter : operaciones.getListaDeParametrosOutputList()) {
 
                     int level = 0;
 
-                     printParameterOutput(parameter, level);
+                    printParameterOutput(parameter, level);
 
                 }
 
@@ -664,21 +660,19 @@ public class MainJDEClient {
                 throw new RuntimeException("Error Logeando", ex);
 
             }
-            
+
             // ===========================  
             // Invoke WS              
             // ===========================  
             // 
-           
-            
             EjecutarOperacionValores.Builder processingVersionStandardReceiptEntryZJDE00001 = EjecutarOperacionValores.newBuilder();
             processingVersionStandardReceiptEntryZJDE00001.setNombreDelParametro("");
             processingVersionStandardReceiptEntryZJDE00001.setValueAsString("ZJDE0001");
-            
+
             EjecutarOperacionValores.Builder processingVersionStandardReceiptEntry = EjecutarOperacionValores.newBuilder();
             processingVersionStandardReceiptEntry.setNombreDelParametro("processingVersionStandardReceiptEntry");
             processingVersionStandardReceiptEntry.addListaDeValores(processingVersionStandardReceiptEntryZJDE00001.build());
-             
+
             EjecutarOperacionResponse ejecutarOperacionesResponse = stub.ejecutarOperacion(
                     EjecutarOperacionRequest.newBuilder()
                             .setConnectorName("WS")
@@ -690,16 +684,15 @@ public class MainJDEClient {
                             .setWsconnection(configuracion.getWsConnection())
                             .setSessionId(sessionID)
                             .addListaDeValores(processingVersionStandardReceiptEntry.build())
-                            .build()); 
-            
+                            .build());
+
             logger.info("Resonpse  ");
             logger.info(ejecutarOperacionesResponse.toString());
-             
+
         }
-        
-        if(testWS_Logout)
-        {
-              
+
+        if (testWS_Logout) {
+
             configuracion.setWsConnection(Boolean.TRUE);
 
             // ===========================  
@@ -735,7 +728,7 @@ public class MainJDEClient {
                                 .build());
 
                 sessionID = (int) tokenResponse.getSessionId();
-                
+
                 sessionIDOld = sessionID;
 
                 System.out.println("Logeado con Session [" + tokenResponse.getSessionId() + "]");
@@ -747,14 +740,13 @@ public class MainJDEClient {
                 throw new RuntimeException("Error Logeando", null);
 
             }
-            
+
             // ===========================  
             // Is Connected                       
             // ===========================  
             //
-            
             Boolean isConnected = Boolean.FALSE;
-            
+
             try {
 
                 IsConnectedResponse tokenResponse = stub.isConnected(
@@ -763,7 +755,7 @@ public class MainJDEClient {
                                 .setWsconnection(configuracion.getWsConnection())
                                 .build());
 
-                isConnected =  tokenResponse.getConnected();
+                isConnected = tokenResponse.getConnected();
 
                 System.out.println("Logeado con Session [" + sessionID + "] ? " + isConnected);
 
@@ -774,12 +766,11 @@ public class MainJDEClient {
                 throw new RuntimeException("Error Logeando", null);
 
             }
-            
+
             // ===========================  
             // Logout                   
             // ===========================  
             //
-            
             try {
 
                 SessionResponse tokenResponse = stub.logout(
@@ -788,7 +779,7 @@ public class MainJDEClient {
                                 .setWsconnection(configuracion.getWsConnection())
                                 .build());
 
-                sessionID =  (int) tokenResponse.getSessionId();
+                sessionID = (int) tokenResponse.getSessionId();
 
                 System.out.println("Logeado con Session [" + sessionID + "] ? " + isConnected);
 
@@ -799,14 +790,13 @@ public class MainJDEClient {
                 throw new RuntimeException("Error Logeando", null);
 
             }
-            
+
             // ===========================  
             // Is Connected                       
             // ===========================  
             //
-            
             isConnected = Boolean.FALSE;
-            
+
             try {
 
                 IsConnectedResponse tokenResponse = stub.isConnected(
@@ -815,7 +805,7 @@ public class MainJDEClient {
                                 .setWsconnection(configuracion.getWsConnection())
                                 .build());
 
-                isConnected =  tokenResponse.getConnected();
+                isConnected = tokenResponse.getConnected();
 
                 System.out.println("Logout con Session [" + sessionID + "] ");
 
@@ -826,13 +816,11 @@ public class MainJDEClient {
                 throw new RuntimeException("Error Logeando", null);
 
             }
-            
-            
+
         }
-        
-        if(testWS_PurchaseOrdersForApproverGetJson)
-        {
-            
+
+        if (testWS_PurchaseOrdersForApproverGetJson) {
+
             configuracion.setWsConnection(Boolean.TRUE);
 
             // ===========================  
@@ -850,48 +838,43 @@ public class MainJDEClient {
             JDEServiceBlockingStub stub = JDEServiceGrpc.newBlockingStub(channel);
 
             int sessionID = 0;
-            
+
             // ===========================  
             // Generate JWT                       
             // ===========================  
             //
-            
             long ttlMillis = 0;
-            
-             //The JWT signature algorithm we will be using to sign the token
+
+            //The JWT signature algorithm we will be using to sign the token
             SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-            
+
             long nowMillis = System.currentTimeMillis();
             Date now = new Date(nowMillis);
-            
-            
+
             //We will sign our JWT with our ApiKey secret 
             byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary("123456789012345678901234567890123456789012345678901234567890");
             Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
-            
-            
+
             //Let's set the JWT Claims
             JwtBuilder builder = Jwts.builder().setId("1231231")
-                                .setIssuedAt(now)
-                                .setSubject("Subject")
-                                .setIssuer("Issue")
-                                .claim("user", configuracion.getUser())
-                                .claim("password", configuracion.getPassword())
-                                .claim("environment", configuracion.getEnvironment())
-                                .claim("role", configuracion.getRole()) 
-                                .claim("sessionId", sessionID) 
-                                .signWith(signingKey, signatureAlgorithm);
-            
-            
+                    .setIssuedAt(now)
+                    .setSubject("Subject")
+                    .setIssuer("Issue")
+                    .claim("user", configuracion.getUser())
+                    .claim("password", configuracion.getPassword())
+                    .claim("environment", configuracion.getEnvironment())
+                    .claim("role", configuracion.getRole())
+                    .claim("sessionId", sessionID)
+                    .signWith(signingKey, signatureAlgorithm);
+
             //if it has been specified, let's add the expiration
             if (ttlMillis >= 0) {
                 long expMillis = nowMillis + ttlMillis;
                 Date exp = new Date(expMillis);
                 builder.setExpiration(exp);
             }
-            
-            String token =  builder.compact();
 
+            String token = builder.compact();
 
             // ===========================  
             // Login                       
@@ -904,7 +887,7 @@ public class MainJDEClient {
                                 .setUser(configuracion.getUser())
                                 .setPassword(configuracion.getPassword())
                                 .setEnvironment(configuracion.getEnvironment())
-                                .setRole(configuracion.getRole()) 
+                                .setRole(configuracion.getRole())
                                 .setWsconnection(configuracion.getWsConnection())
                                 .setJwtToken(token)
                                 .build());
@@ -919,7 +902,7 @@ public class MainJDEClient {
 
                 throw new RuntimeException("Error Logeando", null);
 
-            } 
+            }
 
             // ===========================  
             // Get Metadata                       
@@ -939,15 +922,13 @@ public class MainJDEClient {
                                 .setOperacionKey("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover")
                                 .build());
 
-                 logger.info("Input  ");
-                 
-                 logger.info(operaciones.getInputAsJson());
-                 
-                 logger.info("Output  ");
-                 
-                 logger.info(operaciones.getOutputAsJson());
-                
-                 
+                logger.info("Input  ");
+
+                logger.info(operaciones.getInputAsJson());
+
+                logger.info("Output  ");
+
+                logger.info(operaciones.getOutputAsJson());
 
             } catch (Exception ex) {
 
@@ -955,35 +936,31 @@ public class MainJDEClient {
 
                 throw new RuntimeException("Error Logeando", ex);
 
-            } 
-            
-            
-            
+            }
+
         }
-        
-        if(testWS_PurchaseOrdersForApproverWithToken)
-        {
+
+        if (test_log_capture) {
+
             configuracion.setWsConnection(Boolean.TRUE);
 
-            configuracion.setServidorServicio("fedfaa75.ngrok.io"); // Servidor Hub
-            configuracion.setPuertoServicio(80); // Puerto Servidor Hub
-        
+            configuracion.setServidorServicio("localhost"); // Servidor Hub
+            configuracion.setPuertoServicio(8085); // Puerto Servidor Hub
+
             // ===========================
             // Crear Canal de Comunicacion
             // ===========================  
             //
             InetAddress ipJDEServer = InetAddress.getByName(configuracion.getServidorServicio());
-            
+
             byte[] ip = ipJDEServer.getAddress();
 
-              String ipS = getIPString(ip);
-             
+            String ipS = getIPString(ip);
+
             ManagedChannel channel = ManagedChannelBuilder.forAddress(configuracion.getServidorServicio(), configuracion.getPuertoServicio())
                     .usePlaintext()
-                    .nameResolverFactory(new DnsNameResolverProvider())  // this is on by default
+                    .nameResolverFactory(new DnsNameResolverProvider()) // this is on by default
                     .build();
-            
-             
 
             // =========================== 
             // Creacion del Stub           
@@ -992,9 +969,9 @@ public class MainJDEClient {
             JDEServiceBlockingStub stub = JDEServiceGrpc.newBlockingStub(channel);
 
             int sessionID = 0;
-            
+
             Configuracion config = new Configuracion();
-        
+
             config.setUser(configuracion.getUser());
 
             config.setPassword(configuracion.getPassword());
@@ -1004,9 +981,9 @@ public class MainJDEClient {
             config.setRole(configuracion.getRole());
 
             config.setSessionId((int) sessionID);
-            
+
             config.setTokenExpiration(0L);
-             
+
             String token = getJWT(config);
 
             // ===========================  
@@ -1026,7 +1003,121 @@ public class MainJDEClient {
                                 .build());
 
                 sessionID = (int) tokenResponse.getSessionId();
-                
+
+                token = tokenResponse.getJwtToken();
+
+                System.out.println("Logeado con Session [" + tokenResponse.getSessionId() + "]");
+
+            } catch (Exception ex) {
+
+                logger.error("Error ejecutando metodo " + ex.getMessage());
+
+                throw new RuntimeException("Error Logeando", null);
+
+            }
+
+            // ===========================
+            // Get Logs
+            // ===========================
+            CapturarLogRequest request = CapturarLogRequest.newBuilder()
+                    .setTransactionID(20200229180140011L)
+                    .build(); 
+
+            Iterator<CapturarLogResponse> response = stub.capturarLog(request);
+
+            File output = new File("/tmp/demo.txt");
+
+            FileOutputStream fop = new FileOutputStream(output);
+
+            if (!output.exists()) {
+                output.createNewFile();
+            }
+
+            while (response.hasNext()) {
+
+                ByteString data = response.next().getFileData();
+
+                data.writeTo(fop);
+
+               fop.flush();
+
+                System.out.println("Done");
+
+            }
+            
+             
+                fop.close();
+
+            // ===========================
+            // Get Logs
+            // ===========================  
+        }
+
+        if (testWS_PurchaseOrdersForApproverWithToken) {
+            configuracion.setWsConnection(Boolean.TRUE);
+
+//            configuracion.setServidorServicio("fedfaa75.ngrok.io"); // Servidor Hub
+//            configuracion.setPuertoServicio(80); // Puerto Servidor Hub
+            configuracion.setServidorServicio("localhost"); // Servidor Hub
+            configuracion.setPuertoServicio(8085); // Puerto Servidor Hub
+
+            // ===========================
+            // Crear Canal de Comunicacion
+            // ===========================  
+            //
+            InetAddress ipJDEServer = InetAddress.getByName(configuracion.getServidorServicio());
+
+            byte[] ip = ipJDEServer.getAddress();
+
+            String ipS = getIPString(ip);
+
+            ManagedChannel channel = ManagedChannelBuilder.forAddress(configuracion.getServidorServicio(), configuracion.getPuertoServicio())
+                    .usePlaintext()
+                    .nameResolverFactory(new DnsNameResolverProvider()) // this is on by default
+                    .build();
+
+            // =========================== 
+            // Creacion del Stub           
+            // ===========================  
+            // 
+            JDEServiceBlockingStub stub = JDEServiceGrpc.newBlockingStub(channel);
+
+            int sessionID = 0;
+
+            Configuracion config = new Configuracion();
+
+            config.setUser(configuracion.getUser());
+
+            config.setPassword(configuracion.getPassword());
+
+            config.setEnvironment(configuracion.getEnvironment());
+
+            config.setRole(configuracion.getRole());
+
+            config.setSessionId((int) sessionID);
+
+            config.setTokenExpiration(0L);
+
+            String token = getJWT(config);
+
+            // ===========================  
+            // Login                       
+            // ===========================  
+            //
+            try {
+
+                SessionResponse tokenResponse = stub.login(
+                        SessionRequest.newBuilder()
+                                .setUser("")
+                                .setPassword("")
+                                .setEnvironment("")
+                                .setRole("")
+                                .setJwtToken(token)
+                                .setWsconnection(configuracion.getWsConnection())
+                                .build());
+
+                sessionID = (int) tokenResponse.getSessionId();
+
                 token = tokenResponse.getJwtToken();
 
                 System.out.println("Logeado con Session [" + tokenResponse.getSessionId() + "]");
@@ -1056,11 +1147,10 @@ public class MainJDEClient {
                                 .setJwtToken(token)
                                 .setWsconnection(configuracion.getWsConnection())
                                 .build());
-                
+
                 token = operaciones.getJwtToken();
 
-                for(Operacion operacion: operaciones.getOperacionesList())
-                {
+                for (Operacion operacion : operaciones.getOperacionesList()) {
 
                     System.out.println("Operacion [" + operacion.getNombreOperacion() + "]");
 
@@ -1092,27 +1182,26 @@ public class MainJDEClient {
                                 .setWsconnection(configuracion.getWsConnection())
                                 .setOperacionKey("oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover")
                                 .build());
-                
+
                 token = operaciones.getJwtToken();
 
-                 logger.info("Input  ");
-                 
+                logger.info("Input  ");
+
                 for (TipoDelParametroInput parameter : operaciones.getListaDeParametrosInputList()) {
-                    
+
                     int level = 0;
 
-                     printParameter(parameter, level);
-                     
-                       
+                    printParameter(parameter, level);
+
                 }
-                
-                 logger.info("Output  ");
-                
+
+                logger.info("Output  ");
+
                 for (TipoDelParametroOutput parameter : operaciones.getListaDeParametrosOutputList()) {
 
                     int level = 0;
 
-                     printParameterOutput(parameter, level);
+                    printParameterOutput(parameter, level);
 
                 }
 
@@ -1123,12 +1212,11 @@ public class MainJDEClient {
                 throw new RuntimeException("Error Logeando", ex);
 
             }
-            
+
             // ===========================  
             // Invoke WS              
             // ===========================  
             // 
-            
             EjecutarOperacionValores.Builder entityId = EjecutarOperacionValores.newBuilder();
             entityId.setNombreDelParametro("entityId");
             entityId.setValueAsInteger(533095);
@@ -1136,23 +1224,23 @@ public class MainJDEClient {
             EjecutarOperacionValores.Builder approver = EjecutarOperacionValores.newBuilder();
             approver.setNombreDelParametro("approver");
             approver.addListaDeValores(entityId);
-            
+
             EjecutarOperacionValores.Builder orderTypeCode = EjecutarOperacionValores.newBuilder();
             orderTypeCode.setNombreDelParametro("orderTypeCode");
             orderTypeCode.setValueAsString("OP");
-            
+
             EjecutarOperacionValores.Builder businessUnitCode = EjecutarOperacionValores.newBuilder();
             businessUnitCode.setNombreDelParametro("businessUnitCode");
             businessUnitCode.setValueAsString("         30");
-            
+
             EjecutarOperacionValores.Builder statusCodeNext = EjecutarOperacionValores.newBuilder();
             statusCodeNext.setNombreDelParametro("statusCodeNext");
             statusCodeNext.setValueAsString("230");
-            
+
             EjecutarOperacionValores.Builder statusApproval = EjecutarOperacionValores.newBuilder();
             statusApproval.setNombreDelParametro("statusApproval");
             statusApproval.setValueAsString("2N");
-             
+
             EjecutarOperacionResponse ejecutarOperacionesResponse = stub.ejecutarOperacion(
                     EjecutarOperacionRequest.newBuilder()
                             .setConnectorName("WS")
@@ -1172,14 +1260,13 @@ public class MainJDEClient {
                             .build());
 
             token = ejecutarOperacionesResponse.getJwtToken();
-            
+
             ejecutarOperacionesResponse.toString();
-             
-            
+
         }
 
     }
-    
+
     private String getJWT(Configuracion config) {
 
         long ttlMillis = config.getTokenExpiration();
@@ -1205,7 +1292,7 @@ public class MainJDEClient {
                 .claim("role", config.getRole())
                 .claim("sessionId", config.getSessionId())
                 .signWith(signingKey, signatureAlgorithm);
-        
+
         //if it has been specified, let's add the expiration
         if (ttlMillis > 0) {
             long expMillis = nowMillis + ttlMillis;
@@ -1214,33 +1301,25 @@ public class MainJDEClient {
         }
 
         return builder.compact();
-         
+
     }
-    
-    
-    
-    private void printParameter(TipoDelParametroInput parameter, int level)
-    {
+
+    private void printParameter(TipoDelParametroInput parameter, int level) {
         level++;
-        
+
         String space = StringUtils.repeat(".", level * 2);
-         
+
         logger.info(space + "Parameter Name: [" + parameter.getNombreDelParametro() + "]" + " Type [" + parameter.getTipoDelParametroJava() + "] Repeated: " + parameter.getRepeatedParameter());
-        
-         
-                
-            for(TipoDelParametroInput input:parameter.getSubParametroList())
-            {
-                if(!input.getNombreDelParametro().isEmpty())
-                {
-                    printParameter(input, level);
-                }
-                
+
+        for (TipoDelParametroInput input : parameter.getSubParametroList()) {
+            if (!input.getNombreDelParametro().isEmpty()) {
+                printParameter(input, level);
             }
-          
-        
+
+        }
+
     }
-    
+
     private void printParameterOutput(TipoDelParametroOutput parameter, int level) {
         level++;
 
@@ -1274,7 +1353,7 @@ public class MainJDEClient {
         }
 
     }
-    
+
     private String getIPString(byte[] ipInBytes) {
 
         StringBuilder ipSB = new StringBuilder();
@@ -1283,11 +1362,11 @@ public class MainJDEClient {
 
         for (int i = 0, j = ipInBytes.length; i < j; i++) {
 
-            temp = (int)(ipInBytes[i] & 255);
+            temp = (int) (ipInBytes[i] & 255);
 
             if (i != 3) {
                 ipSB.append(temp)
-                    .append(".");
+                        .append(".");
             } else {
                 ipSB.append(temp);
             }

@@ -46,6 +46,8 @@ service JDEService {
   rpc GetJsonsForOperation(GetMetadataRequest) returns (GetJsonsForOperationResponse) {}
   
   rpc EjecutarOperacion(EjecutarOperacionRequest) returns (EjecutarOperacionResponse) {}
+
+  rpc CapturarLog(CapturarLogRequest) returns (stream CapturarLogResponse) {}
   
 }
 
@@ -204,6 +206,15 @@ message EjecutarOperacionResponse {
   bool repeatedParameter = 15;
   bool isObject = 16;
   string jwtToken = 17;
+}
+
+message CapturarLogRequest {
+  int64 transactionID = 1;
+}
+
+message CapturarLogResponse {
+  bytes fileData = 1;
+  bool  pendingValue = 2;
 }
 
 message BDecimal {
