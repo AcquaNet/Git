@@ -101,6 +101,8 @@ public class LoggerUtil {
             processFile(file, szBeginTransactionID, szEndTransactionID);
              
         }
+        
+        logger.info("End LoggerUtil...");
 
     }
     
@@ -115,18 +117,14 @@ public class LoggerUtil {
                     beginStart = true;
                     
                     thread = StringUtils.substringBetween((String) line, "[", "]");
-                    
-                    logger.info("Starting LoggerUtil Thread:" + thread);
-                    
+                     
                 }
                 
                 if(beginStart)
                 {
                     if(((String) line).contains(thread))
                     {
-                        
-                        logger.info("Starting LoggerUtil Line:" + line);
-
+                         
                         ByteString bytes = ByteString.copyFromUtf8((String) line + System.lineSeparator());
 
                         CapturarLogResponse logResponse = builder.setFileData(bytes).build();
