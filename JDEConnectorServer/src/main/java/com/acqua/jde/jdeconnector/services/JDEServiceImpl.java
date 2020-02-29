@@ -121,58 +121,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         logger.info("======================================================================================");
         
         logger.info("JDE ATINA Capturando Log ...");
-        
-//        //int bufferSize = 1024 * 1024; // 1mo
-//        
-//        int bufferSize = 12;
-//         
-//        CapturarLogResponse.Builder responseBuilder = CapturarLogResponse.newBuilder();
-//
-//        File file = new File("/tmp/jde/JDEConnectorServerLog/Demo.log");
-//        
-//        FileInputStream fileInputStream = null;
-//        
-//        BufferedInputStream bufferedInputStream = null;
-//
-//        try {
-//            
-//            fileInputStream = new FileInputStream(file);
-//            
-//            bufferedInputStream = new BufferedInputStream(fileInputStream);
-//            
-//            // Create buffer
-//            byte[] buffer = new byte[bufferSize];
-//            
-//            int bytesRead = 0;
-//               
-//            while ((bytesRead = bufferedInputStream.read(buffer, 0, bufferSize)) != -1) {
-//                
-//                responseObserver.onNext(
-//                        responseBuilder.setFileData(ByteString.copyFrom(buffer, 0, bytesRead)).build()
-//                );
-//
-//                
-//            }
-//             
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                if (fileInputStream != null) {
-//                    fileInputStream.close();
-//                }
-//                if (bufferedInputStream != null) {
-//                    bufferedInputStream.close();
-//                }
-//                
-//                responseObserver.onCompleted();
-//                
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//        }
-
+         
         CapturarLogResponse.Builder responseBuilder = CapturarLogResponse.newBuilder();
         
         try { 
