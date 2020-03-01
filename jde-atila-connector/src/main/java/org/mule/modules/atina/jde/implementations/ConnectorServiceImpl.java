@@ -1,5 +1,8 @@
 package org.mule.modules.atina.jde.implementations;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,6 +31,8 @@ import com.google.shade.common.cache.CacheLoader;
 import com.google.shade.common.cache.LoadingCache;
 import com.google.shade.protobuf.ByteString;
 import com.google.shade.protobuf.Timestamp;
+import com.jde.jdeserverwp.servicios.CapturarLogRequest;
+import com.jde.jdeserverwp.servicios.CapturarLogResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionRequest;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
@@ -54,6 +59,7 @@ import org.slf4j.LoggerFactory;
 public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
     private static final Logger logger = LoggerFactory.getLogger(JDEAtinaConnector.class);
+    private static String LOGS_DATE_FORMAT = "yyyyMMddHHmmssSSS";
 
     private JDEServiceBlockingStub stub;
     private JDEAtilaConfiguracion configuracion;
@@ -129,6 +135,17 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     public void login(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, Long transactionID)
             throws InternalConnectorException, ExternalConnectorException {
 
+        // ----------------------------------
+        // Generacion de la Transaccion
+        // ----------------------------------
+
+        if (transactionID == 0)
+        {
+            transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
+        }
+
+        logger.info("----------------------------------------------------------------");
+
         logger.info("JDE Atina Service - Login with Transaction ID " + transactionID);
 
         SessionResponse tokenResponse = null;
@@ -167,6 +184,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 String request = "";
                 String response = "";
                 String e1Message = "";
+
+                captureLog(stub, transactionID);
 
                 throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e1Message, e);
 
@@ -207,6 +226,16 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     public void logout(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, Long transactionID)
             throws InternalConnectorException, ExternalConnectorException {
 
+        // ----------------------------------
+        // Generacion de la Transaccion
+        // ----------------------------------
+
+        if (transactionID == 0)
+        {
+            transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
+        }
+
+        logger.info("----------------------------------------------------------------");
         logger.info("JDE Atina Service - Logout... ");
 
         SessionResponse tokenResponse = null;
@@ -242,6 +271,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 String response = "";
                 String e1Message = "";
 
+                captureLog(stub, transactionID);
+
                 throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e1Message, e);
 
             }
@@ -276,6 +307,16 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     public boolean isConnected(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, Long transactionID)
             throws InternalConnectorException, ExternalConnectorException {
 
+        // ----------------------------------
+        // Generacion de la Transaccion
+        // ----------------------------------
+
+        if (transactionID == 0)
+        {
+            transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
+        }
+
+        logger.info("----------------------------------------------------------------");
         logger.info("JDE Atina Service - isConnected... ");
 
         IsConnectedResponse tokenResponse = null;
@@ -310,6 +351,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 String request = "";
                 String response = "";
                 String e1Message = "";
+
+                captureLog(stub, transactionID);
 
                 throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e1Message, e);
 
@@ -346,6 +389,13 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     public Map<String, String> getMetadataOperations(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion)
             throws InternalConnectorException {
 
+        // ----------------------------------
+        // Generacion de la Transaccion
+        // ----------------------------------
+
+        Long transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
+
+        logger.info("----------------------------------------------------------------");
         logger.info("JDE Atina Service - ConnectorServiceImpl - getMetadataOperations ...");
 
         HashMap<String, String> operations = new HashMap<String, String>();
@@ -364,7 +414,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             .setJwtToken(configuracion.getToken())
                             .setSessionId(configuracion.getSessionID())
                             .setWsconnection(configuracion.getWsConnection())
-                            .setTransactionID(0L)
+                            .setTransactionID(transactionID)
                             .build());
 
             for (Operacion operacion : operacionesResponse.getOperacionesList()) {
@@ -388,6 +438,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             String httpStatusReason = "";
             String request = "";
             String response = "";
+
+            captureLog(stub, transactionID);
 
             throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
 
@@ -416,6 +468,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     public Object getJsonFromOperations(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, String entityType, Map<String, Object> entityData)
             throws InternalConnectorException {
 
+        logger.info("----------------------------------------------------------------");
         logger.info("JDE Atina Service - ConnectorServiceImpl - getJsonFromOperations ...");
 
         Long transactionID = 0L;
@@ -426,6 +479,15 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
             entityData.remove("Transaction ID");
 
+        }
+
+        // ----------------------------------
+        // Generacion de la Transaccion
+        // ----------------------------------
+
+        if (transactionID == 0)
+        {
+            transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
         }
 
         HashMap<String, String> operations = new HashMap<String, String>();
@@ -465,6 +527,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             String request = "";
             String response = "";
 
+            captureLog(stub, transactionID);
+
             throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
 
         } catch (Exception e) {
@@ -493,6 +557,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     public List<TipoDelParametroInput> getInputMetadataForOperation(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, String operation)
             throws InternalConnectorException {
 
+        logger.info("----------------------------------------------------------------");
         logger.info("DRAGONFISH - ConnectorServiceImpl - getInputMetadataForOperation for operation: " + operation);
 
         this.stub = stub;
@@ -530,7 +595,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     public List<TipoDelParametroOutput> getOutputMetadataForOperation(JDEServiceBlockingStub stub, JDEAtilaConfiguracion configuracion, String operation)
             throws InternalConnectorException {
 
-        logger.info("DRAGONFISH - ConnectorServiceImpl - getInputMetadataForOperation for operation: " + operation);
+        logger.info("----------------------------------------------------------------");
+        logger.info("DRAGONFISH - ConnectorServiceImpl - getOutputMetadataForOperation for operation: " + operation);
 
         this.stub = stub;
         this.configuracion = configuracion;
@@ -567,6 +633,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
     public Object ejecutarServicio(JDEServiceBlockingStub stub,
             JDEAtilaConfiguracion configuracion, String entityType, Map<String, Object> entityData)
             throws InternalConnectorException, ExternalConnectorException {
+
+        logger.info("----------------------------------------------------------------");
 
         this.stub = stub;
 
@@ -653,6 +721,40 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
         }
 
+        // --------------------------------------------------------------
+        // request
+        // --------------------------------------------------------------
+        //
+
+        String token = "";
+
+        if (entityData.containsKey("JDE Token"))
+        {
+            token = (String) entityData.get("JDE Token");
+
+            entityData.remove("JDE Token");
+
+        }
+
+        Long transactionID = 0L;
+
+        if (entityData.containsKey("Transaction ID"))
+        {
+            transactionID = (Long) entityData.get("Transaction ID");
+
+            entityData.remove("Transaction ID");
+
+        }
+
+        // ----------------------------------
+        // Generacion de la Transaccion
+        // ----------------------------------
+
+        if (transactionID == 0)
+        {
+            transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
+        }
+
         try {
 
             // --------------------------------------------------------------
@@ -661,31 +763,6 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             //
 
             ArrayList<EjecutarOperacionValores> valores = new ArrayList<EjecutarOperacionValores>();
-
-            // --------------------------------------------------------------
-            // request
-            // --------------------------------------------------------------
-            //
-
-            String token = "";
-
-            if (entityData.containsKey("JDE Token"))
-            {
-                token = (String) entityData.get("JDE Token");
-
-                entityData.remove("JDE Token");
-
-            }
-
-            Long transactionID = 0L;
-
-            if (entityData.containsKey("Transaction ID"))
-            {
-                transactionID = (Long) entityData.get("Transaction ID");
-
-                entityData.remove("Transaction ID");
-
-            }
 
             ArrayList<EjecutarOperacionValores> listaValoresValidos = procesarRequest(metadataInput, entityData, metadataInputAsHashMap, 0);
 
@@ -818,6 +895,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 String response = "";
                 String e1Message = "";
 
+                captureLog(stub, transactionID);
+
                 throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e1Message, e);
 
             } else if (e.getMessage()
@@ -834,6 +913,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 String request = "";
                 String response = "";
                 String e1Message = tokens[1];
+
+                captureLog(stub, transactionID);
 
                 throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e1Message, e);
 
@@ -1914,6 +1995,75 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
         return LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos()), ZoneId.of("UTC"))
                 .toLocalDate();
+    }
+
+    private void captureLog(JDEServiceBlockingStub stub, Long transactionID)
+    {
+
+        try {
+
+            // ===========================
+            // Crear Archivo de Output
+            // ===========================
+
+            String mule_home = System.getProperty("MULE_HOME");
+
+            if (mule_home == null)
+            {
+                mule_home = System.getProperty("mule.home");
+            }
+
+            if (mule_home != null && !mule_home.isEmpty())
+            {
+
+                String loggersDir = mule_home.concat(File.separator)
+                        .concat("logs");
+
+                File output = new File(loggersDir + File.separator + "atina-" + Long.toString(transactionID) + ".log");
+
+                logger.info("JDE Atina -     Capturando Log de la Transaccion: [" + output + "]");
+
+                // ===========================
+                // Get Logs
+                // ===========================
+
+                CapturarLogRequest request = CapturarLogRequest.newBuilder()
+                        .setTransactionID(transactionID)
+                        .build();
+
+                Iterator<CapturarLogResponse> response = stub.capturarLog(request);
+
+                FileOutputStream fop;
+
+                fop = new FileOutputStream(output);
+
+                if (!output.exists()) {
+                    output.createNewFile();
+                }
+
+                while (response.hasNext()) {
+
+                    ByteString data = response.next()
+                            .getFileData();
+
+                    data.writeTo(fop);
+
+                    fop.flush();
+
+                }
+
+                fop.close();
+
+            }
+            else
+            {
+                logger.error("JDE Atina -     ERROR Capturando Log de la Transaccion. MULE_HOME no seteado.");
+            }
+
+        } catch (Exception e) {
+            logger.error("JDE Atina -     ERROR Capturando Log de la Transaccion", e);
+        }
+
     }
 
 }
