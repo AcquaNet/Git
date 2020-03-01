@@ -1,11 +1,11 @@
 package org.mule.modules.jde.atina.automation.functional;
 
-import java.util.Date; 
+import java.util.Date;
 import java.util.Map;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
- 
+
 import org.junit.Test;
 import org.mule.modules.atina.jde.exceptions.ExternalConnectorException;
 import org.mule.modules.jde.atina.automation.functional.TestDataBuilder;

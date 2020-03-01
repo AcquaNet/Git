@@ -1,15 +1,13 @@
 package org.mule.modules.jde.atina.automation.functional;
-  
+
 import java.util.Map;
- 
+
 import org.junit.Test;
 import org.mule.modules.atina.jde.exceptions.ExternalConnectorException;
 import org.mule.modules.jde.atina.automation.functional.TestDataBuilder;
 import org.mule.modules.jde.atina.automation.model.Configuracion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
- 
 
 public class GetItemPriceWithTokenAndTransactionIDTestCases extends AbstractTestCases {
 

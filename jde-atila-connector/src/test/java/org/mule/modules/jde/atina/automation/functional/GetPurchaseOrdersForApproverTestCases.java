@@ -1,5 +1,7 @@
 package org.mule.modules.jde.atina.automation.functional;
 
+import static org.junit.Assert.fail;
+
 import java.util.Map;
 
 import org.junit.Ignore;
@@ -54,7 +56,9 @@ public class GetPurchaseOrdersForApproverTestCases extends AbstractTestCases {
 
         try {
 
-            Map<String, Object> result = (Map<String, Object>) ejecucionInterna("GetPurchaseOrdersForApproverTestCases: ", entityType, entityData);
+            ejecucionInterna("GetPurchaseOrdersForApproverTestCases: ", entityType, entityData);
+
+            fail("No se ha producido la exception esperada");
 
         } catch (ExternalConnectorException e) {
             logger.error(e.getE1Message());
