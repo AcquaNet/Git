@@ -100,7 +100,6 @@ public class GetItemPriceAndAvailabilityWithTokenTestCases extends AbstractTestC
     }
 
     @Test
-    @Ignore
     public void executeValidGetItemPriceAndAvailabilityTest() throws Exception {
 
         String entityType = TestDataBuilder.getItemPriceAvaEntityType();
@@ -179,7 +178,6 @@ public class GetItemPriceAndAvailabilityWithTokenTestCases extends AbstractTestC
 
     @SuppressWarnings("unchecked")
     @Test
-    @Ignore
     public void getValidGetItemPriceAndAvailabilityJsonTestWithAuth() throws Exception {
 
         logger.info("MULESOFT - FUNCTIONAL_TEST BEGIN ");
@@ -216,7 +214,7 @@ public class GetItemPriceAndAvailabilityWithTokenTestCases extends AbstractTestC
 
         String entityType = TestDataBuilder.getItemPriceAvaEntityType();
 
-        Map<String, Object> entityData = TestDataBuilder.getJSONSchemaEntityData((String) result);
+        Map<String, Object> entityData = TestDataBuilder.getJSONSchemaEntityData((String) (((Map) result).get("token")));
 
         Map<String, Object> resultItemPrice = null;
 

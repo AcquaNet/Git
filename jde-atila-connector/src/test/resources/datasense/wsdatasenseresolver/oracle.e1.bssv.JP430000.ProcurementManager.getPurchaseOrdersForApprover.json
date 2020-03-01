@@ -10,6 +10,7 @@
     "orderTypeCode": "string",
     "businessUnitCode": "string",
     "statusCodeNext": "string",
-    "statusApproval": "string"
+    "statusApproval": "string",
+    "Transaction ID": "long"
   }
 }

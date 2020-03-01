@@ -34,6 +34,7 @@ public class TestDataBuilder {
         final Map<String, Object> returnValue = new HashMap<String, Object>();
 
         returnValue.put("JDE Token", token);
+        returnValue.put("Transaction ID", 0L);
 
         return returnValue;
 
@@ -44,6 +45,7 @@ public class TestDataBuilder {
         final Map<String, Object> returnValue = new HashMap<String, Object>();
 
         returnValue.put("JDE Token", token);
+        returnValue.put("Transaction ID", 0L);
 
         return returnValue;
 
@@ -54,6 +56,7 @@ public class TestDataBuilder {
         final Map<String, Object> returnValue = new HashMap<String, Object>();
 
         returnValue.put("JDE Token", token);
+        returnValue.put("Transaction ID", 0L);
 
         return returnValue;
 
