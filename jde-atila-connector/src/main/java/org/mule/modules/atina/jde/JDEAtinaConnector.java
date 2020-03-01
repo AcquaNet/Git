@@ -1,6 +1,5 @@
 package org.mule.modules.atina.jde;
-
-import java.io.File;
+ 
 import java.util.HashMap;
 import java.util.Map;
 

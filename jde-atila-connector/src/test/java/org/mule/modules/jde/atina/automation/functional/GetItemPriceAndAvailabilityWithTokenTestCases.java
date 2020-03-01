@@ -1,13 +1,11 @@
 package org.mule.modules.jde.atina.automation.functional;
 
-import java.util.Date;
-import java.util.HashMap;
+import java.util.Date; 
 import java.util.Map;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
-
-import org.junit.Ignore;
+ 
 import org.junit.Test;
 import org.mule.modules.atina.jde.exceptions.ExternalConnectorException;
 import org.mule.modules.jde.atina.automation.functional.TestDataBuilder;
@@ -71,7 +69,7 @@ public class GetItemPriceAndAvailabilityWithTokenTestCases extends AbstractTestC
 
         Map<String, Object> entityData = TestDataBuilder.getItemPriceAvaEntityData();
 
-        entityData.put("JDE Token", ((HashMap) result).get("token"));
+        entityData.put("JDE Token", ((Map<String, Object>) result).get("token"));
 
         try {
             Map<String, Object> resultItemPrice = (Map<String, Object>) ejecucionInterna("GetItemPriceAvaEntityData",
@@ -89,11 +87,11 @@ public class GetItemPriceAndAvailabilityWithTokenTestCases extends AbstractTestC
 
         entityTypeAuth = TestDataBuilder.getAuthorizationLogoutEntityType();
 
-        entityDataAuth = TestDataBuilder.getAuthorizationFromTokenEntityData((String) ((HashMap) result).get("token"));
+        entityDataAuth = TestDataBuilder.getAuthorizationFromTokenEntityData((String) ((Map<String, Object>) result).get("token"));
 
         result = autorizacion(entityTypeAuth, entityDataAuth);
 
-        logger.info("MULESOFT - Token: " + ((HashMap) result).get("token"));
+        logger.info("MULESOFT - Token: " + ((Map<String, Object>) result).get("token"));
 
         logger.info("MULESOFT - FUNCTIONAL_TEST END ");
 
@@ -214,7 +212,7 @@ public class GetItemPriceAndAvailabilityWithTokenTestCases extends AbstractTestC
 
         String entityType = TestDataBuilder.getItemPriceAvaEntityType();
 
-        Map<String, Object> entityData = TestDataBuilder.getJSONSchemaEntityData((String) (((Map) result).get("token")));
+        Map<String, Object> entityData = TestDataBuilder.getJSONSchemaEntityData((String) (((Map<String, Object>) result).get("token")));
 
         Map<String, Object> resultItemPrice = null;
 

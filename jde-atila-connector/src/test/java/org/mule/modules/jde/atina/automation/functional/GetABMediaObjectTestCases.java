@@ -19,8 +19,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JEditorPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.EditorKit;
-
-import org.junit.Ignore;
+ 
 import org.junit.Test;
 import org.mule.modules.atina.jde.exceptions.ExternalConnectorException;
 import org.mule.modules.jde.atina.automation.functional.TestDataBuilder;
@@ -33,8 +32,7 @@ public class GetABMediaObjectTestCases extends AbstractTestCases {
     protected final Logger logger = LoggerFactory.getLogger(GetABMediaObjectTestCases.class);
 
     @SuppressWarnings({
-            "unchecked",
-            "unused"
+            "unchecked"
     })
     @Test
     public void validateMediaImageAndURL() throws Exception {
@@ -104,8 +102,7 @@ public class GetABMediaObjectTestCases extends AbstractTestCases {
     }
 
     @SuppressWarnings({
-            "unchecked",
-            "unused"
+            "unchecked"
     })
     @Test
     public void validateMediaText() throws Exception {
@@ -177,8 +174,7 @@ public class GetABMediaObjectTestCases extends AbstractTestCases {
     }
 
     @SuppressWarnings({
-            "unchecked",
-            "unused"
+            "unchecked"
     })
     @Test
     public void validateMediaTextJPG() throws Exception {

@@ -1,13 +1,7 @@
 package org.mule.modules.jde.atina.automation.functional;
-
-import java.util.Date;
-import java.util.HashMap;
+  
 import java.util.Map;
-
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
-
-import org.junit.Ignore;
+ 
 import org.junit.Test;
 import org.mule.modules.atina.jde.exceptions.ExternalConnectorException;
 import org.mule.modules.jde.atina.automation.functional.TestDataBuilder;
@@ -15,10 +9,7 @@ import org.mule.modules.jde.atina.automation.model.Configuracion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import java.security.Key;
+ 
 
 public class GetItemPriceWithTokenAndTransactionIDTestCases extends AbstractTestCases {
 
@@ -71,7 +62,7 @@ public class GetItemPriceWithTokenAndTransactionIDTestCases extends AbstractTest
 
         Map<String, Object> entityData = TestDataBuilder.getItemPriceAvaEntityData();
 
-        entityData.put("JDE Token", ((HashMap) result).get("token"));
+        entityData.put("JDE Token", ((Map<String, Object>) result).get("token"));
         entityData.put("Transaction ID", 20200229180140004L);
 
         try {
@@ -90,11 +81,11 @@ public class GetItemPriceWithTokenAndTransactionIDTestCases extends AbstractTest
 
         entityTypeAuth = TestDataBuilder.getAuthorizationLogoutEntityType();
 
-        entityDataAuth = TestDataBuilder.getAuthorizationFromTokenEntityData((String) ((HashMap) result).get("token"));
+        entityDataAuth = TestDataBuilder.getAuthorizationFromTokenEntityData((String) ((Map<String, Object>) result).get("token"));
 
         result = autorizacion(entityTypeAuth, entityDataAuth);
 
-        logger.info("MULESOFT - Token: " + ((HashMap) result).get("token"));
+        logger.info("MULESOFT - Token: " + ((Map<String, Object>) result).get("token"));
 
         logger.info("MULESOFT - FUNCTIONAL_TEST END ");
 

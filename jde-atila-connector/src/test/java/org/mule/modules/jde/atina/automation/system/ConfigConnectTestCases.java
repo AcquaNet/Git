@@ -54,8 +54,7 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
         Boolean wsConnection = Boolean.valueOf(validCredentials.getProperty("config.wsConnection"));
         String microServiceName = validCredentials.getProperty("config.microServiceName");
         Integer microServicePort = Integer.valueOf(validCredentials.getProperty("config.microServicePort"));
-        String token = "";
-
+  
         configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
 
         Assert.assertTrue(configJDEAtina.getConfiguracion()
@@ -79,8 +78,7 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
         Boolean wsConnection = Boolean.valueOf(validCredentials.getProperty("config.wsConnection"));
         String microServiceName = validCredentials.getProperty("config.microServiceName");
         Integer microServicePort = Integer.valueOf(validCredentials.getProperty("config.microServicePort"));
-        String token = "";
-
+   
         try
         {
             configJDEAtina.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
@@ -119,8 +117,7 @@ public class ConfigConnectTestCases extends AbstractConfigConnectTestCases {
         Boolean wsConnection = Boolean.valueOf(validCredentials.getProperty("config.wsConnection"));
         String microServiceName = validCredentials.getProperty("config.microServiceName");
         Integer microServicePort = Integer.valueOf(validCredentials.getProperty("config.microServicePort"));
-        String token = "";
-
+  
         try
         {
 

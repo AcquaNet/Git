@@ -1,6 +1,5 @@
 package org.mule.modules.jde.atina.automation.functional;
-
-import java.util.HashMap;
+ 
 import java.util.Map;
 
 import org.junit.Test;
