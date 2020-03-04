@@ -99,6 +99,8 @@ public class LoggerUtil {
             logger.info("Starting LoggerUtil Reading:" + file.getName());
             
             processFile(file, szBeginTransactionID, szEndTransactionID);
+            
+            logger.info("Starting LoggerUtil File:" + file.getName() + " Processed");
              
         }
         
@@ -117,6 +119,8 @@ public class LoggerUtil {
                     beginStart = true;
                     
                     thread = StringUtils.substringBetween((String) line, "[", "]");
+                    
+                    logger.info("Starting LoggerUtil Thread:" + thread + " Line: " + ((String) line).replace(szBeginTransactionID, "99999999999999999"));
                      
                 }
                 
@@ -138,6 +142,9 @@ public class LoggerUtil {
                 if(((String) line).contains(szEndTransactionID))
                 {
                     beginStart = false;
+                    
+                    logger.info("Starting LoggerUtil Thread:" + thread + " Done");
+                    
                     thread = "";
                     
                 } 
