@@ -33,7 +33,7 @@ ECHO "Building JDE Process Layer
 ECHO ==========================================================
 cd C:\_work\JDEConnectorCE\ProjectsPlatforms\process-layer
 CALL mvn clean package
-CALL deploy.bat
+CALL build-and-deploy.bat
 ECHO ==========================================================
 ECHO "Deploy POM from Multimodule
 ECHO ==========================================================

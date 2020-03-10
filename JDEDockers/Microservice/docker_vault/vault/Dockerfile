@@ -67,7 +67,6 @@ VOLUME /vault/file
 # 8200/tcp is the primary interface that applications use to interact with
 # Vault.
 EXPOSE 8200
-EXPOSE 8201
 
 # The entry point script uses dumb-init as the top-level process to reap any
 # zombie processes created by Vault sub-processes.
@@ -79,4 +78,4 @@ ENTRYPOINT ["docker-entrypoint.sh"]
 
 # By default you'll get a single-node development server that stores everything
 # in RAM and bootstraps itself. Don't use this configuration for production.
-CMD ["server", "-dev"]
+CMD ["server"]

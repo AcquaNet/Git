@@ -1,0 +1,845 @@
+{
+	"info": {
+		"_postman_id": "495e4fa8-67a1-4c7d-b030-771bf6625025",
+		"name": "VAULT",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "00-00 - Init Vault",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b443d9b3-c411-4dae-9b45-02e4f32a5b89",
+						"exec": [
+							"pm.test(\"Status code is 200\", function() {\r",
+							"  pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"(pm.response.code===200 ? pm.test : pm.test.skip)(\"Response body is empty\", function () {\r",
+							"    var jsonData = JSON.parse(responseBody);\r",
+							"    pm.environment.set(\"root_token\", jsonData.root_token);\r",
+							"    pm.environment.set(\"key\", jsonData.keys[0]);\r",
+							"    pm.environment.set(\"keyBase64\", jsonData.keys_base64[0]);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"secret_shares\": 1, \"secret_threshold\": 1}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.99.100:8200/v1/sys/init",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"99",
+						"100"
+					],
+					"port": "8200",
+					"path": [
+						"v1",
+						"sys",
+						"init"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "01-00 - Unseal",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "838723bf-98de-42a6-ab26-82f9412be2dc",
+						"exec": [
+							"pm.test(\"Status code is 200\", function() {\r",
+							"  pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"(pm.response.code===200 ? pm.test : pm.test.skip)(\"Response body is empty\", function () {\r",
+							"    var jsonData = JSON.parse(responseBody);\r",
+							"    pm.environment.set(\"sealed\", jsonData.sealed);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"key\": \"{{keyBase64}}\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.99.100:8200/v1/sys/unseal",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"99",
+						"100"
+					],
+					"port": "8200",
+					"path": [
+						"v1",
+						"sys",
+						"unseal"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "02-00 - Create AppRole",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a887e729-f9a9-4786-bc8d-3ce7ecc9bc63",
+						"exec": [
+							"pm.test(\"Status code is 204\", function() {\r",
+							"  pm.expect(pm.response.code).to.equal(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "X-Vault-Token",
+						"type": "text",
+						"value": "{{root_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"type\": \"approle\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.99.100:8200/v1/sys/auth/approle",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"99",
+						"100"
+					],
+					"port": "8200",
+					"path": [
+						"v1",
+						"sys",
+						"auth",
+						"approle"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "02-01 - Create UserPass",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Vault-Token",
+						"type": "text",
+						"value": "{{root_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"type\": \"userpass\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.99.100:8200/v1/sys/auth/userpass",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"99",
+						"100"
+					],
+					"port": "8200",
+					"path": [
+						"v1",
+						"sys",
+						"auth",
+						"userpass"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "03-00 - Create Policy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b5551927-1330-486b-ba60-33f0ca29c320",
+						"exec": [
+							"pm.test(\"Status code is 204\", function() {\r",
+							"  pm.expect(pm.response.code).to.equal(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "X-Vault-Token",
+						"type": "text",
+						"value": "{{root_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"policy\": \"# List, create, update, and delete key\\/value secrets\\r\\npath \\\"secret\\/*\\\"\\r\\n{\\r\\n  capabilities = [\\\"create\\\", \\\"read\\\", \\\"update\\\", \\\"delete\\\", \\\"list\\\", \\\"sudo\\\"]\\r\\n}\\r\\n\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.99.100:8200/v1/sys/policies/acl/my-policy",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"99",
+						"100"
+					],
+					"port": "8200",
+					"path": [
+						"v1",
+						"sys",
+						"policies",
+						"acl",
+						"my-policy"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "04-00 - Mounts/Secret",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "13193787-3a74-4173-8634-7177c3f11953",
+						"exec": [
+							"pm.test(\"Status code is 204\", function() {\r",
+							"  pm.expect(pm.response.code).to.equal(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "X-Vault-Token",
+						"type": "text",
+						"value": "{{root_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"type\":\"kv-v2\" }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.99.100:8200/v1/sys/mounts/secret",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"99",
+						"100"
+					],
+					"port": "8200",
+					"path": [
+						"v1",
+						"sys",
+						"mounts",
+						"secret"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "05-00 - Create Role",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a4904a8f-534a-4c01-83ed-b3441acd5b6a",
+						"exec": [
+							"pm.test(\"Status code is 204\", function() {\r",
+							"  pm.expect(pm.response.code).to.equal(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "X-Vault-Token",
+						"type": "text",
+						"value": "{{root_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"policies\": [\"my-policy\"]}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.99.100:8200/v1/auth/approle/role/my-role",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"99",
+						"100"
+					],
+					"port": "8200",
+					"path": [
+						"v1",
+						"auth",
+						"approle",
+						"role",
+						"my-role"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "05-01 - Get Role ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c257f368-aca4-4f93-9eb1-3fd7f4224ccc",
+						"exec": [
+							"pm.test(\"Status code is 200\", function() {\r",
+							"  pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"(pm.response.code===200 ? pm.test : pm.test.skip)(\"Response body is empty\", function () {\r",
+							"    var jsonData = JSON.parse(responseBody);\r",
+							"    pm.environment.set(\"role_id\", jsonData.data.role_id);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "X-Vault-Token",
+						"type": "text",
+						"value": "{{root_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"policies\": [\"my-policy\"]}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.99.100:8200/v1/auth/approle/role/my-role/role-id",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"99",
+						"100"
+					],
+					"port": "8200",
+					"path": [
+						"v1",
+						"auth",
+						"approle",
+						"role",
+						"my-role",
+						"role-id"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "05-02 - Create Secret ID under My-Role",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d6f31de0-c90b-466b-a7bf-2a8fe61163c1",
+						"exec": [
+							"pm.test(\"Status code is 200\", function() {\r",
+							"  pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"(pm.response.code===200 ? pm.test : pm.test.skip)(\"Response body is empty\", function () {\r",
+							"    var jsonData = JSON.parse(responseBody);\r",
+							"    pm.environment.set(\"secret_id\", jsonData.data.secret_id);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Vault-Token",
+						"value": "{{root_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.99.100:8200/v1/auth/approle/role/my-role/secret-id",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"99",
+						"100"
+					],
+					"port": "8200",
+					"path": [
+						"v1",
+						"auth",
+						"approle",
+						"role",
+						"my-role",
+						"secret-id"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "05-03 - Login Using Role ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e335d1b7-4b03-4a13-9ef2-3002324c5081",
+						"exec": [
+							"pm.test(\"Status code is 200\", function() {\r",
+							"  pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"(pm.response.code===200 ? pm.test : pm.test.skip)(\"Response body is empty\", function () {\r",
+							"    var jsonData = JSON.parse(responseBody);\r",
+							"    pm.environment.set(\"client_token\", jsonData.auth.client_token);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"role_id\": \"{{role_id}}\", \"secret_id\": \"{{secret_id}}\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.99.100:8200/v1/auth/approle/login",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"99",
+						"100"
+					],
+					"port": "8200",
+					"path": [
+						"v1",
+						"auth",
+						"approle",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "06-00 - Create User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Vault-Token",
+						"value": "{{root_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"password\": \"superSecretPassword\",\r\n  \"policies\": \"my-policy\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.99.100:8200/v1/auth/userpass/users/jdeuser",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"99",
+						"100"
+					],
+					"port": "8200",
+					"path": [
+						"v1",
+						"auth",
+						"userpass",
+						"users",
+						"jdeuser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "06-01 - Login using User and Password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ff13ed99-c297-47b8-90a3-6204f5f8ee3a",
+						"exec": [
+							"pm.test(\"Status code is 200\", function() {\r",
+							"  pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"(pm.response.code===200 ? pm.test : pm.test.skip)(\"Response body is empty\", function () {\r",
+							"    var jsonData = JSON.parse(responseBody);\r",
+							"    pm.environment.set(\"client_token\", jsonData.auth.client_token);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"password\": \"superSecretPassword\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.99.100:8200/v1/auth/userpass/login/jdeuser",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"99",
+						"100"
+					],
+					"port": "8200",
+					"path": [
+						"v1",
+						"auth",
+						"userpass",
+						"login",
+						"jdeuser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "07-00 - Put Value",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6d24fc0f-7f39-430a-a4d5-c44b297818cf",
+						"exec": [
+							"pm.test(\"Status code is 200\", function() {\r",
+							"  pm.expect(pm.response.code).to.equal(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Vault-Token",
+						"value": "{{client_token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"data\": {\"user\": \"JDE\",\"password\": \"JDEPassword\"} }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.99.100:8200/v1/secret/data/jde",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"99",
+						"100"
+					],
+					"port": "8200",
+					"path": [
+						"v1",
+						"secret",
+						"data",
+						"jde"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "07-01 - Get Values",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a3cd9612-4050-400e-accc-455100a09d33",
+						"exec": [
+							"pm.test(\"Status code is 200\", function() {\r",
+							"  pm.expect(pm.response.code).to.equal(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Vault-Token",
+						"value": "{{client_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://192.168.99.100:8200/v1/secret/data/jde",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"99",
+						"100"
+					],
+					"port": "8200",
+					"path": [
+						"v1",
+						"secret",
+						"data",
+						"jde"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "08-01 - Seal",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "X-Vault-Token",
+						"value": "{{root_token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://192.168.99.100:8200/v1/sys/seal",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"99",
+						"100"
+					],
+					"port": "8200",
+					"path": [
+						"v1",
+						"sys",
+						"seal"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
