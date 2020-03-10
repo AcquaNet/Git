@@ -2,7 +2,7 @@ FROM alpine:3.10
 
 # This is the release of Vault to pull in.
 ARG VAULT_VERSION=1.3.3
-ENV VAULT_VERSION=1.3.3
+ENV VAULT_VERSION=${VAULT_VERSION}
 
 # Create a vault user and group first so the IDs get set the same way,
 # even as the rest of this may change over time.
