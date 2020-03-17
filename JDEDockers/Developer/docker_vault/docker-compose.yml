@@ -1,0 +1,16 @@
+version: '3.6'
+
+services:
+
+  vault:
+    build: vault
+    image: 92455890/jdeatina-vault:1.0.0
+    container_name: jdeatina-microserver-vault
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: 's.bB0nRUUHnUQjmQR3KbZDKxPL'
+      VAULT_LOCAL_CONFIG: '{"backend": {"file": {"path": "vault/data"}},"listener": {"tcp": {"address": "0.0.0.0:8200","tls_disable": 1}},"ui": true}'
+    ports:
+      - 8200:8200
+    restart: always
+    cap_add:
+      - IPC_LOCK

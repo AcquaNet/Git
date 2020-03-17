@@ -21,9 +21,14 @@ ARG NAME_METRICS_CONSOLE=Metrics
 ARG SEC_METRICS_CONSOLE=http
 ARG URL_SEC_CONSOLE=localhost:8080
 ARG NAME_SEC_CONSOLE='Security Console'
- 
+
+ENV VAULT_IP ${VAULT_IP}
+ENV VAULT_PORT ${VAULT_PORT}
+ENV VAULT_PORT ${VAULT_USER}
+ENV VAULT_PASSWORD ${VAULT_PASSWORD}
+
 RUN apk update && apk upgrade && \
-    apk add curl wget bash tree unzip less vim sed
+    apk add curl wget bash tree unzip less vim sed jq
 
 # Consul template for configuration management
 ENV S6_OVERLAY_VERSION=1.19.1.1 CONSUL_TEMPLATE_VERSION=0.18.2
@@ -40,6 +45,9 @@ ADD etc /etc
  
 # Copiar HTML Files.
 COPY source /home/html
+
+# Copiar Valores Vault
+COPY values.json /home/values.json
 
 COPY entrypoint.sh /
 RUN chmod +x /entrypoint.sh 

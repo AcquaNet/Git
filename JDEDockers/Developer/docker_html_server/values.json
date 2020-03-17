@@ -1,0 +1,10 @@
+{
+	"secret1": {
+		"value11": 10,
+		"Value12": "valuedemo1"
+	},
+	"secret2": {
+		"value12": 20,
+		"Value22": "valuedemo2"
+	}
+}

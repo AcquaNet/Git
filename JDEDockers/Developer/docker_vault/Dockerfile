@@ -68,9 +68,6 @@ VOLUME /vault/file
 # Vault.
 EXPOSE 8200
 
-COPY scripts/bootstrap.sh /usr/local/bin/bootstrap.sh
-RUN chmod +x /usr/local/bin/bootstrap.sh
-
 # The entry point script uses dumb-init as the top-level process to reap any
 # zombie processes created by Vault sub-processes.
 #
