@@ -35,12 +35,10 @@ jde-lib-bundle
 | -n | JDE Library Name
 | -o | JDE Library Version
 
-Destination:
+**Destination**:
 
-...m2\repository\com\jdedwards\StdWebService\1.0.0\StdWebService-1.0.0-sources.jar
+.m2\repository\com\jdedwards\jde-lib-wrapped\1.0.0\jde-lib-wrapped-1.0.0.jar
+.m2\repository\com\jdedwards\StdWebService\1.0.0\StdWebService-1.0.0.jar
 
- 
-## 
 
-Destination:
 
