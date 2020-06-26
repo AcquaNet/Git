@@ -88,12 +88,12 @@ public class MainBuilder {
     private static final String JDE_JARS = "JarsToCopy.properties";
     private static final String WS_JARS = "WSToCopy.properties";
     private static final String JAR_SELECTED = "/tmp/jarselected";
-    private static final String JAR_DESTINATION = "/tmp/wrapped"; 
+    private static final String JAR_DESTINATION = "/tmp/wrapped";
     private static final String JAR_SBF = "/tmp/sbfjars";
     private static final String JAR_METADATA = "/tmp/metadata";
     private static final String METADATA_DRIVER_TXT = "MetadataWSDriver.txt";
     private static final String METADATA_DRIVER_JAVA = "/tmp/metadata/MetadataWSDriver.java";
-    
+
     private static final String STEP_1 = "Defining bundle descriptor";
     private static final String STEP_2 = "Defining bundle assembly";
     private static final String STEP_3 = "Performing bundle creation";
@@ -101,20 +101,18 @@ public class MainBuilder {
     private static final String STEP_4a = "Building Building shaded";
     private static final String STEP_5 = "Cleaning up";
     private static final Boolean SHADE = false;
-     private static final Boolean DEBUG = true;
+    private static final Boolean DEBUG = false;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
 
-        
-        if(DEBUG)
-        {
+        if (DEBUG) {
             MetadataWSGenerator mt = new MetadataWSGenerator();
 
             try {
-                
+
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JP430000\\ProcurementManager.java");
 //                
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JP010000\\valueobject\\ProcessAddressBookV3.java");
@@ -130,7 +128,6 @@ public class MainBuilder {
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JP03B000\\valueobject\\GetInvoiceKey.java");
 //                
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JP420000\\valueobject\\ShowPriceHistoryDetail.java");
-                          
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JPR01MO1\\valueobject\\ABGT_Publish.java");
                 mt.generateMetadata("C:\\tmp\\sbfjars\\JPR01MO1\\valueobject\\RI_ShowAddressBook.java");
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JP430000\\valueobject\\ConfirmPurchaseOrderAcknowledge.java");
@@ -215,20 +212,19 @@ public class MainBuilder {
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JP430000\\valueobject\\UserReservedData.java");
 //                
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JP430000\\ProcurementManager.java");
-                 
+
                 mt.saveMetadata(new File("C:\\tmp\\merge"));
-            
+
             } catch (MetadataServerException ex) {
                 logger.error("DEBUG " + ": " + ex.getMessage());
             }
- 
 
         }
-        
+
         // -----------------------------------------------
         // create the command line parser
         // -----------------------------------------------
-         OptionsParser parser = OptionsParser.newOptionsParser(Options.class);
+        OptionsParser parser = OptionsParser.newOptionsParser(Options.class);
 
         parser.parseAndExitUponError(args);
 
@@ -264,22 +260,21 @@ public class MainBuilder {
             setupEnvironmentVariables(JAR_DESTINATION);
 
             try {
-                
-                 FileUtils.deleteDirectory(JAR_SELECTED);
-                 FileUtils.deleteDirectory(JAR_DESTINATION);
-                 FileUtils.deleteDirectory(JAR_SBF);
-                  
+
+                FileUtils.deleteDirectory(JAR_SELECTED);
+                FileUtils.deleteDirectory(JAR_DESTINATION);
+                FileUtils.deleteDirectory(JAR_SBF);
+
             } catch (Exception ex) {
                 logger.error("Nothing to clean " + ": " + ex.getMessage());
             }
-            
+
             // -----------------------------------------------
             // Create 
             // -----------------------------------------------
             //
-             
             ArrayList<String> summary = new ArrayList<String>();
-            
+
             // -----------------------------------------------
             // Obtener Lista de JARs de JDE
             // -----------------------------------------------
@@ -289,9 +284,9 @@ public class MainBuilder {
             Map<String, String> jdeJars = getPackageToShade(JDE_JARS);
 
             copyFileFromDeployment(jdeJars, options);
-            
+
             summary.add("Se copiaron los Jars de JDEdwards");
-            
+
             // -----------------------------------------------
             // Obtener Lista de WS de JDE
             // -----------------------------------------------
@@ -300,17 +295,16 @@ public class MainBuilder {
 
             Map<String, String> jdeWSJars = getPackageToShade(WS_JARS);
 
-            copyWSFromDeployment(jdeWSJars, options); 
-            
+            copyWSFromDeployment(jdeWSJars, options);
+
             summary.add("Se copiaron los WS de JDEdwards");
-             
+
             // -----------------------------------------------
             // Get Jars File To Shade
             // -----------------------------------------------
-            
             HashSet<String> jarsToShade = new HashSet();
-            Map<String, String> packages = new HashMap<String, String> ();
-            
+            Map<String, String> packages = new HashMap<String, String>();
+
             if (SHADE) {
 
                 // -----------------------------------------------
@@ -336,13 +330,11 @@ public class MainBuilder {
             // -----------------------------------------------
             // Preparing Maven
             // -----------------------------------------------
-            
             logger.info("Creacion del POM en el directorio: " + JAR_DESTINATION);
- 
+
             prepareMvn(jarsToShade, JAR_SELECTED, options.jdbcDriver, JAR_DESTINATION, options.version, options.outputName);
-            
-            summary.add("POM creado en " + JAR_DESTINATION );
-            
+
+            summary.add("POM creado en " + JAR_DESTINATION);
 
             // -----------------------------------------------
             // Copy Assembly
@@ -351,40 +343,38 @@ public class MainBuilder {
 
             copyAssembly(JAR_DESTINATION);
 
-            summary.add("Assembly descargado en " + JAR_DESTINATION );
-            
-            
+            summary.add("Assembly descargado en " + JAR_DESTINATION);
+
             // -----------------------------------------------
             // Executing Maven to Assembly Bundle
             // -----------------------------------------------
             //
             logger.info("Creando JAR File con librerias de JDE");
-            
+
             ExecutorService executor = Executors.newSingleThreadExecutor();
-            
+
             Callable<Integer> callableTask = () -> {
                 int result = executeMvnAssembly(JAR_DESTINATION);
-                summary.add("Libreria creada en " + JAR_DESTINATION );
+                summary.add("Libreria creada en " + JAR_DESTINATION);
                 return result;
             };
-                 
+
             Future<Integer> future = executor.submit(callableTask);
 
             int result = future.get();
-            
+
             executor.shutdown();
-            
-            if(result!=0)
-            {
+
+            if (result != 0) {
                 throw new Exception("Error creando JAR File con librerias de JDE");
             }
-            
+
             // -----------------------------------------------
             // Executing Extra Install
             // -----------------------------------------------
             //
-             if (SHADE) {
-                 
+            if (SHADE) {
+
                 if (isSuccessful(result)) {
 
                     // Adding Jars Files to Shade to Local Repo
@@ -412,17 +402,15 @@ public class MainBuilder {
             // -----------------------------------------------
             // Executing Maven to Assembly Bundle
             // -----------------------------------------------
-            
             logger.info("Ejecutando Clean UP");
-            
+
             cleanUp(JAR_DESTINATION, options.outputName);
-            
-            summary.add("CleanUp ejecutado en " + JAR_DESTINATION );
- 
+
+            summary.add("CleanUp ejecutado en " + JAR_DESTINATION);
+
             // -----------------------------------------------
             // Creating Shaded
             // -----------------------------------------------
-            
             if (SHADE) {
 
                 logger.info(STEP_4a);
@@ -438,17 +426,17 @@ public class MainBuilder {
                     logger.info("Java Dummmy has been copied.");
 
                 } catch (IOException ex) {
-                    
+
                     result = 1;
-                    
+
                     logger.error("Error Copying Java Dummmy" + ": " + ex.getMessage());
-                    
+
                 } catch (URISyntaxException ex) {
-                    
+
                     result = 1;
-                    
+
                     logger.error("Error Copying Java Dummmy" + ": " + ex.getMessage());
-                    
+
                 }
 
                 // -----------------------------------------------
@@ -538,10 +526,8 @@ public class MainBuilder {
 
                 }
 
-                
-
             }
-            
+
             // -----------------------------------------------
             // Installing
             // -----------------------------------------------
@@ -557,23 +543,22 @@ public class MainBuilder {
                 if (!isSuccessful(result)) {
 
                     logger.error("Error Installing JDE Connector in Local Repository");
-                    
+
                     throw new Exception("Error Installing JDE Connector in Local Repository");
                 }
-                
-                summary.add("Jar Instalado en el Repositorio " + JAR_DESTINATION );
-                
+
+                summary.add("Jar Instalado en el Repositorio " + JAR_DESTINATION);
+
             }
-            
+
             // -----------------------------------------------
             // Unzipping WS and Creating Metadata
             // -----------------------------------------------
             //
-            
             logger.info("Descomprimiendo WS..");
 
             MetadataWSGenerator mt = new MetadataWSGenerator();
-            
+
             JarsClassFile jarsToUnzip = new JarsClassFile();
 
             jarsToUnzip = getJarsToUnzip(JAR_SBF);
@@ -583,64 +568,60 @@ public class MainBuilder {
             for (JarClassFile jarfile : jarsToUnzip.getJars()) {
 
                 UnzipJar.unzipJar(JAR_SBF, jarfile.getJarFile().getAbsolutePath());
-                
+
                 logger.info("        " + jarfile.getNameWithoutExtension() + " descomprimido");
             }
-             
-            summary.add("WS descomprimidos en " + JAR_SBF );
-            
+
+            summary.add("WS descomprimidos en " + JAR_SBF);
+
             // -----------------------------------------------
             // Remover Protected 
             // -----------------------------------------------
             //
             logger.info("Reemplazando Protected");
-             
+
             Stream<Path> walk = Files.walk(Paths.get(JAR_SBF));
-            
+
             List<String> resultList = walk.map(x -> x.toString())
                     .filter(f -> f.endsWith(".java")).collect(Collectors.toList());
 
             for (String file : resultList) {
-                
+
                 try {
                     mt.generateMetadata(file);
                 } catch (MetadataServerException ex) {
                     logger.error(ex.getMessage(), ex);
                 }
 
-                modifyFile(file,"protected ", "public ");
+                modifyFile(file, "protected ", "public ");
 
             }
-            
+
             // -------------------------------------------------------------------
             // Generate Metadata For oracle.e1.bssvfoundation.util.E1MessageList
             // -------------------------------------------------------------------
             //
-            
             mt.generateMetadataE1MessageList();
-             
+
             // -----------------------------------------------
             // Persist Metadata
             // -----------------------------------------------
             //
-             
             try {
                 mt.saveMetadata(new File(JAR_METADATA));
             } catch (MetadataServerException ex) {
                 logger.error(ex.getMessage(), ex);
-            } 
-            
+            }
+
             // -----------------------------------------------
             // Copiar Clase de Metadata de Resource a /tmp
             // -----------------------------------------------
             //
-            
             URL url = Thread.currentThread().getContextClassLoader().getResource(METADATA_DRIVER_TXT);
 
             InputStream inputStream = url.openConnection().getInputStream();
 
             IOUtil.copy(inputStream, new FileOutputStream(new File(METADATA_DRIVER_JAVA)));
-            
 
             // -----------------------------------------------
             // Prepare Maven 
@@ -649,16 +630,16 @@ public class MainBuilder {
             logger.info("Preparando POM para compilar WS...");
 
             prepareWSMvn(JAR_METADATA, JAR_METADATA, jarsToUnzip, JAR_SBF, JAR_SBF, options.version);
-            
+
             if (!isSuccessful(result)) {
 
                 logger.error("Error creando POM para la compilacion de WS");
 
                 throw new Exception("Error creando POM para la compilacion de WS");
             }
-             
-            summary.add("POM de Ws crado en " + JAR_SBF );
- 
+
+            summary.add("POM de Ws crado en " + JAR_SBF);
+
             logger.info("Compilando WS..");
 
             ExecutorService executorWS = Executors.newSingleThreadExecutor();
@@ -673,30 +654,28 @@ public class MainBuilder {
             result = futureWS.get();
 
             executorWS.shutdown();
-             
+
             if (!isSuccessful(result)) {
 
                 logger.error("Error Installing JDE Connector in Local Repository");
 
                 throw new Exception("Error Installing JDE Connector in Local Repository");
             }
-         
+
             summary.add("WS instalado en Repositorio");
-           
+
             logger.info("=======================================================");
             logger.info(" Summary ");
             logger.info("=======================================================");
-            
+
             for (String line : summary) {
                 logger.info(line);
             }
-            
 
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
-        
-        
+
     }
 
     private static void printUsage(OptionsParser parser) {
@@ -722,7 +701,7 @@ public class MainBuilder {
 
             Model pom = new Model();
             pom.setGroupId("com.jdedwards");
-            pom.setArtifactId(name); 
+            pom.setArtifactId(name);
             pom.setVersion("1.0.0");
             pom.setModelVersion("4.0.0");
 
@@ -756,9 +735,13 @@ public class MainBuilder {
 
             }
 
-            // jdbc driver processing
-            File jdbcDriverFile = new File(jdbcDriver);
-            addFileToPom(pom, jdbcDriverFile);
+            File[] filesDriver = allJarsInLibDir(jdbcDriver);
+
+            for (File file : filesDriver) {
+
+                addFileToPom(pom, file);
+
+            }
 
             File pomFile = new File(destDir, "pom.xml");
 
@@ -818,11 +801,11 @@ public class MainBuilder {
     }
 
     private static int executeMvnAssembly(String destDir) {
-        
+
         int result = 0;
-        
+
         List<String> executionOutput = null;
-                 
+
         try {
 
             MavenCli cli = new MavenCli();
@@ -984,7 +967,7 @@ public class MainBuilder {
         return result;
 
     }
-    
+
     private static int executeMvnWS(String destDir, String localRepo) {
 
         System.setProperty("maven.repo.local", localRepo);
@@ -994,7 +977,7 @@ public class MainBuilder {
         final ByteArrayOutputStream stdOutStream = new ByteArrayOutputStream();
 
         final ByteArrayOutputStream stdErrStream = new ByteArrayOutputStream();
-        
+
         List<String> executionOutput = null;
 
         try {
@@ -1019,7 +1002,7 @@ public class MainBuilder {
             result = 1;
 
             logger.error("Error Executing Maven Shaded. Message" + ": " + e.getMessage());
-            
+
             if (executionOutput != null) {
                 for (String line : executionOutput) {
                     logger.info(line);
@@ -1027,7 +1010,7 @@ public class MainBuilder {
             }
 
         }
-        
+
         return result;
 
     }
@@ -1050,20 +1033,17 @@ public class MainBuilder {
     }
 
     private static void cleanUp(String destDir, String name) {
-        
+
         try {
-            
+
             File[] temp = null;
-            
-            if(SHADE)
-            {
+
+            if (SHADE) {
                 temp = new File[]{new File(destDir, "pom.xml"), new File(destDir, "assembly.xml"), new File(destDir, "archive-tmp"), new File(destDir, name + "-1.0.0.jar")};
-            }
-            else
-            {
+            } else {
                 temp = new File[]{new File(destDir, "pom.xml"), new File(destDir, "assembly.xml"), new File(destDir, "archive-tmp")};
             }
-            
+
             for (File file : temp) {
                 if (file.exists()) {
                     file.delete();
@@ -1072,7 +1052,7 @@ public class MainBuilder {
         } catch (Exception e) {
             logger.error(STEP_4 + ": " + e.getMessage());
         }
-        
+
     }
 
     private static void cleanUpShade(String destDir) {
@@ -1957,25 +1937,32 @@ public class MainBuilder {
         }
     }
 
-    private static void copyFileFromDeployment(Map<String, String> jdeJars, Options options) throws IOException {
+    private static void copyFileFromDeployment(Map<String, String> jdeJars, Options options) {
 
         for (Entry<String, String> lista : jdeJars.entrySet()) {
 
-            File source = new File(options.jdeInstallPath + File.separator + lista.getValue() + File.separator + lista.getKey() + ".jar");
+            try {
 
-            File dest = new File(JAR_SELECTED + File.separator + lista.getKey() + ".jar");
+                File source = new File(options.jdeInstallPath + File.separator + lista.getValue() + File.separator + lista.getKey() + ".jar");
 
-            logger.info("Copying Jar File " + source.getAbsolutePath() + " to " + dest.getAbsolutePath());
+                File dest = new File(JAR_SELECTED + File.separator + lista.getKey() + ".jar");
 
-            FileUtils.copyFile(source, dest);
+                logger.info("Copying Jar File " + source.getAbsolutePath() + " to " + dest.getAbsolutePath());
 
-            logger.info("Jar File " + source.getName() + " has been copied.");
+                FileUtils.copyFile(source, dest);
+
+                logger.info("Jar File " + source.getName() + " has been copied.");
+
+            } catch (IOException ex) {
+
+                logger.info("Jar File " + lista.getKey() + " has not been copied." + ex.getMessage());
+
+            }
 
         }
-        
 
     }
-    
+
     private static void copyWSFromDeployment(Map<String, String> jdeJars, Options options) throws IOException {
 
         for (Entry<String, String> lista : jdeJars.entrySet()) {
@@ -1991,41 +1978,40 @@ public class MainBuilder {
             logger.info("Jar File " + source.getName() + " has been copied.");
 
         }
-      
 
     }
-    
+
     private static JarsClassFile getJarsToUnzip(String libDir) throws IOException {
 
-       JarsClassFile jarsToShade = new JarsClassFile();
-  
+        JarsClassFile jarsToShade = new JarsClassFile();
+
         // source folder processing
         File[] files = allJarsInLibDir(libDir);
 
-        for (File file : files) { 
-            
+        for (File file : files) {
+
             JarClassFile jarFile = new JarClassFile(file);
-             
+
             jarsToShade.addJar(jarFile);
-  
-        } 
+
+        }
 
         return jarsToShade;
 
     }
-    
+
     private static int prepareWSMvn(String jarMetadata, String metadataDriver, JarsClassFile JarsToShade, String libDir, String destDir, String version) {
-        
+
         int returnValue = 0;
-        
+
         JarsToShade.setMetadataFolder(jarMetadata);
         JarsToShade.setMetadataDriver(metadataDriver);
-        
+
         JarsToShade.sort();
-        
+
         try {
 
-             // -----------------------------------------------
+            // -----------------------------------------------
             // Iniciando Motor
             // -----------------------------------------------
             MustacheFactory mf = new DefaultMustacheFactory();
@@ -2035,25 +2021,21 @@ public class MainBuilder {
             FileWriter writer;
 
             writer = new FileWriter(destDir + "/pom.xml");
-             
+
             // -----------------------------------------------
             // GENERAR
             // -----------------------------------------------
-             
             m.execute(writer, JarsToShade).flush();
-            
-            
-            
+
         } catch (Exception e) {
             logger.error(STEP_1 + ": " + e.getMessage());
             returnValue = 1;
         }
-        
+
         return returnValue;
     }
 
-    static void modifyFile(String filePath, String oldString, String newString) throws IOException
-    {
+    static void modifyFile(String filePath, String oldString, String newString) throws IOException {
         File fileToBeModified = new File(filePath);
 
         String oldContent = "";
@@ -2084,8 +2066,7 @@ public class MainBuilder {
         reader.close();
 
         writer.close();
-         
-         
+
     }
 
 }

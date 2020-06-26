@@ -1,0 +1,1 @@
+java -jar target/JDECreateStdJarFile-1.0.0-SNAPSHOT-jar-with-dependencies.jar -i C:\_work\JDEConnectorCE\jdeJarsFile\jde-lib-bundle -j C:\_work\JDEConnectorCE\jdeJarsFile\jde-lib-bundle\JDBC_Vendor_Drivers -r "C:\Users\jgodi\.m2\repository" -n jde-lib-wrapped -o '1.0.0'
