@@ -70,21 +70,22 @@ public class MainJDEClient {
 
     private static final Boolean testWS_PurchaseOrdersForApproverGetJson = Boolean.FALSE;
 
-    private static final Boolean testWS_PurchaseOrdersForApproverWithToken = Boolean.FALSE;
+    private static final Boolean testWS_PurchaseOrdersForApproverWithToken = Boolean.TRUE;
 
-    private static final Boolean test_log_capture = Boolean.TRUE;
+    private static final Boolean test_log_capture = Boolean.FALSE;
 
     public void iniciarAplicacion(String[] args) throws Exception {
 
         ConfiguracionServer configuracion = new ConfiguracionServer();
 
-        configuracion.setServidorServicio("192.168.99.100"); // Servidor Hub
+        //configuracion.setServidorServicio("192.168.99.100"); // Servidor Hub
+        configuracion.setServidorServicio("localhost"); // Servidor Hub
         configuracion.setPuertoServicio(8085);
 //        configuracion.setServidorServicio("c7629931.ngrok.io"); // Servidor Hub
 //        configuracion.setPuertoServicio(80); // Puerto Servidor Hub
 
         configuracion.setUser("JDE");
-        configuracion.setPassword("Modus2017!");
+        configuracion.setPassword("Modus2020!");
         configuracion.setEnvironment("JDV920");
         configuracion.setRole("*ALL");
         configuracion.setSession(new Integer(0));
