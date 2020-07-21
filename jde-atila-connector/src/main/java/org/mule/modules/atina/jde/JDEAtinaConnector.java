@@ -171,9 +171,22 @@ public class JDEAtinaConnector {
 
             } else
             {
+
+                JDEAtilaConfiguracion currentConfigurationToken = new JDEAtilaConfiguracion();
+
+                currentConfigurationToken.setJdeUser((String) entityData.get("JDE User"));
+                currentConfigurationToken.setJdePassword((String) entityData.get("JDE Password"));
+                currentConfigurationToken.setJdeEnvironment((String) entityData.get("JDE Environment"));
+                currentConfigurationToken.setJdeRole((String) entityData.get("JDE Role"));
+                currentConfigurationToken.setSessionID(0L);
+                currentConfigurationToken.setToken("");
+                currentConfigurationToken.setWsConnection(true);
+
+                logger.info("           Information received: [" + currentConfigurationToken.toString() + "]");
+
                 this.getConfig()
                         .getService()
-                        .login(config.getStub(), config.getConfiguracion(), (Long) entityData.get("Transaction ID"));
+                        .login(config.getStub(), currentConfigurationToken, (Long) entityData.get("Transaction ID"));
 
                 returnValue.put("token", config.getConfiguracion()
                         .getToken());
