@@ -65,12 +65,12 @@ public class MainJDEClient {
     private static final Boolean testWS_Logout = Boolean.FALSE;
     private static final Boolean testWS_WriteOffProcessingOptions = Boolean.FALSE;
     private static final Boolean testWS_ItemPrice = Boolean.FALSE;
-    private static final Boolean testWS_PurchaseOrdersForApprover = Boolean.FALSE;
+    private static final Boolean testWS_PurchaseOrdersForApprover = Boolean.TRUE;
     private static final Boolean testBSFN = Boolean.FALSE;
 
     private static final Boolean testWS_PurchaseOrdersForApproverGetJson = Boolean.FALSE;
 
-    private static final Boolean testWS_PurchaseOrdersForApproverWithToken = Boolean.TRUE;
+    private static final Boolean testWS_PurchaseOrdersForApproverWithToken = Boolean.FALSE;
 
     private static final Boolean test_log_capture = Boolean.FALSE;
 

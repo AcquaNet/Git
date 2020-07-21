@@ -101,7 +101,7 @@ public class MainBuilder {
     private static final String STEP_4a = "Building Building shaded";
     private static final String STEP_5 = "Cleaning up";
     private static final Boolean SHADE = false;
-    private static final Boolean DEBUG = false;
+    private static final Boolean DEBUG = true;
 
     /**
      * @param args the command line arguments
@@ -112,6 +112,8 @@ public class MainBuilder {
             MetadataWSGenerator mt = new MetadataWSGenerator();
 
             try {
+                
+                mt.generateMetadata("C:\\tmp\\sbfjars\\JP040000\\valueobject\\ProcessVoucherDetail.java");
 
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JP430000\\ProcurementManager.java");
 //                
@@ -129,7 +131,7 @@ public class MainBuilder {
 //                
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JP420000\\valueobject\\ShowPriceHistoryDetail.java");
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JPR01MO1\\valueobject\\ABGT_Publish.java");
-                mt.generateMetadata("C:\\tmp\\sbfjars\\JPR01MO1\\valueobject\\RI_ShowAddressBook.java");
+//                mt.generateMetadata("C:\\tmp\\sbfjars\\JPR01MO1\\valueobject\\RI_ShowAddressBook.java");
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JP430000\\valueobject\\ConfirmPurchaseOrderAcknowledge.java");
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JP430000\\valueobject\\ConfirmPurchaseOrderAcknowledgeDetail.java");
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JP430000\\valueobject\\ConfirmPurchaseOrderAcknowledgeHeader.java");
