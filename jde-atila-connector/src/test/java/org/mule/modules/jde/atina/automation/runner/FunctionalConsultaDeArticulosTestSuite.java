@@ -1,6 +1,7 @@
 package org.mule.modules.jde.atina.automation.runner;
 
 import org.mule.modules.atina.jde.JDEAtinaConnector;
+import org.mule.modules.jde.atina.automation.functional.CreateOrderTestCases;
 import org.mule.modules.jde.atina.automation.functional.CreateVoucherTestCases;
 import org.mule.modules.jde.atina.automation.functional.GetABMediaObjectTestCases;
 import org.mule.modules.jde.atina.automation.functional.GetItemPriceAndAvailabilityTestCases;
@@ -24,7 +25,8 @@ import org.mule.tools.devkit.ctf.mockup.ConnectorTestContext;
         GetItemPriceAndAvailabilityWithTokenTestCases.class,
         GetABMediaObjectTestCases.class,
         GetItemPriceAndAvailabilityWithTokenTestCases.class,
-        CreateVoucherTestCases.class
+        CreateVoucherTestCases.class,
+        CreateOrderTestCases.class
 })
 public class FunctionalConsultaDeArticulosTestSuite {
 

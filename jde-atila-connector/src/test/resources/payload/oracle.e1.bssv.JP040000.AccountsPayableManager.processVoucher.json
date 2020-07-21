@@ -1,0 +1,247 @@
+{
+    "header": {
+        "shipToAddress": {
+            "address": {
+                "countyCode": "",
+                "city": "",
+                "countryCode": "",
+                "postalCode": "",
+                "addressLine1": "",
+                "addressLine2": "",
+                "stateCode": "",
+                "addressLine3": "",
+                "addressLine4": "",
+                "mailingName": ""
+            },
+            "shipTo": {
+                "entityTaxId": "",
+                "entityLongId": "",
+                "entityId": 4343
+            }
+        },
+        "businessUnit": "          30",
+        "printMessageCode": "",
+        "RMAId": 0,
+        "userReservedData": {
+            "userReservedCode": "",
+            "userReservedNumber": 0,
+            "userReservedReference": "",
+            "userReservedAmount": 0.0
+        },
+        "remark": "Remark PO",
+        "description1": "Purchase Order X",
+        "reference": "",
+        "orderedBy": "",
+        "evaluatedReceiptSettlement": "",
+        "paymentTermsCode": "",
+        "triangulationRateFromCurrency": 0,
+        "purchaseOrderKey": {
+            "documentTypeCode": "",
+            "documentNumber": 0,
+            "documentCompany": ""
+        },
+        "currencyCodeFrom": "USD",
+        "isTextAssociated": false,
+        "holdOrderCode": "",
+        "percentRetainage": 0.0,
+        "adjustmentScheduleCode": "",
+        "RMAType": "",
+        "supplierAddress": {
+            "address": {
+                "countyCode": "",
+                "city": "",
+                "countryCode": "",
+                "postalCode": "",
+                "addressLine1": "",
+                "addressLine2": "",
+                "stateCode": "",
+                "addressLine3": "",
+                "addressLine4": "",
+                "mailingName": ""
+            },
+            "supplier": {
+                "entityTaxId": "",
+                "entityLongId": "",
+                "entityId": 4343
+            } 
+        },
+        "delivery": {
+            "deliveryInstruction1": "",
+            "carrier": {
+                "entityTaxId": "",
+                "entityLongId": "",
+                "entityId": 0
+            },
+           
+            "landedCostRuleCode": "",
+            "freightHandlingCode": "",
+            "deliveryInstruction2": ""
+        },
+        "printAIADocument": "",
+        "sendMethodCode": "",
+        "orderTakenBy": "",
+        "changeOrderNumber":0,
+        "dates": {   
+        },
+        "tax": {
+            "taxExplanationCode": "",
+            "taxExemptCertificate": "",
+            "taxRateAreaCode": ""
+        },
+        "supplierSO": "",
+        "supplierPriceGroupCode": "",
+        "buyer": {
+            "entityTaxId": "",
+            "entityLongId": "",
+            "entityId": 0
+        },
+        "rateExchangeOverride": 0.0,
+        "currencyCodeTo": "USD",
+        "processing": {
+            "actionType": "",
+            "processingVersion": "ZJDE0001"
+        },
+        "detail": [
+            {
+                "businessUnit": "          30",
+                "matrixControlLine": 0.0,
+                "printMessageCode": "",
+                "RMAId": 0,
+                "originalOrderLineKey": {
+                    "documentTypeCode": "",
+                    "documentLineNumber": 0.0,
+                    "documentNumber": "",
+                    "documentCompany": "",
+                    "documentSuffix": ""
+                },
+                "unitVolume": 0.0,
+                "costExtended": 0.0,
+                "datesDetail": {  
+                },
+                "project": {
+                    "projectNumber": 0,
+                    "taskOrderType": "",
+                    "taskOrderNumber": 0
+                },
+                "priceLevel": "",
+                "promotionId": "",
+                "reference": "",
+                "quantityOrderedSecondary": 0.0,
+                "agreementSupplement": 0,
+                "freezeWorkOrder": "",
+                "unitOfMeasureCodeTransaction": "",
+                "adjustmentScheduleCode": "",
+                "RMAType": "",
+                "unitOfMeasureCodePurchasing": "",
+                "commodityClassCode": "",
+                "transferDirectShip": "",
+                "costObjectTypeCode1": "",
+                "costObjectTypeCode2": "",
+                "buyer": {
+                    "entityTaxId": "",
+                    "entityLongId": "",
+                    "entityId": 0
+                },
+                "reportingCodesPurchasing": {
+                    "purchasingReportCode002": "",
+                    "purchasingReportCode001": "",
+                    "purchasingReportCode004": "",
+                    "purchasingReportCode003": ""
+                },
+                "UNSPSCCode": "",
+                "deliveryDetail": {
+                    "carrier": {
+                        "entityTaxId": "",
+                        "entityLongId": "",
+                        "entityId": 0
+                    },
+                    "modeOfTransportCode": "",
+                    "landedCostRuleCode": "",
+                    "freightHandlingCode": ""
+                },
+                "relatedOrderLineKey": {
+                    "documentTypeCode": "",
+                    "documentLineNumber": 0.0,
+                    "documentNumber": "",
+                    "documentCompany": "",
+                    "documentSuffix": ""
+                },
+                "discountFactor": 0.0,
+                "relievePOBlanketOrder": "",
+                "costObjectCode4": "",
+                "unitWeight": 0.0,
+                "costObjectCode3": "",
+                "costObjectCode2": "",
+                "costObjectCode1": "",
+                "adjustmentRevisionLevel": 0,
+                "financialDetail": {
+                    "glAccountKey": {
+                        "accountId": "",
+                        "accountLongId": "",
+                        "accountAlternate": ""
+                    },
+                    "assetId": "",
+                    "glClassCode": "",
+                    "subledgerTypeCode": "",
+                    "subledger": "",
+                    "glAccount": {
+                        "businessUnit": "",
+                        "objectAccount": "",
+                        "subsidiary": ""
+                    }
+                },
+                "statusCodeNext": "",
+                "userReservedData": {
+                    "userReservedCode": "", 
+                    "userReservedNumber": 0,
+                    "userReservedReference": "",
+                    "userReservedAmount": 0.0
+                },
+                "reference1": "",
+                "quantityOrdered": 10000.0,
+                "costUnitPurchasing": 0.0,
+                "purchaseOrderLineKey": {
+                    "documentLineNumber": 0.0,
+                    "documentSuffix": ""
+                },
+                "costObjectTypeCode3": "",
+                "costObjectTypeCode4": "",
+                "taxDetail": {
+                    "taxExplanationCode": "",
+                    "taxableCode": "",
+                    "taxRateAreaCode": ""
+                },
+                "agreementId": "",
+                "unitOfMeasureCodeVolume": "",
+                "product": {
+                    "item": {
+                        "itemId": 0,
+                        "itemProduct": "CARBURETOR",
+                        "itemCatalog": "",
+                        "itemFreeForm": "",
+                        "itemSupplier": ""
+                    },
+                    "locationPrimary": "",
+                    "lotNumber": "",
+                    "lineTypeCode": "",
+                    "description2": "",
+                    "description1": ""
+                },
+                "transactionOriginator": "",
+                "unitOfMeasureCodeWeight": "",
+                "supplierSO": "",
+                "statusCodeLast": "",
+                "actionType": "",
+                "shipmentId": 0,
+                "unitOfMeasureCodeSecondary": "",
+                "shipTo": {
+                    "entityTaxId": "",
+                    "entityLongId": "",
+                    "entityId": 4343
+                }
+            }
+        ],
+        "triangulationRateToCurrency": 0,
+        "approvalRouteCode": "DEMO"
+    }
+}
