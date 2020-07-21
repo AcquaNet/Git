@@ -2,11 +2,17 @@ package org.mule.modules.atina.jde.implementations;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
@@ -19,6 +25,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.mule.modules.atina.jde.JDEAtinaConnector;
 import org.mule.modules.atina.jde.exceptions.ExternalConnectorException;
 import org.mule.modules.atina.jde.exceptions.InternalConnectorException;
@@ -26,6 +33,7 @@ import org.mule.modules.atina.jde.interfaces.ConnectorServiceInterface;
 import org.mule.modules.atina.jde.models.JDEAtilaConfiguracion;
 import org.mule.modules.atina.jde.models.ParametroInput;
 
+import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.google.shade.common.cache.CacheBuilder;
 import com.google.shade.common.cache.CacheLoader;
 import com.google.shade.common.cache.LoadingCache;
@@ -981,9 +989,13 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             try
             {
 
-                String className = valor.getValue()
-                        .getClass()
-                        .getName();
+            	String className = "";
+            	
+				if (valor.getValue() != null) {
+					className = valor.getValue().getClass().getName();
+				} else {
+					className = "NULL";
+				}
 
                 logger.info(levelLog + "                                        Parameter No.: " + y);
 
@@ -992,8 +1004,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 valorNuevo.setNombreDelParametro(valor.getKey());
 
                 logger.info(levelLog + "                                        Parameter Name recieved      : " + valor.getKey());
-                logger.info(levelLog + "                                        Parameter Value received     : " + valor.getValue()
-                        .toString());
+                logger.info(levelLog + "                                        Parameter Value received     : " + (valor.getValue()!=null?valor.getValue()
+                        .toString():"NULL"));
                 logger.info(levelLog + "                                        Parameter Value Type recieved: " + className);
 
                 // --------------------------------------------------------------
@@ -1102,6 +1114,11 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
                     valoresARetornar.add(valoresNuevo.build());
 
+                } else if (className.equals("NULL")) {
+                	
+                	valorNuevo.setNullValue(true);
+                	logger.info(levelLog + "                                        NULL Value:\n " + valorNuevo.toString());
+                	
                 } else
                 {
 
@@ -1109,7 +1126,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     // Los parametros se deben convertir al formato desde el formato de MULE al formato de SWAGGER
                     // ------------------------------------------------------------------------------------------------
                     // CONVERTIR AL FORMATO DEL METADATA
-
+                	  
                     switch (metadataDelInput.getParametro()
                             .getTipoDelParametroJava()) {
 
@@ -1222,8 +1239,30 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
                             }
                             break;
+                        case "java.util.Calendar":
                         case "java.util.Date":
                             switch (className) {
+                                case "java.lang.String":
+
+                                	if(((String)valor.getValue()).isEmpty())
+                                	{
+                                		valorNuevo.setNullValue(true);
+                                		
+                                	} else
+                                	{
+                                		Date date2 = DateUtils.parseDate(String.valueOf(valor.getValue()), new String[] { "yyyy-MM-dd"
+                                        });
+
+                                        Instant instant2 = date2.toInstant();
+                                        long seconds2 = instant2.getEpochSecond();
+                                        int nanos2 = (int) instant2.getEpochSecond();
+                                        valorNuevo.setValueAsDate(Timestamp.newBuilder()
+                                                .setSeconds(seconds2)
+                                                .setNanos(nanos2)
+                                                .build());
+                                	} 
+                                	
+                                    break;
                                 case "java.util.Date":
                                     Date date = (java.util.Date) valor.getValue();
                                     Instant instant = date.toInstant();
@@ -1366,6 +1405,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, null);
 
                     }
+                     
 
                     logger.info(levelLog + "---------------------------------------------------------------------------------");
                     logger.info(levelLog + "                                        New Primitive Value:\n " + valorNuevo.toString());
@@ -1379,6 +1419,22 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             } catch (java.lang.NullPointerException e)
             {
                 String msg = "ERROR: Invalid Parameter:" + valor.getKey() + " Value: " + valor.getValue();
+
+                logger.error(msg);
+
+                String errorMessage = msg;
+                String claseDeLaOperacion = "";
+                String metodoDeLaOperacion = "";
+                int httpStatus = 510;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
+
+                throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, null);
+
+            } catch (ParseException e) {
+
+                String msg = "ERROR: Parsing Parameter:" + valor.getKey() + " Value: " + valor.getValue();
 
                 logger.error(msg);
 
