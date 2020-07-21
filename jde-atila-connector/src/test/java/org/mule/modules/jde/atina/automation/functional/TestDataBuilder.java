@@ -16,6 +16,7 @@ public class TestDataBuilder {
     private static final String AUTH_FROM_TOKEN = "FromTokenData";
     private static final String AUTH_FROM_USER = "FromUserData";
     private static final String AUTH_LOGOUT = "LogoutTokenData";
+    private static final String CREATE_VOUCHER = "oracle.e1.bssv.JP040000.AccountsPayableManager.processVoucher";
 
     public static String getAuthorizationFromTokenEntityType() {
         return AUTH_FROM_TOKEN;
@@ -62,6 +63,92 @@ public class TestDataBuilder {
 
     }
 
+    public static String getCreteVoucherEntityType() {
+        return CREATE_VOUCHER;
+    }
+
+    public static Map<String, Object> getCreateVoucherEntityData() {
+
+        final Map<String, Object> returnValue = new HashMap<String, Object>();
+
+        final Map<String, Object> processVoucherHeader = new HashMap<String, Object>();
+
+        processVoucherHeader.put("supplierInvoiceNumber", "10010211");
+        processVoucherHeader.put("businessUnit", "           1");
+
+        Map<String, Object> voucherKey = new java.util.HashMap<String, Object>();
+        voucherKey.put("documentTypeCode", "PV");
+        voucherKey.put("documentNumber", new Integer(0));
+        voucherKey.put("documentCompany", "00001");
+        processVoucherHeader.put("voucherKey", voucherKey);
+
+        processVoucherHeader.put("remark", "Remark1");
+        processVoucherHeader.put("dateInvoice", "2020-04-23");
+        processVoucherHeader.put("dateAccounting", "2020-04-23");
+
+        Map<String, Object> supplier = new java.util.HashMap<String, Object>();
+        supplier.put("entityTaxId", "");
+        supplier.put("entityId", new Integer(4319));
+        supplier.put("entityLongId", "");
+        processVoucherHeader.put("supplier", supplier);
+
+        Map<String, Object> processing = new java.util.HashMap<String, Object>();
+        processing.put("actionType", "A");
+        processing.put("processingVersionGeneralLedger", "ZJDE0001");
+        processing.put("processingVersion", "ZJDE0001");
+        processVoucherHeader.put("processing", processing);
+
+        processVoucherHeader.put("company", "00001");
+
+        // ===========================================
+        // Detail
+        // ===========================================
+
+        // Voucher Detail
+
+        ArrayList<Object> voucherDetailList = new java.util.ArrayList<Object>();
+
+        Map<String, Object> voucherDetail = new java.util.HashMap<String, Object>();
+
+        voucherDetail.put("remark", "Remark 01");
+        voucherDetail.put("amountGrossDomestic", BigDecimal.valueOf(10000));
+        voucherDetail.put("dateDue", null);
+
+        voucherDetailList.add(voucherDetail);
+
+        // GL Detail
+
+        ArrayList<Object> glDistributionList = new java.util.ArrayList<Object>();
+
+        Map<String, Object> glDistributionDetail = new java.util.HashMap<String, Object>();
+
+        glDistributionDetail.put("nameExplanationRemark", "GL Remark 01");
+
+        Map<String, Object> glAccountKey = new java.util.HashMap<String, Object>();
+        glAccountKey.put("businessUnit", "           1");
+        glAccountKey.put("objectAccount", "1110");
+        glAccountKey.put("subsidiary", "AUTOBKST");
+
+        glDistributionDetail.put("glAccount", glAccountKey);
+        glDistributionDetail.put("amountDomestic", BigDecimal.valueOf(10000));
+
+        glDistributionList.add(glDistributionDetail);
+
+        // Detail
+
+        Map<String, Object> processVoucherDetail = new java.util.HashMap<String, Object>();
+
+        processVoucherDetail.put("voucher", voucherDetailList);
+        processVoucherDetail.put("glDistribution", glDistributionList);
+
+        processVoucherHeader.put("processVoucherDetail", processVoucherDetail);
+
+        returnValue.put("processVoucherHeader", processVoucherHeader);
+
+        return returnValue;
+
+    }
+
     public static String getPurchaseOrdersForApproverEntityType() {
         return GET_PURCHASE_ORDER_FOR_APPROVER;
     }
@@ -71,7 +158,7 @@ public class TestDataBuilder {
         final Map<String, Object> returnValue = new HashMap<String, Object>();
 
         Map<String, Object> tmp1 = new java.util.HashMap<String, Object>();
-        tmp1.put("entityId", new Integer(533095));
+        tmp1.put("entityId", new Integer(92455890));
 
         returnValue.put("approver", tmp1);
 
