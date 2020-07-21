@@ -161,8 +161,7 @@ public class JDEWSCreateAndInvokeWS {
 
             Object[] parametrosDeInputDelMetodo = new Object[3];
 
-            parametrosDeInputDelMetodo[0] = context;
-            //parametrosDeInputDelMetodo[1] = defaultConnection;
+            parametrosDeInputDelMetodo[0] = context; 
             parametrosDeInputDelMetodo[1] = null; 
             parametrosDeInputDelMetodo[2] = inputVOObject;
 
@@ -174,7 +173,12 @@ public class JDEWSCreateAndInvokeWS {
 
         } catch (IllegalAccessException ex) {
 
-            String errorMessage = ((BusinessServiceException) ex.getCause()).getMessage();
+            String errorMessage = ex.getMessage();
+                    
+            if( ex.getCause() != null)
+            {
+                errorMessage = ((BusinessServiceException) ex.getCause()).getMessage();
+            }  
 
             logger.error("Error invoking WS IllegalAccessException " + operation + " Error: " + errorMessage, ex);
              
@@ -182,7 +186,12 @@ public class JDEWSCreateAndInvokeWS {
 
         } catch (IllegalArgumentException ex) {
 
-            String errorMessage = ((BusinessServiceException) ex.getCause()).getMessage();
+            String errorMessage = ex.getMessage();
+                    
+            if( ex.getCause() != null)
+            {
+                errorMessage = ((BusinessServiceException) ex.getCause()).getMessage();
+            }  
 
             logger.error("Error invoking WS IllegalArgumentException " + operation + " Error: " + errorMessage, ex);
              
@@ -190,8 +199,15 @@ public class JDEWSCreateAndInvokeWS {
 
         } catch (InvocationTargetException ex) {
             
-            String errorMessage = ((BusinessServiceException) ex.getCause()).getMessage();
-
+            String errorMessage = ex.getMessage();
+                 
+            if( ex.getCause() != null)
+            {
+                logger.error("Exception Clase  XXXX" + ex.getCause().getClass().getName());
+                
+                errorMessage = ((BusinessServiceException) ex.getCause()).getMessage();
+            }  
+               
             logger.error("Error invoking WS InvocationTargetException " + operation + " Error: " + errorMessage, ex);
             
             E1Message e1Message = new E1Message(context, "019FIS", errorMessage);
