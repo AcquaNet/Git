@@ -20,7 +20,6 @@ public class GetPurchaseOrdersForApproverTestCases extends AbstractTestCases {
             "unchecked"
     })
     @Test
-    @Ignore
     public void executeTest1() throws Exception {
 
         String entityType = TestDataBuilder.getPurchaseOrdersForApproverEntityType();
@@ -54,9 +53,11 @@ public class GetPurchaseOrdersForApproverTestCases extends AbstractTestCases {
 
         Map<String, Object> entityData = TestDataBuilder.getPurchaseOrdersForApproverEntityData();
 
+        Object returnedValue = null;
+
         try {
 
-            ejecucionInterna("GetPurchaseOrdersForApproverTestCases: ", entityType, entityData);
+            returnedValue = ejecucionInterna("GetPurchaseOrdersForApproverTestCases: ", entityType, entityData);
 
             fail("No se ha producido la exception esperada");
 

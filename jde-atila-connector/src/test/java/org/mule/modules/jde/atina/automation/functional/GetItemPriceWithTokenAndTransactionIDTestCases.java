@@ -31,7 +31,7 @@ public class GetItemPriceWithTokenAndTransactionIDTestCases extends AbstractTest
         Configuracion config = new Configuracion();
 
         config.setUser("JDE");
-        config.setPassword("Modus2017!");
+        config.setPassword("Modus2020!");
         config.setEnvironment("JDV920");
         config.setRole("*ALL");
         config.setSessionId(0);
@@ -42,7 +42,7 @@ public class GetItemPriceWithTokenAndTransactionIDTestCases extends AbstractTest
         // Authorization
         // ======================
 
-        String token = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNTcyNDQ3Nzc0LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMTchIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MH0.u9olIwWVsyCQnEPz2q0ngr1Kny24RqcRCU23xHFvr3o";
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNTk1MjQ4NzEzLCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMTchIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6LTE3Mjk2MTg0NywiZXhwIjoxNTk1MjUzNTEzfQ.X8CnCBdzhPpg9NiDF8cyzvE5lXmkW0_gAviHvQLI6NU";
 
         String entityTypeAuth = TestDataBuilder.getAuthorizationFromTokenEntityType();
 
