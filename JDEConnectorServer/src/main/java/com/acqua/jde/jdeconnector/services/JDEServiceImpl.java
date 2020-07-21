@@ -43,9 +43,13 @@ import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
 import com.jdedwards.base.datatypes.SqlDate;
 import io.grpc.Status;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,6 +75,7 @@ import org.slf4j.LoggerFactory;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import java.lang.reflect.Field;
 import java.security.Key;
+import java.util.Calendar;
 import java.util.logging.Level;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
@@ -260,28 +265,36 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     
     private Configuracion getConfigFromJWT(String jwtToken) {
         
-        logger.info("          Get Config From JWT: " + jwtToken);
-        
         Configuracion config = new Configuracion();
-        
-        Claims claims = Jwts.parser()
-                .setSigningKey(DatatypeConverter.parseBase64Binary(configuracion.getSecretKey()))
-                .parseClaimsJws(jwtToken).getBody();
+         
+        try {
 
-        config.setUser(claims.get("user", String.class));
+            logger.info("          Get Config From JWT: " + jwtToken);
 
-        config.setPassword(claims.get("password", String.class));
+            Claims claims = Jwts.parser()
+                    .setSigningKey(DatatypeConverter.parseBase64Binary(configuracion.getSecretKey()))
+                    .parseClaimsJws(jwtToken).getBody();
 
-        config.setEnvironment(claims.get("environment", String.class));
+            config.setUser(claims.get("user", String.class));
 
-        config.setRole(claims.get("role", String.class));
- 
-        config.setSessionId(claims.get("sessionId", Integer.class));
-        
-        config.setTokenExpiration(this.configuracion.getTokenExpiration());
-        
-        logger.info("          Configuration Received: " + config.toString());
-        
+            config.setPassword(claims.get("password", String.class));
+
+            config.setEnvironment(claims.get("environment", String.class));
+
+            config.setRole(claims.get("role", String.class));
+
+            config.setSessionId(claims.get("sessionId", Integer.class));
+
+            config.setTokenExpiration(this.configuracion.getTokenExpiration());
+
+            logger.info("          Configuration Received: " + config.toString());
+
+        } catch (ExpiredJwtException | MalformedJwtException | UnsupportedJwtException | SignatureException | IllegalArgumentException ex) {
+
+            throw new JDESingleConnectionException("Error Processing Token: " + ex.getMessage(), ex);
+
+        }
+
         return config;
         
     }
@@ -1147,7 +1160,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             logger.info("-------------------------------------------------------------------------------");
             
             StringBuilder sb = new StringBuilder();
-            sb.append("Error getting metadata operations");
+            sb.append("Error invoking operation");
             sb.append("|");
             sb.append(ex.getMessage());
             sb.append("|%ExternalServiceException%");
@@ -1987,11 +2000,19 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                             case "java.lang.Float":
                                 valorActual = valor.getValueAsFloat();
                                 break;
-                            case "java.util.Date":
+                            case "java.util.Date": 
                                 // Convertir de TimeStamp to Date
                                 com.google.protobuf.Timestamp ts = valor.getValueAsDate();
                                 Instant valorTM = Instant.ofEpochSecond(ts.getSeconds(), ts.getNanos());
                                 valorActual = Date.from(valorTM);
+                                break;
+                            case "java.util.Calendar":
+                                com.google.protobuf.Timestamp ts2 = valor.getValueAsDate();
+                                Instant valorTM2 = Instant.ofEpochSecond(ts2.getSeconds(), ts2.getNanos());
+                                Date valorActualAsDate = Date.from(valorTM2);
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.setTime(valorActualAsDate);
+                                valorActual = calendar;
                                 break;
                             case "java.lang.Byte":
                                 valorActual = valor.getValuesAsByteString();
