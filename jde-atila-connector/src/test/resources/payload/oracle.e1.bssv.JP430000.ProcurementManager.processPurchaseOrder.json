@@ -81,7 +81,11 @@
         "sendMethodCode": "",
         "orderTakenBy": "",
         "changeOrderNumber":0,
-        "dates": {   
+        "dates": {
+            "dateCancel": "",
+            "dateOrdered": "2020-07-01",
+            "dateRequested": "2020-07-01",
+            "datePromisedDelivery": ""
         },
         "tax": {
             "taxExplanationCode": "",
@@ -116,7 +120,12 @@
                 },
                 "unitVolume": 0.0,
                 "costExtended": 0.0,
-                "datesDetail": {  
+                "datesDetail": {
+                    "dateAccounting": "",
+                    "dateCancel": "",
+                    "dateRequested": "",
+                    "datePromisedDelivery": "",
+                    "dateEffectiveLot": ""
                 },
                 "project": {
                     "projectNumber": 0,

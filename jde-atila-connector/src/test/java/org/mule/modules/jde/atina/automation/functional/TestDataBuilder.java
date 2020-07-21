@@ -17,6 +17,7 @@ public class TestDataBuilder {
     private static final String AUTH_FROM_USER = "FromUserData";
     private static final String AUTH_LOGOUT = "LogoutTokenData";
     private static final String CREATE_VOUCHER = "oracle.e1.bssv.JP040000.AccountsPayableManager.processVoucher";
+    private static final String CREATE_ORDER = "oracle.e1.bssv.JP430000.ProcurementManager.processPurchaseOrder";
 
     public static String getAuthorizationFromTokenEntityType() {
         return AUTH_FROM_TOKEN;
@@ -61,6 +62,10 @@ public class TestDataBuilder {
 
         return returnValue;
 
+    }
+    
+    public static String getCreateOrderEntityType() {
+        return CREATE_ORDER;
     }
 
     public static String getCreteVoucherEntityType() {
