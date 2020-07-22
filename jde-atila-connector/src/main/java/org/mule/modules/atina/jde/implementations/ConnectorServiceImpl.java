@@ -989,13 +989,15 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
             try
             {
 
-            	String className = "";
-            	
-				if (valor.getValue() != null) {
-					className = valor.getValue().getClass().getName();
-				} else {
-					className = "NULL";
-				}
+                String className = "";
+
+                if (valor.getValue() != null) {
+                    className = valor.getValue()
+                            .getClass()
+                            .getName();
+                } else {
+                    className = "NULL";
+                }
 
                 logger.info(levelLog + "                                        Parameter No.: " + y);
 
@@ -1004,8 +1006,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                 valorNuevo.setNombreDelParametro(valor.getKey());
 
                 logger.info(levelLog + "                                        Parameter Name recieved      : " + valor.getKey());
-                logger.info(levelLog + "                                        Parameter Value received     : " + (valor.getValue()!=null?valor.getValue()
-                        .toString():"NULL"));
+                logger.info(levelLog + "                                        Parameter Value received     : " + (valor.getValue() != null ? valor.getValue()
+                        .toString() : "NULL"));
                 logger.info(levelLog + "                                        Parameter Value Type recieved: " + className);
 
                 // --------------------------------------------------------------
@@ -1115,10 +1117,10 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     valoresARetornar.add(valoresNuevo.build());
 
                 } else if (className.equals("NULL")) {
-                	
-                	valorNuevo.setNullValue(true);
-                	logger.info(levelLog + "                                        NULL Value:\n " + valorNuevo.toString());
-                	
+
+                    valorNuevo.setNullValue(true);
+                    logger.info(levelLog + "                                        NULL Value:\n " + valorNuevo.toString());
+
                 } else
                 {
 
@@ -1126,7 +1128,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                     // Los parametros se deben convertir al formato desde el formato de MULE al formato de SWAGGER
                     // ------------------------------------------------------------------------------------------------
                     // CONVERTIR AL FORMATO DEL METADATA
-                	  
+
                     switch (metadataDelInput.getParametro()
                             .getTipoDelParametroJava()) {
 
@@ -1244,13 +1246,13 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             switch (className) {
                                 case "java.lang.String":
 
-                                	if(((String)valor.getValue()).isEmpty())
-                                	{
-                                		valorNuevo.setNullValue(true);
-                                		
-                                	} else
-                                	{
-                                		Date date2 = DateUtils.parseDate(String.valueOf(valor.getValue()), new String[] { "yyyy-MM-dd"
+                                    if (((String) valor.getValue()).isEmpty())
+                                    {
+                                        valorNuevo.setNullValue(true);
+
+                                    } else
+                                    {
+                                        Date date2 = DateUtils.parseDate(String.valueOf(valor.getValue()), new String[] { "yyyy-MM-dd"
                                         });
 
                                         Instant instant2 = date2.toInstant();
@@ -1260,8 +1262,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                                                 .setSeconds(seconds2)
                                                 .setNanos(nanos2)
                                                 .build());
-                                	} 
-                                	
+                                    }
+
                                     break;
                                 case "java.util.Date":
                                     Date date = (java.util.Date) valor.getValue();
@@ -1405,7 +1407,6 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
                             throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, null);
 
                     }
-                     
 
                     logger.info(levelLog + "---------------------------------------------------------------------------------");
                     logger.info(levelLog + "                                        New Primitive Value:\n " + valorNuevo.toString());
