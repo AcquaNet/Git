@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Test; 
+import org.junit.Test;
 import org.mule.modules.jde.atina.automation.functional.TestDataBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,66 +31,59 @@ public class CreateOrderTestCases extends AbstractTestCases {
         String entityType = TestDataBuilder.getCreateOrderEntityType();
 
         logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " BEGIN ");
-        
+
         // ======================
         // Get Payload
         // ======================
-        
+
         InputStream inputStreamJSON;
-         
-        inputStreamJSON = Thread.currentThread().getContextClassLoader()
-        	    .getResourceAsStream( "payload/" + entityType + ".json");
-        
+
+        inputStreamJSON = Thread.currentThread()
+                .getContextClassLoader()
+                .getResourceAsStream("payload/" + entityType + ".json");
+
         assertNotNull(inputStreamJSON);
 
         // ======================
         // Get Connector Instance
-        // ====================== 
-        
-        Map<String, Object> entityData2 = null;
-        
-        try {
-        	
-        	String text = IOUtils.toString(inputStreamJSON, StandardCharsets.UTF_8.name());
-        	
+        // ======================
 
-            logger.info("MULESOFT - INPUT: " + text  );
-            
-        	ObjectMapper oM = new ObjectMapper();
-        	
-        	
-        	 entityData2 = new ObjectMapper().readValue(text, Map.class);
-        }
-        catch (IOException e) {
+        Map<String, Object> entityData2 = null;
+
+        try {
+
+            String text = IOUtils.toString(inputStreamJSON, StandardCharsets.UTF_8.name());
+
+            logger.info("MULESOFT - INPUT: " + text);
+
+            ObjectMapper oM = new ObjectMapper();
+
+            entityData2 = new ObjectMapper().readValue(text, Map.class);
+        } catch (IOException e) {
             e.printStackTrace();
         }
-           
+
         Map<String, Object> result = (Map<String, Object>) ejecucionInterna("Create Voucher: ", entityType, entityData2);
-        
+
         String response = new ObjectMapper().writeValueAsString(result);
-        
-        logger.info("MULESOFT - OUTPUT: " + response  );
-        
+
+        logger.info("MULESOFT - OUTPUT: " + response);
+
         // Get Voucher No
-        
+
         assertTrue(result.containsKey("confirmVoucherHeader"));
-        Map<String, Object> vh = (Map<String, Object>)result.get("confirmVoucherHeader");
-        
+        Map<String, Object> vh = (Map<String, Object>) result.get("confirmVoucherHeader");
+
         assertTrue(vh.containsKey("voucherKey"));
-        Map<String, Object> vk = (Map<String, Object>)vh.get("voucherKey");
-        
+        Map<String, Object> vk = (Map<String, Object>) vh.get("voucherKey");
+
         assertTrue(vk.containsKey("documentNumber"));
         Integer value = (Integer) vk.get("documentNumber");
-         
-        
-        assertTrue(value>0);
+
+        assertTrue(value > 0);
 
         logger.info("MULESOFT - FUNCTIONAL_TEST " + entityType + " END ");
-        
-        
 
     }
-
-     
 
 }

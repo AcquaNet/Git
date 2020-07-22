@@ -63,7 +63,7 @@ public class TestDataBuilder {
         return returnValue;
 
     }
-    
+
     public static String getCreateOrderEntityType() {
         return CREATE_ORDER;
     }
