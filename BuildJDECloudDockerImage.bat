@@ -35,28 +35,6 @@ cd C:\_work\JDEConnectorCE\ProjectsPlatforms\process-layer
 CALL mvn clean package
 CALL build-and-deploy.bat
 ECHO ==========================================================
-ECHO "Deploy POM from Multimodule
-ECHO ==========================================================
-cd C:\_work\JDEConnectorCE\ProjectsPlatforms
-CALL mvn clean install
-ECHO ==========================================================
-ECHO Press Enter ....
-ECHO ==========================================================
-PAUSE >nul
-cd C:\_work\JDEConnectorCE\Projects\JDEGeneretaResponseJavaClass
-CALL mvn clean install
-CALL mvn clean deploy
-
-
-
-
-
-
-
-
-
-
-ECHO ==========================================================
 ECHO "Creating JDE Mule Cloud
 ECHO ==========================================================
 CD C:\_work\JDEConnectorCE\Projects\JDEDockers\Cloud
