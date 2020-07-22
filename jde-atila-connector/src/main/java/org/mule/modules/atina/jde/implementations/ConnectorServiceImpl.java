@@ -156,6 +156,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
         logger.info("JDE Atina Service - Login with Transaction ID " + transactionID);
 
+        logger.info("JDE Atina Service - Config " + configuracion.toString());
+
         SessionResponse tokenResponse = null;
 
         try {

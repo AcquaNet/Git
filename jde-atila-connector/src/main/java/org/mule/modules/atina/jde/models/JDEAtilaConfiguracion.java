@@ -123,4 +123,12 @@ public class JDEAtilaConfiguracion {
         this.addressBookNumber = addressBookNumber;
     }
 
+    @Override
+    public String toString() {
+        return "JDEAtilaConfiguracion [jdeUser=" + jdeUser + ", jdeEnvironment=" + jdeEnvironment + ", jdeRole="
+                + jdeRole + ", wsConnection=" + wsConnection + ", microServiceName=" + microServiceName
+                + ", microServicePort=" + microServicePort + ", sessionID=" + sessionID + ", token=" + token
+                + ", addressBookNumber=" + addressBookNumber + "]";
+    }
+
 }
