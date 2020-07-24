@@ -101,7 +101,7 @@ public class MainBuilder {
     private static final String STEP_4a = "Building Building shaded";
     private static final String STEP_5 = "Cleaning up";
     private static final Boolean SHADE = false;
-    private static final Boolean DEBUG = true;
+    private static final Boolean DEBUG = false;
 
     /**
      * @param args the command line arguments

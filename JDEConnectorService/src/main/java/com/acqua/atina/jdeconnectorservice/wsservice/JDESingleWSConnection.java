@@ -59,15 +59,25 @@ public class JDESingleWSConnection implements JDEConnection {
         // ----------------------------------------------
         // Creating JDE Client Connector
         // ----------------------------------------------
-        logger.info("JDE ATINA  JDESingleWSConnection - Creating JDE Client Connector with this values:");
+        logger.info("JDE ATINA  JDESingleWSConnection - Creating JDE Client Connector with following values:");
 
         logger.info("     User: " + user);
         logger.info("     Environment: " + environment);
         logger.info("     Role: " + role);
+        
+        try {
 
-        this.client = new JDESingleWSClientFactory().createInstance(user, password, environment, role);
+            this.client = new JDESingleWSClientFactory().createInstance(user, password, environment, role);
 
-        logger.info("JDE ATINA  JDESingleWSConnection - JDE Client Connector is done.");
+            logger.info("JDE ATINA  JDESingleWSConnection - JDE Client Connector is done.");
+        
+        } catch (Exception e) {
+
+            logger.error("ATINA - JDESingleWSConnection - startupJDEConfiguration() - Error Creating Client ..." + e.getMessage(), e);
+
+            throw new JDESingleConnectionException("Error loading jdeinterop.ini file:" + e.getMessage(), e);
+
+        }
 
         // ----------------------------------------------
         // Startup JDE Std configuration

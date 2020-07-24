@@ -15,12 +15,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.InvalidKeyException; 
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import org.apache.commons.lang.StringUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option; 
@@ -201,9 +198,23 @@ public class JDEConnectorServer {
                 logger.info("------------------------------------------------------");
                 logger.info("Loading libraries...");
 
-                File jarToAdd1 = new File("/tmp/jde/lib/jde-lib-wrapped-" + jdeLibWrappedVersion + ".jar");
+                File jarToAdd1 = new File("/tmp/jde/jde-lib-wrapped-" + jdeLibWrappedVersion + ".jar");
                  
-                File jarToAdd2 = new File("/tmp/jde/lib/StdWebService-" + stdWebServiceVersion + ".jar");
+                File jarToAdd2 = new File("/tmp/jde/StdWebService-" + stdWebServiceVersion + ".jar");
+                
+                logger.info("Libraries: ");
+                    logger.info("  " + jarToAdd1.getName() + " Exist: " + jarToAdd1.exists());
+                    logger.info("  " + jarToAdd2.getName() + " Exist: " + jarToAdd2.exists());
+                
+                if(!jarToAdd1.exists())
+                {
+                    throw new RuntimeException(jarToAdd1.getName() + " doesn't exist");
+                }
+                
+                if(!jarToAdd2.exists())
+                {
+                    throw new RuntimeException(jarToAdd2.getName() + " doesn't exist");
+                }
 
                 URL urlJdeLibWrapped = jarToAdd1.toURI().toURL();
 
