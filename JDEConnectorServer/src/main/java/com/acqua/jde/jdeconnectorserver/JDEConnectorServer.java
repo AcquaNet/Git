@@ -36,7 +36,7 @@ public class JDEConnectorServer {
 
     private static String DIR_INSTALACION = "service-files";
     private static String METADATA = "metadata";
-    private static String BUILDID = "2016-02-16-001";
+    private static String BUILDID = "2020-08-31-001";
     private static boolean LOAD_LIBRARY = true;
     
     @Option(name = "-help", usage = "Ayuda")
