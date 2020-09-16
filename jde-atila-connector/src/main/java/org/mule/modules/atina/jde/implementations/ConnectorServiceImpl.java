@@ -2,17 +2,12 @@ package org.mule.modules.atina.jde.implementations;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
@@ -33,7 +28,6 @@ import org.mule.modules.atina.jde.interfaces.ConnectorServiceInterface;
 import org.mule.modules.atina.jde.models.JDEAtilaConfiguracion;
 import org.mule.modules.atina.jde.models.ParametroInput;
 
-import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.google.shade.common.cache.CacheBuilder;
 import com.google.shade.common.cache.CacheLoader;
 import com.google.shade.common.cache.LoadingCache;
@@ -738,31 +732,65 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface {
 
         String token = "";
 
-        if (entityData.containsKey("JDE Token"))
-        {
-            token = (String) entityData.get("JDE Token");
+        try {
 
-            entityData.remove("JDE Token");
+            if (entityData.containsKey("JDE Token"))
+            {
+                token = (String) entityData.get("JDE Token");
+
+                entityData.remove("JDE Token");
+
+            }
+
+        } catch (Exception e) {
+
+            String errorMessage = e.getMessage();
+            String claseDeLaOperacion = this.getClass()
+                    .getSimpleName();
+            String metodoDeLaOperacion = "ejecutarServicio";
+            int httpStatus = 510;
+            String httpStatusReason = "";
+            String request = "";
+            String response = "";
+
+            throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
 
         }
 
         Long transactionID = 0L;
 
-        if (entityData.containsKey("Transaction ID"))
-        {
-            transactionID = (Long) entityData.get("Transaction ID");
+        try {
 
-            entityData.remove("Transaction ID");
+            if (entityData.containsKey("Transaction ID"))
+            {
+                transactionID = (Long) entityData.get("Transaction ID");
 
-        }
+                entityData.remove("Transaction ID");
 
-        // ----------------------------------
-        // Generacion de la Transaccion
-        // ----------------------------------
+            }
 
-        if (transactionID == 0)
-        {
-            transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
+            // ----------------------------------
+            // Generacion de la Transaccion
+            // ----------------------------------
+
+            if (transactionID == 0)
+            {
+                transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
+            }
+
+        } catch (Exception e) {
+
+            String errorMessage = e.getMessage();
+            String claseDeLaOperacion = this.getClass()
+                    .getSimpleName();
+            String metodoDeLaOperacion = "ejecutarServicio";
+            int httpStatus = 510;
+            String httpStatusReason = "";
+            String request = "";
+            String response = "";
+
+            throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+
         }
 
         try {
