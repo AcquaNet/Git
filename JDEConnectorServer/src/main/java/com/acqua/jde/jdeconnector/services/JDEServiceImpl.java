@@ -228,8 +228,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             StringBuilder sb = new StringBuilder();
             sb.append("Error Creating Connection");
             sb.append("|");
-            sb.append(ex.getMessage());
-            sb.append("|%ExternalServiceException%");
+            sb.append(ex.getMessage().replaceAll("\\|", "/"));
+            sb.append("||%ExternalServiceException%");
  
             responseObserver.onError(Status.INTERNAL
                     .withDescription(sb.toString())
@@ -247,7 +247,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             StringBuilder sb = new StringBuilder();
             sb.append("Error Creating Connection");
             sb.append("|");
-            sb.append(ex.getMessage());
+            sb.append(ex.getMessage().replaceAll("\\|", "/"));
             sb.append("|%ServiceServerException%");
  
             responseObserver.onError(Status.INTERNAL
@@ -390,8 +390,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             StringBuilder sb = new StringBuilder();
             sb.append("Error with Logout");
             sb.append("|");
-            sb.append(ex.getMessage());
-            sb.append("|%ExternalServiceException%");
+            sb.append(ex.getMessage().replaceAll("\\|", "/"));
+            sb.append("||%ExternalServiceException%");
  
             responseObserver.onError(Status.INTERNAL
                     .withDescription(sb.toString())
@@ -409,7 +409,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             StringBuilder sb = new StringBuilder();
             sb.append("Error with Logout");
             sb.append("|");
-            sb.append(ex.getMessage());
+            sb.append(ex.getMessage().replaceAll("\\|", "/"));
             sb.append("|%ServiceServerException%");
  
             responseObserver.onError(Status.INTERNAL
@@ -481,7 +481,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             StringBuilder sb = new StringBuilder();
             sb.append("Error with Logout");
             sb.append("|");
-            sb.append(ex.getMessage());
+            sb.append(ex.getMessage().replaceAll("\\|", "/"));
             sb.append("|%ExternalServiceException%");
  
             responseObserver.onError(Status.INTERNAL
@@ -500,7 +500,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             StringBuilder sb = new StringBuilder();
             sb.append("Error with Logout");
             sb.append("|");
-            sb.append(ex.getMessage());
+            sb.append(ex.getMessage().replaceAll("\\|", "/"));
             sb.append("|%ServiceServerException%");
  
             responseObserver.onError(Status.INTERNAL
@@ -611,7 +611,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             StringBuilder sb = new StringBuilder();
             sb.append("Error getting operations");
             sb.append("|");
-            sb.append(ex.getMessage());
+            sb.append(ex.getMessage().replaceAll("\\|", "/"));
             sb.append("|%ExternalServiceException%");
  
             responseObserver.onError(Status.INTERNAL
@@ -630,7 +630,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             StringBuilder sb = new StringBuilder();
             sb.append("Error getting operations");
             sb.append("|");
-            sb.append(ex.getMessage());
+            sb.append(ex.getMessage().replaceAll("\\|", "/"));
             sb.append("|%ServiceServerException%");
  
             responseObserver.onError(Status.INTERNAL
@@ -814,7 +814,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             StringBuilder sb = new StringBuilder();
             sb.append("Error getting metadata operations");
             sb.append("|");
-            sb.append(ex.getMessage());
+            sb.append(ex.getMessage().replaceAll("\\|", "/"));
             sb.append("|%ExternalServiceException%");
 
             responseObserver.onError(Status.INTERNAL
@@ -832,7 +832,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             StringBuilder sb = new StringBuilder();
             sb.append("Error getting metadata operations");
             sb.append("|");
-            sb.append(ex.getMessage());
+            sb.append(ex.getMessage().replaceAll("\\|", "/"));
             sb.append("|%ServiceServerException%");
 
             responseObserver.onError(Status.INTERNAL
@@ -994,7 +994,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             StringBuilder sb = new StringBuilder();
             sb.append("Error getting metadata operations");
             sb.append("|");
-            sb.append(ex.getMessage());
+            sb.append(ex.getMessage().replaceAll("\\|", "/"));
             sb.append("|%ExternalServiceException%");
 
             responseObserver.onError(Status.INTERNAL
@@ -1012,7 +1012,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             StringBuilder sb = new StringBuilder();
             sb.append("Error getting metadata operations");
             sb.append("|");
-            sb.append(ex.getMessage());
+            sb.append(ex.getMessage().replaceAll("\\|", "/"));
             sb.append("|%ServiceServerException%");
 
             responseObserver.onError(Status.INTERNAL
@@ -1162,7 +1162,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             StringBuilder sb = new StringBuilder();
             sb.append("Error invoking operation");
             sb.append("|");
-            sb.append(ex.getMessage());
+            sb.append(ex.getMessage().replaceAll("\\|", "/"));
             sb.append("|%ExternalServiceException%");
 
             responseObserver.onError(Status.INTERNAL
@@ -1180,7 +1180,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             StringBuilder sb = new StringBuilder();
             sb.append("Error Invoking WS");
             sb.append("|");
-            sb.append(ex.getE1Message());
+            sb.append(ex.getE1Message().replaceAll("\\|", "/"));
             sb.append("|%WSException%");
 
             responseObserver.onError(Status.INTERNAL
@@ -1198,7 +1198,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             StringBuilder sb = new StringBuilder();
             sb.append("Error getting metadata operations");
             sb.append("|");
-            sb.append(ex.getMessage());
+            sb.append(ex.getMessage().replaceAll("\\|", "/"));
             sb.append("|%ServiceServerException%");
 
             responseObserver.onError(Status.INTERNAL

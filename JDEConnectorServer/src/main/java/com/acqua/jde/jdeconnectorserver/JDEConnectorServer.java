@@ -22,6 +22,7 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option; 
 import com.jcabi.manifests.Manifests;
+import java.nio.file.Path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,8 +140,12 @@ public class JDEConnectorServer {
                 
                 String newLicense = lic.getLicense(clientcod);
                 
+                Path pubKey = new File("jdelicense.dat").toPath();
+                
                 logger.info("------------------------------------------------------");
                 logger.info("Checking License...");
+                logger.info("Public Key: " + pubKey.toAbsolutePath().toString());
+                
                 
                 valido = lic.verificarLicencia("jdelicense.dat", newLicense);
                 
@@ -149,21 +154,27 @@ public class JDEConnectorServer {
                 
             } catch (NoSuchPaddingException ex) {
                 valido = false;
+                logger.info("Invalid License: " + ex.getMessage());
             } catch (InvalidKeyException ex) {
                 valido = false;
+                logger.info("Invalid License: " + ex.getMessage());
             } catch (UnsupportedEncodingException ex) {
                 valido = false;
+                logger.info("Invalid License: " + ex.getMessage());
             } catch (IllegalBlockSizeException ex) {
                 valido = false;
+                logger.info("Invalid License: " + ex.getMessage());
             } catch (BadPaddingException ex) {
                 valido = false;
+                logger.info("Invalid License: " + ex.getMessage());
             } catch (Exception ex) {
                 valido = false;
+                logger.info("Invalid License: " + ex.getMessage());
             }
              
             if(!valido)
             {
-                System.out.println("Invalid License"); 
+                System.out.println("---------------------------------------"); 
                 System.exit(0);
             }
         }
