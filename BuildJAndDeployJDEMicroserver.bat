@@ -3,17 +3,17 @@ ECHO ==========================================================
 ECHO "Building Shader para Conector
 ECHO ==========================================================
 cd C:\_work\JDEConnectorCE\Projects\jde-gRPC-Shader
-CALL mvn clean deploy
+CALL mvn clean deploy -P AcquaIT
 ECHO ==========================================================
 ECHO "Building JDE Connector Service...
 ECHO ==========================================================
 cd C:\_work\JDEConnectorCE\Projects\JDEConnectorService
-CALL mvn clean install
+CALL mvn clean install -P AcquaIT
 ECHO ==========================================================
 ECHO "Building JDE Connector Server...
 ECHO ==========================================================
 cd C:\_work\JDEConnectorCE\Projects\JDEConnectorServer
-CALL mvn clean install
+CALL mvn clean install -P AcquaIT
 del C:\Users\jgodi\.m2\repository\com\atina\JDEConnectorServer\1.0.0\JDEConnectorServer-1.0.0.jar
 copy C:\Users\jgodi\.m2\repository\com\atina\JDEConnectorServer\1.0.0\JDEConnectorServer-1.0.0-jar-with-dependencies.jar C:\Users\jgodi\.m2\repository\com\atina\JDEConnectorServer\1.0.0\JDEConnectorServer-1.0.0.jar
 ECHO ==========================================================
