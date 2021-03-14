@@ -1,0 +1,13 @@
+uriParameters: 
+    taxId: 
+      description: TaxId
+      required: true
+      type: string
+get:
+    description: Get Address Book by Tax Id
+    responses: 
+      200:
+        description: On successful response
+        body:
+          application/json:
+            example: !include examples/get-ab-by-taxid.json

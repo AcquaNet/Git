@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:jdeatina="http://www.mulesoft.org/schema/mule/jdeatina" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/jdeatina http://www.mulesoft.org/schema/mule/jdeatina/current/mule-jdeatina.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <flow name="jde-get-ab-by-taxid-flow" processingStrategy="synchronous">
+        <dw:transform-message doc:name="Transform Message" metadata:id="8ea391b3-1681-46d0-86f2-3e80325da19a">
+            <dw:input-variable mimeType="application/java" variableName="taxId"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	entity: {
+		entityTaxId: flowVars.taxId
+	}
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <jdeatina:invoke-w-s config-ref="JDE_Atina__Configuration" entityType="oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook" doc:name="JDE Atina"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="b2fed246-557f-4bd7-86ff-633f5e031d36">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	addressbook-name: payload.addressBookResult[0].entityName
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <catch-exception-strategy doc:name="Catch Exception Strategy">
+            <set-payload value="#[exception]" doc:name="Set Payload"/>
+        </catch-exception-strategy>
+    </flow>
+</mule>

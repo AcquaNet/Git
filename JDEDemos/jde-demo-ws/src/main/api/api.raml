@@ -1,0 +1,11 @@
+#%RAML 1.0
+title: JDE Demo
+version: 0.1
+baseUri: https://mocksvc.mulesoft.com/mocks/ab387fbf-b87e-498c-bc31-cf008c01a6c1
+
+mediaType: application/json
+description:  Shows JDE Atina connector
+  
+/jde:
+  description: JDE RestApi
+  /get-addressbook-name-by-taxId/{taxId}: !include get-addressbook-by-taxId.raml

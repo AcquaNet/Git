@@ -1,0 +1,13 @@
+{
+    "inputMessageMetadata": {
+        "flowVariables": {
+            "taxId": {
+                "connectorName": "#_custom_mule_metadata_type_#",
+                "typeId": "taxId"
+            }
+        }
+    },
+    "outputMessageMetadata": {},
+    "id": "8ea391b3-1681-46d0-86f2-3e80325da19a",
+    "version": "5.2.0.0"
+}
