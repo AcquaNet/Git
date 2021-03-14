@@ -523,7 +523,8 @@ public class MetadataWSGenerator {
    
             if (bValueObject) {
                 
-                if (ModifierSet.isPrivate(n.getModifiers()) && !ModifierSet.isStatic(n.getModifiers())) {
+                if ((n.getModifiers() == 0 || ModifierSet.isPrivate(n.getModifiers())) && 
+                     !ModifierSet.isStatic(n.getModifiers())) {
                      
                     ModelType tipoDelModelo = new ModelType();
                     

@@ -113,7 +113,7 @@ public class MainBuilder {
 
             try {
                 
-                mt.generateMetadata("C:\\tmp\\sbfjars\\JP040000\\valueobject\\ProcessVoucherDetail.java");
+                mt.generateMetadata("C:\\tmp\\sbfjars\\JP010000\\valueobject\\ShowAddressBook.java");
 
 //                mt.generateMetadata("C:\\tmp\\sbfjars\\JP430000\\ProcurementManager.java");
 //                

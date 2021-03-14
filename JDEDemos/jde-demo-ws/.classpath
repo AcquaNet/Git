@@ -7,7 +7,8 @@
   <classpathentry kind="src" path="src/test/resources" output="target/test-classes" excluding="**/*.java"/>
   <classpathentry kind="output" path="target/classes"/>
   <classpathentry kind="var" path="M2_REPO/org/jetbrains/annotations/13.0/annotations-13.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.0/commons-lang3-3.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.0/commons-lang3-3.0.jar" sourcepath="M2_REPO/org/apache/commons/commons-lang3/3.0/commons-lang3-3.0-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/atina/jde-atina-connector/1.0.0/jde-atina-connector-1.0.0.jar" sourcepath="M2_REPO/com/atina/jde-atina-connector/1.0.0/jde-atina-connector-1.0.0-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mule/modules/jde-atina-connector/1.0.0-SNAPSHOT/jde-atina-connector-1.0.0-SNAPSHOT.jar" sourcepath="M2_REPO/org/mule/modules/jde-atina-connector/1.0.0-SNAPSHOT/jde-atina-connector-1.0.0-SNAPSHOT-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/atina/JDEGPRCShaded/1.0.0/JDEGPRCShaded-1.0.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mule/tools/devkit/mule-devkit-shade/3.9.0/mule-devkit-shade-3.9.0.jar"/>
