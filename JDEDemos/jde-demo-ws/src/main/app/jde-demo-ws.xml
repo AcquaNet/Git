@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:jdeatina="http://www.mulesoft.org/schema/mule/jdeatina" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/jdeatina http://www.mulesoft.org/schema/mule/jdeatina/current/mule-jdeatina.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="0.0.0.0" port="8082" doc:name="HTTP Listener Configuration"/>
+    <jdeatina:config name="JDE_Atina__Configuration" jdeUser="JDE" jdePassword="Modus2020!" jdeEnvironment="JDV920" jdeRole="*ALL" wsConnection="true" microServiceName="localhost" microServicePort="8085" doc:name="JDE Atina: Configuration"/>
+    <flow name="jde-demo-get-purchase-orders-flow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/get-company" doc:name="HTTP"/>
+        <set-variable variableName="company" value="#['Financial/Distribution Company']" doc:name="Variable - Set Company 00001"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	companyName: flowVars.company
+}]]></dw:set-payload>
+        </dw:transform-message>
+        <jdeatina:invoke-w-s config-ref="JDE_Atina__Configuration" entityType="oracle.e1.bssv.JP000010.CompanyManager.getCompany" doc:name="JDE Atina"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+    </flow>
+
+</mule>
