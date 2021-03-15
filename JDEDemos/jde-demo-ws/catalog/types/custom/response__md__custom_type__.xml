@@ -1,8 +1,8 @@
 <custom__type__definition>
   <version>5.2.0.0</version>
   <typeName class="org.mule.common.metadata.DefaultMetaDataKey">
-    <id>AddressBookName</id>
-    <displayName>AddressBookName</displayName>
+    <id>response</id>
+    <displayName>response</displayName>
     <category>DEFAULT</category>
     <metaDataKeyPropertiesManager>
       <properties>

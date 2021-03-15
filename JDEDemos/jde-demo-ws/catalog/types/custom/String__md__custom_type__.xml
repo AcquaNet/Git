@@ -1,8 +1,8 @@
 <custom__type__definition>
   <version>5.2.0.0</version>
   <typeName class="org.mule.common.metadata.DefaultMetaDataKey">
-    <id>JSON</id>
-    <displayName>JSON</displayName>
+    <id>String</id>
+    <displayName>String</displayName>
     <category>DEFAULT</category>
     <metaDataKeyPropertiesManager>
       <properties>
