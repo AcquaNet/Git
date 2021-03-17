@@ -199,8 +199,7 @@ public class JDEConnectorServer {
         //    StdWebService-1.0.0
         // al Classpath
         // ================================================
-        //
-         
+        // 
         
         if(LOAD_LIBRARY)
         {
@@ -261,7 +260,7 @@ public class JDEConnectorServer {
         URL[] urls = ((URLClassLoader)cl).getURLs();
 
         for(URL url: urls){
-        	logger.info((url.getFile()));
+        	logger.info("          " + (url.getFile()));
         }
         
         // ================================================
@@ -269,7 +268,7 @@ public class JDEConnectorServer {
         // ================================================
         //
         logger.info("*------------------------------------------------------*");
-        logger.info("Directorio de Trabajo: " + currentUsersHomeDir); 
+        logger.info("Working Directory: " + currentUsersHomeDir); 
         logger.info("Version: " + "1.0.0"); 
 
         mostrarConfiguracion(cfg);
@@ -285,7 +284,7 @@ public class JDEConnectorServer {
             service.startServer();
 
         } catch (Exception ex) {
-            logger.info("Error. No se pudo iniciar el servidor. Error:");
+            logger.info("Error. Cannot start service. Error:");
             logger.info("     " + ex.getMessage());
             logger.info("Ver log para mas detalle");
             logger.error(ex.getMessage(), ex);
@@ -296,12 +295,12 @@ public class JDEConnectorServer {
     private void mostrarConfiguracion(ServerConfiguration cfg) {
 
         logger.info("------------------------------------------------------");
-        logger.info("Configuracion: ");
-        logger.info("       SERVICIO: ");
-        logger.info("          IP del Servicio = [" + cfg.getIpServicio() + "]");
-        logger.info("          Puerto del Servicio = [" + Integer.toString(cfg.getPortServicio()) + "]");
-        logger.info("          IP local del Servicio = [" + cfg.getIpLocalServicio() + "]");
-        logger.info("          Expiracion = [" + Long.toString(cfg.getTokenExpiration()) + "]");
+        logger.info("Configuration: ");
+        logger.info("       SERICES: ");
+        logger.info("          IP = [" + cfg.getIpServicio() + "]");
+        logger.info("          Port = [" + Integer.toString(cfg.getPortServicio()) + "]");
+        logger.info("          Local IP = [" + cfg.getIpLocalServicio() + "]");
+        logger.info("          Token Expirtation = [" + Long.toString(cfg.getTokenExpiration()) + "]");
         
         if(Manifests.exists("timestamp"))
         {
