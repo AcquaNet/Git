@@ -1,6 +1,6 @@
 @echo off
 ECHO ==========================================================
-ECHO "Building Shader para Conector
+ECHO "ARMADO VALIDO DE MICROSERVICIO JDE
 ECHO ==========================================================
 cd C:\_work\JDEConnectorCE\Projects\jde-gRPC-Shader
 CALL mvn clean deploy

@@ -11,6 +11,6 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
     
-    <jdeatina:config name="JDE_Atina__Configuration" jdeUser="JDE" jdePassword="Modus2020!" jdeEnvironment="JDV920" jdeRole="*ALL" wsConnection="true" microServiceName="localhost" microServicePort="8085" doc:name="JDE Atina: Configuration"/>
+    <jdeatina:config name="JDE_Atina__Configuration" jdeUser="JDE" jdePassword="Modus2020!" jdeEnvironment="JDV920" jdeRole="*ALL" wsConnection="true" microServiceName="134.122.14.13" microServicePort="8077" doc:name="JDE Atina: Configuration"/>
 
 </mule>
