@@ -29,10 +29,25 @@ ARG swaggerServerPorts=8085
 # ====================================
 #ENV JAVA_HOME ${javaFolder}/${javaJRERootFolder}
 ENV JAVA_HOME ${javaFolder}/${javaJDKRootFolder}
-  
+#  
+# ====================================
+# REPOSITORY
+# ====================================
+#
+ARG ATINA_REPOSITORY_PROTOCOL=${ATINA_REPOSITORY_PROTOCOL} 
+ARG ATINA_REPOSITORY_URL=${ATINA_REPOSITORY_URL} 
+ARG CUSTOMER_REPOSITORY_PROTOCOL=${CUSTOMER_REPOSITORY_PROTOCOL} 
+ARG CUSTOMER_REPOSITORY_URL=${CUSTOMER_REPOSITORY_URL} 
+#
+ENV ATINA_REPOSITORY_PROTOCOL ${ATINA_REPOSITORY_PROTOCOL} 
+ENV ATINA_REPOSITORY_URL ${ATINA_REPOSITORY_URL} 
+ENV CUSTOMER_REPOSITORY_PROTOCOL ${CUSTOMER_REPOSITORY_PROTOCOL} 
+ENV CUSTOMER_REPOSITORY_URL ${CUSTOMER_REPOSITORY_URL} 
+#
 # ====================================
 # JDE ATINA MICRO SERVER
 # ====================================
+#
 ARG JDE_MICROSERVER_IP=${JDE_MICROSERVER_IP} 
 ARG JDE_MICROSERVER_PORT=${JDE_MICROSERVER_PORT} 
 ARG JDE_MICROSERVER_CODE=${JDE_MICROSERVER_CODE}
@@ -52,6 +67,7 @@ ENV JDE_MICROSERVER_ENTERPRISE_SERVER_NAME ${JDE_MICROSERVER_ENTERPRISE_SERVER_N
 ENV JDE_MICROSERVER_ENTERPRISE_SERVER_IP ${JDE_MICROSERVER_ENTERPRISE_SERVER_IP}
 ENV JDE_MICROSERVER_ENTERPRISE_DB_NAME ${JDE_MICROSERVER_ENTERPRISE_DB_NAME}
 ENV JDE_MICROSERVER_ENTERPRISE_DB_IP ${JDE_MICROSERVER_ENTERPRISE_DB_IP}
+#
 # ====================================
 # Actualizacion del Ubuntu
 # ====================================
@@ -120,19 +136,15 @@ COPY images/settings-docker.xml /usr/share/maven/ref/
 # ====================================
 # Instalacion de JDE Atina Microserver
 # ====================================
-RUN mkdir /tmp/config
-RUN mkdir /tmp/lib
+#
 RUN mkdir /tmp/jde
 RUN mkdir /tmp/jde/config
-RUN mkdir /tmp/jde/lib
-
+#
 # ====================================
 # Instalacion de JDE Atina Microserver
 # ====================================
 
 RUN mkdir /var/jdeatinaserver
-RUN cd /var/jdeatinaserver
-COPY images/JDEAtinaServer-1.0.0.jar /var/jdeatinaserver/
 EXPOSE $SWAGGER_SERVER_PORT 
 
 # ====================================
