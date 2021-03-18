@@ -76,6 +76,9 @@ public class JDEConnectorServer {
     @Option(name = "-StdWebServiceVersion", usage = "StdWebService Version")
     public String stdWebServiceVersion;
     
+    @Option(name = "-JDEConnectorServerVersion", usage = "JDEConnectorServer Version")
+    public String jdeConnectorServerVersion;
+    
     // -------------------------------------------------------------
     // Secret Key
     // -------------------------------------------------------------
@@ -269,7 +272,7 @@ public class JDEConnectorServer {
         //
         logger.info("*------------------------------------------------------*");
         logger.info("Working Directory: " + currentUsersHomeDir); 
-        logger.info("Version: " + "1.0.0"); 
+        logger.info("JDE Connector Version: " + jdeConnectorServerVersion); 
 
         mostrarConfiguracion(cfg);
    
