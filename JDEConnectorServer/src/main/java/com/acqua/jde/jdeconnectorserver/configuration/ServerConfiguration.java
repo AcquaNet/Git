@@ -20,6 +20,8 @@ public class ServerConfiguration{
     private String secretKey;
     
     private long tokenExpiration;
+    
+    private int mocking;
 
     public ServerConfiguration() {
         this.portServicio = 8085;
@@ -27,6 +29,7 @@ public class ServerConfiguration{
         this.ipLocalServicio = "0.0.0.0";  
         this.secretKey = "";
         this.tokenExpiration = 0L;
+        this.mocking = 0;
     }
 
     public int getPortServicio() {
@@ -68,5 +71,13 @@ public class ServerConfiguration{
     public void setTokenExpiration(long tokenExpiration) {
         this.tokenExpiration = tokenExpiration;
     }
+
+    public int getMocking() {
+        return mocking;
+    }
+
+    public void setMocking(int mocking) {
+        this.mocking = mocking;
+    } 
      
 }

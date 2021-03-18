@@ -79,6 +79,9 @@ public class JDEConnectorServer {
     @Option(name = "-JDEConnectorServerVersion", usage = "JDEConnectorServer Version")
     public String jdeConnectorServerVersion;
     
+    @Option(name = "-JDEConnectorServerMocking", usage = "JDEConnectorServer Mocking")
+    public Integer jdeConnectorServerMocking;
+    
     // -------------------------------------------------------------
     // Secret Key
     // -------------------------------------------------------------
@@ -194,6 +197,7 @@ public class JDEConnectorServer {
             cfg.setPortServicio(portLServer);
             cfg.setSecretKey(secretKey);
             cfg.setTokenExpiration(tokenExpiration);
+            cfg.setMocking(jdeConnectorServerMocking);
         }
           
         // ================================================
@@ -304,6 +308,7 @@ public class JDEConnectorServer {
         logger.info("          Port = [" + Integer.toString(cfg.getPortServicio()) + "]");
         logger.info("          Local IP = [" + cfg.getIpLocalServicio() + "]");
         logger.info("          Token Expirtation = [" + Long.toString(cfg.getTokenExpiration()) + "]");
+        logger.info("          Mocking = [" + Boolean.toString(cfg.getMocking() == 1) + "]");
         
         if(Manifests.exists("timestamp"))
         {
@@ -319,7 +324,7 @@ public class JDEConnectorServer {
 
         logger.info("------------------------------------------------------");
         logger.info("Usar: ");
-        logger.info(" java -jar JDEConnectorServer-1.0.0.jar -help -user JDE -pass JDE -environment JDV920 -role *ALL  -logdetail");
+        logger.info(" java -jar JDEConnectorServer-1.0.0.jar -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -clientcod demo -jdeLibWrappedVersion 1.0.0 -StdWebServiceVersion 1.0.0 -JDEConnectorServerVersion 1.0.0 -secretKey 123456789012345678901234567890123456789012345678901234567890 -tokenExpiration 4800000 -JDEConnectorServerMocking false");
         logger.info("------------------------------------------------------");
 
     }

@@ -37,7 +37,19 @@ public class JDEPoolConnections {
         
     }
     
-    public int createConnection(String user, String password, String environment, String role, int sessionID, boolean wsConnection) throws JDESingleConnectionException {
+    public int createMockingConnection(String user, String password, String environment, String role, int sessionID, boolean wsConnection) throws JDESingleConnectionException
+    {
+ 
+            return createConnectionWithMockOptions(user,password,environment,role,sessionID,wsConnection,true);
+    }
+    
+    public int createConnection(String user, String password, String environment, String role, int sessionID, boolean wsConnection) throws JDESingleConnectionException
+    {
+ 
+            return createConnectionWithMockOptions(user,password,environment,role,sessionID,wsConnection,false);
+    }
+
+    public int createConnectionWithMockOptions(String user, String password, String environment, String role, int sessionID, boolean wsConnection, boolean mocking) throws JDESingleConnectionException {
         
         logger.info("           JDEPoolConnections Creating JDE Connection: ");
         logger.info("                       User: " + user);
@@ -78,9 +90,16 @@ public class JDEPoolConnections {
                 jdeConnection = new JDESingleConnection(user,password,environment,role);
             }
             
+            if(mocking)
+            {
+                currentSessionId = (int) ((Math.random() * (214748364 - 0)) + 0) * -1;
+                
+            } else
+            {
+                currentSessionId = jdeConnection.connect();
+            }
             
-            currentSessionId = jdeConnection.connect();
-            
+             
             logger.info("                      New user session: " + currentSessionId);
             
             pool.put(currentSessionId, jdeConnection);

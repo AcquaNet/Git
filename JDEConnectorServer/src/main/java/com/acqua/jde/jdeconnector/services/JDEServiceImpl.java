@@ -74,6 +74,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import java.lang.reflect.Field;
+import java.nio.file.Paths;
 import java.security.Key;
 import java.util.Calendar;
 import java.util.logging.Level;
@@ -171,6 +172,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         config.setSessionId((int) request.getSessionId());
         
         config.setTokenExpiration(configuracion.getTokenExpiration());
+        
+        config.setMocking(configuracion.getMocking());
           
         logger.info("              Request Received: " + config.toString());
          
@@ -190,18 +193,41 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                    
             }
  
-            int sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
+            int sessionID = 0;
+            
+            if(configuracion.getMocking()==1)
+            {
+                 sessionID = JDEPoolConnections.getInstance().createMockingConnection(config.getUser(), 
+                                                                                config.getPassword(), 
+                                                                                config.getEnvironment(), 
+                                                                                config.getRole(), 
+                                                                                config.getSessionIdAsInt(),
+                                                                                request.getWsconnection()); 
+                
+            } else
+            {
+                sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
                                                                                 config.getPassword(), 
                                                                                 config.getEnvironment(), 
                                                                                 config.getRole(), 
                                                                                 config.getSessionIdAsInt(),
                                                                                 request.getWsconnection());
+            }
+              
             
             config.setSessionId(sessionID);
             
             logger.info("              Session ID: " + sessionID);
             
-            String addressBookNumber = JDEPoolConnections.getInstance().getSingleConnection(sessionID).getUserPreference().getAddrNum();
+            String addressBookNumber = "";
+            
+            if(configuracion.getMocking()!=1)
+            { 
+                addressBookNumber = JDEPoolConnections.getInstance().getSingleConnection(sessionID).getUserPreference().getAddrNum();
+            } else
+            {
+                addressBookNumber = "1";
+            }
             
             logger.info("              Address Book No: " + addressBookNumber);
         
@@ -286,6 +312,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             config.setSessionId(claims.get("sessionId", Integer.class));
 
             config.setTokenExpiration(this.configuracion.getTokenExpiration());
+            
+            config.setMocking(configuracion.getMocking());
 
             logger.info("          Configuration Received: " + config.toString());
 
@@ -357,6 +385,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         
         config.setTokenExpiration(configuracion.getTokenExpiration());
         
+        config.setMocking(configuracion.getMocking());
+        
           
         // -----------------------------------------
         // Generar Session
@@ -372,7 +402,10 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                    
             }
  
-            JDEPoolConnections.getInstance().disconnect(config.getSessionId());
+            if(configuracion.getMocking()!=1)
+            {
+                JDEPoolConnections.getInstance().disconnect(config.getSessionId());
+            }
              
             SessionResponse response = SessionResponse.newBuilder().setSessionId(0).build();
    
@@ -429,7 +462,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.IsConnectedResponse> responseObserver) {
 
         
-    	logger.info("BEGIN TID: " + request.getTransactionID() +  "======================================================================================");
+     	logger.info("BEGIN TID: " + request.getTransactionID() +  "======================================================================================");
         logger.info("JDE ATINA  isConnected with Session ID: " + request.getSessionId()); 
         
         // -----------------------------------------
@@ -450,6 +483,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         config.setSessionId((int) request.getSessionId());
         
         config.setTokenExpiration(configuracion.getTokenExpiration());
+        
+        config.setMocking(configuracion.getMocking());
           
         try {
             
@@ -460,8 +495,17 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                    
             }
  
-            int sessionId = JDEPoolConnections.getInstance().getSingleConnection(config.getSessionId()).isJDEConnected();
+            int sessionId = 0;
             
+            if(configuracion.getMocking()!=1)
+            {
+                sessionId = JDEPoolConnections.getInstance().getSingleConnection(config.getSessionId()).isJDEConnected();
+                
+            } else
+            {
+                sessionId = config.getSessionId();
+            }
+             
             IsConnectedResponse response = IsConnectedResponse.newBuilder().setConnected(sessionId!=0).build();
             
             logger.info("JDE isConnected: " + Boolean.toString(sessionId!=0)); 
@@ -543,6 +587,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         
         config.setTokenExpiration(configuracion.getTokenExpiration());
         
+        config.setMocking(configuracion.getMocking());
+        
         try {
             
             if(!request.getJwtToken().isEmpty())
@@ -551,14 +597,28 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 config = getConfigFromJWT(request.getJwtToken()); 
                    
             }
-        
-            int sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
+            
+            int sessionID = 0;
+            
+            if(configuracion.getMocking()==1)
+            {
+                 sessionID = JDEPoolConnections.getInstance().createMockingConnection(  config.getUser(), 
                                                                                 config.getPassword(), 
                                                                                 config.getEnvironment(), 
                                                                                 config.getRole(), 
                                                                                 (int) config.getSessionIdAsInt(),
                                                                                 request.getWsconnection());
-      
+                
+            } else
+            {
+                sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
+                                                                                config.getPassword(), 
+                                                                                config.getEnvironment(), 
+                                                                                config.getRole(), 
+                                                                                (int) config.getSessionIdAsInt(),
+                                                                                request.getWsconnection());
+            }
+            
             config.setSessionId(sessionID);
         
             // ================================================
@@ -665,6 +725,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         config.setRole(request.getRole());
 
         config.setSessionId((int) request.getSessionId());
+        
+        config.setMocking(configuracion.getMocking());
          
         try {
             
@@ -679,14 +741,27 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
            // Get Session ID
            // ================================================
            //
-
-            int sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
+           
+            int sessionID = 0;
+            
+            if(configuracion.getMocking()==1)
+            {
+                 sessionID = JDEPoolConnections.getInstance().createMockingConnection(  config.getUser(), 
                                                                                 config.getPassword(), 
                                                                                 config.getEnvironment(), 
                                                                                 config.getRole(), 
                                                                                 (int) config.getSessionId(),
                                                                                 request.getWsconnection());
-            
+                
+            } else
+            {
+                sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
+                                                                                config.getPassword(), 
+                                                                                config.getEnvironment(), 
+                                                                                config.getRole(), 
+                                                                                (int) config.getSessionId(),
+                                                                                request.getWsconnection());
+            } 
             
             config.setSessionId(sessionID);
         
@@ -868,6 +943,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         config.setSessionId((int) request.getSessionId());
         
         config.setTokenExpiration(configuracion.getTokenExpiration());
+        
+        config.setMocking(configuracion.getMocking());
          
         try {
         
@@ -882,14 +959,27 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 config = getConfigFromJWT(request.getJwtToken()); 
                    
             }
-
-            int sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
+           
+           int sessionID = 0;
+            
+            if(configuracion.getMocking()==1)
+            {
+                 sessionID = JDEPoolConnections.getInstance().createMockingConnection(  config.getUser(), 
                                                                                 config.getPassword(), 
                                                                                 config.getEnvironment(), 
                                                                                 config.getRole(), 
                                                                                 (int) config.getSessionIdAsInt(),
                                                                                 request.getWsconnection());
-         
+                
+            } else
+            {
+                sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
+                                                                                config.getPassword(), 
+                                                                                config.getEnvironment(), 
+                                                                                config.getRole(), 
+                                                                                (int) config.getSessionIdAsInt(),
+                                                                                request.getWsconnection());
+            } 
         
             // ================================================
             // Get Single Connection
@@ -1050,6 +1140,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         config.setSessionId((int) request.getSessionId());
         
         config.setTokenExpiration(configuracion.getTokenExpiration());
+        
+        config.setMocking(configuracion.getMocking());
          
         try {
         
@@ -1064,14 +1156,28 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 config = getConfigFromJWT(request.getJwtToken()); 
                    
             }
-
-            int sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
+           
+            int sessionID = 0;
+            
+            if(configuracion.getMocking()==1)
+            {
+                 sessionID = JDEPoolConnections.getInstance().createMockingConnection(  config.getUser(), 
                                                                                 config.getPassword(), 
                                                                                 config.getEnvironment(), 
                                                                                 config.getRole(), 
                                                                                 (int) config.getSessionIdAsInt(),
                                                                                 request.getWsconnection());
-         
+                
+            } else
+            {
+                sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
+                                                                                config.getPassword(), 
+                                                                                config.getEnvironment(), 
+                                                                                config.getRole(), 
+                                                                                (int) config.getSessionIdAsInt(),
+                                                                                request.getWsconnection());
+            }
+ 
         
             // ================================================
             // Get Single Connection
@@ -1120,7 +1226,23 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 logger.info("----------------------------------------------------------"); 
                 logger.info("Calling Operation ..."); 
                 
-                HashMap<String, Object> returnValues = singleConnection.callJDEOperation(request.getOperacionKey(), inputValues, sessionID);
+                
+                HashMap<String, Object> returnValues = null;
+                
+                if(configuracion.getMocking()==0 || configuracion.getMocking()==2 )
+                {
+                    returnValues = singleConnection.callJDEOperation(request.getOperacionKey(), inputValues, sessionID);
+                    
+                    if(configuracion.getMocking()==2)
+                    {
+                        saveMockingResponse(returnValues,request.getOperacionKey());
+                    }
+                    
+                } else
+                {
+                    returnValues = readMockingResponse(request.getOperacionKey());
+                }  
+                 
                 
                 logger.info("----------------------------------------------------------"); 
                 logger.info("Preparing Response ..."); 
@@ -1212,6 +1334,61 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         logger.info("-------------------------------------------------------------------------------");
         
     }
+    
+    private void saveMockingResponse(HashMap<String, Object> returnValues,
+            String operation) {
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        mapper.setPropertyNamingStrategy(new MyNamingStrategy());
+
+        mapper.configure(MapperFeature.USE_ANNOTATIONS, false);
+
+        try {
+
+            mapper.writeValue(Paths.get("/tmp/jde/mock_" + operation + ".json").toFile(), returnValues);
+
+        } catch (JsonProcessingException ex) {
+
+            throw new JDESingleConnectionException("Cannot Create Mocking Response: " + ex.getMessage(), ex);
+
+        } catch (IOException ex) {
+
+            throw new JDESingleConnectionException("Cannot Save Mocking Response: " + ex.getMessage(), ex);
+
+        }
+
+    }
+    
+    private HashMap<String, Object> readMockingResponse(String operation) {
+
+        HashMap<String, Object> returnValue = new HashMap<String, Object>();
+        
+        ObjectMapper mapper = new ObjectMapper();
+
+        mapper.setPropertyNamingStrategy(new MyNamingStrategy());
+
+        mapper.configure(MapperFeature.USE_ANNOTATIONS, false);
+
+        try {
+
+             returnValue = mapper.readValue(Paths.get("/tmp/jde/mock_" + operation + ".json").toFile(), HashMap.class);
+
+        } catch (JsonProcessingException ex) {
+
+            throw new JDESingleConnectionException("Cannot Create Mocking Response: " + ex.getMessage(), ex);
+
+        } catch (IOException ex) {
+
+            throw new JDESingleConnectionException("Cannot Save Mocking Response: " + ex.getMessage(), ex);
+
+        }
+        
+        return returnValue;
+
+    }
+
+    
     
     private void generateInputTreeMetadata(GetMetadataResponse.Builder responseBuilder, HashMap<String, ParameterTypeSimple> parameters) {
  

@@ -13,14 +13,16 @@ public class Configuracion {
     private String role;
     private Integer sessionId;
     private long tokenExpiration;
+    private int mocking;
 
-    public Configuracion(String user, String password, String environment, String role, Integer sessionId,long tokenExpiration) {
+    public Configuracion(String user, String password, String environment, String role, Integer sessionId,long tokenExpiration, int mocking) {
         this.user = user;
         this.password = password;
         this.environment = environment;
         this.role = role;
         this.sessionId = sessionId;
         this.tokenExpiration = tokenExpiration;
+        this.mocking = mocking;
     }
 
     public Configuracion() {
@@ -81,8 +83,15 @@ public class Configuracion {
 
     @Override
     public String toString() {
-        return "Configuracion{" + "user=" + user + ", environment=" + environment + ", role=" + role + ", sessionId=" + sessionId + ", tokenExpiration=" + tokenExpiration + '}';
+        return "Configuracion{" + "user=" + user + ", password=" + password + ", environment=" + environment + ", role=" + role + ", sessionId=" + sessionId + ", tokenExpiration=" + tokenExpiration + ", mocking=" + mocking + '}';
     }
-     
+ 
+    public int getMocking() {
+        return mocking;
+    }
+
+    public void setMocking(int mocking) {
+        this.mocking = mocking;
+    }
       
 }
