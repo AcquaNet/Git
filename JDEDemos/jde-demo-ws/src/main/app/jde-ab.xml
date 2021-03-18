@@ -9,18 +9,24 @@ http://www.mulesoft.org/schema/mule/jdeatina http://www.mulesoft.org/schema/mule
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
 http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
     <flow name="jde-abFlow" processingStrategy="synchronous">
+        <jdeatina:authenticate config-ref="JDE_Atina__Configuration" entityType="FromTokenData" doc:name="JDE Atina Login">
+            <jdeatina:entity-data>
+                <jdeatina:entity-datum key="JDE Token">eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjE1OTI4MzA3LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJBTExMTExMTCIsImVudmlyb25tZW50IjoiSkRWOTIwIiwicm9sZSI6IipBTEwifQ.cGa36uQoAZGcYDwoF1fhkVlwDXgKNiQ63JYk6Gf-6eg</jdeatina:entity-datum>
+            </jdeatina:entity-data>
+        </jdeatina:authenticate>
         <dw:transform-message doc:name="Transform Message" metadata:id="0111b602-09f7-49f6-9bc6-3ac39bdb47a6">
             <dw:input-variable mimeType="application/java" variableName="taxId"/>
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/java
 ---
 {
+	"JDE Token": payload.Token,
 	entity: {
 		entityTaxId: flowVars.taxId
 	}
 }]]></dw:set-payload>
         </dw:transform-message>
-        <jdeatina:invoke-w-s config-ref="JDE_Atina__Configuration" entityType="oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook" doc:name="JDE Atina"/>
+        <jdeatina:invoke-w-s config-ref="JDE_Atina__Configuration" entityType="oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook" doc:name="JDE Atina Invoke WS"/>
         <dw:transform-message doc:name="Transform Message" metadata:id="102ccfb4-51c4-47b4-9291-d719f016fbd7">
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/json
