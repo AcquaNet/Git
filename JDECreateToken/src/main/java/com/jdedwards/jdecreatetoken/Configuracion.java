@@ -63,6 +63,11 @@ public class Configuracion {
         this.role = role;
     }
 
+    public void setSessionId(Integer sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    
     public Integer getSessionId() {
         return sessionId;
     }

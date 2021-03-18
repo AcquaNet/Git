@@ -58,6 +58,8 @@ public class JDEAtinaCreateToken {
   
         // Token
         String token = "";
+        
+        conf.setSessionId(new Integer(0));
 
         String secretKey = ".";
         
