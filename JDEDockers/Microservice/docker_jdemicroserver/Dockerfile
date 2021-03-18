@@ -57,6 +57,7 @@ ARG JDE_MICROSERVER_ENTERPRISE_SERVER_NAME=${JDE_MICROSERVER_ENTERPRISE_SERVER_N
 ARG JDE_MICROSERVER_ENTERPRISE_SERVER_IP=${JDE_MICROSERVER_ENTERPRISE_SERVER_IP}
 ARG JDE_MICROSERVER_ENTERPRISE_DB_NAME=${JDE_MICROSERVER_ENTERPRISE_DB_NAME}
 ARG JDE_MICROSERVER_ENTERPRISE_DB_IP=${JDE_MICROSERVER_ENTERPRISE_DB_IP}
+ARG JDE_MICROSERVER_MOCKING=${JDE_MICROSERVER_MOCKING} 
 #
 ENV JDE_MICROSERVER_IP ${JDE_MICROSERVER_IP} 
 ENV JDE_MICROSERVER_PORT ${JDE_MICROSERVER_PORT} 
@@ -67,6 +68,7 @@ ENV JDE_MICROSERVER_ENTERPRISE_SERVER_NAME ${JDE_MICROSERVER_ENTERPRISE_SERVER_N
 ENV JDE_MICROSERVER_ENTERPRISE_SERVER_IP ${JDE_MICROSERVER_ENTERPRISE_SERVER_IP}
 ENV JDE_MICROSERVER_ENTERPRISE_DB_NAME ${JDE_MICROSERVER_ENTERPRISE_DB_NAME}
 ENV JDE_MICROSERVER_ENTERPRISE_DB_IP ${JDE_MICROSERVER_ENTERPRISE_DB_IP}
+ENV JDE_MICROSERVER_MOCKING ${JDE_MICROSERVER_MOCKING}
 #
 # ====================================
 # Actualizacion del Ubuntu
@@ -129,6 +131,7 @@ COPY images/settings-docker.xml /usr/share/maven/ref/
 #
 RUN mkdir /tmp/jde
 RUN mkdir /tmp/jde/config
+RUN mkdir /tmp/jde/mocking
 #
 # ====================================
 # Instalacion de JDE Atina Microserver
@@ -142,6 +145,12 @@ EXPOSE $SWAGGER_SERVER_PORT
 # ==================================== 
 COPY images/jdelicense.dat /var/jdeatinaserver/
 
+# ====================================
+# Copiar Metadata for Mocking
+# ==================================== 
+COPY images/mocking/vo.json /tmp/jde/mocking
+COPY images/mocking/ws.json /tmp/jde/mocking
+COPY images/mocking/wslist.json /tmp/jde/mocking
 # ====================================
 # Start
 # ====================================
