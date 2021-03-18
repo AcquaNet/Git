@@ -90,17 +90,7 @@ RUN apt-get install -y net-tools
 RUN apt-get install -y bzip2
 RUN apt-get install -y unzip
 RUN apt-get install -y curl
-
-# ===================================================
-# Instalacion de Java OpenJDK Modificado 64 Bits JRE
-# ===================================================
-#RUN mkdir ${javaFolder}
-#RUN cd ${javaFolder}
-#COPY java64/${javaJREImage} ${javaFolder}/ 
-#RUN tar -xvjf ${javaFolder}/${javaJREImage} -C ${javaFolder} 
-#RUN /usr/bin/update-alternatives --install /usr/bin/java java ${javaFolder}/${javaJRERootFolder}/bin/java 1 
-#RUN rm ${javaFolder}/${javaJREImage} 
-
+#
 # ===================================================
 # Instalacion de Java OpenJDK Modificado 64 Bits JDK
 # ===================================================
