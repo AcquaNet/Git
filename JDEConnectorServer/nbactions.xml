@@ -10,7 +10,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Djava.io.tmpdir=/tmp/jde -classpath %classpath com.acqua.jde.jdeconnectorserver.JDEConnectorServer -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -clientcod demo -jdeLibWrappedVersion 1.0.0 -StdWebServiceVersion 1.0.0 -JDEConnectorServerVersion 1.0.0 -secretKey 123456789012345678901234567890123456789012345678901234567890 -tokenExpiration 4800000 -JDEConnectorServerMocking 1</exec.args>
+                <exec.args>-Djava.io.tmpdir=/tmp/jde -classpath %classpath com.acqua.jde.jdeconnectorserver.JDEConnectorServer -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -clientcod demo -jdeLibWrappedVersion 1.0.0 -StdWebServiceVersion 1.0.0 -JDEConnectorServerVersion 1.0.0 -secretKey 123456789012345678901234567890123456789012345678901234567890 -tokenExpiration 4800000 -JDEConnectorServerMocking 2</exec.args>
                 <exec.executable>java</exec.executable>
                 <exec.workingdir>C:\_work\JDEConnectorCE\Projects\JDEConnectorServer</exec.workingdir>
             </properties>
@@ -25,7 +25,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Djava.io.tmpdir=/tmp/jde -classpath %classpath com.acqua.jde.jdeconnectorserver.JDEConnectorServer -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -clientcod demo -jdeLibWrappedVersion 1.0.0 -StdWebServiceVersion 1.0.0 -JDEConnectorServerVersion 1.0.0 -secretKey 123456789012345678901234567890123456789012345678901234567890 -tokenExpiration 4800000 -JDEConnectorServerMocking 1</exec.args>
+                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -Djava.io.tmpdir=/tmp/jde -classpath %classpath com.acqua.jde.jdeconnectorserver.JDEConnectorServer -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -clientcod demo -jdeLibWrappedVersion 1.0.0 -StdWebServiceVersion 1.0.0 -JDEConnectorServerVersion 1.0.0 -secretKey 123456789012345678901234567890123456789012345678901234567890 -tokenExpiration 4800000 -JDEConnectorServerMocking 2</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
                 <exec.workingdir>C:\_work\JDEConnectorCE\Projects\JDEConnectorServer</exec.workingdir>
@@ -41,7 +41,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-Djava.io.tmpdir=/tmp/jde -classpath %classpath com.acqua.jde.jdeconnectorserver.JDEConnectorServer -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -clientcod demo -jdeLibWrappedVersion 1.0.0 -StdWebServiceVersion 1.0.0 -JDEConnectorServerVersion 1.0.0 -secretKey 123456789012345678901234567890123456789012345678901234567890 -tokenExpiration 4800000 -JDEConnectorServerMocking 1</exec.args>
+                <exec.args>-Djava.io.tmpdir=/tmp/jde -classpath %classpath com.acqua.jde.jdeconnectorserver.JDEConnectorServer -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -clientcod demo -jdeLibWrappedVersion 1.0.0 -StdWebServiceVersion 1.0.0 -JDEConnectorServerVersion 1.0.0 -secretKey 123456789012345678901234567890123456789012345678901234567890 -tokenExpiration 4800000 -JDEConnectorServerMocking 2</exec.args>
                 <exec.executable>java</exec.executable>
                 <exec.workingdir>C:\_work\JDEConnectorCE\Projects\JDEConnectorServer</exec.workingdir>
             </properties>
