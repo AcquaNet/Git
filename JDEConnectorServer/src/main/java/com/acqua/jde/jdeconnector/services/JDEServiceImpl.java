@@ -2155,62 +2155,67 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                     else {
 
                         Object valorActual = null;
+                        
+                        if(!valor.getNullValue())
+                        {
 
-                        switch (parameterMetadata.getModelType()) {
+                            switch (parameterMetadata.getModelType()) {
 
-                            case "java.lang.String":
-                                valorActual = valor.getValueAsString();
-                                break;
-                            case "java.lang.Integer":
-                            case "int":
-                                valorActual = valor.getValueAsInteger();
-                                break;
-                            case "java.lang.Boolean":
-                                valorActual = valor.getValueAsBoolean();
-                                break;
-                            case "java.lang.Long":
-                                valorActual = valor.getValueAsLong();
-                                break;
-                            case "java.lang.Double":
-                                valorActual = valor.getValueAsDouble();
-                                break;
-                            case "java.lang.Float":
-                                valorActual = valor.getValueAsFloat();
-                                break;
-                            case "java.util.Date": 
-                                // Convertir de TimeStamp to Date
-                                com.google.protobuf.Timestamp ts = valor.getValueAsDate();
-                                Instant valorTM = Instant.ofEpochSecond(ts.getSeconds(), ts.getNanos());
-                                valorActual = Date.from(valorTM);
-                                break;
-                            case "java.util.Calendar":
-                                com.google.protobuf.Timestamp ts2 = valor.getValueAsDate();
-                                Instant valorTM2 = Instant.ofEpochSecond(ts2.getSeconds(), ts2.getNanos());
-                                Date valorActualAsDate = Date.from(valorTM2);
-                                Calendar calendar = Calendar.getInstance();
-                                calendar.setTime(valorActualAsDate);
-                                valorActual = calendar;
-                                break;
-                            case "java.lang.Byte":
-                                valorActual = valor.getValuesAsByteString();
-                                break;
-                            case "BDecimal":
-                            case "java.math.BigDecimal":
-                                Double valueDouble = new Double(valor.getValueAsDouble());
-                                String strValueD = valueDouble.toString();
-                                valorActual = new BigDecimal(strValueD);
-                                break;
-                            case "BInteger":
-                            case "java.math.BigInteger":
-                                Long valueLong = new Long(valor.getValueAsLong());
-                                String strValueL = valueLong.toString();
-                                valorActual = new BigInteger(strValueL);
-                                break;
-                            default:
-                                logger.error("Error convirtiendo tipoDelParametroDeInput: " + parameterMetadata.getModelType());
-                                errorFound = true;
-                                break;
+                                case "java.lang.String":
+                                    valorActual = valor.getValueAsString();
+                                    break;
+                                case "java.lang.Integer":
+                                case "int":
+                                    valorActual = valor.getValueAsInteger();
+                                    break;
+                                case "java.lang.Boolean":
+                                    valorActual = valor.getValueAsBoolean();
+                                    break;
+                                case "java.lang.Long":
+                                    valorActual = valor.getValueAsLong();
+                                    break;
+                                case "java.lang.Double":
+                                    valorActual = valor.getValueAsDouble();
+                                    break;
+                                case "java.lang.Float":
+                                    valorActual = valor.getValueAsFloat();
+                                    break;
+                                case "java.util.Date": 
+                                    // Convertir de TimeStamp to Date
+                                    com.google.protobuf.Timestamp ts = valor.getValueAsDate();
+                                    Instant valorTM = Instant.ofEpochSecond(ts.getSeconds(), ts.getNanos());
+                                    valorActual = Date.from(valorTM);
+                                    break;
+                                case "java.util.Calendar":
+                                    com.google.protobuf.Timestamp ts2 = valor.getValueAsDate();
+                                    Instant valorTM2 = Instant.ofEpochSecond(ts2.getSeconds(), ts2.getNanos());
+                                    Date valorActualAsDate = Date.from(valorTM2);
+                                    Calendar calendar = Calendar.getInstance();
+                                    calendar.setTime(valorActualAsDate);
+                                    valorActual = calendar;
+                                    break;
+                                case "java.lang.Byte":
+                                    valorActual = valor.getValuesAsByteString();
+                                    break;
+                                case "BDecimal":
+                                case "java.math.BigDecimal":
+                                    Double valueDouble = new Double(valor.getValueAsDouble());
+                                    String strValueD = valueDouble.toString();
+                                    valorActual = new BigDecimal(strValueD);
+                                    break;
+                                case "BInteger":
+                                case "java.math.BigInteger":
+                                    Long valueLong = new Long(valor.getValueAsLong());
+                                    String strValueL = valueLong.toString();
+                                    valorActual = new BigInteger(strValueL);
+                                    break;
+                                default:
+                                    logger.error("Error convirtiendo tipoDelParametroDeInput: " + parameterMetadata.getModelType());
+                                    errorFound = true;
+                                    break;
 
+                            }
+                        
                         }
 
                         returnValue.put(nombreDelParametro, valorActual);

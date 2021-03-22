@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:jdeatina="http://www.mulesoft.org/schema/mule/jdeatina" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:jdeatina="http://www.mulesoft.org/schema/mule/jdeatina" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:spring="http://www.springframework.org/schema/beans" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/jdeatina http://www.mulesoft.org/schema/mule/jdeatina/current/mule-jdeatina.xsd
 http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
-http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd">
     <flow name="jde-abFlow" processingStrategy="synchronous">
         <jdeatina:authenticate config-ref="JDE_Atina__Configuration" entityType="FromTokenData" doc:name="JDE Atina Login">
             <jdeatina:entity-data>
-                <jdeatina:entity-datum key="JDE Token">eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjE1OTI4MzA3LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJBTExMTExMTCIsImVudmlyb25tZW50IjoiSkRWOTIwIiwicm9sZSI6IipBTEwifQ.cGa36uQoAZGcYDwoF1fhkVlwDXgKNiQ63JYk6Gf-6eg</jdeatina:entity-datum>
+                <jdeatina:entity-datum key="JDE Token">eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjE2MDkxMjM4LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MH0.pRedLml1BFzBuz2i1HqTiepV75K-MKdBqvCDwyMa3HQ</jdeatina:entity-datum>
             </jdeatina:entity-data>
         </jdeatina:authenticate>
         <dw:transform-message doc:name="Transform Message" metadata:id="0111b602-09f7-49f6-9bc6-3ac39bdb47a6">
@@ -36,5 +37,592 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 }]]></dw:set-payload>
         </dw:transform-message>
         <logger message="Response #[payload]" level="INFO" doc:name="Logger"/>
+        <flow-ref name="jde-abFlow1" doc:name="jde-abFlow1"/>
     </flow>
+    
+    <flow name="jde-abFlow1" processingStrategy="synchronous">
+        <set-variable variableName="token" value="eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjE2MDkxMjM4LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MH0.pRedLml1BFzBuz2i1HqTiepV75K-MKdBqvCDwyMa3HQ" doc:name="Variable"/>
+        <set-payload value="{
+    &quot;approver&quot;: {
+        &quot;entityTaxId&quot;: &quot;&quot;,
+        &quot;entityLongId&quot;: &quot;&quot;,
+        &quot;entityId&quot;: 92455890
+    },
+    &quot;orderTypeCode&quot;: &quot;OP&quot;,
+    &quot;businessUnitCode&quot;: &quot;         30&quot;,
+    &quot;statusCodeNext&quot;: &quot;230&quot;,
+    &quot;statusApproval&quot;: &quot;2N&quot;
+}" mimeType="application/json" doc:name="Set Payload"/>
+        <json:json-to-object-transformer returnClass="java.util.HashMap" doc:name="JSON to Object"/>
+        <expression-component doc:name="Expression"><![CDATA[payload.put("JDE Token", flowVars .token);]]></expression-component>
+        <jdeatina:invoke-w-s config-ref="JDE_Atina__Configuration" entityType="oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover" doc:name="JDE Atina Invoke WS"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="3b24ea97-08d2-4389-a33f-fd799a23b4b6">
+            <dw:set-variable variableName="token"><![CDATA[%dw 1.0
+%output application/java
+---
+payload."JDE Token"]]></dw:set-variable>
+        </dw:transform-message>
+    </flow>
+    
+    <flow name="jde-abFlow2" processingStrategy="synchronous">
+        <set-variable variableName="token" value="eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjE2MDkxMjM4LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MH0.pRedLml1BFzBuz2i1HqTiepV75K-MKdBqvCDwyMa3HQ" doc:name="Variable"/>
+        <set-payload value="{
+  &quot;p43081Version&quot;: &quot;ZJDE0002&quot;,
+  &quot;businessUnit&quot;: &quot;          30&quot;,
+  &quot;companyKeyOrderNumber&quot;: &quot;00001&quot;,
+  &quot;documentType&quot;: &quot;OP&quot;,
+  &quot;documentNumber&quot;: 5041,
+  &quot;orderSuffix&quot;: &quot;001&quot;,
+  &quot;remark&quot;: &quot;Aprovado&quot;,
+  &quot;statusApproval&quot;: &quot;2A&quot;,
+  &quot;budgetPassword&quot;: &quot;&quot;,
+  &quot;amountToApprove&quot;: &quot;876755.00&quot;,
+  &quot;holdCode&quot;: &quot;&quot;,
+  &quot;approveReject&quot;: &quot;A&quot;,
+  &quot;approverAddressNumber&quot;: 92455890,
+  &quot;lineNumber&quot;: &quot;1&quot;,
+  &quot;approvalRouteCode&quot;: &quot;DEMO&quot;
+}
+" mimeType="application/json" doc:name="Set Payload"/>
+        <json:json-to-object-transformer returnClass="java.util.HashMap" doc:name="JSON to Object"/>
+        <expression-component doc:name="Expression"><![CDATA[payload.put("JDE Token", flowVars .token);]]></expression-component>
+        <jdeatina:invoke-w-s config-ref="JDE_Atina__Configuration" entityType="oracle.e1.bssv.JP430000.ProcurementManager.processPurchaseOrderApproveReject" doc:name="JDE Atina Invoke WS"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="3b24ea97-08d2-4389-a33f-fd799a23b4b6">
+            <dw:set-variable variableName="token"><![CDATA[%dw 1.0
+%output application/java
+---
+payload."JDE Token"]]></dw:set-variable>
+        </dw:transform-message>
+    </flow>
+    
+    <flow name="jde-abFlow3" processingStrategy="synchronous">
+        <set-variable variableName="token" value="eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjE2MDkxMjM4LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MH0.pRedLml1BFzBuz2i1HqTiepV75K-MKdBqvCDwyMa3HQ" doc:name="Variable"/>
+        <set-payload value="{
+  &quot;p43081Version&quot;: &quot;ZJDE0002&quot;,
+  &quot;businessUnit&quot;: &quot;          30&quot;,
+  &quot;companyKeyOrderNumber&quot;: &quot;00001&quot;,
+  &quot;documentType&quot;: &quot;OP&quot;,
+  &quot;documentNumber&quot;: 5051,
+  &quot;orderSuffix&quot;: &quot;000&quot;,
+  &quot;remark&quot;: &quot;REM1&quot;,
+  &quot;statusApproval&quot;: &quot;2N&quot;,
+  &quot;budgetPassword&quot;: &quot;&quot;,
+  &quot;amountToApprove&quot;: &quot;26517.34&quot;,
+  &quot;holdCode&quot;: &quot;&quot;,
+  &quot;approveReject&quot;: &quot;A&quot;,
+  &quot;approverAddressNumber&quot;: 1,
+  &quot;approvalRouteCode&quot;: &quot;DEMO&quot;
+}" mimeType="application/json" doc:name="Set Payload"/>
+        <json:json-to-object-transformer returnClass="java.util.HashMap" doc:name="JSON to Object"/>
+        <expression-component doc:name="Expression"><![CDATA[payload.put("JDE Token", flowVars .token);]]></expression-component>
+        <jdeatina:invoke-w-s config-ref="JDE_Atina__Configuration" entityType="oracle.e1.bssv.JP430000.ProcurementManager.processPurchaseOrderApproveReject" doc:name="JDE Atina Invoke WS"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="3b24ea97-08d2-4389-a33f-fd799a23b4b6">
+            <dw:set-variable variableName="token"><![CDATA[%dw 1.0
+%output application/java
+---
+payload."JDE Token"]]></dw:set-variable>
+        </dw:transform-message>
+    </flow>
+    
+    <flow name="jde-abFlow4" processingStrategy="synchronous">
+        <set-variable variableName="token" value="eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjE2MDkxMjM4LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MH0.pRedLml1BFzBuz2i1HqTiepV75K-MKdBqvCDwyMa3HQ" doc:name="Variable"/>
+        <set-payload value="{
+    &quot;header&quot;: {
+        &quot;shipToAddress&quot;: {
+            &quot;address&quot;: {
+                &quot;countyCode&quot;: &quot;&quot;,
+                &quot;city&quot;: &quot;&quot;,
+                &quot;countryCode&quot;: &quot;&quot;,
+                &quot;postalCode&quot;: &quot;&quot;,
+                &quot;addressLine1&quot;: &quot;&quot;,
+                &quot;addressLine2&quot;: &quot;&quot;,
+                &quot;stateCode&quot;: &quot;&quot;,
+                &quot;addressLine3&quot;: &quot;&quot;,
+                &quot;addressLine4&quot;: &quot;&quot;,
+                &quot;mailingName&quot;: &quot;&quot;
+            },
+            &quot;shipTo&quot;: {
+                &quot;entityTaxId&quot;: &quot;&quot;,
+                &quot;entityLongId&quot;: &quot;&quot;,
+                &quot;entityId&quot;: 4343
+            }
+        },
+        &quot;businessUnit&quot;: &quot;          30&quot;,
+        &quot;printMessageCode&quot;: &quot;&quot;,
+        &quot;RMAId&quot;: 0,
+        &quot;userReservedData&quot;: {
+            &quot;userReservedCode&quot;: &quot;&quot;,
+            &quot;userReservedNumber&quot;: 0,
+            &quot;userReservedReference&quot;: &quot;&quot;,
+            &quot;userReservedAmount&quot;: 0.0
+        },
+        &quot;remark&quot;: &quot;Remark PO&quot;,
+        &quot;description1&quot;: &quot;Purchase Order X&quot;,
+        &quot;reference&quot;: &quot;&quot;,
+        &quot;orderedBy&quot;: &quot;&quot;,
+        &quot;evaluatedReceiptSettlement&quot;: &quot;&quot;,
+        &quot;paymentTermsCode&quot;: &quot;&quot;,
+        &quot;triangulationRateFromCurrency&quot;: 0,
+        &quot;purchaseOrderKey&quot;: {
+            &quot;documentTypeCode&quot;: &quot;&quot;,
+            &quot;documentNumber&quot;: 0,
+            &quot;documentCompany&quot;: &quot;&quot;
+        },
+        &quot;currencyCodeFrom&quot;: &quot;USD&quot;,
+        &quot;isTextAssociated&quot;: false,
+        &quot;holdOrderCode&quot;: &quot;&quot;,
+        &quot;percentRetainage&quot;: 0.0,
+        &quot;adjustmentScheduleCode&quot;: &quot;&quot;,
+        &quot;RMAType&quot;: &quot;&quot;,
+        &quot;supplierAddress&quot;: {
+            &quot;address&quot;: {
+                &quot;countyCode&quot;: &quot;&quot;,
+                &quot;city&quot;: &quot;&quot;,
+                &quot;countryCode&quot;: &quot;&quot;,
+                &quot;postalCode&quot;: &quot;&quot;,
+                &quot;addressLine1&quot;: &quot;&quot;,
+                &quot;addressLine2&quot;: &quot;&quot;,
+                &quot;stateCode&quot;: &quot;&quot;,
+                &quot;addressLine3&quot;: &quot;&quot;,
+                &quot;addressLine4&quot;: &quot;&quot;,
+                &quot;mailingName&quot;: &quot;&quot;
+            },
+            &quot;supplier&quot;: {
+                &quot;entityTaxId&quot;: &quot;&quot;,
+                &quot;entityLongId&quot;: &quot;&quot;,
+                &quot;entityId&quot;: 4343
+            } 
+        },
+        &quot;delivery&quot;: {
+            &quot;deliveryInstruction1&quot;: &quot;&quot;,
+            &quot;carrier&quot;: {
+                &quot;entityTaxId&quot;: &quot;&quot;,
+                &quot;entityLongId&quot;: &quot;&quot;,
+                &quot;entityId&quot;: 0
+            },
+           
+            &quot;landedCostRuleCode&quot;: &quot;&quot;,
+            &quot;freightHandlingCode&quot;: &quot;&quot;,
+            &quot;deliveryInstruction2&quot;: &quot;&quot;
+        },
+        &quot;printAIADocument&quot;: &quot;&quot;,
+        &quot;sendMethodCode&quot;: &quot;&quot;,
+        &quot;orderTakenBy&quot;: &quot;&quot;,
+        &quot;changeOrderNumber&quot;:0,
+        &quot;dates&quot;: {
+            &quot;dateCancel&quot;: &quot;&quot;,
+            &quot;dateOrdered&quot;: &quot;2020-07-01&quot;,
+            &quot;dateRequested&quot;: &quot;2020-07-01&quot;,
+            &quot;datePromisedDelivery&quot;: &quot;&quot;
+        },
+        &quot;tax&quot;: {
+            &quot;taxExplanationCode&quot;: &quot;&quot;,
+            &quot;taxExemptCertificate&quot;: &quot;&quot;,
+            &quot;taxRateAreaCode&quot;: &quot;&quot;
+        },
+        &quot;supplierSO&quot;: &quot;&quot;,
+        &quot;supplierPriceGroupCode&quot;: &quot;&quot;,
+        &quot;buyer&quot;: {
+            &quot;entityTaxId&quot;: &quot;&quot;,
+            &quot;entityLongId&quot;: &quot;&quot;,
+            &quot;entityId&quot;: 0
+        },
+        &quot;rateExchangeOverride&quot;: 0.0,
+        &quot;currencyCodeTo&quot;: &quot;USD&quot;,
+        &quot;processing&quot;: {
+            &quot;actionType&quot;: &quot;&quot;,
+            &quot;processingVersion&quot;: &quot;ZJDE0001&quot;
+        },
+        &quot;detail&quot;: [
+            {
+                &quot;businessUnit&quot;: &quot;          30&quot;,
+                &quot;matrixControlLine&quot;: 0.0,
+                &quot;printMessageCode&quot;: &quot;&quot;,
+                &quot;RMAId&quot;: 0,
+                &quot;originalOrderLineKey&quot;: {
+                    &quot;documentTypeCode&quot;: &quot;&quot;,
+                    &quot;documentLineNumber&quot;: 0.0,
+                    &quot;documentNumber&quot;: &quot;&quot;,
+                    &quot;documentCompany&quot;: &quot;&quot;,
+                    &quot;documentSuffix&quot;: &quot;&quot;
+                },
+                &quot;unitVolume&quot;: 0.0,
+                &quot;costExtended&quot;: 0.0,
+                &quot;datesDetail&quot;: {
+                    &quot;dateAccounting&quot;: &quot;&quot;,
+                    &quot;dateCancel&quot;: &quot;&quot;,
+                    &quot;dateRequested&quot;: &quot;&quot;,
+                    &quot;datePromisedDelivery&quot;: &quot;&quot;,
+                    &quot;dateEffectiveLot&quot;: &quot;&quot;
+                },
+                &quot;project&quot;: {
+                    &quot;projectNumber&quot;: 0,
+                    &quot;taskOrderType&quot;: &quot;&quot;,
+                    &quot;taskOrderNumber&quot;: 0
+                },
+                &quot;priceLevel&quot;: &quot;&quot;,
+                &quot;promotionId&quot;: &quot;&quot;,
+                &quot;reference&quot;: &quot;&quot;,
+                &quot;quantityOrderedSecondary&quot;: 0.0,
+                &quot;agreementSupplement&quot;: 0,
+                &quot;freezeWorkOrder&quot;: &quot;&quot;,
+                &quot;unitOfMeasureCodeTransaction&quot;: &quot;&quot;,
+                &quot;adjustmentScheduleCode&quot;: &quot;&quot;,
+                &quot;RMAType&quot;: &quot;&quot;,
+                &quot;unitOfMeasureCodePurchasing&quot;: &quot;&quot;,
+                &quot;commodityClassCode&quot;: &quot;&quot;,
+                &quot;transferDirectShip&quot;: &quot;&quot;,
+                &quot;costObjectTypeCode1&quot;: &quot;&quot;,
+                &quot;costObjectTypeCode2&quot;: &quot;&quot;,
+                &quot;buyer&quot;: {
+                    &quot;entityTaxId&quot;: &quot;&quot;,
+                    &quot;entityLongId&quot;: &quot;&quot;,
+                    &quot;entityId&quot;: 0
+                },
+                &quot;reportingCodesPurchasing&quot;: {
+                    &quot;purchasingReportCode002&quot;: &quot;&quot;,
+                    &quot;purchasingReportCode001&quot;: &quot;&quot;,
+                    &quot;purchasingReportCode004&quot;: &quot;&quot;,
+                    &quot;purchasingReportCode003&quot;: &quot;&quot;
+                },
+                &quot;UNSPSCCode&quot;: &quot;&quot;,
+                &quot;deliveryDetail&quot;: {
+                    &quot;carrier&quot;: {
+                        &quot;entityTaxId&quot;: &quot;&quot;,
+                        &quot;entityLongId&quot;: &quot;&quot;,
+                        &quot;entityId&quot;: 0
+                    },
+                    &quot;modeOfTransportCode&quot;: &quot;&quot;,
+                    &quot;landedCostRuleCode&quot;: &quot;&quot;,
+                    &quot;freightHandlingCode&quot;: &quot;&quot;
+                },
+                &quot;relatedOrderLineKey&quot;: {
+                    &quot;documentTypeCode&quot;: &quot;&quot;,
+                    &quot;documentLineNumber&quot;: 0.0,
+                    &quot;documentNumber&quot;: &quot;&quot;,
+                    &quot;documentCompany&quot;: &quot;&quot;,
+                    &quot;documentSuffix&quot;: &quot;&quot;
+                },
+                &quot;discountFactor&quot;: 0.0,
+                &quot;relievePOBlanketOrder&quot;: &quot;&quot;,
+                &quot;costObjectCode4&quot;: &quot;&quot;,
+                &quot;unitWeight&quot;: 0.0,
+                &quot;costObjectCode3&quot;: &quot;&quot;,
+                &quot;costObjectCode2&quot;: &quot;&quot;,
+                &quot;costObjectCode1&quot;: &quot;&quot;,
+                &quot;adjustmentRevisionLevel&quot;: 0,
+                &quot;financialDetail&quot;: {
+                    &quot;glAccountKey&quot;: {
+                        &quot;accountId&quot;: &quot;&quot;,
+                        &quot;accountLongId&quot;: &quot;&quot;,
+                        &quot;accountAlternate&quot;: &quot;&quot;
+                    },
+                    &quot;assetId&quot;: &quot;&quot;,
+                    &quot;glClassCode&quot;: &quot;&quot;,
+                    &quot;subledgerTypeCode&quot;: &quot;&quot;,
+                    &quot;subledger&quot;: &quot;&quot;,
+                    &quot;glAccount&quot;: {
+                        &quot;businessUnit&quot;: &quot;&quot;,
+                        &quot;objectAccount&quot;: &quot;&quot;,
+                        &quot;subsidiary&quot;: &quot;&quot;
+                    }
+                },
+                &quot;statusCodeNext&quot;: &quot;&quot;,
+                &quot;userReservedData&quot;: {
+                    &quot;userReservedCode&quot;: &quot;&quot;, 
+                    &quot;userReservedNumber&quot;: 0,
+                    &quot;userReservedReference&quot;: &quot;&quot;,
+                    &quot;userReservedAmount&quot;: 0.0
+                },
+                &quot;reference1&quot;: &quot;&quot;,
+                &quot;quantityOrdered&quot;: 10000.0,
+                &quot;costUnitPurchasing&quot;: 0.0,
+                &quot;purchaseOrderLineKey&quot;: {
+                    &quot;documentLineNumber&quot;: 0.0,
+                    &quot;documentSuffix&quot;: &quot;&quot;
+                },
+                &quot;costObjectTypeCode3&quot;: &quot;&quot;,
+                &quot;costObjectTypeCode4&quot;: &quot;&quot;,
+                &quot;taxDetail&quot;: {
+                    &quot;taxExplanationCode&quot;: &quot;&quot;,
+                    &quot;taxableCode&quot;: &quot;&quot;,
+                    &quot;taxRateAreaCode&quot;: &quot;&quot;
+                },
+                &quot;agreementId&quot;: &quot;&quot;,
+                &quot;unitOfMeasureCodeVolume&quot;: &quot;&quot;,
+                &quot;product&quot;: {
+                    &quot;item&quot;: {
+                        &quot;itemId&quot;: 0,
+                        &quot;itemProduct&quot;: &quot;CARBURETOR&quot;,
+                        &quot;itemCatalog&quot;: &quot;&quot;,
+                        &quot;itemFreeForm&quot;: &quot;&quot;,
+                        &quot;itemSupplier&quot;: &quot;&quot;
+                    },
+                    &quot;locationPrimary&quot;: &quot;&quot;,
+                    &quot;lotNumber&quot;: &quot;&quot;,
+                    &quot;lineTypeCode&quot;: &quot;&quot;,
+                    &quot;description2&quot;: &quot;&quot;,
+                    &quot;description1&quot;: &quot;&quot;
+                },
+                &quot;transactionOriginator&quot;: &quot;&quot;,
+                &quot;unitOfMeasureCodeWeight&quot;: &quot;&quot;,
+                &quot;supplierSO&quot;: &quot;&quot;,
+                &quot;statusCodeLast&quot;: &quot;&quot;,
+                &quot;actionType&quot;: &quot;&quot;,
+                &quot;shipmentId&quot;: 0,
+                &quot;unitOfMeasureCodeSecondary&quot;: &quot;&quot;,
+                &quot;shipTo&quot;: {
+                    &quot;entityTaxId&quot;: &quot;&quot;,
+                    &quot;entityLongId&quot;: &quot;&quot;,
+                    &quot;entityId&quot;: 4343
+                }
+            }
+        ],
+        &quot;triangulationRateToCurrency&quot;: 0,
+        &quot;approvalRouteCode&quot;: &quot;DEMO&quot;
+    }
+}" mimeType="application/json" doc:name="Set Payload"/>
+        <json:json-to-object-transformer returnClass="java.util.HashMap" doc:name="JSON to Object"/>
+        <expression-component doc:name="Expression"><![CDATA[payload.put("JDE Token", flowVars .token);]]></expression-component>
+        <jdeatina:invoke-w-s config-ref="JDE_Atina__Configuration" entityType="oracle.e1.bssv.JP430000.ProcurementManager.processPurchaseOrder" doc:name="JDE Atina Invoke WS"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="3b24ea97-08d2-4389-a33f-fd799a23b4b6">
+            <dw:set-variable variableName="token"><![CDATA[%dw 1.0
+%output application/java
+---
+payload."JDE Token"]]></dw:set-variable>
+        </dw:transform-message>
+    </flow>
+    
+    <flow name="jde-abFlow5" processingStrategy="synchronous">
+        <set-variable variableName="token" value="eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjE2MDkxMjM4LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MH0.pRedLml1BFzBuz2i1HqTiepV75K-MKdBqvCDwyMa3HQ" doc:name="Variable"/>
+        <set-payload value="{
+     &quot;addressBook&quot;: {
+            &quot;parent&quot;: {
+                &quot;entityTaxId&quot;: &quot;&quot;,
+                &quot;entityLongId&quot;: &quot;&quot;,
+                &quot;entityId&quot;: 0
+            },
+            &quot;businessUnit&quot;: &quot;           1&quot;,
+            &quot;personCorporationCode&quot;: &quot;&quot;,
+            &quot;taxExemptCertificate&quot;: &quot;&quot;,
+            &quot;isEntityTypePayables&quot;: true,
+            &quot;categoryCodesAddressBook&quot;: {
+                &quot;categoryCode013&quot;: &quot;&quot;,
+                &quot;categoryCode012&quot;: &quot;&quot;,
+                &quot;categoryCode011&quot;: &quot;&quot;,
+                &quot;categoryCode010&quot;: &quot;&quot;,
+                &quot;categoryCode030&quot;: &quot;&quot;,
+                &quot;categoryCode019&quot;: &quot;&quot;,
+                &quot;categoryCode018&quot;: &quot;&quot;,
+                &quot;categoryCode017&quot;: &quot;&quot;,
+                &quot;categoryCode016&quot;: &quot;&quot;,
+                &quot;categoryCode015&quot;: &quot;&quot;,
+                &quot;categoryCode014&quot;: &quot;&quot;,
+                &quot;categoryCode002&quot;: &quot;&quot;,
+                &quot;categoryCode024&quot;: &quot;&quot;,
+                &quot;categoryCode001&quot;: &quot;&quot;,
+                &quot;categoryCode023&quot;: &quot;&quot;,
+                &quot;categoryCode022&quot;: &quot;&quot;,
+                &quot;categoryCode021&quot;: &quot;&quot;,
+                &quot;categoryCode020&quot;: &quot;&quot;,
+                &quot;categoryCode009&quot;: &quot;&quot;,
+                &quot;categoryCode008&quot;: &quot;&quot;,
+                &quot;categoryCode007&quot;: &quot;&quot;,
+                &quot;categoryCode029&quot;: &quot;&quot;,
+                &quot;categoryCode006&quot;: &quot;&quot;,
+                &quot;categoryCode028&quot;: &quot;&quot;,
+                &quot;categoryCode005&quot;: &quot;&quot;,
+                &quot;categoryCode027&quot;: &quot;&quot;,
+                &quot;categoryCode004&quot;: &quot;&quot;,
+                &quot;categoryCode026&quot;: &quot;&quot;,
+                &quot;categoryCode003&quot;: &quot;&quot;,
+                &quot;categoryCode025&quot;: &quot;&quot;
+            },
+            &quot;entityNameSecondary&quot;: &quot;Mailing Name 01&quot;,
+            &quot;userReservedData&quot;: {
+                &quot;userReservedCode&quot;: &quot;&quot;,
+                &quot;userReservedDate&quot;: null,
+                &quot;userReservedNumber&quot;: 0,
+                &quot;userReservedReference&quot;: &quot;&quot;,
+                &quot;userReservedAmount&quot;: 0
+            },
+            &quot;remark&quot;: &quot;Remark&quot;,
+            &quot;electronicAddresses&quot;: [
+                {
+                    &quot;actionType&quot;: &quot;1&quot;,
+                    &quot;electronicAddressLineNumber&quot;: 1,
+                    &quot;electronicAddress&quot;: &quot;email@gmail.com&quot;,
+                    &quot;contactId&quot;: 0,
+                    &quot;electronicAddressClassificationCode&quot;: &quot;&quot;,
+                    &quot;messageIndicatorCode&quot;: 0,
+                    &quot;electronicAddressTypeCode&quot;: &quot;E&quot;
+                }
+            ],
+            &quot;employeeGroupApprovalsCode&quot;: &quot;&quot;,
+            &quot;phoneNumbers&quot;: [
+                {
+                    &quot;phoneLineNumber&quot;: 1,
+                    &quot;actionType&quot;: &quot;1&quot;,
+                    &quot;areaCode&quot;: &quot;11&quot;,
+                    &quot;phoneNumber&quot;: &quot;22223636&quot;,
+                    &quot;contactId&quot;: 0,
+                    &quot;phoneTypeCode&quot;: &quot;HOM&quot;
+                }
+            ],
+            &quot;relatedAddress1&quot;: {
+                &quot;entityTaxId&quot;: &quot;&quot;,
+                &quot;entityLongId&quot;: &quot;&quot;,
+                &quot;entityId&quot;: 0
+            },
+            &quot;relatedAddress2&quot;: {
+                &quot;entityTaxId&quot;: &quot;&quot;,
+                &quot;entityLongId&quot;: &quot;&quot;,
+                &quot;entityId&quot;: 0
+            },
+            &quot;relatedAddress3&quot;: {
+                &quot;entityTaxId&quot;: &quot;&quot;,
+                &quot;entityLongId&quot;: &quot;&quot;,
+                &quot;entityId&quot;: 0
+            },
+            &quot;relatedAddress4&quot;: {
+                &quot;entityTaxId&quot;: &quot;&quot;,
+                &quot;entityLongId&quot;: &quot;&quot;,
+                &quot;entityId&quot;: 0
+            },
+            &quot;callSalesTeamAlignment&quot;: &quot;&quot;,
+            &quot;relatedAddress5&quot;: {
+                &quot;entityTaxId&quot;: &quot;&quot;,
+                &quot;entityLongId&quot;: &quot;&quot;,
+                &quot;entityId&quot;: 0
+            },
+            &quot;isEntityTypeEmployee&quot;: false,
+            &quot;relatedAddress6&quot;: {
+                &quot;entityTaxId&quot;: &quot;&quot;,
+                &quot;entityLongId&quot;: &quot;&quot;,
+                &quot;entityId&quot;: 0
+            },
+            &quot;entityName&quot;: &quot;Alpha Name 01&quot;,
+            &quot;isEntityTypeNettingIndicator&quot;: false,
+            &quot;stock&quot;: {
+                &quot;stockExchange&quot;: &quot;&quot;,
+                &quot;stockTickerSymbol&quot;: &quot;&quot;
+            },
+            &quot;industryClassificationCode&quot;: &quot;&quot;,
+            &quot;address&quot;: {
+                &quot;countyCode&quot;: &quot;&quot;,
+                &quot;mailingNameSecondary&quot;: &quot;Mailing Name 01&quot;,
+                &quot;city&quot;: &quot;Buenos Aires&quot;,
+                &quot;countryCode&quot;: &quot;US&quot;,
+                &quot;postalCode&quot;: &quot;&quot;,
+                &quot;dateEffective&quot;: null,
+                &quot;addressLine1&quot;: &quot;Address Line 1&quot;,
+                &quot;addressLine2&quot;: &quot;Address Line 2&quot;,
+                &quot;stateCode&quot;: &quot;CO&quot;,
+                &quot;addressLine3&quot;: &quot;Address Line 3&quot;,
+                &quot;addressLine4&quot;: &quot;Address Line 4&quot;,
+                &quot;mailingName&quot;: &quot;Mailing Name&quot;
+            },
+            &quot;isEntityTypeReceivables&quot;: false,
+            &quot;languageCode&quot;: &quot;&quot;,
+            &quot;entityTaxIdAdditional&quot;: &quot;Tax Add&quot;,
+            &quot;classifications&quot;: {
+                &quot;classificationCode002&quot;: &quot;&quot;,
+                &quot;classificationCode001&quot;: &quot;&quot;,
+                &quot;classificationCode005&quot;: &quot;&quot;,
+                &quot;classificationCode004&quot;: &quot;&quot;,
+                &quot;classificationCode003&quot;: &quot;&quot;
+            },
+            &quot;isEntityTypePurchaser&quot;: true,
+            &quot;entityTypeCode&quot;: &quot;V&quot;,
+            &quot;creditMessageCode&quot;: &quot;&quot;,
+            &quot;processing&quot;: {
+                &quot;actionType&quot;: &quot;1&quot;,
+                &quot;processingVersion&quot;: &quot;ZJDE0001&quot;
+            },
+            &quot;entity&quot;: {
+                &quot;entityTaxId&quot;: &quot;&quot;,
+                &quot;entityLongId&quot;: &quot;&quot;,
+                &quot;entityId&quot;: 0
+            },
+            &quot;statistics&quot;: {
+                &quot;dunBradStreetId&quot;: &quot;&quot;,
+                &quot;rateGrowth&quot;: 0,
+                &quot;revenueRangeCode&quot;: &quot;&quot;,
+                &quot;yearCompanyFounded&quot;: &quot;&quot;,
+                &quot;numberOfEmployees&quot;: 0
+            }
+        }
+}" mimeType="application/json" doc:name="Set Payload"/>
+        <json:json-to-object-transformer returnClass="java.util.HashMap" doc:name="JSON to Object"/>
+        <expression-component doc:name="Expression"><![CDATA[payload.put("JDE Token", flowVars .token);]]></expression-component>
+        <jdeatina:invoke-w-s config-ref="JDE_Atina__Configuration" entityType="oracle.e1.bssv.JP010000.AddressBookManager.processAddressBook" doc:name="JDE Atina Invoke WS"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="3b24ea97-08d2-4389-a33f-fd799a23b4b6">
+            <dw:set-variable variableName="token"><![CDATA[%dw 1.0
+%output application/java
+---
+payload."JDE Token"]]></dw:set-variable>
+        </dw:transform-message>
+    </flow>
+    
+    <flow name="jde-abFlow6" processingStrategy="synchronous">
+        <set-variable variableName="token" value="eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjE2MDkxMjM4LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MH0.pRedLml1BFzBuz2i1HqTiepV75K-MKdBqvCDwyMa3HQ" doc:name="Variable"/>
+        <set-payload value="{
+    &quot;header&quot;: {
+        
+        &quot;purchaseOrderKey&quot;: {
+            &quot;documentTypeCode&quot;: &quot;OP&quot;,
+            &quot;documentNumber&quot;: 5056,
+            &quot;documentCompany&quot;: &quot;00001&quot;
+        }
+    }
+}" mimeType="application/json" doc:name="Set Payload"/>
+        <json:json-to-object-transformer returnClass="java.util.HashMap" doc:name="JSON to Object"/>
+        <expression-component doc:name="Expression"><![CDATA[payload.put("JDE Token", flowVars .token);]]></expression-component>
+        <jdeatina:invoke-w-s config-ref="JDE_Atina__Configuration" entityType="oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrder" doc:name="JDE Atina Invoke WS"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="3b24ea97-08d2-4389-a33f-fd799a23b4b6">
+            <dw:set-variable variableName="token"><![CDATA[%dw 1.0
+%output application/java
+---
+payload."JDE Token"]]></dw:set-variable>
+        </dw:transform-message>
+    </flow>
+    
+    <flow name="jde-abFlow7" processingStrategy="synchronous">
+        <set-variable variableName="token" value="eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjE2MDkxMjM4LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MH0.pRedLml1BFzBuz2i1HqTiepV75K-MKdBqvCDwyMa3HQ" doc:name="Variable"/>
+        <set-payload value="{
+    &quot;approver&quot;: {
+        &quot;entityTaxId&quot;: &quot;&quot;,
+        &quot;entityLongId&quot;: &quot;&quot;,
+        &quot;entityId&quot;: 92455890
+    },
+    &quot;orderTypeCode&quot;: &quot;OP&quot;,
+    &quot;businessUnitCode&quot;: &quot;         30&quot;,
+    &quot;statusCodeNext&quot;: &quot;230&quot;,
+    &quot;statusApproval&quot;: &quot;2N&quot;
+}" mimeType="application/json" doc:name="Set Payload"/>
+        <json:json-to-object-transformer returnClass="java.util.HashMap" doc:name="JSON to Object"/>
+        <expression-component doc:name="Expression"><![CDATA[payload.put("JDE Token", flowVars .token);]]></expression-component>
+        <jdeatina:invoke-w-s config-ref="JDE_Atina__Configuration" entityType="oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrdersForApprover" doc:name="JDE Atina Invoke WS"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="3b24ea97-08d2-4389-a33f-fd799a23b4b6">
+            <dw:set-variable variableName="token"><![CDATA[%dw 1.0
+%output application/java
+---
+payload."JDE Token"]]></dw:set-variable>
+        </dw:transform-message>
+    </flow>
+    
+    <flow name="jde-abFlow8" processingStrategy="synchronous">
+        <set-variable variableName="token" value="eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjE2MDkxMjM4LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MH0.pRedLml1BFzBuz2i1HqTiepV75K-MKdBqvCDwyMa3HQ" doc:name="Variable"/>
+        <set-payload value="{     &quot;header&quot;: {                  &quot;purchaseOrderKey&quot;: {             &quot;documentTypeCode&quot;: &quot;OP&quot;,             &quot;documentNumber&quot;: 5056,             &quot;documentCompany&quot;: &quot;00001&quot;         }     } }" mimeType="application/json" doc:name="Set Payload"/>
+        <json:json-to-object-transformer returnClass="java.util.HashMap" doc:name="JSON to Object"/>
+        <expression-component doc:name="Expression"><![CDATA[payload.put("JDE Token", flowVars .token);]]></expression-component>
+        <jdeatina:invoke-w-s config-ref="JDE_Atina__Configuration" entityType="oracle.e1.bssv.JP430000.ProcurementManager.getPurchaseOrderDetailForApprover" doc:name="JDE Atina Invoke WS"/>
+        <dw:transform-message doc:name="Transform Message" metadata:id="3b24ea97-08d2-4389-a33f-fd799a23b4b6">
+            <dw:set-variable variableName="token"><![CDATA[%dw 1.0
+%output application/java
+---
+payload."JDE Token"]]></dw:set-variable>
+        </dw:transform-message>
+    </flow>
+    
 </mule>

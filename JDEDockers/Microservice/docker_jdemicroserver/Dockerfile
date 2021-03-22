@@ -148,7 +148,7 @@ COPY images/jdelicense.dat /var/jdeatinaserver/
 # ====================================
 # Copiar Metadata for Mocking
 # ==================================== 
-COPY images/mocking/*.json /tmp/jde/mocking
+COPY images/mocking/*.json /tmp/jde/mocking/
 
 # ====================================
 # Start
