@@ -4,7 +4,6 @@ import static org.junit.Assert.fail;
 
 import java.util.Map;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.modules.atina.jde.exceptions.ExternalConnectorException;
 import org.mule.modules.jde.atina.automation.functional.TestDataBuilder;
@@ -53,11 +52,9 @@ public class GetPurchaseOrdersForApproverTestCases extends AbstractTestCases {
 
         Map<String, Object> entityData = TestDataBuilder.getPurchaseOrdersForApproverEntityData();
 
-        Object returnedValue = null;
-
         try {
 
-            returnedValue = ejecucionInterna("GetPurchaseOrdersForApproverTestCases: ", entityType, entityData);
+            ejecucionInterna("GetPurchaseOrdersForApproverTestCases: ", entityType, entityData);
 
             fail("No se ha producido la exception esperada");
 

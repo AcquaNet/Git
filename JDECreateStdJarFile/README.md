@@ -24,7 +24,7 @@ jde-lib-bundle
 
 ## Build
 
-**java** **-jar** target/JDECreateStdJarFile-1.0.0-SNAPSHOT.jar **-i** C:\_work\JDEConnectorCE\jdeJarsFile\jde-lib-bundle **-j** C:\_work\JDEConnectorCE\jdeJarsFile\jde-lib-bundle\JDBC_Vendor_Drivers **-r** "C:\Users\jgodi\.m2\repository" **-n** jde-lib-wrapped **-o** '1.0.0'
+**java** **-jar** target/JDECreateStdJarFile-1.0.0-SNAPSHOT.jar **-i** C:\...\Deployment\jde-lib-bundle **-j** C:\...\Deployment\jde-lib-bundle\JDBC_Vendor_Drivers **-r** "C:\Users\username\.m2\repository" **-n** jde-lib-wrapped **-o** "1.0.0" **-s** "/apache-maven-3.8.1/conf/settings.xml"
 
 
 | Option | Description 
@@ -34,6 +34,7 @@ jde-lib-bundle
 | -r | Local Repository 
 | -n | JDE Library Name
 | -o | JDE Library Version
+| -s | settings.xml to use
 
 **Destination**:
 

@@ -31,28 +31,6 @@
                     <target>${jdk.version}</target>
                 </configuration>
             </plugin>
-            
-            <plugin>
-                <groupId>com.acqua</groupId>
-                <artifactId>EncryptClassFiles</artifactId>
-                <version>1.0.0</version>
-                <configuration>
-                    <fileSets>
-                        <fileSet>
-                            <directory>target/classes/com/acqua</directory>
-                        </fileSet>
-                    </fileSets>
-                    <activo>false</activo>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>test-compile</phase>   
-                        <goals>
-                            <goal>crypto</goal>
-                        </goals>             
-                    </execution>      
-                </executions>
-            </plugin>
              
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

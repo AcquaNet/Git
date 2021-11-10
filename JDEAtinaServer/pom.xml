@@ -74,6 +74,7 @@
                                     <groupId>com.atina</groupId>
                                     <artifactId>JDEConnectorServer</artifactId>
                                     <version>1.0.0</version>
+									<classifier>jar-with-dependencies</classifier>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.directory}/classes</outputDirectory>
@@ -141,5 +142,13 @@
         </plugins>
         
     </build>
+	
+	<distributionManagement>
+		<repository>
+			<id>AcquaNet-central</id>
+			<url>http://157.245.236.175:8081/artifactory/libs-release-local</url>
+		</repository>
+	</distributionManagement>
+	
     <name>JDEAtinaServer</name>
 </project>

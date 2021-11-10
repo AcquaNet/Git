@@ -14,13 +14,11 @@ ECHO "Building JDE Connector Server...
 ECHO ==========================================================
 cd C:\_work\JDEConnectorCE\Projects\JDEConnectorServer
 CALL mvn clean install -P AcquaIT
-del C:\Users\jgodi\.m2\repository\com\atina\JDEConnectorServer\1.0.0\JDEConnectorServer-1.0.0.jar
-copy C:\Users\jgodi\.m2\repository\com\atina\JDEConnectorServer\1.0.0\JDEConnectorServer-1.0.0-jar-with-dependencies.jar C:\Users\jgodi\.m2\repository\com\atina\JDEConnectorServer\1.0.0\JDEConnectorServer-1.0.0.jar
 ECHO ==========================================================
 ECHO "Building JDE Atina Server...
 ECHO ==========================================================
 cd C:\_work\JDEConnectorCE\Projects\JDEAtinaServer
-CALL mvn clean install
+CALL mvn clean deploy -P AcquaIT
 CALL deploy.bat
 ECHO ==========================================================
 ECHO "Building JDE Microservice...

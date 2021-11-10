@@ -61,5 +61,14 @@ public class Options extends OptionsBase {
             defaultValue = ""
     )
     public String outputName;
+    
+    @Option(
+            name = "settings",
+            abbrev = 's',
+            help = "settings.xml to use Ex. /apache-maven-3.8.1/conf/settings.xml",
+            category = "startup",
+            defaultValue = ""
+    )
+    public String settings;
    
 }

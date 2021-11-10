@@ -87,12 +87,12 @@ public class MainBuilder {
     private static final String PROPERTYFILE = "packageToShade.properties";
     private static final String JDE_JARS = "JarsToCopy.properties";
     private static final String WS_JARS = "WSToCopy.properties";
-    private static final String JAR_SELECTED = "/tmp/jarselected";
-    private static final String JAR_DESTINATION = "/tmp/wrapped";
-    private static final String JAR_SBF = "/tmp/sbfjars";
-    private static final String JAR_METADATA = "/tmp/metadata";
+    private static final String JAR_SELECTED = "/tmp/build_jde_libs/jarselected";
+    private static final String JAR_DESTINATION = "/tmp/build_jde_libs/wrapped";
+    private static final String JAR_SBF = "/tmp/build_jde_libs/sbfjars";
+    private static final String JAR_METADATA = "/tmp/build_jde_libs/metadata";
     private static final String METADATA_DRIVER_TXT = "MetadataWSDriver.txt";
-    private static final String METADATA_DRIVER_JAVA = "/tmp/metadata/MetadataWSDriver.java";
+    private static final String METADATA_DRIVER_JAVA = "/tmp/build_jde_libs/metadata/MetadataWSDriver.java";
 
     private static final String STEP_1 = "Defining bundle descriptor";
     private static final String STEP_2 = "Defining bundle assembly";
@@ -102,6 +102,7 @@ public class MainBuilder {
     private static final String STEP_5 = "Cleaning up";
     private static final Boolean SHADE = false;
     private static final Boolean DEBUG = false;
+    private static final Boolean THREADS = false;
 
     /**
      * @param args the command line arguments
@@ -240,7 +241,8 @@ public class MainBuilder {
                 || options.version.isEmpty()
                 || options.localRepo.isEmpty()
                 || options.outputName.isEmpty()
-                || options.jdeInstallPath.isEmpty()) {
+                || options.jdeInstallPath.isEmpty()
+                || options.settings.isEmpty()) {
 
             printUsage(parser);
 
@@ -353,21 +355,32 @@ public class MainBuilder {
             //
             logger.info("Creando JAR File con librerias de JDE");
 
-            ExecutorService executor = Executors.newSingleThreadExecutor();
+            int resultFinal = 1;
+            
+            if(THREADS)
+            {
+                ExecutorService executor = Executors.newSingleThreadExecutor();
 
-            Callable<Integer> callableTask = () -> {
-                int result = executeMvnAssembly(JAR_DESTINATION);
+                Callable<Integer> callableTask = () -> {
+                    int result = executeMvnAssembly(JAR_DESTINATION, options.settings);
+                    summary.add("Libreria creada en " + JAR_DESTINATION);
+                    return result;
+                };
+
+                Future<Integer> future = executor.submit(callableTask);
+
+                resultFinal = future.get();
+
+                executor.shutdown();
+            
+            } else
+            {
+                resultFinal = executeMvnAssembly(JAR_DESTINATION,options.settings);
+                
                 summary.add("Libreria creada en " + JAR_DESTINATION);
-                return result;
-            };
+            }
 
-            Future<Integer> future = executor.submit(callableTask);
-
-            int result = future.get();
-
-            executor.shutdown();
-
-            if (result != 0) {
+            if (resultFinal != 0) {
                 throw new Exception("Error creando JAR File con librerias de JDE");
             }
 
@@ -377,11 +390,11 @@ public class MainBuilder {
             //
             if (SHADE) {
 
-                if (isSuccessful(result)) {
+                if (isSuccessful(resultFinal)) {
 
                     // Adding Jars Files to Shade to Local Repo
                     for (String fileToRename : jarsToShade) {
-                        executeExtraInstall(JAR_SELECTED, fileToRename.substring(0, fileToRename.lastIndexOf(".")), "1.0.0", options.localRepo);
+                        executeExtraInstall(JAR_SELECTED, fileToRename.substring(0, fileToRename.lastIndexOf(".")), "1.0.0", options.localRepo, options.settings);
                     }
 
                     logger.info(STEP_4);
@@ -389,7 +402,7 @@ public class MainBuilder {
                     ExecutorService executor2 = Executors.newSingleThreadExecutor();
 
                     Callable<Integer> callableTask2 = () -> {
-                        executeMvnInstall(JAR_DESTINATION, "1.0.0", options.localRepo, options.outputName);
+                        executeMvnInstall(JAR_DESTINATION, "1.0.0", options.localRepo, options.outputName, options.settings);
                         return 0;
                     };
 
@@ -417,7 +430,7 @@ public class MainBuilder {
 
                 logger.info(STEP_4a);
 
-                result = 0;
+                resultFinal = 0;
 
                 try {
 
@@ -429,13 +442,13 @@ public class MainBuilder {
 
                 } catch (IOException ex) {
 
-                    result = 1;
+                    resultFinal = 1;
 
                     logger.error("Error Copying Java Dummmy" + ": " + ex.getMessage());
 
                 } catch (URISyntaxException ex) {
 
-                    result = 1;
+                    resultFinal = 1;
 
                     logger.error("Error Copying Java Dummmy" + ": " + ex.getMessage());
 
@@ -444,11 +457,11 @@ public class MainBuilder {
                 // -----------------------------------------------
                 // Prepare POM to build  Java Dummy
                 // -----------------------------------------------
-                if (isSuccessful(result)) {
+                if (isSuccessful(resultFinal)) {
 
                     logger.info("Preparing POM to build JDE Connector Shaded");
 
-                    result = prepareMvnForDummy(jarsToShade, JAR_SELECTED, options.jdbcDriver, JAR_DESTINATION, options.version, packages, options.outputName);
+                    resultFinal = prepareMvnForDummy(jarsToShade, JAR_SELECTED, options.jdbcDriver, JAR_DESTINATION, options.version, packages, options.outputName);
 
                     logger.info("P POM to build JDE Connector Shaded has been wrote.");
 
@@ -457,20 +470,20 @@ public class MainBuilder {
                 // -----------------------------------------------
                 // Executing Building with Shaded option
                 // -----------------------------------------------
-                if (isSuccessful(result)) {
+                if (isSuccessful(resultFinal)) {
 
                     logger.info("Executing Building with Shaded option");
 
                     ExecutorService executor3 = Executors.newSingleThreadExecutor();
 
                     Callable<Integer> callableTask3 = () -> {
-                        int result2 = executeMvnShade(JAR_DESTINATION, options.version, options.localRepo);
+                        int result2 = executeMvnShade(JAR_DESTINATION, options.version, options.localRepo, options.settings);
                         return result2;
                     };
 
                     Future<Integer> future3 = executor3.submit(callableTask3);
 
-                    result = future3.get();
+                    resultFinal = future3.get();
 
                     executor3.shutdown();
 
@@ -479,7 +492,7 @@ public class MainBuilder {
                 // -----------------------------------------------
                 // Copying Jar Shaded
                 // -----------------------------------------------
-                if (isSuccessful(result)) {
+                if (isSuccessful(resultFinal)) {
 
                     File source = new File(JAR_DESTINATION + File.separator + "target/" + options.outputName + "-" + options.version + "-shaded.jar");
                     File dest = new File(JAR_DESTINATION + File.separator + options.outputName + "-" + options.version + ".jar");
@@ -492,7 +505,7 @@ public class MainBuilder {
                         logger.info("Jar File " + source.getName() + " to " + dest.getName() + " has been copied.");
 
                     } catch (IOException ex) {
-                        result = 1;
+                        resultFinal = 1;
                         logger.error("Error copying Jar Shaded. Message" + ": " + ex.getMessage());
                     }
 
@@ -501,11 +514,11 @@ public class MainBuilder {
                 // -----------------------------------------------
                 // Cleanning Shading process
                 // -----------------------------------------------
-                if (isSuccessful(result)) {
+                if (isSuccessful(resultFinal)) {
 
                     try {
 
-                        executeMvnShadeClean(JAR_DESTINATION, options.localRepo);
+                        executeMvnShadeClean(JAR_DESTINATION, options.localRepo, options.settings);
 
                         logger.info("Cleaning Shading process ... ");
 
@@ -534,15 +547,15 @@ public class MainBuilder {
             // Installing
             // -----------------------------------------------
             //
-            if (isSuccessful(result)) {
+            if (isSuccessful(resultFinal)) {
 
                 logger.info("Installing JDE Connector Shaded in local repository...");
 
-                result = executeMvnInstall(JAR_DESTINATION, options.version, options.localRepo, options.outputName);
+                resultFinal = executeMvnInstall(JAR_DESTINATION, options.version, options.localRepo, options.outputName, options.settings);
 
                 logger.info("JDE Connector Shaded jhas been installed in local repository.");
 
-                if (!isSuccessful(result)) {
+                if (!isSuccessful(resultFinal)) {
 
                     logger.error("Error Installing JDE Connector in Local Repository");
 
@@ -633,7 +646,7 @@ public class MainBuilder {
 
             prepareWSMvn(JAR_METADATA, JAR_METADATA, jarsToUnzip, JAR_SBF, JAR_SBF, options.version);
 
-            if (!isSuccessful(result)) {
+            if (!isSuccessful(resultFinal)) {
 
                 logger.error("Error creando POM para la compilacion de WS");
 
@@ -647,17 +660,17 @@ public class MainBuilder {
             ExecutorService executorWS = Executors.newSingleThreadExecutor();
 
             Callable<Integer> callableTaskWS = () -> {
-                int result4 = executeMvnWS(JAR_SBF, options.localRepo);
+                int result4 = executeMvnWS(JAR_SBF, options.localRepo, options.settings);
                 return result4;
             };
 
             Future<Integer> futureWS = executorWS.submit(callableTaskWS);
 
-            result = futureWS.get();
+            resultFinal = futureWS.get();
 
             executorWS.shutdown();
 
-            if (!isSuccessful(result)) {
+            if (!isSuccessful(resultFinal)) {
 
                 logger.error("Error Installing JDE Connector in Local Repository");
 
@@ -801,8 +814,8 @@ public class MainBuilder {
         }
 
     }
-
-    private static int executeMvnAssembly(String destDir) {
+    
+    private static int executeMvnAssembly(String destDir, String settings) {
 
         int result = 0;
 
@@ -812,7 +825,7 @@ public class MainBuilder {
 
             MavenCli cli = new MavenCli();
 
-            String[] params = new String[]{"assembly:help"};
+            String[] params = new String[]{"-s",settings,"assembly:help"};
 
             final ByteArrayOutputStream stdOutStream = new ByteArrayOutputStream();
             final ByteArrayOutputStream stdErrStream = new ByteArrayOutputStream();
@@ -825,7 +838,7 @@ public class MainBuilder {
                 logger.info(line);
             }
 
-            params = new String[]{"assembly:single", "-o"};
+            params = new String[]{"-s",settings,"assembly:single", "-o"};
 
             result = cli.doMain(params, destDir, printStream(stdOutStream), printStream(stdErrStream));
 
@@ -869,7 +882,7 @@ public class MainBuilder {
         return result == 0;
     }
 
-    private static int executeExtraInstall(String destDir, String jarFile, String version, String localRepo) {
+    private static int executeExtraInstall(String destDir, String jarFile, String version, String localRepo, String settings) {
 
         System.setProperty("maven.repo.local", localRepo);
 
@@ -883,7 +896,7 @@ public class MainBuilder {
 
             MavenCli cli = new MavenCli();
 
-            String[] params = new String[]{"install:install-file", "-Dfile=" + destDir + File.separator + jarFile + ".jar", "-DgroupId=com.jdedwards", "-DartifactId=" + jarFile, "-Dversion=" + version, "-Dpackaging=jar"};
+            String[] params = new String[]{"-s",settings,"install:install-file", "-Dfile=" + destDir + File.separator + jarFile + ".jar", "-DgroupId=com.jdedwards", "-DartifactId=" + jarFile, "-Dversion=" + version, "-Dpackaging=jar"};
 
             result = cli.doMain(params, destDir, printStream(stdOutStream), printStream(stdErrStream));
 
@@ -901,7 +914,7 @@ public class MainBuilder {
 
     }
 
-    private static int executeMvnInstall(String destDir, String version, String localRepo, String name) {
+    private static int executeMvnInstall(String destDir, String version, String localRepo, String name,String settings) {
 
         System.setProperty("maven.repo.local", localRepo);
 
@@ -914,7 +927,7 @@ public class MainBuilder {
 
             MavenCli cli = new MavenCli();
 
-            String[] params = new String[]{"install:install-file", "-Dfile=" + destDir + File.separator + name + "-" + version + ".jar", "-DgroupId=com.jdedwards", "-DartifactId=" + name + "", "-Dversion=" + version, "-Dpackaging=jar"};
+            String[] params = new String[]{"-s",settings,"install:install-file", "-Dfile=" + destDir + File.separator + name + "-" + version + ".jar", "-DgroupId=com.jdedwards", "-DartifactId=" + name + "", "-Dversion=" + version, "-Dpackaging=jar"};
 
             result = cli.doMain(params, destDir, printStream(stdOutStream), printStream(stdErrStream));
 
@@ -932,7 +945,7 @@ public class MainBuilder {
 
     }
 
-    private static int executeMvnShade(String destDir, String version, String localRepo) {
+    private static int executeMvnShade(String destDir, String version, String localRepo,String settings) {
 
         System.setProperty("maven.repo.local", localRepo);
 
@@ -946,7 +959,7 @@ public class MainBuilder {
 
             MavenCli cli = new MavenCli();
 
-            String[] params = new String[]{"clean", "package"};
+            String[] params = new String[]{"-s",settings,"clean", "package"};
 
             result = cli.doMain(params, destDir, printStream(stdOutStream), printStream(stdErrStream));
 
@@ -970,7 +983,7 @@ public class MainBuilder {
 
     }
 
-    private static int executeMvnWS(String destDir, String localRepo) {
+    private static int executeMvnWS(String destDir, String localRepo,String settings) {
 
         System.setProperty("maven.repo.local", localRepo);
 
@@ -986,7 +999,7 @@ public class MainBuilder {
 
             MavenCli cli = new MavenCli();
 
-            String[] params = new String[]{"clean", "install"};
+            String[] params = new String[]{"-s",settings,"clean", "install"};
 
             result = cli.doMain(params, destDir, printStream(stdOutStream), printStream(stdErrStream));
 
@@ -1017,14 +1030,14 @@ public class MainBuilder {
 
     }
 
-    private static int executeMvnShadeClean(String destDir, String localRepo) {
+    private static int executeMvnShadeClean(String destDir, String localRepo,String settings) {
 
         System.setProperty("maven.repo.local", localRepo);
 
         int result = 0;
         try {
             MavenCli cli = new MavenCli();
-            String[] params = new String[]{"clean"};
+            String[] params = new String[]{"-s",settings,"clean"};
             result = cli.doMain(params, destDir, System.out, System.err);
         } catch (Exception e) {
             logger.error(STEP_4 + ": " + e.getMessage());

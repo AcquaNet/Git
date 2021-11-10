@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import java.util.Map;
 
 import org.junit.Test;
-import org.mule.modules.atina.jde.exceptions.ExternalConnectorException;
 import org.mule.modules.jde.atina.automation.functional.TestDataBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
