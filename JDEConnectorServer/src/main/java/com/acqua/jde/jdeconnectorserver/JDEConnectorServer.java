@@ -220,8 +220,8 @@ public class JDEConnectorServer {
                 File jarToAdd2 = new File("/tmp/jde/StdWebService-" + stdWebServiceVersion + ".jar");
                 
                 logger.info("Libraries: ");
-                    logger.info("  " + jarToAdd1.getName() + " Exist: " + jarToAdd1.exists());
-                    logger.info("  " + jarToAdd2.getName() + " Exist: " + jarToAdd2.exists());
+                logger.info("  /tmp/jde/" + jarToAdd1.getName() + " Exist: " + jarToAdd1.exists());
+                logger.info("  /tmp/jde/" + jarToAdd2.getName() + " Exist: " + jarToAdd2.exists());
                 
                 if(!jarToAdd1.exists())
                 {
@@ -303,7 +303,7 @@ public class JDEConnectorServer {
 
         logger.info("------------------------------------------------------");
         logger.info("Configuration: ");
-        logger.info("       SERICES: ");
+        logger.info("       SERVICE: ");
         logger.info("          IP = [" + cfg.getIpServicio() + "]");
         logger.info("          Port = [" + Integer.toString(cfg.getPortServicio()) + "]");
         logger.info("          Local IP = [" + cfg.getIpLocalServicio() + "]");

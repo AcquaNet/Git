@@ -474,18 +474,26 @@ public class MainBuilder {
 
                     logger.info("Executing Building with Shaded option");
 
-                    ExecutorService executor3 = Executors.newSingleThreadExecutor();
+                    if(THREADS)
+                    {
+                    
+                        ExecutorService executor3 = Executors.newSingleThreadExecutor();
 
-                    Callable<Integer> callableTask3 = () -> {
-                        int result2 = executeMvnShade(JAR_DESTINATION, options.version, options.localRepo, options.settings);
-                        return result2;
-                    };
+                        Callable<Integer> callableTask3 = () -> {
+                            int result2 = executeMvnShade(JAR_DESTINATION, options.version, options.localRepo, options.settings);
+                            return result2;
+                        };
 
-                    Future<Integer> future3 = executor3.submit(callableTask3);
+                        Future<Integer> future3 = executor3.submit(callableTask3);
 
-                    resultFinal = future3.get();
+                        resultFinal = future3.get();
 
-                    executor3.shutdown();
+                        executor3.shutdown();
+                    
+                    } else
+                    {
+                        resultFinal = executeMvnShade(JAR_DESTINATION, options.version, options.localRepo, options.settings);
+                    }
 
                 }
 
@@ -656,19 +664,27 @@ public class MainBuilder {
             summary.add("POM de Ws crado en " + JAR_SBF);
 
             logger.info("Compilando WS..");
+            
+            if(THREADS)
+            {
 
-            ExecutorService executorWS = Executors.newSingleThreadExecutor();
+                ExecutorService executorWS = Executors.newSingleThreadExecutor();
 
-            Callable<Integer> callableTaskWS = () -> {
-                int result4 = executeMvnWS(JAR_SBF, options.localRepo, options.settings);
-                return result4;
-            };
+                Callable<Integer> callableTaskWS = () -> {
+                    int result4 = executeMvnWS(JAR_SBF, options.localRepo, options.settings);
+                    return result4;
+                };
 
-            Future<Integer> futureWS = executorWS.submit(callableTaskWS);
+                Future<Integer> futureWS = executorWS.submit(callableTaskWS);
 
-            resultFinal = futureWS.get();
+                resultFinal = futureWS.get();
 
-            executorWS.shutdown();
+                executorWS.shutdown();
+            
+            } else
+            {
+                resultFinal = executeMvnWS(JAR_SBF, options.localRepo, options.settings);
+            }
 
             if (!isSuccessful(resultFinal)) {
 
@@ -999,7 +1015,7 @@ public class MainBuilder {
 
             MavenCli cli = new MavenCli();
 
-            String[] params = new String[]{"-s",settings,"clean", "install"};
+            String[] params = new String[]{"-s",settings,"-Dmaven.repo.local="+localRepo,"clean", "install"};
 
             result = cli.doMain(params, destDir, printStream(stdOutStream), printStream(stdErrStream));
 

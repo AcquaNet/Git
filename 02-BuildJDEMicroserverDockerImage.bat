@@ -20,5 +20,7 @@ docker push 92455890/ngrok-microserver:1.0.0
 ECHO Starting Server...
 cd C:\_work\JDEConnectorCE\Projects\JDEDockers\Microservice
 docker cp config/JPS920 jdeatina-microserver:/tmp/jde/config
+docker cp /tmp/build_jde_libs/jde-lib-wrapped-1.0.0.jar jdeatina-microserver:/tmp/jde
+docker cp /tmp/build_jde_libs/StdWebService-1.0.0.jar jdeatina-microserver:/tmp/jde
 docker-compose start
 pause

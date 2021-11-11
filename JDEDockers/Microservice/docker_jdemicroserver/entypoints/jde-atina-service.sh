@@ -17,7 +17,7 @@ if [ "${JDE_GET_LIB_WRAPPED_UPDATE_FROM_REPOSITORY}" = "1" ]; then
 	echo '   Updating Librarie jde-lib-wrapped ' ${JDE_LIB_WRAPPED_VERSION} >>/tmp/start.log
     mvn org.apache.maven.plugins:maven-dependency-plugin:2.4:get -DremoteRepositories=$CUSTOMER_REPOSITORY_PROTOCOL://$CUSTOMER_REPOSITORY_URL -Dartifact=com.jdedwards:jde-lib-wrapped:$JDE_LIB_WRAPPED_VERSION -Ddest=/tmp/jde/jde-lib-wrapped-$JDE_LIB_WRAPPED_VERSION.jar >>/tmp/start.log
 else
-	FILE=jde-lib-wrapped-$JDE_LIB_WRAPPED_VERSION.jar
+	FILE=/tmp/jde/jde-lib-wrapped-$JDE_LIB_WRAPPED_VERSION.jar
 	if [ -f "$FILE" ]; then
 		echo "   $FILE exists" >>/tmp/start.log
 	else
@@ -25,11 +25,11 @@ else
 	fi
 fi;
 echo '   Updating Librarie StdWebService Version ' ${STD_WEB_SERVICE_VERSION} >>/tmp/start.log
-if [ "${JDE_GET_LIB_WRAPPED_UPDATE_FROM_REPOSITORY}" = "1" ]; then
+if [ "${JDE_GET_LIB_WEB_SERVICE_FROM_REPOSITORY}" = "1" ]; then
 	echo '   Updating Librarie jde-lib-wrapped ' ${JDE_LIB_WRAPPED_VERSION} >>/tmp/start.log
     mvn org.apache.maven.plugins:maven-dependency-plugin:2.4:get -DremoteRepositories=$CUSTOMER_REPOSITORY_PROTOCOL://$CUSTOMER_REPOSITORY_URL -Dartifact=com.jdedwards:StdWebService:$STD_WEB_SERVICE_VERSION -Ddest=/tmp/jde/StdWebService-$STD_WEB_SERVICE_VERSION.jar >>/tmp/start.log
 else
-	FILE=StdWebService-$STD_WEB_SERVICE_VERSION.jar
+	FILE=/tmp/jde/StdWebService-$STD_WEB_SERVICE_VERSION.jar
 	if [ -f "$FILE" ]; then
 		echo "   $FILE exists" >>/tmp/start.log
 	else
