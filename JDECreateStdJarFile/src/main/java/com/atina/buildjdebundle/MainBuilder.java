@@ -838,6 +838,9 @@ public class MainBuilder {
                 // Clean
                 // -------------------------------------------------------------------
                 // 
+                walkControl = Files.walk(Paths.get(JAR_SBF),1);
+                resultListFolder = walkControl.filter(Files::isDirectory).map(Path::toString).collect(Collectors.toList());
+                summary.add("WS Folders in :" + JAR_SBF + ": " + Integer.toString(resultListFolder.size()-1) );
                 
                 if(options.clean.equals("Y"))
                 { 
