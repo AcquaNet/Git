@@ -89,6 +89,7 @@ public class MainBuilder {
     private static final String JDE_JARS = "JarsToCopy.properties";
     private static final String WS_JARS = "WSToIgnore.properties";
     private static final String WS_SOURCE_FOLDER = "system/WS";
+    private static final String JAR_FOLDER_PREFIX = "\\tmp\\build_jde_libs\\sbfjars\\J";
     private static final String JAR_SELECTED = TMP_FOLDER + "/jarselected";
     private static final String JAR_DESTINATION = TMP_FOLDER + "/wrapped";
     private static final String JAR_SBF = TMP_FOLDER + "/sbfjars";
@@ -323,7 +324,7 @@ public class MainBuilder {
 
                 Map<String, String> jdeWSJarsToIgnore = getPropertyFileAsMap(WS_JARS,TMP_FOLDER);
                 
-                summary.add("WS Jas files to Ignore: " + Integer.toString(jdeWSJarsToIgnore.size()));
+                summary.add("WS jar files to Ignore: " + Integer.toString(jdeWSJarsToIgnore.size()));
                 
                 logger.info("Getting WS List ...");
                 
@@ -466,11 +467,13 @@ public class MainBuilder {
                         ExecutorService executor2 = Executors.newSingleThreadExecutor();
 
                         Callable<Integer> callableTask2 = () -> {
-                            executeMvnInstall(JAR_DESTINATION, "1.0.0", options.localRepo, options.outputName, options.settings);
+                            executeMvnInstall(JAR_DESTINATION, "1.0.0", options.localRepo, options.outputName, options.settings, summary);
                             return 0;
                         };
 
                         Future<Integer> future2 = executor2.submit(callableTask2);
+                        
+                        resultFinal = future2.get();
 
                         executor2.shutdown();
 
@@ -633,7 +636,7 @@ public class MainBuilder {
 
                     logger.info("Installing JDE Bundle in local repository...");
 
-                    resultFinal = executeMvnInstall(JAR_DESTINATION, options.version, options.localRepo, options.outputName, options.settings);
+                    resultFinal = executeMvnInstall(JAR_DESTINATION, options.version, options.localRepo, options.outputName, options.settings, summary);
 
                     logger.info("JDE Bundle has been installed in local repository.");
 
@@ -754,11 +757,16 @@ public class MainBuilder {
                 // Persist Metadata
                 // -----------------------------------------------
                 //
+                
+                ArrayList<String> details = null;
+                
                 try {
-                    mt.saveMetadata(new File(JAR_METADATA));
+                    details = mt.saveMetadata(new File(JAR_METADATA));
                 } catch (MetadataServerException ex) {
-                    logger.error(ex.getMessage(), ex);
+                    throw new Exception("Error saving Metadata for WS: " + ex.getMessage());
                 }
+                
+                summary.addAll(details);
 
                 // -----------------------------------------------
                 // Copiar Clase de Metadata de Resource a /tmp
@@ -799,7 +807,7 @@ public class MainBuilder {
                     ExecutorService executorWS = Executors.newSingleThreadExecutor();
 
                     Callable<Integer> callableTaskWS = () -> {
-                        int result4 = executeMvnWS(JAR_SBF, options.localRepo, options.settings);
+                        int result4 = executeMvnWS(JAR_SBF, options.localRepo, options.settings,summary);
                         return result4;
                     };
 
@@ -812,7 +820,7 @@ public class MainBuilder {
                 } else
                 {
                  
-                    resultFinal = executeMvnWS(JAR_SBF, options.localRepo, options.settings);
+                    resultFinal = executeMvnWS(JAR_SBF, options.localRepo, options.settings,summary);
                     
                     resultFinal = 0;
                 }
@@ -827,19 +835,21 @@ public class MainBuilder {
                 summary.add("WS instalado en Repositorio");
                 
                 // -------------------------------------------------------------------
-                // Check Control
+                // Clean
                 // -------------------------------------------------------------------
                 // 
-                walkControl = Files.walk(Paths.get(JAR_SBF),1);
-                resultListFolder = walkControl.filter(Files::isDirectory).filter(path -> !path.startsWith("J")).map(Path::toString).collect(Collectors.toList());
-                summary.add("WS Folders in :" + JAR_SBF + ": " + Integer.toString(resultListFolder.size()-1) );
+                
                 if(options.clean.equals("Y"))
-                {
+                { 
                     for(String file:resultListFolder)
-                    {
-                        logger.info(" >>>>>>>" + file);
+                    {    
+                        if(file.startsWith(JAR_FOLDER_PREFIX))
+                        {
+                            FileUtils.deleteDirectory(file);
+                        }
                     }
                 }
+                
                 walkControl.close();
                 
             }
@@ -1079,7 +1089,7 @@ public class MainBuilder {
 
     }
 
-    private static int executeMvnInstall(String destDir, String version, String localRepo, String name,String settings) {
+    private static int executeMvnInstall(String destDir, String version, String localRepo, String name,String settings, ArrayList<String> summary) {
 
         System.setProperty("maven.repo.local", localRepo);
 
@@ -1100,6 +1110,12 @@ public class MainBuilder {
 
             for (String line : executionOutput) {
                 logger.info(line);
+                
+                if(line.contains("[INFO] Installing"))
+                {
+                    summary.add(line);
+                }
+                
             }
 
         } catch (Exception e) {
@@ -1148,7 +1164,7 @@ public class MainBuilder {
 
     }
 
-    private static int executeMvnWS(String destDir, String localRepo,String settings) {
+    private static int executeMvnWS(String destDir, String localRepo,String settings, ArrayList<String> summary ) {
 
         System.setProperty("maven.repo.local", localRepo);
 
@@ -1171,7 +1187,14 @@ public class MainBuilder {
             executionOutput = toString(stdOutStream);
 
             for (String line : executionOutput) {
+                
                 logger.info(line);
+                
+                if(line.contains("[INFO] Installing"))
+                {
+                    summary.add(line);
+                }
+                
             }
 
             stdOutStream.close();

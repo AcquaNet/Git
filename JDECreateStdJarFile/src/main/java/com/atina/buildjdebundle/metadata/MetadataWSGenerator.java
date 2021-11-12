@@ -26,7 +26,6 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.ModifierSet;
 import com.github.javaparser.ast.body.VariableDeclarator;
-import com.github.javaparser.ast.body.VariableDeclaratorId;
 import static com.github.javaparser.ast.internal.Utils.isNullOrEmpty;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import java.io.IOException;
@@ -584,8 +583,9 @@ public class MetadataWSGenerator {
 
     }
     
-    public void saveMetadata(File metadataDir) throws MetadataServerException {
+    public ArrayList<String> saveMetadata(File metadataDir) throws MetadataServerException {
 
+        ArrayList<String> returnValue = new ArrayList<String>();
         
         logger.info("Validating Metadata:");
         
@@ -612,11 +612,15 @@ public class MetadataWSGenerator {
             ObjectMapper objectMapper = new ObjectMapper();
 
             objectMapper.writeValue(new File(metadataDir.getAbsolutePath() + File.separator + WS_JSON), this.operaciones);
+             
+            returnValue.add("Serialized Operations with " + Integer.toString(this.operaciones.getOperations().size()) + " records in " + metadataDir.getAbsolutePath() + File.separator + WS_JSON);
             
             logger.info("Serialized " + metadataDir.getAbsolutePath() + File.separator + WS_JSON);
 
             objectMapper.writeValue(new File(metadataDir.getAbsolutePath() + File.separator + VO_JSON), this.modelos); 
             
+            returnValue.add("Serialized Models with " + Integer.toString(this.modelos.getModels().size()) + " records in " + metadataDir.getAbsolutePath() + File.separator + VO_JSON);
+             
             logger.info("Serialized " + metadataDir.getAbsolutePath() + File.separator + VO_JSON);
             
              
@@ -627,6 +631,8 @@ public class MetadataWSGenerator {
             throw new MetadataServerException("Error Serializing Metadata: " + ex.getMessage(), ex);
 
         }
+        
+        return returnValue;
 
     }
     
