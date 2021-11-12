@@ -88,39 +88,6 @@
             <version>1.0.0</version>
         </dependency>
           
-    </dependencies>
-    
-    <repositories>
-        
-        <repository>
-            <id>Central-Repository</id>
-            <name>Maven</name>
-            <url>https://repo1.maven.org/maven2</url>
-            <layout>default</layout>
-        </repository>
-        
-
-        <repository>
-            <id>Maven</id>
-            <name>Maven</name>
-            <url>https://repo.maven.apache.org/maven2/</url>
-            <layout>default</layout>
-        </repository>
-        
-        <repository>
-            <id>Sonatype</id>
-            <name>Sonatype</name>
-            <url>https://oss.sonatype.org/content/repositories/releases/</url>
-            <layout>default</layout>
-        </repository>
-        
-        <repository>
-            <id>Sonatype Snap</id>
-            <name>Sonatype Snap</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-            <layout>default</layout>
-        </repository>
-		  
-    </repositories>
+    </dependencies> 
     
 </project>

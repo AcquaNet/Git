@@ -16,7 +16,15 @@ import com.google.devtools.common.options.OptionsBase;
  */
 public class Options extends OptionsBase {
 
-   
+    @Option(
+            name = "accion",
+            abbrev = 'a',
+            help = "Accion: 1: Generate JDE Bundle 2: Build WS 3: Both",
+            category = "startup",
+            defaultValue = "3"
+    )
+    public String accion;
+    
     @Option(
             name = "jdeInstallPath",
             abbrev = 'i',

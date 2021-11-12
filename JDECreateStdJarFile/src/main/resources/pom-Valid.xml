@@ -229,48 +229,7 @@
     <version>3.1.0</version>
 </dependency>
   </dependencies>
-  <repositories>
-  	<repository>
-			<id>central</id>
-			<name>Central Repository</name>
-			<url>https://repo1.maven.org/maven2</url>
-			<layout>default</layout>
-			<snapshots>
-			<enabled>false</enabled>
-			</snapshots>
-		</repository>
-  </repositories>
- <pluginRepositories>
-  <pluginRepository>
-			<id>central</id>
-			<name>Central Repository</name>
-			<url>https://repo1.maven.org/maven2</url>
-			<layout>default</layout>
-			<snapshots>
-			<enabled>false</enabled>
-			</snapshots>
-			<releases>
-			<updatePolicy>never</updatePolicy>
-			</releases>
-		</pluginRepository>	
-    <pluginRepository>
-			<id>mule-public</id>
-			<layout>default</layout>
-			<url>https://repository.mulesoft.org/nexus/content/repositories/releases</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
-			<id>mulesoft-release</id>
-			<name>mulesoft release repository</name>
-			<layout>default</layout>
-			<url>https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-  </pluginRepositories>
+   
   <build>
     <directory>C:\_work\JDE_jars\New Oracle Cloud Bare Metal\1_4_2\Bundle</directory>
     <plugins>

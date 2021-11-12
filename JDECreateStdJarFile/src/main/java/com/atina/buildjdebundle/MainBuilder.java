@@ -242,7 +242,8 @@ public class MainBuilder {
                 || options.localRepo.isEmpty()
                 || options.outputName.isEmpty()
                 || options.jdeInstallPath.isEmpty()
-                || options.settings.isEmpty()) {
+                || options.settings.isEmpty()
+                || options.accion.isEmpty()) {
 
             printUsage(parser);
 
@@ -265,9 +266,15 @@ public class MainBuilder {
 
             try {
 
-                FileUtils.deleteDirectory(JAR_SELECTED);
-                FileUtils.deleteDirectory(JAR_DESTINATION);
-                FileUtils.deleteDirectory(JAR_SBF);
+                if(options.accion.equals("1") || options.accion.equals("3"))
+                {
+                    FileUtils.deleteDirectory(JAR_SELECTED);
+                    FileUtils.deleteDirectory(JAR_DESTINATION);
+                }
+                if(options.accion.equals("2") || options.accion.equals("3"))
+                {
+                    FileUtils.deleteDirectory(JAR_SBF);
+                }
 
             } catch (Exception ex) {
                 logger.error("Nothing to clean " + ": " + ex.getMessage());
@@ -284,32 +291,49 @@ public class MainBuilder {
             // -----------------------------------------------
             //
             logger.info("Getting JDE Jars...");
+ 
+            if(options.accion.equals("1") || options.accion.equals("3"))
+            {
+                
+                logger.info("Getting JDE Jars...");
+                
+                Map<String, String> jdeJars = getPropertyFileAsMap(JDE_JARS);
+                
+                logger.info("Copying JDE Jars to Wrapped Folder...");
 
-            Map<String, String> jdeJars = getPackageToShade(JDE_JARS);
+                copyFileFromDeploymentWrappedFolder(jdeJars, options);
 
-            copyFileFromDeployment(jdeJars, options);
+                summary.add("Jars file from JDE Deployment has been copied to Wrapped Folder");
 
-            summary.add("Se copiaron los Jars de JDEdwards");
-
+            }
             // -----------------------------------------------
             // Obtener Lista de WS de JDE
             // -----------------------------------------------
             //
-            logger.info("Getting JDE Jars...");
+            
+            if(options.accion.equals("2") || options.accion.equals("3"))
+            {
+                logger.info("Getting WS List...");
 
-            Map<String, String> jdeWSJars = getPackageToShade(WS_JARS);
+                Map<String, String> jdeWSJars = getPropertyFileAsMap(WS_JARS);
 
-            copyWSFromDeployment(jdeWSJars, options);
+                logger.info("Copying WS Jars to sbfjars Folder...");
+                
+                copyWSFromDeployment(jdeWSJars, options);
 
-            summary.add("Se copiaron los WS de JDEdwards");
+                summary.add("WS has been copied to sbfjars Folder");
+            
+            }
 
             // -----------------------------------------------
             // Get Jars File To Shade
             // -----------------------------------------------
+            
             HashSet<String> jarsToShade = new HashSet();
+            
             Map<String, String> packages = new HashMap<String, String>();
 
-            if (SHADE) {
+            if (SHADE && options.accion.equals("1") || options.accion.equals("3")) {
 
                 // -----------------------------------------------
                 // Get Package To Shade
@@ -317,7 +341,7 @@ public class MainBuilder {
                 //
                 logger.info("Getting Package to Shade...");
 
-                packages = getPackageToShade(PROPERTYFILE);
+                packages = getPropertyFileAsMap(PROPERTYFILE);
 
                 logger.info("Getting JARS Files to Shade...");
 
@@ -332,236 +356,385 @@ public class MainBuilder {
             }
 
             // -----------------------------------------------
-            // Preparing Maven
+            // Build Bundle
             // -----------------------------------------------
-            logger.info("Creacion del POM en el directorio: " + JAR_DESTINATION);
-
-            prepareMvn(jarsToShade, JAR_SELECTED, options.jdbcDriver, JAR_DESTINATION, options.version, options.outputName);
-
-            summary.add("POM creado en " + JAR_DESTINATION);
-
-            // -----------------------------------------------
-            // Copy Assembly
-            // -----------------------------------------------
-            logger.info("Descarga del Assembly en " + JAR_DESTINATION);
-
-            copyAssembly(JAR_DESTINATION);
-
-            summary.add("Assembly descargado en " + JAR_DESTINATION);
-
-            // -----------------------------------------------
-            // Executing Maven to Assembly Bundle
-            // -----------------------------------------------
-            //
-            logger.info("Creando JAR File con librerias de JDE");
-
-            int resultFinal = 1;
             
-            if(THREADS)
-            {
-                ExecutorService executor = Executors.newSingleThreadExecutor();
+            if(options.accion.equals("1") || options.accion.equals("3"))
+            { 
+ 
+                // -----------------------------------------------
+                // Preparing Maven
+                // -----------------------------------------------
 
-                Callable<Integer> callableTask = () -> {
-                    int result = executeMvnAssembly(JAR_DESTINATION, options.settings);
-                    summary.add("Libreria creada en " + JAR_DESTINATION);
-                    return result;
-                };
+                logger.info("Creating POM file in: " + JAR_DESTINATION);
 
-                Future<Integer> future = executor.submit(callableTask);
+                prepareMvn(jarsToShade, JAR_SELECTED, options.jdbcDriver, JAR_DESTINATION, options.version, options.outputName);
 
-                resultFinal = future.get();
+                summary.add("POM has been created in " + JAR_DESTINATION);
 
-                executor.shutdown();
-            
-            } else
-            {
-                resultFinal = executeMvnAssembly(JAR_DESTINATION,options.settings);
-                
-                summary.add("Libreria creada en " + JAR_DESTINATION);
-            }
+                // -----------------------------------------------
+                // Copy Assembly
+                // -----------------------------------------------
+                logger.info("Creating Assembly in: " + JAR_DESTINATION);
 
-            if (resultFinal != 0) {
-                throw new Exception("Error creando JAR File con librerias de JDE");
-            }
+                copyAssembly(JAR_DESTINATION);
 
-            // -----------------------------------------------
-            // Executing Extra Install
-            // -----------------------------------------------
-            //
-            if (SHADE) {
+                summary.add("Assembly build it in " + JAR_DESTINATION);
 
-                if (isSuccessful(resultFinal)) {
+                // -----------------------------------------------
+                // Executing Maven to Assembly Bundle
+                // -----------------------------------------------
+                //
+                logger.info("Creating JDE Bundle...");
 
-                    // Adding Jars Files to Shade to Local Repo
-                    for (String fileToRename : jarsToShade) {
-                        executeExtraInstall(JAR_SELECTED, fileToRename.substring(0, fileToRename.lastIndexOf(".")), "1.0.0", options.localRepo, options.settings);
-                    }
+                int resultFinal = 1;
 
-                    logger.info(STEP_4);
+                if(THREADS)
+                {
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
 
-                    ExecutorService executor2 = Executors.newSingleThreadExecutor();
-
-                    Callable<Integer> callableTask2 = () -> {
-                        executeMvnInstall(JAR_DESTINATION, "1.0.0", options.localRepo, options.outputName, options.settings);
-                        return 0;
+                    Callable<Integer> callableTask = () -> {
+                        int result = executeMvnAssembly(JAR_DESTINATION, options.settings);
+                        summary.add("JDE Bundle build it in " + JAR_DESTINATION);
+                        return result;
                     };
 
-                    Future<Integer> future2 = executor2.submit(callableTask2);
+                    Future<Integer> future = executor.submit(callableTask);
 
-                    executor2.shutdown();
+                    resultFinal = future.get();
 
+                    executor.shutdown();
+
+                } else
+                {
+                    resultFinal = executeMvnAssembly(JAR_DESTINATION,options.settings);
+
+                    summary.add("JDE Bundle build in in " + JAR_DESTINATION);
                 }
 
-            }
-
-            // -----------------------------------------------
-            // Executing Maven to Assembly Bundle
-            // -----------------------------------------------
-            logger.info("Ejecutando Clean UP");
-
-            cleanUp(JAR_DESTINATION, options.outputName);
-
-            summary.add("CleanUp ejecutado en " + JAR_DESTINATION);
-
-            // -----------------------------------------------
-            // Creating Shaded
-            // -----------------------------------------------
-            if (SHADE) {
-
-                logger.info(STEP_4a);
-
-                resultFinal = 0;
-
-                try {
-
-                    logger.info("Copying Java Dummmy...");
-
-                    copyJavaDummy(JAR_DESTINATION);
-
-                    logger.info("Java Dummmy has been copied.");
-
-                } catch (IOException ex) {
-
-                    resultFinal = 1;
-
-                    logger.error("Error Copying Java Dummmy" + ": " + ex.getMessage());
-
-                } catch (URISyntaxException ex) {
-
-                    resultFinal = 1;
-
-                    logger.error("Error Copying Java Dummmy" + ": " + ex.getMessage());
-
+                if (resultFinal != 0) {
+                    throw new Exception("Error creating JDE Bundle");
                 }
-
+                
                 // -----------------------------------------------
-                // Prepare POM to build  Java Dummy
+                // Executing Extra Install
                 // -----------------------------------------------
-                if (isSuccessful(resultFinal)) {
+                //
+                if (SHADE) {
 
-                    logger.info("Preparing POM to build JDE Connector Shaded");
+                    if (isSuccessful(resultFinal)) {
 
-                    resultFinal = prepareMvnForDummy(jarsToShade, JAR_SELECTED, options.jdbcDriver, JAR_DESTINATION, options.version, packages, options.outputName);
-
-                    logger.info("P POM to build JDE Connector Shaded has been wrote.");
-
-                }
-
-                // -----------------------------------------------
-                // Executing Building with Shaded option
-                // -----------------------------------------------
-                if (isSuccessful(resultFinal)) {
-
-                    logger.info("Executing Building with Shaded option");
-
-                    if(THREADS)
-                    {
-                    
-                        ExecutorService executor3 = Executors.newSingleThreadExecutor();
-
-                        Callable<Integer> callableTask3 = () -> {
-                            int result2 = executeMvnShade(JAR_DESTINATION, options.version, options.localRepo, options.settings);
-                            return result2;
-                        };
-
-                        Future<Integer> future3 = executor3.submit(callableTask3);
-
-                        resultFinal = future3.get();
-
-                        executor3.shutdown();
-                    
-                    } else
-                    {
-                        resultFinal = executeMvnShade(JAR_DESTINATION, options.version, options.localRepo, options.settings);
-                    }
-
-                }
-
-                // -----------------------------------------------
-                // Copying Jar Shaded
-                // -----------------------------------------------
-                if (isSuccessful(resultFinal)) {
-
-                    File source = new File(JAR_DESTINATION + File.separator + "target/" + options.outputName + "-" + options.version + "-shaded.jar");
-                    File dest = new File(JAR_DESTINATION + File.separator + options.outputName + "-" + options.version + ".jar");
-
-                    logger.info("Copying Jar File " + source.getAbsolutePath() + " to " + dest.getAbsolutePath());
-
-                    try {
-                        FileUtils.copyFile(source, dest);
-
-                        logger.info("Jar File " + source.getName() + " to " + dest.getName() + " has been copied.");
-
-                    } catch (IOException ex) {
-                        resultFinal = 1;
-                        logger.error("Error copying Jar Shaded. Message" + ": " + ex.getMessage());
-                    }
-
-                }
-
-                // -----------------------------------------------
-                // Cleanning Shading process
-                // -----------------------------------------------
-                if (isSuccessful(resultFinal)) {
-
-                    try {
-
-                        executeMvnShadeClean(JAR_DESTINATION, options.localRepo, options.settings);
-
-                        logger.info("Cleaning Shading process ... ");
-
-                        FileUtils.deleteDirectory(JAR_DESTINATION + File.separator + "target");
-
-                        try {
-                            Thread.sleep(60000);
-                        } catch (InterruptedException ex) {
-                            java.util.logging.Logger.getLogger(MainBuilder.class.getName()).log(Level.SEVERE, null, ex);
+                        // Adding Jars Files to Shade to Local Repo
+                        for (String fileToRename : jarsToShade) {
+                            executeExtraInstall(JAR_SELECTED, fileToRename.substring(0, fileToRename.lastIndexOf(".")), "1.0.0", options.localRepo, options.settings);
                         }
 
-                        logger.info("Shading process has been cleaned");
+                        logger.info(STEP_4);
 
-                    } catch (IOException ex) {
-                        //result = 1;
-                        logger.error("Error Cleanning Shading process. Message" + ": " + ex.getMessage());
+                        ExecutorService executor2 = Executors.newSingleThreadExecutor();
+
+                        Callable<Integer> callableTask2 = () -> {
+                            executeMvnInstall(JAR_DESTINATION, "1.0.0", options.localRepo, options.outputName, options.settings);
+                            return 0;
+                        };
+
+                        Future<Integer> future2 = executor2.submit(callableTask2);
+
+                        executor2.shutdown();
+
                     }
 
-                    cleanUpShade(JAR_DESTINATION);
+                }
+                
+                // -----------------------------------------------
+                // Executing Maven to Assembly Bundle
+                // -----------------------------------------------
+                logger.info("Executing Clean UP");
+
+                cleanPOMAndAssemblyXMLForBundleProcess(JAR_DESTINATION, options.outputName);
+
+                summary.add("CleanUp exectuted in " + JAR_DESTINATION);
+
+                // -----------------------------------------------
+                // Creating Shaded
+                // -----------------------------------------------
+                //
+                if (SHADE) {
+
+                    logger.info(STEP_4a);
+
+                    resultFinal = 0;
+
+                    try {
+
+                        logger.info("Copying Java Dummmy...");
+
+                        copyJavaDummy(JAR_DESTINATION);
+
+                        logger.info("Java Dummmy has been copied.");
+
+                    } catch (IOException ex) {
+
+                        resultFinal = 1;
+
+                        logger.error("Error Copying Java Dummmy" + ": " + ex.getMessage());
+
+                    } catch (URISyntaxException ex) {
+
+                        resultFinal = 1;
+
+                        logger.error("Error Copying Java Dummmy" + ": " + ex.getMessage());
+
+                    }
+
+                    // -----------------------------------------------
+                    // Prepare POM to build  Java Dummy
+                    // -----------------------------------------------
+                    //
+                    if (isSuccessful(resultFinal)) {
+
+                        logger.info("Preparing POM to build JDE Connector Shaded");
+
+                        resultFinal = prepareMvnForDummy(jarsToShade, JAR_SELECTED, options.jdbcDriver, JAR_DESTINATION, options.version, packages, options.outputName);
+
+                        logger.info("P POM to build JDE Connector Shaded has been wrote.");
+
+                    }
+
+                    // -----------------------------------------------
+                    // Executing Building with Shaded option
+                    // -----------------------------------------------
+                    //
+                    if (isSuccessful(resultFinal)) {
+
+                        logger.info("Executing Building with Shaded option");
+
+                        if(THREADS)
+                        {
+
+                            ExecutorService executor3 = Executors.newSingleThreadExecutor();
+
+                            Callable<Integer> callableTask3 = () -> {
+                                int result2 = executeMvnShade(JAR_DESTINATION, options.version, options.localRepo, options.settings);
+                                return result2;
+                            };
+
+                            Future<Integer> future3 = executor3.submit(callableTask3);
+
+                            resultFinal = future3.get();
+
+                            executor3.shutdown();
+
+                        } else
+                        {
+                            resultFinal = executeMvnShade(JAR_DESTINATION, options.version, options.localRepo, options.settings);
+                        }
+
+                    }
+
+                    // -----------------------------------------------
+                    // Copying Jar Shaded
+                    // -----------------------------------------------
+                    //
+                    if (isSuccessful(resultFinal)) {
+
+                        File source = new File(JAR_DESTINATION + File.separator + "target/" + options.outputName + "-" + options.version + "-shaded.jar");
+                        File dest = new File(JAR_DESTINATION + File.separator + options.outputName + "-" + options.version + ".jar");
+
+                        logger.info("Copying Jar File " + source.getAbsolutePath() + " to " + dest.getAbsolutePath());
+
+                        try {
+                            
+                            FileUtils.copyFile(source, dest);
+
+                            logger.info("Jar File " + source.getName() + " to " + dest.getName() + " has been copied.");
+
+                        } catch (IOException ex) {
+                            resultFinal = 1;
+                            logger.error("Error copying Jar Shaded. Message" + ": " + ex.getMessage());
+                        }
+
+                    }
+
+                    // -----------------------------------------------
+                    // Cleanning Shading process
+                    // -----------------------------------------------
+                    //
+                    if (isSuccessful(resultFinal)) {
+
+                        try {
+
+                            executeMvnShadeClean(JAR_DESTINATION, options.localRepo, options.settings);
+
+                            logger.info("Cleaning Shading process ... ");
+
+                            FileUtils.deleteDirectory(JAR_DESTINATION + File.separator + "target");
+
+                            try {
+                                Thread.sleep(60000);
+                            } catch (InterruptedException ex) {
+                                java.util.logging.Logger.getLogger(MainBuilder.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+
+                            logger.info("Shading process has been cleaned");
+
+                        } catch (IOException ex) {
+                            //result = 1;
+                            logger.error("Error Cleanning Shading process. Message" + ": " + ex.getMessage());
+                        }
+
+                        cleanUpShade(JAR_DESTINATION);
+
+                    }
 
                 }
 
+                // -----------------------------------------------
+                // Installing
+                // -----------------------------------------------
+                //
+                if (isSuccessful(resultFinal)) {
+
+                    logger.info("Installing JDE Bundle in local repository...");
+
+                    resultFinal = executeMvnInstall(JAR_DESTINATION, options.version, options.localRepo, options.outputName, options.settings);
+
+                    logger.info("JDE Bundle has been installed in local repository.");
+
+                    if (!isSuccessful(resultFinal)) {
+
+                        logger.error("Error Installing JDE Bundle in Local Repository");
+
+                        throw new Exception("Error Installing JDE Bundle in Local Repository");
+                    }
+
+                    summary.add("JDE Bundle Instalado en el Repositorio " + JAR_DESTINATION);
+
+                }
+            
             }
-
-            // -----------------------------------------------
-            // Installing
-            // -----------------------------------------------
+  
+            // ===========================================================
+            // BUILD WS
+            // ===========================================================
             //
-            if (isSuccessful(resultFinal)) {
 
-                logger.info("Installing JDE Connector Shaded in local repository...");
+            if(options.accion.equals("2") || options.accion.equals("3"))
+            {
+                
+                int resultFinal = 0;
+                
+                // -----------------------------------------------
+                // Unzipping WS and Creating Metadata
+                // -----------------------------------------------
+                //
+                logger.info("Descomprimiendo WS..");
 
-                resultFinal = executeMvnInstall(JAR_DESTINATION, options.version, options.localRepo, options.outputName, options.settings);
+                MetadataWSGenerator mt = new MetadataWSGenerator();
 
-                logger.info("JDE Connector Shaded jhas been installed in local repository.");
+                JarsClassFile jarsToUnzip = new JarsClassFile();
+
+                jarsToUnzip = getJarsToUnzip(JAR_SBF);
+
+                logger.info("JARS Files to unzip...");
+
+                for (JarClassFile jarfile : jarsToUnzip.getJars()) {
+
+                    UnzipJar.unzipJar(JAR_SBF, jarfile.getJarFile().getAbsolutePath());
+
+                    logger.info("        " + jarfile.getNameWithoutExtension() + " descomprimido");
+                }
+
+                summary.add("WS descomprimidos en " + JAR_SBF);
+
+                // -----------------------------------------------
+                // Remover Protected 
+                // -----------------------------------------------
+                //
+                logger.info("Reemplazando Protected");
+
+                Stream<Path> walk = Files.walk(Paths.get(JAR_SBF));
+
+                List<String> resultList = walk.map(x -> x.toString())
+                        .filter(f -> f.endsWith(".java")).collect(Collectors.toList());
+
+                for (String file : resultList) {
+
+                    try {
+                        mt.generateMetadata(file);
+                    } catch (MetadataServerException ex) {
+                        logger.error(ex.getMessage(), ex);
+                    }
+
+                    modifyFile(file, "protected ", "public ");
+
+                }
+
+                // -------------------------------------------------------------------
+                // Generate Metadata For oracle.e1.bssvfoundation.util.E1MessageList
+                // -------------------------------------------------------------------
+                //
+                mt.generateMetadataE1MessageList();
+
+                // -----------------------------------------------
+                // Persist Metadata
+                // -----------------------------------------------
+                //
+                try {
+                    mt.saveMetadata(new File(JAR_METADATA));
+                } catch (MetadataServerException ex) {
+                    logger.error(ex.getMessage(), ex);
+                }
+
+                // -----------------------------------------------
+                // Copiar Clase de Metadata de Resource a /tmp
+                // -----------------------------------------------
+                //
+                URL url = Thread.currentThread().getContextClassLoader().getResource(METADATA_DRIVER_TXT);
+
+                InputStream inputStream = url.openConnection().getInputStream();
+
+                IOUtil.copy(inputStream, new FileOutputStream(new File(METADATA_DRIVER_JAVA)));
+
+                // -----------------------------------------------
+                // Prepare Maven 
+                // -----------------------------------------------
+                //
+                logger.info("Preparando POM para compilar WS...");
+
+                prepareWSMvn(JAR_METADATA, JAR_METADATA, jarsToUnzip, JAR_SBF, JAR_SBF, options.version);
+
+                if (!isSuccessful(resultFinal)) {
+
+                    logger.error("Error creando POM para la compilacion de WS");
+
+                    throw new Exception("Error creando POM para la compilacion de WS");
+                }
+
+                summary.add("POM de Ws crado en " + JAR_SBF);
+
+                logger.info("Compilando WS..");
+
+                if(THREADS)
+                {
+
+                    ExecutorService executorWS = Executors.newSingleThreadExecutor();
+
+                    Callable<Integer> callableTaskWS = () -> {
+                        int result4 = executeMvnWS(JAR_SBF, options.localRepo, options.settings);
+                        return result4;
+                    };
+
+                    Future<Integer> futureWS = executorWS.submit(callableTaskWS);
+
+                    resultFinal = futureWS.get();
+
+                    executorWS.shutdown();
+
+                } else
+                {
+                    resultFinal = executeMvnWS(JAR_SBF, options.localRepo, options.settings);
+                }
 
                 if (!isSuccessful(resultFinal)) {
 
@@ -570,130 +743,9 @@ public class MainBuilder {
                     throw new Exception("Error Installing JDE Connector in Local Repository");
                 }
 
-                summary.add("Jar Instalado en el Repositorio " + JAR_DESTINATION);
-
+                summary.add("WS instalado en Repositorio");
+                
             }
-
-            // -----------------------------------------------
-            // Unzipping WS and Creating Metadata
-            // -----------------------------------------------
-            //
-            logger.info("Descomprimiendo WS..");
-
-            MetadataWSGenerator mt = new MetadataWSGenerator();
-
-            JarsClassFile jarsToUnzip = new JarsClassFile();
-
-            jarsToUnzip = getJarsToUnzip(JAR_SBF);
-
-            logger.info("JARS Files to unzip...");
-
-            for (JarClassFile jarfile : jarsToUnzip.getJars()) {
-
-                UnzipJar.unzipJar(JAR_SBF, jarfile.getJarFile().getAbsolutePath());
-
-                logger.info("        " + jarfile.getNameWithoutExtension() + " descomprimido");
-            }
-
-            summary.add("WS descomprimidos en " + JAR_SBF);
-
-            // -----------------------------------------------
-            // Remover Protected 
-            // -----------------------------------------------
-            //
-            logger.info("Reemplazando Protected");
-
-            Stream<Path> walk = Files.walk(Paths.get(JAR_SBF));
-
-            List<String> resultList = walk.map(x -> x.toString())
-                    .filter(f -> f.endsWith(".java")).collect(Collectors.toList());
-
-            for (String file : resultList) {
-
-                try {
-                    mt.generateMetadata(file);
-                } catch (MetadataServerException ex) {
-                    logger.error(ex.getMessage(), ex);
-                }
-
-                modifyFile(file, "protected ", "public ");
-
-            }
-
-            // -------------------------------------------------------------------
-            // Generate Metadata For oracle.e1.bssvfoundation.util.E1MessageList
-            // -------------------------------------------------------------------
-            //
-            mt.generateMetadataE1MessageList();
-
-            // -----------------------------------------------
-            // Persist Metadata
-            // -----------------------------------------------
-            //
-            try {
-                mt.saveMetadata(new File(JAR_METADATA));
-            } catch (MetadataServerException ex) {
-                logger.error(ex.getMessage(), ex);
-            }
-
-            // -----------------------------------------------
-            // Copiar Clase de Metadata de Resource a /tmp
-            // -----------------------------------------------
-            //
-            URL url = Thread.currentThread().getContextClassLoader().getResource(METADATA_DRIVER_TXT);
-
-            InputStream inputStream = url.openConnection().getInputStream();
-
-            IOUtil.copy(inputStream, new FileOutputStream(new File(METADATA_DRIVER_JAVA)));
-
-            // -----------------------------------------------
-            // Prepare Maven 
-            // -----------------------------------------------
-            //
-            logger.info("Preparando POM para compilar WS...");
-
-            prepareWSMvn(JAR_METADATA, JAR_METADATA, jarsToUnzip, JAR_SBF, JAR_SBF, options.version);
-
-            if (!isSuccessful(resultFinal)) {
-
-                logger.error("Error creando POM para la compilacion de WS");
-
-                throw new Exception("Error creando POM para la compilacion de WS");
-            }
-
-            summary.add("POM de Ws crado en " + JAR_SBF);
-
-            logger.info("Compilando WS..");
-            
-            if(THREADS)
-            {
-
-                ExecutorService executorWS = Executors.newSingleThreadExecutor();
-
-                Callable<Integer> callableTaskWS = () -> {
-                    int result4 = executeMvnWS(JAR_SBF, options.localRepo, options.settings);
-                    return result4;
-                };
-
-                Future<Integer> futureWS = executorWS.submit(callableTaskWS);
-
-                resultFinal = futureWS.get();
-
-                executorWS.shutdown();
-            
-            } else
-            {
-                resultFinal = executeMvnWS(JAR_SBF, options.localRepo, options.settings);
-            }
-
-            if (!isSuccessful(resultFinal)) {
-
-                logger.error("Error Installing JDE Connector in Local Repository");
-
-                throw new Exception("Error Installing JDE Connector in Local Repository");
-            }
-
-            summary.add("WS instalado en Repositorio");
 
             logger.info("=======================================================");
             logger.info(" Summary ");
@@ -1063,7 +1115,7 @@ public class MainBuilder {
 
     }
 
-    private static void cleanUp(String destDir, String name) {
+    private static void cleanPOMAndAssemblyXMLForBundleProcess(String destDir, String name) {
 
         try {
 
@@ -1099,7 +1151,7 @@ public class MainBuilder {
         }
     }
 
-    private static Map<String, String> getPackageToShade(String propertyFile) {
+    private static Map<String, String> getPropertyFileAsMap(String propertyFile) {
 
         Properties properties = new Properties();
 
@@ -1968,7 +2020,7 @@ public class MainBuilder {
         }
     }
 
-    private static void copyFileFromDeployment(Map<String, String> jdeJars, Options options) {
+    private static void copyFileFromDeploymentWrappedFolder(Map<String, String> jdeJars, Options options) {
 
         for (Entry<String, String> lista : jdeJars.entrySet()) {
 
