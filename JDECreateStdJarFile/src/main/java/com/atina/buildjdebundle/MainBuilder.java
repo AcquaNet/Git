@@ -1193,7 +1193,7 @@ public class MainBuilder {
 
         for (final Entry<Object, Object> entry : properties.entrySet()) {
 
-            map.put((String) entry.getKey(), (String) entry.getValue());
+            map.put(((String) entry.getKey()).trim(), ((String) entry.getValue()).trim());
 
             logger.info("Packages to Shade: " + entry.getKey());
         }
