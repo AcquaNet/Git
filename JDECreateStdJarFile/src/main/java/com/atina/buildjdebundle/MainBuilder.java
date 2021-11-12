@@ -85,8 +85,10 @@ public class MainBuilder {
     private static final Logger logger = LoggerFactory.getLogger(MainBuilder.class);
 
     private static final String PROPERTYFILE = "packageToShade.properties";
+    private static final String TMP_FOLDER = "/tmp/build_jde_libs";
     private static final String JDE_JARS = "JarsToCopy.properties";
-    private static final String WS_JARS = "WSToCopy.properties";
+    private static final String WS_JARS = "WSToIgnore.properties";
+    private static final String WS_SOURCE_FOLDER = "system/WS";
     private static final String JAR_SELECTED = "/tmp/build_jde_libs/jarselected";
     private static final String JAR_DESTINATION = "/tmp/build_jde_libs/wrapped";
     private static final String JAR_SBF = "/tmp/build_jde_libs/sbfjars";
@@ -297,7 +299,7 @@ public class MainBuilder {
                 
                 logger.info("Getting JDE Jars...");
                 
-                Map<String, String> jdeJars = getPropertyFileAsMap(JDE_JARS);
+                Map<String, String> jdeJars = getPropertyFileAsMap(JDE_JARS,TMP_FOLDER);
                 
                 logger.info("Copying JDE Jars to Wrapped Folder...");
 
@@ -313,9 +315,30 @@ public class MainBuilder {
             
             if(options.accion.equals("2") || options.accion.equals("3"))
             {
-                logger.info("Getting WS List...");
+                
+                logger.info("Getting WS List To Ignore...");
 
-                Map<String, String> jdeWSJars = getPropertyFileAsMap(WS_JARS);
+                Map<String, String> jdeWSJarsToIgnore = getPropertyFileAsMap(WS_JARS,TMP_FOLDER);
+                
+                logger.info("Getting WS List ...");
+                
+                Map<String, String> jdeWSJars = new HashMap<String,String>();
+                        
+                File[] files = allJarsInLibDir(options.jdeInstallPath + File.separator+  WS_SOURCE_FOLDER);
+
+                for (File file : files) {
+
+                    String baseName = FileUtils.basename(file.getName(),".jar");
+                    
+                    if (!jdeWSJarsToIgnore.keySet().contains(baseName)) {
+                        jdeWSJars.put(baseName, WS_SOURCE_FOLDER);
+                        logger.info("    WS found: " + baseName);
+                    } else
+                    {
+                        logger.info("    WS Ignored: " + baseName);
+                    }
+
+                } 
 
                 logger.info("Copying WS Jars to sbfjars Folder...");
                 
@@ -341,7 +364,7 @@ public class MainBuilder {
                 //
                 logger.info("Getting Package to Shade...");
 
-                packages = getPropertyFileAsMap(PROPERTYFILE);
+                packages = getPropertyFileAsMap(PROPERTYFILE,TMP_FOLDER);
 
                 logger.info("Getting JARS Files to Shade...");
 
@@ -744,7 +767,7 @@ public class MainBuilder {
 
                 } else
                 {
-                    resultFinal = executeMvnWS(JAR_SBF, options.localRepo, options.settings);
+                 //   resultFinal = executeMvnWS(JAR_SBF, options.localRepo, options.settings);
                 }
 
                 if (!isSuccessful(resultFinal)) {
@@ -1162,13 +1185,13 @@ public class MainBuilder {
         }
     }
 
-    private static Map<String, String> getPropertyFileAsMap(String propertyFile) {
+    private static Map<String, String> getPropertyFileAsMap(String propertyFile, String tmpFolder) {
 
         Properties properties = new Properties();
 
         Map<String, String> map = new HashMap<String, String>();
 
-        String fileName = File.separator + "tmp" + File.separator + propertyFile;
+        String fileName = tmpFolder + File.separator + propertyFile;
 
         boolean check = new File(fileName).exists();
 
