@@ -648,7 +648,7 @@ public class MainBuilder {
                 summary.add("WS descomprimidos en " + JAR_SBF);
 
                 // -----------------------------------------------
-                // Remover Protected 
+                // Generate Metadata and Remove Protected 
                 // -----------------------------------------------
                 //
                 logger.info("Reemplazando Protected");
@@ -660,13 +660,24 @@ public class MainBuilder {
 
                 for (String file : resultList) {
 
-                    try {
-                        mt.generateMetadata(file);
-                    } catch (MetadataServerException ex) {
-                        logger.error(ex.getMessage(), ex);
-                    }
+                    if(file.endsWith(".java") && file.contains("Test"))
+                    {
+                        logger.info("        " + file + " deleted");
+                        
+                        FileUtils.forceDelete(file);
+                        
+                    } else
+                    {
+                        
+                        try {
+                            mt.generateMetadata(file);
+                        } catch (MetadataServerException ex) {
+                            logger.error(ex.getMessage(), ex);
+                        }
 
-                    modifyFile(file, "protected ", "public ");
+                        modifyFile(file, "protected ", "public ");
+                    
+                    }
 
                 }
 
