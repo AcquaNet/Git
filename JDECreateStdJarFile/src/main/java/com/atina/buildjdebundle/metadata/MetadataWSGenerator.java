@@ -612,11 +612,14 @@ public class MetadataWSGenerator {
             ObjectMapper objectMapper = new ObjectMapper();
 
             objectMapper.writeValue(new File(metadataDir.getAbsolutePath() + File.separator + WS_JSON), this.operaciones);
+            
+            logger.info("Serialized " + metadataDir.getAbsolutePath() + File.separator + WS_JSON);
 
             objectMapper.writeValue(new File(metadataDir.getAbsolutePath() + File.separator + VO_JSON), this.modelos); 
             
-            logger.info("Serializado");
-
+            logger.info("Serialized " + metadataDir.getAbsolutePath() + File.separator + VO_JSON);
+            
+             
         } catch (Exception ex) {
 
             logger.error("Error Serializing Metadata: " + ex.getMessage());

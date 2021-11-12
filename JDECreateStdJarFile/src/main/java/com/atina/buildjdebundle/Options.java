@@ -78,5 +78,14 @@ public class Options extends OptionsBase {
             defaultValue = ""
     )
     public String settings;
+    
+    @Option(
+            name = "clean",
+            abbrev = 'c',
+            help = "clean",
+            category = "startup",
+            defaultValue = "Y"
+    )
+    public String clean;
    
 }

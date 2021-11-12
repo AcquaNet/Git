@@ -89,12 +89,12 @@ public class MainBuilder {
     private static final String JDE_JARS = "JarsToCopy.properties";
     private static final String WS_JARS = "WSToIgnore.properties";
     private static final String WS_SOURCE_FOLDER = "system/WS";
-    private static final String JAR_SELECTED = "/tmp/build_jde_libs/jarselected";
-    private static final String JAR_DESTINATION = "/tmp/build_jde_libs/wrapped";
-    private static final String JAR_SBF = "/tmp/build_jde_libs/sbfjars";
-    private static final String JAR_METADATA = "/tmp/build_jde_libs/metadata";
+    private static final String JAR_SELECTED = TMP_FOLDER + "/jarselected";
+    private static final String JAR_DESTINATION = TMP_FOLDER + "/wrapped";
+    private static final String JAR_SBF = TMP_FOLDER + "/sbfjars";
+    private static final String JAR_METADATA = TMP_FOLDER + "/metadata";
     private static final String METADATA_DRIVER_TXT = "MetadataWSDriver.txt";
-    private static final String METADATA_DRIVER_JAVA = "/tmp/build_jde_libs/metadata/MetadataWSDriver.java";
+    private static final String METADATA_DRIVER_JAVA = TMP_FOLDER + "/metadata/MetadataWSDriver.java";
 
     private static final String STEP_1 = "Defining bundle descriptor";
     private static final String STEP_2 = "Defining bundle assembly";
@@ -313,6 +313,9 @@ public class MainBuilder {
             // -----------------------------------------------
             //
             
+            int totalWS = 0;
+            int totalWSJava = 0;
+            
             if(options.accion.equals("2") || options.accion.equals("3"))
             {
                 
@@ -320,11 +323,15 @@ public class MainBuilder {
 
                 Map<String, String> jdeWSJarsToIgnore = getPropertyFileAsMap(WS_JARS,TMP_FOLDER);
                 
+                summary.add("WS Jas files to Ignore: " + Integer.toString(jdeWSJarsToIgnore.size()));
+                
                 logger.info("Getting WS List ...");
                 
                 Map<String, String> jdeWSJars = new HashMap<String,String>();
                         
                 File[] files = allJarsInLibDir(options.jdeInstallPath + File.separator+  WS_SOURCE_FOLDER);
+                
+                summary.add("WS Jar files in " + options.jdeInstallPath + File.separator+  WS_SOURCE_FOLDER + " : " + Integer.toString(files.length));
 
                 for (File file : files) {
 
@@ -343,8 +350,10 @@ public class MainBuilder {
                 logger.info("Copying WS Jars to sbfjars Folder...");
                 
                 copyWSFromDeployment(jdeWSJars, options);
+                
+                totalWS = jdeWSJars.size();
 
-                summary.add("WS has been copied to sbfjars Folder");
+                summary.add("WS has been copied to " + JAR_SBF + ": " + Integer.toString(totalWS));
             
             }
 
@@ -474,9 +483,13 @@ public class MainBuilder {
                 // -----------------------------------------------
                 logger.info("Executing Clean UP");
 
-                cleanPOMAndAssemblyXMLForBundleProcess(JAR_DESTINATION, options.outputName);
-
-                summary.add("CleanUp exectuted in " + JAR_DESTINATION);
+                if(options.clean.equals("Y"))
+                {
+                    logger.info("Executing Clean UP");
+                    cleanPOMAndAssemblyXMLForBundleProcess(JAR_DESTINATION, options.outputName);
+                    summary.add("CleanUp exectuted in " + JAR_DESTINATION);
+                }
+                
 
                 // -----------------------------------------------
                 // Creating Shaded
@@ -660,15 +673,19 @@ public class MainBuilder {
                 jarsToUnzip = getJarsToUnzip(JAR_SBF);
 
                 logger.info("JARS Files to unzip...");
+                
+                int qty = 0;
 
                 for (JarClassFile jarfile : jarsToUnzip.getJars()) {
 
                     UnzipJar.unzipJar(JAR_SBF, jarfile.getJarFile().getAbsolutePath());
 
                     logger.info("        " + jarfile.getNameWithoutExtension() + " descomprimido");
+                    
+                    qty++;
                 }
 
-                summary.add("WS descomprimidos en " + JAR_SBF);
+                summary.add("WS descomprimidos en " + JAR_SBF + " Total: " + Integer.toString(qty));
 
                 // -----------------------------------------------
                 // Generate Metadata and Remove Protected 
@@ -681,6 +698,9 @@ public class MainBuilder {
                 List<String> resultList = walk.map(x -> x.toString())
                         .filter(f -> f.endsWith(".java")).collect(Collectors.toList());
 
+                int qtyJava = 0;
+                int qtyModifyFile = 0;
+                
                 for (String file : resultList) {
 
                     if(file.endsWith(".java") && file.contains("Test"))
@@ -692,24 +712,44 @@ public class MainBuilder {
                     } else
                     {
                         
+                        qtyJava ++; 
+                        
                         try {
                             mt.generateMetadata(file);
                         } catch (MetadataServerException ex) {
                             logger.error(ex.getMessage(), ex);
                         }
 
-                        modifyFile(file, "protected ", "public ");
-                    
+                        boolean changed = modifyFile(file, "protected ", "public ");
+                        
+                        qtyModifyFile = qtyModifyFile + (changed?1:0);
+                        
                     }
 
                 }
+                
+                walk.close();
+                
+                summary.add("JAVA Converter from protected to public:" + Integer.toString(qtyModifyFile) + " of " + Integer.toString(qtyJava));
+                
+                totalWSJava = qtyJava;
 
+                // -------------------------------------------------------------------
+                // Check Control
+                // -------------------------------------------------------------------
+                // 
+                Stream<Path> walkControl = Files.walk(Paths.get(JAR_SBF),1);
+                List<String> resultListFolder = walkControl.filter(Files::isDirectory).map(Path::toString).collect(Collectors.toList());
+                summary.add("WS Folders in :" + JAR_SBF + ": " + Integer.toString(resultListFolder.size()-1) );
+                walkControl.close();
+                
+                
                 // -------------------------------------------------------------------
                 // Generate Metadata For oracle.e1.bssvfoundation.util.E1MessageList
                 // -------------------------------------------------------------------
                 //
                 mt.generateMetadataE1MessageList();
-
+             
                 // -----------------------------------------------
                 // Persist Metadata
                 // -----------------------------------------------
@@ -729,7 +769,7 @@ public class MainBuilder {
                 InputStream inputStream = url.openConnection().getInputStream();
 
                 IOUtil.copy(inputStream, new FileOutputStream(new File(METADATA_DRIVER_JAVA)));
-
+                
                 // -----------------------------------------------
                 // Prepare Maven 
                 // -----------------------------------------------
@@ -743,12 +783,16 @@ public class MainBuilder {
                     logger.error("Error creando POM para la compilacion de WS");
 
                     throw new Exception("Error creando POM para la compilacion de WS");
+                    
+                } else
+                {
+                    summary.add("WS Compilded correctly");
                 }
 
-                summary.add("POM de Ws crado en " + JAR_SBF);
+                summary.add("POM de Ws creado en " + JAR_SBF);
 
                 logger.info("Compilando WS..");
-
+                
                 if(THREADS)
                 {
 
@@ -767,7 +811,10 @@ public class MainBuilder {
 
                 } else
                 {
-                 //   resultFinal = executeMvnWS(JAR_SBF, options.localRepo, options.settings);
+                 
+                    resultFinal = executeMvnWS(JAR_SBF, options.localRepo, options.settings);
+                    
+                    resultFinal = 0;
                 }
 
                 if (!isSuccessful(resultFinal)) {
@@ -778,6 +825,22 @@ public class MainBuilder {
                 }
 
                 summary.add("WS instalado en Repositorio");
+                
+                // -------------------------------------------------------------------
+                // Check Control
+                // -------------------------------------------------------------------
+                // 
+                walkControl = Files.walk(Paths.get(JAR_SBF),1);
+                resultListFolder = walkControl.filter(Files::isDirectory).filter(path -> !path.startsWith("J")).map(Path::toString).collect(Collectors.toList());
+                summary.add("WS Folders in :" + JAR_SBF + ": " + Integer.toString(resultListFolder.size()-1) );
+                if(options.clean.equals("Y"))
+                {
+                    for(String file:resultListFolder)
+                    {
+                        logger.info(" >>>>>>>" + file);
+                    }
+                }
+                walkControl.close();
                 
             }
 
@@ -2152,7 +2215,7 @@ public class MainBuilder {
         return returnValue;
     }
 
-    static void modifyFile(String filePath, String oldString, String newString) throws IOException {
+    static boolean modifyFile(String filePath, String oldString, String newString) throws IOException {
         File fileToBeModified = new File(filePath);
 
         String oldContent = "";
@@ -2171,9 +2234,13 @@ public class MainBuilder {
 
             line = reader.readLine();
         }
+        
+        int hashCodeOld = oldContent.hashCode();
 
         //Replacing oldString with newString in the oldContent
         String newContent = oldContent.replaceAll(oldString, newString);
+        
+        int hashCodeNew = newContent.hashCode();
 
         //Rewriting the input text file with newContent
         writer = new FileWriter(fileToBeModified);
@@ -2183,6 +2250,8 @@ public class MainBuilder {
         reader.close();
 
         writer.close();
+        
+        return hashCodeOld != hashCodeNew;
 
     }
 

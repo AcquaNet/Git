@@ -31,7 +31,7 @@ public class UnzipJar {
          
         fileDirJarName.mkdirs();
          
-        ArchiveUtil.extract(file, fileDirJarName);
+        ArchiveUtil.extract(file, fileDirJarName, false);
           
     }
 }
