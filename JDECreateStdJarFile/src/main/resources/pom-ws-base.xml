@@ -29,7 +29,7 @@
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.2.1</version>
                 <configuration>
-                  <skipSource>false</skipSource>
+                  <skipSource>true</skipSource>
                 </configuration>
                 <executions>
                     <execution>
