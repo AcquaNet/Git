@@ -732,6 +732,9 @@ public class MainBuilder {
             if(options.accion.equals("2") || options.accion.equals("3"))
             {
                 
+                summary.add("-------------------------------------------");
+                summary.add("Starting WS process...");
+            
                 int resultFinal = 0;
                 
                 // -----------------------------------------------
@@ -907,7 +910,7 @@ public class MainBuilder {
                 //
                 if (isSuccessful(resultFinal)) {
  
-                       File source = new File(FOLDER_WRAPPED + File.separator + "target" + File.separator + WS_NAME + "-" + options.version + ".jar");
+                       File source = new File(FOLDER_WS_SBFJARS + File.separator + "target" + File.separator + WS_NAME + "-" + options.version + ".jar");
                        File dest = new File(WORKING_FOLDER + File.separator + WS_NAME + "-" + options.version + ".jar");
 
                        logger.info("Copying Jar File " + source.getAbsolutePath() + " to " + dest.getAbsolutePath());
@@ -959,6 +962,8 @@ public class MainBuilder {
             for (String line : summary) {
                 logger.info(line);
             }
+            
+            logger.info("=======================================================");
 
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
