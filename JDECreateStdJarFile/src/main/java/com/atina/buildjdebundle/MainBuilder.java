@@ -394,7 +394,7 @@ public class MainBuilder {
             
             Map<String, String> packages = new HashMap<String, String>();
 
-            if (SHADE && options.accion.equals("1") || options.accion.equals("3")) {
+            if (SHADE && (options.accion.equals("1") || options.accion.equals("3"))) {
 
                 // -----------------------------------------------
                 // Get Package To Shade
