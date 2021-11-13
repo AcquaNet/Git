@@ -143,7 +143,7 @@ EXPOSE $SWAGGER_SERVER_PORT
 # ====================================
 # Copiar Claves de Licencia	
 # ==================================== 
-#COPY images/jdelicense.dat /var/jdeatinaserver/
+COPY images/jdelicense.dat /var/jdeatinaserver/
 
 # ====================================
 # Copiar Metadata for Mocking
