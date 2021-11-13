@@ -85,6 +85,9 @@ public class MainBuilder {
     private static final Logger logger = LoggerFactory.getLogger(MainBuilder.class);
 
     private static final String JDE_BUNDLE_NAME = "jde-lib-wrapped";
+    private static final String WS_NAME = "StdWebService";
+    
+    
     
     private static final String WORKING_FOLDER = "/tmp/build_jde_libs";
       
@@ -294,6 +297,8 @@ public class MainBuilder {
                     summary.add("    Folder " + FOLDER_JAR_SELECTED + " has been deleted.");
                    
                     FileUtils.deleteDirectory(FOLDER_WRAPPED); 
+                    
+                    FileUtils.mkdir(FOLDER_WRAPPED);
                     
                     summary.add("    Folder " + FOLDER_WRAPPED + " has been deleted.");
                     
@@ -709,9 +714,9 @@ public class MainBuilder {
                     
                     summary.add("    Folder " + FOLDER_JAR_SELECTED + " has been deleted.");
                    
-                    FileUtils.deleteDirectory(FOLDER_WRAPPED); 
+                    //FileUtils.deleteDirectory(FOLDER_WRAPPED); 
                     
-                    summary.add("    Folder " + FOLDER_WRAPPED + " has been deleted.");
+                    //summary.add("    Folder " + FOLDER_WRAPPED + " has been deleted.");
                     
                     
                 }
@@ -894,6 +899,32 @@ public class MainBuilder {
                     logger.error("Error Installing JDE Connector in Local Repository");
 
                     throw new Exception("Error Installing JDE Connector in Local Repository");
+                }
+                
+                // -----------------------------------------------
+                // Copying files to working directory
+                // -----------------------------------------------
+                //
+                if (isSuccessful(resultFinal)) {
+ 
+                       File source = new File(FOLDER_WRAPPED + File.separator + "target" + File.separator + WS_NAME + "-" + options.version + ".jar");
+                       File dest = new File(WORKING_FOLDER + File.separator + WS_NAME + "-" + options.version + ".jar");
+
+                       logger.info("Copying Jar File " + source.getAbsolutePath() + " to " + dest.getAbsolutePath());
+
+                        try {
+                            
+                            FileUtils.copyFile(source, dest);
+
+                            logger.info("Jar File " + source.getName() + " to " + dest.getName() + " has been copied.");
+
+                        } catch (IOException ex) {
+                            resultFinal = 1;
+                            logger.error("Error copying WS. Message" + ": " + ex.getMessage());
+                        }
+                        
+                        summary.add("    WS has been copied to: " + dest.getAbsolutePath());
+
                 }
 
                 summary.add("WS instalado en Repositorio");
