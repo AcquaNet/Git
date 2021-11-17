@@ -1,1 +1,0 @@
-mvnw compile quarkus:dev -Dquarkus.args="-u jde_admin -p Modus2020! -s http://mdx-alpha-wls.westus.cloudapp.azure.com:8999/manage"

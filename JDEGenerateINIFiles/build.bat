@@ -1,6 +1,17 @@
+@echo off
+ECHO ==========================================================
+ECHO Activando JAVA 11
+ECHO ==========================================================
 set JAVA_HOME=C:\Program Files\Java\openjdk-11
 set Path=%JAVA_HOME%\bin;%Path%
 echo Java 11 activated.
-REM ==================================
-REM mvnw package
-REM java -jar target\quarkus-app\quarkus-run.jar -u jde_admin -p Modusbox2020! -s http://mdx-alpha-wls.westus.cloudapp.azure.com:8999/manage
+ECHO ==========================================================
+ECHO Build
+ECHO ==========================================================
+mvnw package
+ECHO ==========================================================
+ECHO Build
+ECHO ==========================================================
+mvnw clean deploy
+REM java -jar target\jde-generate-ini-files-1.0.0-SNAPSHOT-runner.jar -u jde_admin -p Modusbox2020! -s http://mdx-alpha-wls.westus.cloudapp.azure.com:8999/manage
+REM mvnw compile quarkus:dev -Dsuspend=true -Dquarkus.args="-u jde_admin -p Modusbox2020! -s http://mdx-alpha-wls.westus.cloudapp.azure.com:8999/manage"

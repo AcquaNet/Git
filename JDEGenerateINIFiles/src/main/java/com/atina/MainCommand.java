@@ -4,8 +4,7 @@
  * and open the template in the editor.
  */
 package com.atina;
- 
-import com.atina.restClient.ServerManagerClient;
+  
 import com.atina.sm.SMClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
@@ -37,11 +36,23 @@ import org.apache.commons.io.IOUtils;
 @CommandLine.Command
 public class MainCommand implements Runnable {
     
+    // APIS
+    
     static final String API_AUTHENTICATE = "/mgmtrestservice/authenticate";
     static final String API_GROUPS = "/mgmtrestservice/servergroupinfo";
     static final String API_INSTANCE_INFO = "/mgmtrestservice/configsummary";
+    
+    // FOLDERS
+    
     static final String INI_FOLDER = "/ini-files/";
-
+    private static final String WORKING_FOLDER = "/tmp/build_jde_libs";
+    
+    // FILES
+     
+    private static final String JDBJ = "jdbj.ini";
+    private static final String INTEROP = "jdeinterop.ini";
+    private static final String JDELOG = "jdelog.properties";
+     
     @CommandLine.Option(names = {"-s", "--server"}, description = "JDE URL of Server Manager", arity = "0..1",  required = true, interactive = true)
     String server;
     
@@ -51,10 +62,9 @@ public class MainCommand implements Runnable {
     @CommandLine.Option(names = {"-p", "--password"}, description = "JDE Password for Enterprise Server Manager", arity = "0..1",   required = true, interactive = true)
     String password;
     
-    @Inject
-    @RestClient
-    ServerManagerClient serverManagerClient;
-      
+    @CommandLine.Option(names = {"-d", "--debug"}, description = "Debug Option", required = false , defaultValue = "N")
+    String debug;
+  
     @Inject 
     SMClient smClient;
      
@@ -71,20 +81,47 @@ public class MainCommand implements Runnable {
         OutputStreamWriter consoleWriter = new OutputStreamWriter(System.out);
         
         try { 
-
-            BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
-        
-            consoleWriter.write("=================================================================== ");
-            consoleWriter.write(System.getProperty( "line.separator" ));
-            consoleWriter.write(System.getProperty( "line.separator" ));
-            consoleWriter.write("Authenticating : " + server + API_AUTHENTICATE);
-            consoleWriter.write(System.getProperty( "line.separator" ));
-            consoleWriter.flush();
-        
+ 
             // =======================================
             // JDE Authenticate
             // =======================================
             //
+            
+            boolean showDetail = debug.equalsIgnoreCase("y");
+            
+            BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
+        
+            consoleWriter.write("=================================================================== ");
+            
+            
+            // =====================================================
+            // Create Working Folder
+            // =====================================================
+                
+            File workingFolder = new File(WORKING_FOLDER);
+
+            if(!workingFolder.exists())
+            {
+                FileUtils.forceMkdir(workingFolder); 
+                
+                consoleWriter.write(System.getProperty( "line.separator" ));
+                consoleWriter.write("Folder : " + WORKING_FOLDER + " has been created");
+                consoleWriter.write(System.getProperty( "line.separator" ));
+                consoleWriter.write(System.getProperty( "line.separator" ));
+                
+            } else
+            {
+                FileUtils.deleteQuietly(new File(WORKING_FOLDER + File.separator + JDBJ));
+                FileUtils.deleteQuietly(new File(WORKING_FOLDER + File.separator + INTEROP));
+                FileUtils.deleteQuietly(new File(WORKING_FOLDER + File.separator + JDELOG));
+            }
+             
+        
+            consoleWriter.write(System.getProperty( "line.separator" ));
+            consoleWriter.write(System.getProperty( "line.separator" ));
+            consoleWriter.write("Authenticating : " + server + (showDetail?API_AUTHENTICATE:""));
+            consoleWriter.write(System.getProperty( "line.separator" ));
+            consoleWriter.flush();
               
             String auth = user.trim() + ":" + password.trim();
             
@@ -100,7 +137,7 @@ public class MainCommand implements Runnable {
                   
                 consoleWriter.write(System.getProperty( "line.separator" ));
                 
-                consoleWriter.write("                  Server : " + server + API_AUTHENTICATE);
+                consoleWriter.write("                  Server : " + server + (showDetail?API_AUTHENTICATE:""));
                   
                 consoleWriter.write(System.getProperty( "line.separator" ));
                 
@@ -148,7 +185,7 @@ public class MainCommand implements Runnable {
             // =======================================
             //
             
-            consoleWriter.write("Getting Server Groups : " + server + API_GROUPS);
+            consoleWriter.write("Getting Server Groups : " + server + (showDetail?API_GROUPS:""));
             consoleWriter.flush();
             
             HttpResponse<String> serverGroups = smClient.readServerGroupInfo(server,tokenHeader.orElse("Invalid"),API_GROUPS);
@@ -290,7 +327,7 @@ public class MainCommand implements Runnable {
                 consoleWriter.write(System.getProperty( "line.separator" ));
                 consoleWriter.flush(); 
                 
-                consoleWriter.write("Getting Instance Values: " + server + API_INSTANCE_INFO + "?instanceName=" + option);
+                consoleWriter.write("Getting Instance Values: " + server + (showDetail?API_INSTANCE_INFO:"") + " for Instance Name=" + option);
                 consoleWriter.write(System.getProperty( "line.separator" )); 
                 consoleWriter.flush();
             
@@ -328,39 +365,26 @@ public class MainCommand implements Runnable {
                    valuesInstanceInfo.put((String) value.get("iniSection") + "|" + (String) value.get("name"), (String) value.get("value"));
                 }
                 
-//                for(String key:valuesInstanceInfo.keySet())
-//                {
-//                    consoleWriter.write(key + " =>" + valuesInstanceInfo.get(key));
-//                    consoleWriter.write(System.getProperty( "line.separator" )); 
-//                    consoleWriter.flush();
-//                }
+                if(showDetail)
+                {
+                    for(String key:valuesInstanceInfo.keySet())
+                    {
+                        consoleWriter.write(key + " =>" + valuesInstanceInfo.get(key));
+                        consoleWriter.write(System.getProperty( "line.separator" )); 
+                        consoleWriter.flush();
+                    }
+                }
                 
-                // =======================================
-                // Getting Ini Files
-                // =======================================
-                //
-                
-                String fileNameJDBJ = "jdbj.ini";
-                String fileNameINTERORP = "jdeinterop.ini";
-                String fileNameLOG = "jdelog.properties";
-                 
-                // =====================================================
-                // Delete File
-                // =====================================================
-                
-                FileUtils.deleteQuietly(new File(fileNameJDBJ));
-                FileUtils.deleteQuietly(new File(fileNameINTERORP));
-                FileUtils.deleteQuietly(new File(fileNameLOG));
-                
+                   
                 // =====================================================
                 // Process jdbj.ini
                 // =====================================================
                 
-                processIniFile(fileNameJDBJ,valuesInstanceInfo,consoleWriter);
+                processIniFile(JDBJ,valuesInstanceInfo,consoleWriter);
                 
-                processIniFile(fileNameINTERORP,valuesInstanceInfo,consoleWriter);
+                processIniFile(INTEROP,valuesInstanceInfo,consoleWriter);
                 
-                processIniFile(fileNameLOG,valuesInstanceInfo,consoleWriter);
+                processIniFile(JDELOG,valuesInstanceInfo,consoleWriter);
                  
              
             }
@@ -379,9 +403,7 @@ public class MainCommand implements Runnable {
             System.out.println(ex.getMessage());
         } catch (InterruptedException ex) {
             System.out.println(ex.getMessage());
-        } finally {
-            
-        }
+        }  
         
         // =======================================
         // Close Console
@@ -426,7 +448,7 @@ public class MainCommand implements Runnable {
         
         ClassLoader classLoader = MainCommand.class.getClassLoader();
         
-        InputStream inputStream = classLoader.getResourceAsStream(INI_FOLDER+fileName);
+        InputStream inputStream = classLoader.getResourceAsStream(INI_FOLDER + fileName);
 
         // the stream holding the file content
         if (inputStream == null) {
@@ -437,7 +459,7 @@ public class MainCommand implements Runnable {
         // Create Target File
         // --------------------------------------------------
         
-        File targetFile = new File(fileName);
+        File targetFile = new File(WORKING_FOLDER + File.separator + fileName);
         OutputStream outStream = new FileOutputStream(targetFile);
         
         // --------------------------------------------------
@@ -480,7 +502,7 @@ public class MainCommand implements Runnable {
         
         
     }
-    
+
     public static String getStringBetweenTwoChars(String input, String startChar, String endChar) {
 
         int start = input.indexOf(startChar);
@@ -491,7 +513,7 @@ public class MainCommand implements Runnable {
             }
         }
         return input; // return null; || return "" ;
-}
+    }
     
     
 }
