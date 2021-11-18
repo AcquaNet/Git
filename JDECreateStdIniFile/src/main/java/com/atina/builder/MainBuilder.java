@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.atina.buildjdebundle;
+package com.atina.builder;
  
  
 import com.atina.sm.SMClient;
@@ -61,6 +61,8 @@ public class MainBuilder {
      */
     public static void main(String[] args) throws IOException {
  
+        showBanner();
+                
         // -----------------------------------------------
         // create the command line parser
         // -----------------------------------------------
@@ -394,6 +396,39 @@ public class MainBuilder {
         }
         return true;
     }
+      
+    private static void showBanner() throws IOException {
+
+        // --------------------------------------------------
+        // The class loader that loaded the class
+        // --------------------------------------------------
+        ClassLoader classLoader = MainBuilder.class.getClassLoader();
+
+        InputStream inputStream = classLoader.getResourceAsStream("banner.txt");
+
+        // the stream holding the file content
+        if (inputStream == null) {
+            throw new IllegalArgumentException("Error: File not found in resource folder: " + INI_FOLDER + "banner.txt");
+        }
+
+        // --------------------------------------------------
+        // Process Each Line
+        // --------------------------------------------------
+        InputStreamReader streamReader
+                = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        BufferedReader reader = new BufferedReader(streamReader);
+
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+
+            System.out.println(line);
+
+        }
+
+        inputStream.close(); 
+
+    }
      
     private static String processIniFile(String fileName, HashMap<String, String> valuesInstanceInfo) {
 
@@ -445,10 +480,10 @@ public class MainBuilder {
                 line = line + System.getProperty("line.separator");
                 outStream.write(line.getBytes(StandardCharsets.UTF_8));
             }
-
-            IOUtils.closeQuietly(inputStream);
-
-            IOUtils.closeQuietly(outStream);
+            
+            inputStream.close();
+            
+            outStream.close(); 
  
             returnValue = " File: " + targetFile.toString() + " generated";
 

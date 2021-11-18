@@ -67,7 +67,7 @@
                     <!-- MainClass in mainfest make a executable jar -->
                     <archive>
                         <manifest>
-                            <mainClass>com.atina.buildjdebundle.MainBuilder</mainClass>
+                            <mainClass>com.atina.builder.MainBuilder</mainClass>
                         </manifest>
                     </archive>
 
@@ -91,7 +91,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.atina.buildjdebundle.MainBuilder</mainClass>
+                            <mainClass>com.atina.builder.MainBuilder</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

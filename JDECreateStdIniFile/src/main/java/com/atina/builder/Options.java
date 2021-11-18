@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.atina.buildjdebundle;
+package com.atina.builder;
   
 import com.google.devtools.common.options.Option;
 import com.google.devtools.common.options.OptionsBase;
