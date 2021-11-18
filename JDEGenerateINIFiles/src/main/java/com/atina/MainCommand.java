@@ -66,11 +66,7 @@ public class MainCommand implements Runnable {
     
     @CommandLine.Option(names = {"-d", "--debug"}, description = "Debug Option", required = false , defaultValue = "N")
     String debug;
-  
-    @Inject 
-    SMClient smClient;
-     
-    
+   
     public MainCommand() {  
       
     }
@@ -94,7 +90,8 @@ public class MainCommand implements Runnable {
             BufferedReader consoleReader = new BufferedReader(new InputStreamReader(System.in));
         
             consoleWriter.write("=================================================================== ");
-            
+             
+            SMClient smClient = new SMClient();
             
             // =====================================================
             // Create Working Folder
@@ -427,13 +424,9 @@ public class MainCommand implements Runnable {
               
             consoleReader.close();
             
-        } catch (RuntimeException ex) {
-             //
-        }catch (IOException ex) {
+        } catch (Exception ex) {
             System.out.println(ex.getMessage());
-        } catch (InterruptedException ex) {
-            System.out.println(ex.getMessage());
-        }  
+        }   
         
         // =======================================
         // Close Console
