@@ -4,9 +4,7 @@
  * and open the template in the editor.
  */
 package com.atina.buildjdebundle;
-
-import java.util.List;
-
+  
 import com.google.devtools.common.options.Option;
 import com.google.devtools.common.options.OptionsBase;
 
@@ -17,66 +15,40 @@ import com.google.devtools.common.options.OptionsBase;
 public class Options extends OptionsBase {
 
     @Option(
-            name = "accion",
-            abbrev = 'a',
-            help = "Accion: 1: Generate JDE Bundle 2: Build WS 3: Both",
-            category = "startup",
-            defaultValue = "3"
-    )
-    public String accion;
-    
-    @Option(
-            name = "jdeInstallPath",
-            abbrev = 'i',
-            help = "Enter JDE Path installed",
+            name = "server",
+            abbrev = 's',
+            help = "JDE URL of Server Manager",
             category = "startup",
             defaultValue = ""
     )
-    public String jdeInstallPath;
+    public String server;
+    
+    @Option(
+            name = "user",
+            abbrev = 'u',
+            help = "JDE User for Enterprise Server Manager",
+            category = "startup",
+            defaultValue = ""
+    )
+    public String user;
   
     @Option(
-            name = "jdbcDriver",
-            abbrev = 'j',
-            help = "Enter JDBC Driver",
+            name = "password",
+            abbrev = 'p',
+            help = "JDE Password for Enterprise Server Manager",
             category = "startup",
             defaultValue = ""
     )
-    public String jdbcDriver;
+    public String password;
 
     @Option(
-            name = "version",
-            abbrev = 'o',
-            help = "Enter Version",
+            name = "debug",
+            abbrev = 'd',
+            help = "Debug Option",
             category = "startup",
-            defaultValue = ""
+            defaultValue = "N"
     )
-    public String version;
-    
-    @Option(
-            name = "localRepo",
-            abbrev = 'r',
-            help = "Enter Maven Local Repo",
-            category = "startup",
-            defaultValue = ""
-    )
-    public String localRepo;
-    
-    @Option(
-            name = "settings",
-            abbrev = 's',
-            help = "settings.xml to use Ex. /apache-maven-3.8.1/conf/settings.xml",
-            category = "startup",
-            defaultValue = ""
-    )
-    public String settings;
-    
-    @Option(
-            name = "clean",
-            abbrev = 'c',
-            help = "clean",
-            category = "startup",
-            defaultValue = "Y"
-    )
-    public String clean;
+    public String debug;
+     
    
 }
