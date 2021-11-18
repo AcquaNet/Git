@@ -1,0 +1,9 @@
+                 <configuration>
+                    <file>target/castor-resources/org/castor/xml/castor.xml.properties</file>  
+                    <replacements>
+                        <replacement>
+                            <token>org.apache.xerces</token>
+                            <value>org.apache.shade.xerces</value>
+                        </replacement>
+                    </replacements>
+                </configuration> 
