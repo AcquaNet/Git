@@ -122,6 +122,10 @@ public class MainBuilder {
      */
     public static void main(String[] args) throws IOException {
 
+        showBanner();
+        
+        ArrayList<String> endMessage = new ArrayList<String>();
+                
         if (DEBUG) {
             MetadataWSGenerator mt = new MetadataWSGenerator();
 
@@ -694,6 +698,9 @@ public class MainBuilder {
                         }
                         
                         summary.add("    JDE Bundle has been copied to: " + dest.getAbsolutePath());
+                        
+                        endMessage.add("JDE Library bundle has been copied to: " + dest.getAbsolutePath());
+                        
 
                 }
                 
@@ -927,6 +934,8 @@ public class MainBuilder {
                         }
                         
                         summary.add("    WS has been copied to: " + dest.getAbsolutePath());
+                        
+                        endMessage.add("JDE WS has been copied to: " + dest.getAbsolutePath());
 
                 }
 
@@ -968,6 +977,16 @@ public class MainBuilder {
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
+        
+        logger.info("------------------------------------------------------------------------");
+        logger.info("GENERATION SUCESSS");
+        logger.info("------------------------------------------------------------------------");
+        for (String line : endMessage) {
+            logger.info(line);
+        }
+        logger.info("------------------------------------------------------------------------");
+        
+        
 
     }
 
@@ -2218,31 +2237,7 @@ public class MainBuilder {
         pom.getBuild().addPlugin(plugin);
 
     }
-
-    private static void cleanUpShading(String destDir, String name) {
-
-        try {
-
-            File[] temp = new File[]{new File(destDir, "pom.xml"), new File(destDir, "assembly.xml"), new File(destDir, "archive-tmp"), new File(destDir, name + "-1.0.0.jar")};
-
-            for (File file : temp) {
-
-                if (file.exists()) {
-
-                    file.delete();
-
-                    logger.info("Cleanning Shading process. File " + file.getName() + " has been deleted");
-                }
-
-            }
-
-        } catch (Exception e) {
-
-            logger.error("Error Cleanning Shading process." + ": " + e.getMessage());
-
-        }
-    }
-
+ 
     private static void copyFileFromDeploymentWrappedFolder(Map<String, String> jdeJars, String folderDestination, Options options) {
 
         for (Entry<String, String> lista : jdeJars.entrySet()) {
@@ -2380,5 +2375,38 @@ public class MainBuilder {
         return hashCodeOld != hashCodeNew;
 
     }
+    private static void showBanner() throws IOException {
+
+        // --------------------------------------------------
+        // The class loader that loaded the class
+        // --------------------------------------------------
+        ClassLoader classLoader = MainBuilder.class.getClassLoader();
+
+        InputStream inputStream = classLoader.getResourceAsStream("banner.txt");
+
+        // the stream holding the file content
+        if (inputStream == null) {
+            throw new IllegalArgumentException("Error: File not found in resource folder: " + "banner.txt");
+        }
+
+        // --------------------------------------------------
+        // Process Each Line
+        // --------------------------------------------------
+        InputStreamReader streamReader
+                = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+        BufferedReader reader = new BufferedReader(streamReader);
+
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+
+            System.out.println(line);
+
+        }
+
+        inputStream.close(); 
+
+    }
+    
 
 }
