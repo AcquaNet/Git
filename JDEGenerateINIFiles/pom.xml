@@ -125,6 +125,7 @@
             </build>
             <properties>
                 <quarkus.package.type>native</quarkus.package.type>
+                <quarkus.native.additional-build-args>-H:ResourceConfigurationFiles=resources-config.json -H:EnableURLProtocols=http enable-all-security-services --rerun-class-initialization-at-runtime=javax.net.ssl.SSLContext</quarkus.native.additional-build-args>
             </properties>
         </profile>
     </profiles>

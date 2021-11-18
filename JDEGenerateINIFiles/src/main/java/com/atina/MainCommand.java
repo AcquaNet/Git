@@ -25,6 +25,8 @@ import picocli.CommandLine;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -44,7 +46,7 @@ public class MainCommand implements Runnable {
     
     // FOLDERS
     
-    static final String INI_FOLDER = "/ini-files/";
+    static final String INI_FOLDER = "";
     private static final String WORKING_FOLDER = "/tmp/build_jde_libs";
     
     // FILES
@@ -75,10 +77,10 @@ public class MainCommand implements Runnable {
     
     @Override
     public void run() {
-        
-        Configuration config = new Configuration(user,password);
-        
+          
         OutputStreamWriter consoleWriter = new OutputStreamWriter(System.out);
+        
+        ArrayList<String> endMessage = new ArrayList<String>();
         
         try { 
  
@@ -380,11 +382,41 @@ public class MainCommand implements Runnable {
                 // Process jdbj.ini
                 // =====================================================
                 
-                processIniFile(JDBJ,valuesInstanceInfo,consoleWriter);
+                String status = processIniFile(JDBJ,valuesInstanceInfo,consoleWriter);
                 
-                processIniFile(INTEROP,valuesInstanceInfo,consoleWriter);
+                endMessage.add(status);
                 
-                processIniFile(JDELOG,valuesInstanceInfo,consoleWriter);
+                if(showDetail)
+                {
+                    consoleWriter.write(System.getProperty( "line.separator" )); 
+                    consoleWriter.write(status); 
+                    consoleWriter.write(System.getProperty( "line.separator" )); 
+                    consoleWriter.flush();
+                }
+                
+                status = processIniFile(INTEROP,valuesInstanceInfo,consoleWriter);
+                
+                endMessage.add(status);
+                
+                if(showDetail)
+                {
+                    consoleWriter.write(System.getProperty( "line.separator" )); 
+                    consoleWriter.write(status); 
+                    consoleWriter.write(System.getProperty( "line.separator" )); 
+                    consoleWriter.flush();
+                }
+                
+                status = processIniFile(JDELOG,valuesInstanceInfo,consoleWriter);
+                
+                endMessage.add(status);
+                
+                if(showDetail)
+                {
+                    consoleWriter.write(System.getProperty( "line.separator" )); 
+                    consoleWriter.write(status); 
+                    consoleWriter.write(System.getProperty( "line.separator" )); 
+                    consoleWriter.flush();
+                }
                  
              
             }
@@ -392,9 +424,7 @@ public class MainCommand implements Runnable {
             // =======================================
             // Close Console
             // =======================================
-            
-            consoleWriter.close();
-            
+              
             consoleReader.close();
             
         } catch (RuntimeException ex) {
@@ -410,7 +440,20 @@ public class MainCommand implements Runnable {
         // =======================================
         
         try {
-            consoleWriter.write("=================================================================== ");
+            consoleWriter.write(System.getProperty( "line.separator" )); 
+            consoleWriter.write("------------------------------------------------------------------------");
+            consoleWriter.write(System.getProperty( "line.separator" )); 
+            consoleWriter.write("GENERATION SUCESSS");
+            consoleWriter.write(System.getProperty( "line.separator" )); 
+            consoleWriter.write("------------------------------------------------------------------------");
+            consoleWriter.write(System.getProperty( "line.separator" )); 
+            for(String line:endMessage)
+            {
+                consoleWriter.write(line);
+                consoleWriter.write(System.getProperty( "line.separator" )); 
+            }
+            consoleWriter.write("------------------------------------------------------------------------");
+            consoleWriter.write(System.getProperty( "line.separator" ));  
             consoleWriter.flush();
             consoleWriter.close();
         } catch (IOException ex) {
@@ -432,74 +475,78 @@ public class MainCommand implements Runnable {
         return true;
     }
      
-    private static void processIniFile(String fileName, HashMap<String, String> valuesInstanceInfo, OutputStreamWriter consoleWriter) throws IOException {
+    private static String processIniFile(String fileName, HashMap<String, String> valuesInstanceInfo, OutputStreamWriter consoleWriter) {
 
-        consoleWriter.write(System.getProperty( "line.separator" ));
-        consoleWriter.write(" -------------------------------------------------------------- ");
-        consoleWriter.write(System.getProperty( "line.separator" ));
-        consoleWriter.write(" Processing File: " + fileName);
-        consoleWriter.write(System.getProperty( "line.separator" ));
+        String returnValue = "";
+        
+        try {
+            
+            consoleWriter.write(System.getProperty("line.separator"));
 
-        consoleWriter.flush();
-                    
-        // --------------------------------------------------
-        // The class loader that loaded the class
-        // --------------------------------------------------
-        
-        ClassLoader classLoader = MainCommand.class.getClassLoader();
-        
-        InputStream inputStream = classLoader.getResourceAsStream(INI_FOLDER + fileName);
+            consoleWriter.write(" -------------------------------------------------------------- ");
+            consoleWriter.write(System.getProperty("line.separator"));
+            consoleWriter.write(" Processing File: " + INI_FOLDER + fileName);
+            consoleWriter.write(System.getProperty("line.separator"));
 
-        // the stream holding the file content
-        if (inputStream == null) {
-            throw new IllegalArgumentException("file not found! " + fileName);
-        }  
-        
-        // --------------------------------------------------
-        // Create Target File
-        // --------------------------------------------------
-        
-        File targetFile = new File(WORKING_FOLDER + File.separator + fileName);
-        OutputStream outStream = new FileOutputStream(targetFile);
-        
-        // --------------------------------------------------
-        // Process Each Line
-        // --------------------------------------------------
-        
-        InputStreamReader streamReader =
-                    new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-             BufferedReader reader = new BufferedReader(streamReader);
-             
-        String line;
-         
-        while ((line = reader.readLine()) != null) {
-          
-                if(line.contains("{{") && line.contains("}}"))
-                {
-                    String key = getStringBetweenTwoChars(line,"{{","}}");
-                    if(valuesInstanceInfo.containsKey(key))
-                    {
-                        line = line.replace("{{"+key+"}}", valuesInstanceInfo.get(key));
-                    } else
-                    {
-                        consoleWriter.write("  Missing key: " + key); 
-                        consoleWriter.write(System.getProperty( "line.separator" )); 
+            consoleWriter.flush();
+
+            // --------------------------------------------------
+            // The class loader that loaded the class
+            // --------------------------------------------------
+            
+            ClassLoader classLoader = MainCommand.class.getClassLoader();
+
+            InputStream inputStream = classLoader.getResourceAsStream(INI_FOLDER + fileName);
+
+            // the stream holding the file content
+            if (inputStream == null) {
+                throw new IllegalArgumentException("Error: File not found in resource folder: " + INI_FOLDER + fileName);
+            }
+
+            // --------------------------------------------------
+            // Create Target File
+            // --------------------------------------------------
+            File targetFile = new File(WORKING_FOLDER + File.separator + fileName);
+            OutputStream outStream = new FileOutputStream(targetFile);
+
+            // --------------------------------------------------
+            // Process Each Line
+            // --------------------------------------------------
+            InputStreamReader streamReader
+                    = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            BufferedReader reader = new BufferedReader(streamReader);
+
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+
+                if (line.contains("{{") && line.contains("}}")) {
+                    String key = getStringBetweenTwoChars(line, "{{", "}}");
+                    if (valuesInstanceInfo.containsKey(key)) {
+                        line = line.replace("{{" + key + "}}", valuesInstanceInfo.get(key));
+                    } else {
+                        consoleWriter.write("  Missing key: " + key);
+                        consoleWriter.write(System.getProperty("line.separator"));
                         consoleWriter.flush();
                     }
-                  
+
                 }
-                line = line + System.getProperty( "line.separator" );
+                line = line + System.getProperty("line.separator");
                 outStream.write(line.getBytes(StandardCharsets.UTF_8));
-        }     
-    
-        IOUtils.closeQuietly(inputStream);
+            }
+
+            IOUtils.closeQuietly(inputStream);
+
+            IOUtils.closeQuietly(outStream);
+ 
+            returnValue = " File: " + targetFile.toString() + " generated";
+
+        } catch (Exception ex) {
+            
+            returnValue = "Error generating " + fileName + ": " + ex.getMessage();
+        }
         
-        IOUtils.closeQuietly(outStream);
-        
-        consoleWriter.write(" File: " + targetFile.toString() + " generated");
-        consoleWriter.write(System.getProperty( "line.separator" ));
-        
-        
+        return returnValue;
         
     }
 
