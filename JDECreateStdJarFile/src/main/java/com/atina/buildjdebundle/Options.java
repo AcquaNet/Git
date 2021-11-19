@@ -48,7 +48,7 @@ public class Options extends OptionsBase {
             abbrev = 'o',
             help = "Enter Version",
             category = "startup",
-            defaultValue = ""
+            defaultValue = "1.0.0"
     )
     public String version;
     
