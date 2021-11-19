@@ -1,0 +1,1 @@
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies -u jde_admin -e JPS920 -p Modusbox2020! -r *ALL -s 

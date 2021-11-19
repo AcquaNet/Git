@@ -1,0 +1,2 @@
+-d 'C:\_work\JDE_jars\New Oracle Cloud Bare Metal\2.0.1-Bundle\Bundle' -j 'C:\_work\JDE_jars\New Oracle Cloud Bare Metal\2.0.1-Bundle\JDBC_Vendor_Drivers\ojdbc7.jar' -l 'C:\_work\JDE_jars\New Oracle Cloud Bare Metal\2.0.1-Bundle\ServerFiles' -o '2.0.1' -r "C:\Users\jgodi\.m2\repository"
+-d 'C:\_work\modusbox\customers\Wesco Aircraf\JdeLib 9-1-4-7\bundle' -j 'C:\_work\modusbox\customers\Wesco Aircraf\JdeLib 9-1-4-7\driver\jt400.jar' -l 'C:\_work\modusbox\customers\Wesco Aircraf\JdeLib 9-1-4-7\serverFiles' -o '2.0.7' -r "C:\Users\jgodi\.m2\repository"
