@@ -22,12 +22,13 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
 ---
 {
 	"JDE Token": payload.Token,
-	entity: {
-		entityTaxId: flowVars.taxId
+	entity: { 
+		entityId: 28
 	}
 }]]></dw:set-payload>
         </dw:transform-message>
         <jdeatina:invoke-w-s config-ref="JDE_Atina__Configuration" entityType="oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook" doc:name="JDE Atina Invoke WS"/>
+
         <dw:transform-message doc:name="Transform Message" metadata:id="102ccfb4-51c4-47b4-9291-d719f016fbd7">
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/json
@@ -37,7 +38,7 @@ http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/jso
 }]]></dw:set-payload>
         </dw:transform-message>
         <logger message="Response #[payload]" level="INFO" doc:name="Logger"/>
-        <flow-ref name="jde-abFlow1" doc:name="jde-abFlow1"/>
+
     </flow>
     
     <flow name="jde-abFlow1" processingStrategy="synchronous">

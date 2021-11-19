@@ -10,7 +10,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath com.atina.builder.MainBuilder -u jde_admin -p Modusbox2020! -s http://mdx-alpha-wls.westus.cloudapp.azure.com:8999/manage -e JPS920</exec.args>
+                <exec.args>-classpath %classpath com.acqua.jde.jdeconnectorserver.JDEConnectorServer -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -clientcod demo -jdeLibWrappedVersion 1.0.0 -StdWebServiceVersion 1.0.0 -JDEConnectorServerVersion 1.0.0 -secretKey 123456789012345678901234567890123456789012345678901234567890 -tokenExpiration 4800000 -JDEConnectorServerMocking 0</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
@@ -24,7 +24,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath com.atina.builder.MainBuilder -u jde_admin -p Modusbox2020! -s http://mdx-alpha-wls.westus.cloudapp.azure.com:8999/manage -e JPS920</exec.args>
+                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath com.acqua.jde.jdeconnectorserver.JDEConnectorServer -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -clientcod demo -jdeLibWrappedVersion 1.0.0 -StdWebServiceVersion 1.0.0 -JDEConnectorServerVersion 1.0.0 -secretKey 123456789012345678901234567890123456789012345678901234567890 -tokenExpiration 4800000 -JDEConnectorServerMocking 0</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
             </properties>
@@ -39,7 +39,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath com.atina.builder.MainBuilder -u jde_admin -p Modusbox2020! -s http://mdx-alpha-wls.westus.cloudapp.azure.com:8999/manage -e JPS920</exec.args>
+                <exec.args>-classpath %classpath com.acqua.jde.jdeconnectorserver.JDEConnectorServer -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -clientcod demo -jdeLibWrappedVersion 1.0.0 -StdWebServiceVersion 1.0.0 -JDEConnectorServerVersion 1.0.0 -secretKey 123456789012345678901234567890123456789012345678901234567890 -tokenExpiration 4800000 -JDEConnectorServerMocking 0</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>

@@ -199,6 +199,35 @@ public class JDEConnectorServer {
             cfg.setTokenExpiration(tokenExpiration);
             cfg.setMocking(jdeConnectorServerMocking);
         }
+        
+        try {
+
+                logger.info("------------------------------------------------------");
+                logger.info("Loading Configuration...");
+
+                File configFolder = new File("/tmp/jde/config");
+                  
+                logger.info("  /tmp/jde/config folder Exist: " + (configFolder.exists() && configFolder.isDirectory())); 
+                
+                if(!configFolder.exists())
+                {
+                    throw new RuntimeException("/tmp/jde/config folder doesn't exist");
+                }
+                
+                if(!configFolder.isDirectory())
+                {
+                    throw new RuntimeException("/tmp/jde/config folder doesn't exist");
+                } 
+
+            } catch (Exception ex) {
+
+                logger.info("Error. Cannot check config folder");
+                logger.info("     " + ex.getMessage());
+                logger.info("See log for more detail");
+                logger.error(ex.getMessage(), ex);
+
+            }
+        
           
         // ================================================
         // Agregando 
@@ -207,7 +236,7 @@ public class JDEConnectorServer {
         // al Classpath
         // ================================================
         // 
-        
+               
         if(LOAD_LIBRARY)
         {
             try {
@@ -324,7 +353,7 @@ public class JDEConnectorServer {
 
         logger.info("------------------------------------------------------");
         logger.info("Usar: ");
-        logger.info(" java -jar JDEConnectorServer-1.0.0.jar -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -clientcod demo -jdeLibWrappedVersion 1.0.0 -StdWebServiceVersion 1.0.0 -JDEConnectorServerVersion 1.0.0 -secretKey 123456789012345678901234567890123456789012345678901234567890 -tokenExpiration 4800000 -JDEConnectorServerMocking false");
+        logger.info(" java -jar JDEConnectorServer-1.0.0.jar -ipServicio localhost -portServicio 8085 -localIP 0.0.0.0 -clientcod demo -jdeLibWrappedVersion 1.0.0 -StdWebServiceVersion 1.0.0 -JDEConnectorServerVersion 1.0.0 -secretKey 123456789012345678901234567890123456789012345678901234567890 -tokenExpiration 4800000 -JDEConnectorServerMocking 0");
         logger.info("------------------------------------------------------");
 
     }

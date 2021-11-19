@@ -49,6 +49,15 @@ public class Options extends OptionsBase {
             defaultValue = "N"
     )
     public String debug;
+    
+    @Option(
+            name = "environment",
+            abbrev = 'e',
+            help = "JDE Environment",
+            category = "startup",
+            defaultValue = ""
+    )
+    public String environment;
      
    
 }

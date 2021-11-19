@@ -75,7 +75,8 @@ public class MainBuilder {
 
         if (options.server.isEmpty()
                 || options.user.isEmpty()
-                || options.password.isEmpty()) {
+                || options.password.isEmpty()
+                || options.environment.isEmpty()) {
 
             printUsage(parser);
 
@@ -105,18 +106,29 @@ public class MainBuilder {
             // =====================================================
                 
             File workingFolder = new File(WORKING_FOLDER);
+            File workingFolderEnviroment = new File(WORKING_FOLDER + File.separator + options.environment.toUpperCase());
 
             if(!workingFolder.exists())
             {
                 FileUtils.forceMkdir(workingFolder); 
+                   
+                FileUtils.forceMkdir(workingFolderEnviroment); 
                 
                 logger.info("");
                 logger.info("Folder : " + WORKING_FOLDER + " has been created");
                 logger.info("");
-                logger.info("");
                 
             } else
             {
+                if(!workingFolderEnviroment.exists())
+                {
+                        FileUtils.forceMkdir(workingFolderEnviroment); 
+                        
+                        logger.info("");
+                        logger.info("Folder : " + WORKING_FOLDER + File.separator + options.environment.toUpperCase() + " has been created");
+                        logger.info("");
+                }
+                
                 FileUtils.deleteQuietly(new File(WORKING_FOLDER + File.separator + JDBJ));
                 FileUtils.deleteQuietly(new File(WORKING_FOLDER + File.separator + INTEROP));
                 FileUtils.deleteQuietly(new File(WORKING_FOLDER + File.separator + JDELOG));
@@ -222,7 +234,7 @@ public class MainBuilder {
             
             while(!exit)
             { 
-                logger.info("Select HTML Instance:"); 
+                logger.info("Select HTML Instance for environment " + options.environment +":"); 
                  
                 for(int i = 0; i < jdeInstances.size(); i++) {
                      logger.info(Integer.toString(i) + " - " + jdeInstances.get(i)); 
@@ -311,7 +323,7 @@ public class MainBuilder {
                 // Process jdbj.ini
                 // =====================================================
                 
-                String status = processIniFile(JDBJ,valuesInstanceInfo);
+                String status = processIniFile(JDBJ,valuesInstanceInfo,options.environment);
                 
                 endMessage.add(status);
                 
@@ -320,7 +332,7 @@ public class MainBuilder {
                     logger.info(status);  
                 }
                 
-                status = processIniFile(INTEROP,valuesInstanceInfo);
+                status = processIniFile(INTEROP,valuesInstanceInfo,options.environment);
                 
                 endMessage.add(status);
                 
@@ -329,7 +341,7 @@ public class MainBuilder {
                     logger.info(status);  
                 }
                 
-                status = processIniFile(JDELOG,valuesInstanceInfo);
+                status = processIniFile(JDELOG,valuesInstanceInfo,options.environment);
                 
                 endMessage.add(status);
                 
@@ -372,7 +384,7 @@ public class MainBuilder {
 
     private static void printUsage(OptionsParser parser) {
 
-        System.out.println("Usage: java -jar jd-create-jars-files.jar OPTIONS");
+        System.out.println("Usage: java -jar jd-create-ini-files.jar OPTIONS");
 
         System.out.println(parser.describeOptions(Collections.<String, String>emptyMap(), OptionsParser.HelpVerbosity.LONG));
 
@@ -428,7 +440,7 @@ public class MainBuilder {
 
     }
      
-    private static String processIniFile(String fileName, HashMap<String, String> valuesInstanceInfo) {
+    private static String processIniFile(String fileName, HashMap<String, String> valuesInstanceInfo, String environment) {
 
         String returnValue = "";
         
@@ -452,7 +464,7 @@ public class MainBuilder {
             // --------------------------------------------------
             // Create Target File
             // --------------------------------------------------
-            File targetFile = new File(WORKING_FOLDER + File.separator + fileName);
+            File targetFile = new File(WORKING_FOLDER + File.separator + File.separator + environment.toUpperCase() + File.separator + fileName);
             OutputStream outStream = new FileOutputStream(targetFile);
 
             // --------------------------------------------------

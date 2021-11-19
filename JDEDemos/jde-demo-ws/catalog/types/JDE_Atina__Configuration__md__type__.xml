@@ -19969,7 +19969,15 @@
         <metaDataModelPropertiesManager>
           <properties>
             <org.mule.common.metadata.property.StructureIdentifierMetaDataModelProperty>
-              <metaDataKey class="org.mule.common.metadata.DefaultMetaDataKey" reference="../../../../../org.mule.common.metadata.DefaultMetaDataKey"/>
+              <metaDataKey class="org.mule.common.metadata.DefaultMetaDataKey">
+                <id>oracle.e1.bssv.JP410000.InventoryManager.getItemPrice Result</id>
+                <category>WSDataSenseResolver</category>
+                <metaDataKeyPropertiesManager>
+                  <properties>
+                    <org.mule.common.metadata.key.property.dsql.DsqlFromMetaDataKeyProperty/>
+                  </properties>
+                </metaDataKeyPropertiesManager>
+              </metaDataKey>
               <derivedStructure>false</derivedStructure>
               <generatedStructure>true</generatedStructure>
             </org.mule.common.metadata.property.StructureIdentifierMetaDataModelProperty>

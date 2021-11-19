@@ -51,7 +51,7 @@ echo '   JDEAtinaServer Version' ${JDE_ATINA_SERVER_VERSION}>>/tmp/start.log
 echo '-LICENSE--------------------------------------------' >>/tmp/start.log 
 echo '   Code: ' $JDE_MICROSERVER_CODE >>/tmp/start.log
 echo '-MICROSERVER----------------------------------------' >>/tmp/start.log
-echo "   JDE_MICROSERVER_SECRET_KEY: " ${JDE_MICROSERVER_SECRET_KEY} >>/tmp/start.log
+#Secho "   JDE_MICROSERVER_SECRET_KEY: " ${JDE_MICROSERVER_SECRET_KEY} >>/tmp/start.log
 echo "   JDE_MICROSERVER_TOKEN_EXPIRATION: " ${JDE_MICROSERVER_TOKEN_EXPIRATION} >>/tmp/start.log
 echo "   JDE_MICROSERVER_ENTERPRISE_SERVER_NAME: " ${JDE_MICROSERVER_ENTERPRISE_SERVER_NAME} >>/tmp/start.log
 echo "   JDE_MICROSERVER_ENTERPRISE_SERVER_IP: " ${JDE_MICROSERVER_ENTERPRISE_SERVER_IP} >>/tmp/start.log

@@ -203,7 +203,7 @@ public class JDEWSCreateAndInvokeWS {
                  
             if( ex.getCause() != null)
             {
-                logger.error("Exception Clase  XXXX" + ex.getCause().getClass().getName());
+                logger.error("Exception Clase: " + ex.getCause().getClass().getName());
                 
                 errorMessage = ((BusinessServiceException) ex.getCause()).getMessage();
             }  
