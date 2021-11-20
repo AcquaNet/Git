@@ -34,6 +34,7 @@ import org.slf4j.MDC;
 import java.io.InputStream;  
 import java.util.Arrays;
 import java.util.List; 
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -53,8 +54,7 @@ public class Main {
      
     
     public enum ModesOptions {
-        TestGetAddressBookWS("TestGetAddressBookWS"),
-        TestIsConnected("TestIsConnected"),
+        TestLoggindAndGetAddressBookWS("TestLoggindAndGetAddressBookWS"),
         TestGetMetadataWSAddressBook("TestGetMetadataWSAddressBook");
 
         public final String modes;
@@ -80,7 +80,10 @@ public class Main {
     }
     
     public enum ModesHiddenOptions {
-        GetLog("GetLog");
+        GetLog("GetLog"),
+        TestIsConnectedWS("TestIsConnectedWS"),
+        TestLogoutWS("TestLogoutWS"),
+        TestLogindWS("TestLogindWS");
 
         public final String modesHidden;
 
@@ -136,21 +139,10 @@ public class Main {
         Options options = parser.getOptions(Options.class);
         
         System.out.println(options.values()); 
-          
-        if (   options.serverName.isEmpty()
-            || options.serverPort.isEmpty() 
-            || options.user.isEmpty()
-            || options.password.isEmpty()
-            || options.environment.isEmpty()) {
-
-            printUsage(parser);
-
-            return;
-        } 
         
         ModesOptions mode = ModesOptions.valueOfLabel(options.mode);
         ModesHiddenOptions modeHidden = ModesHiddenOptions.valueOfLabel(options.mode);
-        
+          
         if (mode==null && modeHidden == null)
         {
             printUsage(parser);        
@@ -160,14 +152,62 @@ public class Main {
             return;
         }
         
+        
+        if ( (  (  !options.mode.isEmpty()    
+                && (mode == ModesOptions.TestGetMetadataWSAddressBook ||  mode == ModesOptions.TestLoggindAndGetAddressBookWS)
+                ) ||
+                (  !options.mode.isEmpty()    
+                && (modeHidden == ModesHiddenOptions.TestLogindWS)
+                )
+              )
+            && (options.serverName.isEmpty()
+            || options.serverPort.isEmpty() 
+            || options.user.isEmpty()
+            || options.password.isEmpty()
+            || options.environment.isEmpty())) {
+
+            printUsage(parser);
+
+            return;
+        } 
+        
+        if ( (  
+                (  !options.mode.isEmpty()    
+                && (modeHidden == ModesHiddenOptions.TestIsConnectedWS || modeHidden == ModesHiddenOptions.TestLogoutWS || modeHidden == ModesHiddenOptions.GetLog )
+                )
+              )
+            && (    options.serverName.isEmpty()
+                 || options.serverPort.isEmpty() 
+               )) {
+
+            printUsage(parser);
+            
+            System.out.println("Error: "); 
+            System.out.println("   ");
+            System.out.println("   Mode ["+ options.mode + "] requires microservices values"); 
+
+            return;
+        }
+          
         if ( !options.mode.isEmpty() 
-             && mode == ModesOptions.TestGetAddressBookWS
+             && mode == ModesOptions.TestLoggindAndGetAddressBookWS
              && options.addressbookno.isEmpty())
         {
             printUsage(parser);    
             System.out.println("Error: "); 
             System.out.println("   ");
             System.out.println("   Mode ["+ options.mode + "] requires addressbookno option"); 
+            return;
+        }
+        
+        if ( !options.mode.isEmpty() 
+             && (modeHidden == ModesHiddenOptions.TestIsConnectedWS || modeHidden == ModesHiddenOptions.TestLogoutWS )
+             && options.sessionId.isEmpty())
+        {
+            printUsage(parser);    
+            System.out.println("Error: "); 
+            System.out.println("   ");
+            System.out.println("   Mode ["+ options.mode + "] requires sessionId option"); 
             return;
         }
             
@@ -217,7 +257,7 @@ public class Main {
             // ===========================  
             //
             
-            if(mode == ModesOptions.TestGetAddressBookWS || mode == ModesOptions.TestGetMetadataWSAddressBook)  
+            if(mode == ModesOptions.TestLoggindAndGetAddressBookWS || mode == ModesOptions.TestGetMetadataWSAddressBook)  
             {
                 try {
 
@@ -302,7 +342,7 @@ public class Main {
                 // ===========================  
                 // 
 
-                if(mode == ModesOptions.TestGetAddressBookWS)
+                if(mode == ModesOptions.TestLoggindAndGetAddressBookWS)
                 {
 
                     try {
@@ -394,11 +434,41 @@ public class Main {
             //
             
             Boolean isConnected = Boolean.FALSE;
-            
-            if(mode == ModesOptions.TestIsConnected)  
+             
+            if(modeHidden != null && modeHidden == ModesHiddenOptions.TestLogindWS)
             {
-               
                 try {
+                    
+                    SessionResponse tokenResponse = stub.login(
+                                        SessionRequest.newBuilder()
+                                        .setUser(configuracion.getUser())
+                                        .setPassword(configuracion.getPassword())
+                                        .setEnvironment(configuracion.getEnvironment())
+                                        .setRole(configuracion.getRole())
+                                        .setWsconnection(configuracion.getWsConnection())
+                                        .build());
+
+                    sessionID = (int) tokenResponse.getSessionId();
+
+                    System.out.println("User " + configuracion.getUserDetail() +  " connected with Session ID [" + tokenResponse.getSessionId() + "]");
+
+                    endMessage.add("User " + configuracion.getUserDetail() + " connected with Session ID " + tokenResponse.getSessionId());
+
+                } catch (Exception ex) {
+
+                    logger.error("Error with Login:  " + ex.getMessage(),ex) ;
+
+                    throw new RuntimeException("Error Logeando", null);
+
+                }
+                 
+            }
+            
+            if(modeHidden != null && modeHidden == ModesHiddenOptions.TestIsConnectedWS)
+            {
+                try {
+                    
+                    sessionID = Integer.parseInt(options.sessionId);
 
                     IsConnectedResponse tokenResponse = stub.isConnected(
                             IsConnectedRequest.newBuilder()
@@ -410,6 +480,19 @@ public class Main {
 
                     System.out.println("User is Connected with session ID [" + sessionID + "] ? " + isConnected);
 
+                } catch (io.grpc.StatusRuntimeException ex) {
+ 
+                    String[] msg = ex.getMessage().split(Pattern.quote("|"));
+                    
+                    if(msg.length == 3 && msg[1].startsWith("There is not a session in poll connections for session id"))
+                    {
+                        logger.error(msg[1]);
+                    } else
+                    {
+                        throw new RuntimeException("Error runnng isConnected: " + ex.getMessage(), null);
+                    }
+                    
+ 
                 } catch (Exception ex) {
 
                     logger.error("Error runnng isConnected" + ex.getMessage()) ;
@@ -417,10 +500,38 @@ public class Main {
                     throw new RuntimeException("Error runnng isConnected", null);
 
                 }
+                
+            }
             
+            if(modeHidden != null && modeHidden == ModesHiddenOptions.TestLogoutWS)
+            {
+                
+                try {
+                    
+                    sessionID = Integer.parseInt(options.sessionId);
+
+                    SessionResponse tokenResponse = stub.logout(
+                            LogoutRequest.newBuilder()
+                                    .setSessionId(sessionID)
+                                    .setWsconnection(configuracion.getWsConnection())
+                                    .build());
+
+                    sessionID = (int) tokenResponse.getSessionId();
+
+                    System.out.println("Logout [" + sessionID + "]");
+
+                    endMessage.add("User " + configuracion.getUserDetail() + " disconnected. Current session ID " + tokenResponse.getSessionId());
+
+                } catch (Exception ex) {
+
+                    logger.error("Error runnng logout" + ex.getMessage()) ;
+
+                    throw new RuntimeException("Error runnng logout", null);
+
+                }
+                
             }
               
-            
             if(modeHidden != null && modeHidden == ModesHiddenOptions.GetLog)
             {
                 
