@@ -18,6 +18,9 @@ import com.jde.jdeserverwp.servicios.IsConnectedRequest;
 import com.jde.jdeserverwp.servicios.IsConnectedResponse;
 import com.jde.jdeserverwp.servicios.JDEServiceGrpc;
 import com.jde.jdeserverwp.servicios.LogoutRequest;
+import com.jde.jdeserverwp.servicios.Operacion;
+import com.jde.jdeserverwp.servicios.OperacionesRequest;
+import com.jde.jdeserverwp.servicios.OperacionesResponse;
 import com.jde.jdeserverwp.servicios.ProcessTokenRequest;
 import com.jde.jdeserverwp.servicios.ProcessTokenResponse;
 import com.jde.jdeserverwp.servicios.SessionRequest;
@@ -63,9 +66,8 @@ public class Main {
      
     
     public enum ModesOptions {
-        TestLoggindAndGetAddressBookWS("TestLoggindAndGetAddressBookWS"),
-        TestGetMetadataWSAddressBook("TestGetMetadataWSAddressBook");
-
+        TestLoggindAndGetAddressBookWS("TestLoggindAndGetAddressBookWS");
+          
         public final String modes;
 
         private ModesOptions(String modes) {
@@ -96,6 +98,8 @@ public class Main {
         TestLogindWS("TestLogindWS"),
         TestGetAddressBookWSWithSessionId("TestGetAddressBookWSWithSessionId"),
         CreateToken("CreateToken"),
+        GetMetadataWS("GetMetadataWS"),
+        GetMetadataOperations("GetMetadataOperations"),
         ParseToken("ParseToken");
 
         public final String modesHidden;
@@ -175,10 +179,13 @@ public class Main {
         }
         
         if ( (  (  !options.mode.isEmpty()    
-                && (mode == ModesOptions.TestGetMetadataWSAddressBook ||  mode == ModesOptions.TestLoggindAndGetAddressBookWS)
+                && (mode == ModesOptions.TestLoggindAndGetAddressBookWS)
                 ) ||
                 (  !options.mode.isEmpty()    
-                && (modeHidden == ModesHiddenOptions.TestLogindWS || modeHidden == ModesHiddenOptions.CreateToken)
+                && (modeHidden == ModesHiddenOptions.GetMetadataWS 
+                    || modeHidden == ModesHiddenOptions.GetMetadataOperations
+                    || modeHidden == ModesHiddenOptions.TestLogindWS 
+                    || modeHidden == ModesHiddenOptions.CreateToken)
                 )
               )
             && (options.serverName.isEmpty()
@@ -260,6 +267,18 @@ public class Main {
             System.out.println("   Mode ["+ options.mode + "] requires Token option"); 
             return;
         }
+        
+        if ( !options.mode.isEmpty() 
+             && (modeHidden == ModesHiddenOptions.GetMetadataWS
+                )
+             && options.operationId.isEmpty())
+        {
+            printUsage(parser);    
+            System.out.println("Error: "); 
+            System.out.println("   ");
+            System.out.println("   Mode ["+ options.mode + "] requires operationId option"); 
+            return;
+        }
             
         String operationKey = "oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook";
         
@@ -315,7 +334,9 @@ public class Main {
             // ===========================  
             //
             
-            if(mode == ModesOptions.TestLoggindAndGetAddressBookWS || mode == ModesOptions.TestGetMetadataWSAddressBook)  
+            if(mode == ModesOptions.TestLoggindAndGetAddressBookWS 
+                    || modeHidden == ModesHiddenOptions.GetMetadataWS
+                    || modeHidden == ModesHiddenOptions.GetMetadataOperations)  
             {
                 try {
 
@@ -344,13 +365,64 @@ public class Main {
                 }
                 
                 // ===========================  
+                // Get Operations                       
+                // ===========================  
+                //
+                if(modeHidden == ModesHiddenOptions.GetMetadataOperations)
+                {
+                    try {
+
+                        OperacionesResponse operaciones = stub.operaciones(
+                            OperacionesRequest.newBuilder()
+                                    .setConnectorName("WS")
+                                    .setUser(configuracion.getUser())
+                                    .setPassword(configuracion.getPassword())
+                                    .setEnvironment(configuracion.getEnvironment())
+                                    .setRole(configuracion.getRole())
+                                    .setSessionId(sessionID)
+                                    .setWsconnection(configuracion.getWsConnection())
+                                    .build());
+   
+                        File output = new File("/tmp/jd_operations.txt");
+                        
+                        FileOutputStream fop = new FileOutputStream(output);
+                        
+                        if (!output.exists()) {
+                            output.createNewFile();
+                        }       
+                            
+                        ByteString.copyFromUtf8("--------------------------------------------------------------------------").writeTo(fop);
+                        ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
+                        
+                        for (Operacion operacion : operaciones.getOperacionesList()) {
+                            
+                            ByteString.copyFromUtf8("Operacion [" + operacion.getNombreOperacion() + "]").writeTo(fop);
+                            ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
+        
+                        }
+ 
+                        fop.flush();
+                        
+                        fop.close();
+                        
+                        endMessage.add("Metadata File: " + output);
+                        
+                    } catch (Exception ex) {
+
+                        logger.error("Error getting Metadata Operations: " + ex.getMessage(),ex);
+
+                        throw new RuntimeException("Error Logeando", ex);
+
+                    }
+                    
+                }
+                
+                // ===========================  
                 // Get Metadata                       
                 // ===========================  
                 //
-            
-                
-
-                if(mode == ModesOptions.TestGetMetadataWSAddressBook)
+             
+                if(modeHidden == ModesHiddenOptions.GetMetadataWS)
                 {
                     try {
 
@@ -363,33 +435,59 @@ public class Main {
                                         .setRole(configuracion.getRole())
                                         .setSessionId(sessionID)
                                         .setWsconnection(configuracion.getWsConnection())
-                                        .setOperacionKey(operationKey)
+                                        .setOperacionKey(options.operationId)
                                         .setTransactionID(transactionId)
                                         .build());
-
-                        logger.info("Input  ");
-
+ 
+                        String[] operationArray = options.operationId.split("\\.");
+                        
+                        File output = new File("/tmp/jd_" + operationArray[3] + "_" + operationArray[4] + "_" + operationArray[5] +".txt");
+                        
+                        FileOutputStream fop = new FileOutputStream(output);
+                        
+                        if (!output.exists()) {
+                            output.createNewFile();
+                        }       
+                        
+                        ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
+                           
+                        ByteString.copyFromUtf8("--------------------------------------------------------------------------").writeTo(fop);                       
+                        ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
+                        ByteString.copyFromUtf8("Input").writeTo(fop);
+                        ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
+                        
                         for (TipoDelParametroInput parameter : operaciones.getListaDeParametrosInputList()) {
 
                             int level = 0;
 
-                            printParameter(parameter, level);
+                            saveParameterInput(parameter, level, fop);
 
-                        }
-
-                        logger.info("Output  ");
-
+                        } 
+                
+                        ByteString.copyFromUtf8("--------------------------------------------------------------------------").writeTo(fop);
+                        ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
+                        ByteString.copyFromUtf8("Ouptut").writeTo(fop);
+                        ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
+                         
                         for (TipoDelParametroOutput parameter : operaciones.getListaDeParametrosOutputList()) {
 
                             int level = 0;
 
-                            printParameterOutput(parameter, level);
+                            saveParameterOutput(parameter, level, fop);
 
                         }
-
+                        
+                        ByteString.copyFromUtf8("--------------------------------------------------------------------------").writeTo(fop);
+                        
+                        fop.flush();
+                        
+                        fop.close();
+                        
+                        endMessage.add("Metadata File: " + output);
+                        
                     } catch (Exception ex) {
 
-                        logger.error("Error ejecutando metodo ");
+                        logger.error("Error getting Metadata: " + ex.getMessage(),ex);
 
                         throw new RuntimeException("Error Logeando", ex);
 
@@ -857,6 +955,26 @@ public class Main {
 
     }
     
+    private static void saveParameterInput(TipoDelParametroInput parameter, int level,FileOutputStream fop) throws IOException {
+        
+        level++;
+
+        String space = StringUtils.repeat(".", level * 2);
+        
+        ByteString.copyFromUtf8(space + "Parameter Name: [" + parameter.getNombreDelParametro() + "]" + " Type [" + parameter.getTipoDelParametroJava() + "] Repeated: " + parameter.getRepeatedParameter()).writeTo(fop);
+        ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
+        
+        for (TipoDelParametroInput input : parameter.getSubParametroList()) {
+            if (!input.getNombreDelParametro().isEmpty()) {
+                saveParameterInput(input, level,fop);
+            }
+
+        }
+        
+        fop.flush();
+
+    }
+    
     private static void printParameter(TipoDelParametroInput parameter, int level) {
         level++;
 
@@ -869,6 +987,23 @@ public class Main {
                 printParameter(input, level);
             }
 
+        }
+
+    }
+    
+    private static void saveParameterOutput(TipoDelParametroOutput parameter, int level, FileOutputStream fop) throws IOException {
+    
+        level++;
+
+        String space = StringUtils.repeat(".", level * 2);
+
+        ByteString.copyFromUtf8(space + "Parameter Name: [" + parameter.getNombreDelParametro() + "]" + " Type [" + parameter.getTipoDelParametroJava() + "] Repeated: " + parameter.getRepeatedParameter()).writeTo(fop);
+        ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
+        
+        for (TipoDelParametroOutput input : parameter.getSubParametroList()) {
+            if (!input.getNombreDelParametro().isEmpty()) {
+                saveParameterOutput(input, level,fop);
+            }
         }
 
     }
