@@ -37,6 +37,8 @@ service JDEService {
 
   rpc Login(SessionRequest) returns (SessionResponse) {}
 
+  rpc ProcessToken(ProcessTokenRequest) returns (ProcessTokenResponse) {}
+
   rpc IsConnected(IsConnectedRequest) returns (IsConnectedResponse) {}
   
   rpc Operaciones(OperacionesRequest) returns (OperacionesResponse) {}
@@ -48,7 +50,7 @@ service JDEService {
   rpc EjecutarOperacion(EjecutarOperacionRequest) returns (EjecutarOperacionResponse) {}
 
   rpc CapturarLog(CapturarLogRequest) returns (stream CapturarLogResponse) {}
-  
+   
 }
 
 // Configuracion del la Conexion a JDE
@@ -87,6 +89,26 @@ message SessionResponse {
   int64 sessionId = 1;
   string jwtToken = 2;
   string addressBookNumber = 3;
+}
+
+// Configuracion del la Conexion a JDE
+message ProcessTokenRequest {
+  string action = 15;
+  string user = 10;
+  string password = 11;
+  string environment = 12;
+  string role = 13;  
+  string jwtToken = 14; 
+  int64 transactionID = 16;
+}
+
+// Configuracion del la Conexion a JDE
+message ProcessTokenResponse {
+    string user = 10; 
+    string environment = 11;
+    string role = 12; 
+    string jwtToken = 13; 
+    int64 sessionId = 14;
 }
 
 message OperacionesRequest {
