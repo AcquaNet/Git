@@ -69,24 +69,32 @@ public class Options extends OptionsBase {
     )
     public String serverPort;
       
+    
+    // Mode: TestWS: Test BSFN
     @Option(
             name = "mode",
-            abbrev = 'd',
-            help = "Debug Option",
+            abbrev = 'm',
+            help = "Modes",
             category = "startup",
-            defaultValue = "B"
+            defaultValue = "Test_WS_GetAB"
     )
     
     public String mode;
     
     @Option(
-            name = "entityId",
+            name = "addressbookno",
             abbrev = 'a',
-            help = "Address Book Id",
+            help = "Address Book No",
             category = "startup",
-            defaultValue = "1"
+            defaultValue = ""
     )
     
-    public String entityId;
+    public String addressbookno;
+
+     
+    public String values() {
+        return  "user=" + user + ", environment=" + environment + ", role=" + role + ", serverName=" + serverName + ", serverPort=" + serverPort + ", mode=" + mode + ", entityId=" + addressbookno ;
+    }
+     
       
 }

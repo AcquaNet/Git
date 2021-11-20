@@ -4,10 +4,7 @@
  * and open the template in the editor.
  */
 package com.atina.ppal;
- 
   
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.devtools.common.options.OptionsParser;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionRequest;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
@@ -34,7 +31,7 @@ import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC; 
-import java.io.InputStream; 
+import java.io.InputStream;  
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
@@ -52,14 +49,46 @@ public class Main {
      
     private static final String INI_FOLDER = "";
     private static final String WORKING_FOLDER = "/tmp/build_jde_libs";
+     
+    
+    public enum ModesOptions {
+        TestWS("TestWS"),
+        TestWSWithMetadata("TestWSWithMetadata");
+
+        public final String modes;
+
+        private ModesOptions(String modes) {
+            this.modes = modes;
+        }
+
+        public static ModesOptions valueOfLabel(String label) {
+            for (ModesOptions e : values()) {
+                if (e.modes.equals(label)) {
+                    return e;
+                }
+            }
+            return null;
+        }
+    }
     
  
     /**
      * @param args the command line arguments
+     * @throws java.io.IOException
      */
     public static void main(String[] args) throws IOException {
  
         showBanner();
+        
+        // -----------------------------------------------
+        // Setting Logging 
+        // -----------------------------------------------
+        //
+        setupLogging(WORKING_FOLDER);
+        
+        System.out.println("------------------------------------------------------------------------");
+        System.out.println("Checking Microservice..."); 
+        
                 
         // -----------------------------------------------
         // create the command line parser
@@ -72,30 +101,49 @@ public class Main {
         // create the Options
         // -----------------------------------------------
         Options options = parser.getOptions(Options.class);
-
-        if (options.serverName.isEmpty()
-                || options.serverPort.isEmpty() 
-                || options.user.isEmpty()
-                || options.password.isEmpty()
-                || options.environment.isEmpty()) {
+        
+        System.out.println(options.values()); 
+          
+        if (   options.serverName.isEmpty()
+            || options.serverPort.isEmpty() 
+            || options.user.isEmpty()
+            || options.password.isEmpty()
+            || options.environment.isEmpty()) {
 
             printUsage(parser);
 
             return;
         } 
         
-        ArrayList<String> endMessage = new ArrayList<String>();
+        ModesOptions mode = ModesOptions.valueOfLabel(options.mode);
+        
+        if (mode==null)
+        {
+            printUsage(parser);        
+            System.out.println("Error: "); 
+            System.out.println("   ");
+            System.out.println("   Invalid Mode [" + options.mode + "] Valid values: " + java.util.Arrays.asList(ModesOptions.values()));  
+            return;
+        }
+        
+        if ( !options.mode.isEmpty() 
+             && mode == ModesOptions.TestWS
+             && options.addressbookno.isEmpty())
+        {
+            printUsage(parser);    
+            System.out.println("Error: "); 
+            System.out.println("   ");
+            System.out.println("   Mode ["+ options.mode + "] requires addressbookno option"); 
+            return;
+        }
+            
+        
+        ArrayList<String> endMessage = new ArrayList<>();
         
         ManagedChannel channel = null;
 
         try {
-            
-            // -----------------------------------------------
-            // Setting Logging 
-            // -----------------------------------------------
-            //
-            setupLogging(WORKING_FOLDER);
-            
+             
             // -----------------------------------------------
             // Create Configuration
             // -----------------------------------------------
@@ -129,8 +177,7 @@ public class Main {
             JDEServiceGrpc.JDEServiceBlockingStub stub = JDEServiceGrpc.newBlockingStub(channel);
             
             int sessionID = 0;
-            
-            
+             
             // ===========================  
             // Login                       
             // ===========================  
@@ -167,7 +214,7 @@ public class Main {
             
             Boolean isConnected = Boolean.FALSE;
             
-            if(!options.mode.equals("0"))
+            if(options.mode.equals("1"))
             {
                
                 try {
@@ -199,7 +246,7 @@ public class Main {
             
             String operationKey = "oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook";
             
-            if(!options.mode.equals("0"))
+            if(mode == ModesOptions.TestWSWithMetadata)
             {
                 try {
 
@@ -249,57 +296,62 @@ public class Main {
             // Invoke WS              
             // ===========================  
             // 
-            try {
-                 
-                EjecutarOperacionValores.Builder itemId = EjecutarOperacionValores.newBuilder();
-                itemId.setNombreDelParametro("entityId");
-                itemId.setValueAsInteger(28);
-
-                EjecutarOperacionValores.Builder item = EjecutarOperacionValores.newBuilder();
-                item.setNombreDelParametro("entity");
-                item.addListaDeValores(itemId);
-
-                EjecutarOperacionResponse ejecutarOperacionesResponse = stub.ejecutarOperacion(
-                        EjecutarOperacionRequest.newBuilder()
-                                .setConnectorName("WS")
-                                .setOperacionKey(operationKey)
-                                .setUser(configuracion.getUser())
-                                .setPassword(configuracion.getPassword())
-                                .setEnvironment(configuracion.getEnvironment())
-                                .setRole(configuracion.getRole())
-                                .setWsconnection(configuracion.getWsConnection())
-                                .setSessionId(sessionID)
-                                .addListaDeValores(item.build())
-                                .build());
-
-                logger.info("AB: ");
+            
+            if(mode == ModesOptions.TestWS)
+            {
                 
-                List<EjecutarOperacionResponse> values = ejecutarOperacionesResponse.getListaDeValoresList();
-                
-                if (values != null && !values.isEmpty()) {
+                try {
 
-                    for (EjecutarOperacionResponse response : values) {
-                        if (response.getNombreDelParametro().equals("addressBookResult")) {
-                            for (EjecutarOperacionResponse response1 : response.getListaDeValoresList()) {
-                                for (EjecutarOperacionResponse response2 : response1.getListaDeValoresList()) {
-                                    if (response2.getNombreDelParametro().equals("description1")) {
-                                        endMessage.add("Address Book Name: " + response2.getValueAsString());
-                                    }
+                    EjecutarOperacionValores.Builder itemId = EjecutarOperacionValores.newBuilder();
+                    itemId.setNombreDelParametro("entityId");
+                    itemId.setValueAsInteger(Integer.parseInt(options.addressbookno));
+
+                    EjecutarOperacionValores.Builder item = EjecutarOperacionValores.newBuilder();
+                    item.setNombreDelParametro("entity");
+                    item.addListaDeValores(itemId);
+
+                    EjecutarOperacionResponse ejecutarOperacionesResponse = stub.ejecutarOperacion(
+                            EjecutarOperacionRequest.newBuilder()
+                                    .setConnectorName("WS")
+                                    .setOperacionKey(operationKey)
+                                    .setUser(configuracion.getUser())
+                                    .setPassword(configuracion.getPassword())
+                                    .setEnvironment(configuracion.getEnvironment())
+                                    .setRole(configuracion.getRole())
+                                    .setWsconnection(configuracion.getWsConnection())
+                                    .setSessionId(sessionID)
+                                    .addListaDeValores(item.build())
+                                    .build());
+
+
+                    List<EjecutarOperacionResponse> values = ejecutarOperacionesResponse.getListaDeValoresList();
+
+                    if (values != null && !values.isEmpty()) {
+
+                        for (EjecutarOperacionResponse response : values) {
+                            if (response.getNombreDelParametro().equals("addressBookResult")) {
+                                for (EjecutarOperacionResponse response1 : response.getListaDeValoresList()) {
+                                    for (EjecutarOperacionResponse response2 : response1.getListaDeValoresList()) {
+                                        if (response2.getNombreDelParametro().equals("description1")) {
+                                            endMessage.add("Address Book Name: " + response2.getValueAsString());
+                                        }
+                                    } 
                                 } 
                             } 
                         } 
-                    } 
+                    }
+
+                    logger.info("WS JP010000.AddressBookManager.getAddressBook has been called correctly");
+
                 }
- 
-                logger.info(ejecutarOperacionesResponse.toString());
-                
-            }
-            catch (Exception ex) {
+                catch (Exception ex) {
 
-                logger.error("Error runnng isConnected" + ex.getMessage()) ;
+                    logger.error("Error runnng isConnected" + ex.getMessage()) ;
 
-                throw new RuntimeException("Error runnng isConnected", null);
+                    throw new RuntimeException("Error runnng isConnected", null);
 
+                }
+            
             }
              
             // ===========================  
@@ -316,7 +368,7 @@ public class Main {
 
                 sessionID = (int) tokenResponse.getSessionId();
 
-                System.out.println("Logout [" + sessionID + "] ? ");
+                System.out.println("Logout [" + sessionID + "]");
                 
                 endMessage.add("User " + configuracion.getUserDetail() + " disconnected. Current session ID " + tokenResponse.getSessionId());
 
@@ -327,6 +379,14 @@ public class Main {
                 throw new RuntimeException("Error runnng logout", null);
 
             }
+            
+            logger.info("------------------------------------------------------------------------");
+            logger.info("CHECK SUCESSS");
+            logger.info("------------------------------------------------------------------------");
+            for (String line : endMessage) {
+                logger.info(line);
+            }
+            logger.info("------------------------------------------------------------------------");
              
                
         } catch (Exception ex) {
@@ -341,13 +401,7 @@ public class Main {
             channel.shutdown();
         }
         
-        logger.info("------------------------------------------------------------------------");
-        logger.info("GENERATION SUCESSS");
-        logger.info("------------------------------------------------------------------------");
-        for (String line : endMessage) {
-            logger.info(line);
-        }
-        logger.info("------------------------------------------------------------------------");
+        
 
     }
 
@@ -355,8 +409,14 @@ public class Main {
 
         System.out.println("Usage: java -jar jd-check-microservice OPTIONS");
 
-        System.out.println(parser.describeOptions(Collections.<String, String>emptyMap(), OptionsParser.HelpVerbosity.LONG));
-
+        System.out.println("   " + parser.describeOptions(Collections.<String, String>emptyMap(), OptionsParser.HelpVerbosity.LONG));
+        
+        System.out.println("   ");
+        
+        System.out.println("   " + "Mode values:" + java.util.Arrays.asList(ModesOptions.values()));
+        
+        System.out.println("   ");
+          
     }
 
     private static void setupLogging(String destDir) {
