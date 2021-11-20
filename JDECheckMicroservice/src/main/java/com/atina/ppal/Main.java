@@ -31,14 +31,10 @@ import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC; 
-import java.io.InputStream;  
-import java.security.Key;
-import java.util.Arrays;
-import java.util.Date;
+import java.io.InputStream;   
+import java.util.Arrays; 
 import java.util.List; 
-import java.util.regex.Pattern;
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
+import java.util.regex.Pattern; 
 import org.apache.commons.lang3.StringUtils;
 
 /**
