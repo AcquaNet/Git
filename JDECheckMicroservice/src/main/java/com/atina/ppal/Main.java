@@ -69,6 +69,12 @@ public class Main {
             }
             return null;
         }
+        
+        public static ModesOptions[] publicValues() 
+        { 
+            return ModesOptions.values();
+        
+        }
     }
     
  
@@ -122,7 +128,7 @@ public class Main {
             printUsage(parser);        
             System.out.println("Error: "); 
             System.out.println("   ");
-            System.out.println("   Invalid Mode [" + options.mode + "] Valid values: " + java.util.Arrays.asList(ModesOptions.values()));  
+            System.out.println("   Invalid Mode [" + options.mode + "] Valid values: " + java.util.Arrays.asList(ModesOptions.publicValues()));  
             return;
         }
         
@@ -413,7 +419,7 @@ public class Main {
         
         System.out.println("   ");
         
-        System.out.println("   " + "Mode values:" + java.util.Arrays.asList(ModesOptions.values()));
+        System.out.println("   " + "Mode values:" + java.util.Arrays.asList(ModesOptions.publicValues()));
         
         System.out.println("   ");
           

@@ -93,7 +93,7 @@ public class Options extends OptionsBase {
 
      
     public String values() {
-        return  "user=" + user + ", environment=" + environment + ", role=" + role + ", serverName=" + serverName + ", serverPort=" + serverPort + ", mode=" + mode + ", entityId=" + addressbookno ;
+        return  "user=" + user + ", environment=" + environment + ", role=" + role + ", serverName=" + serverName + ", serverPort=" + serverPort + ", mode=" + mode + ", addressbookno=" + addressbookno ;
     }
      
       
