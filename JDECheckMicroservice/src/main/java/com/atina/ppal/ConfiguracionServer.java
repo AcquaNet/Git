@@ -15,6 +15,7 @@ public class ConfiguracionServer {
     private String role;
     private Integer session;
     private Boolean wsConnection;
+    private long tokenExpiration;
 
     public ConfiguracionServer() {
         super();
@@ -100,9 +101,17 @@ public class ConfiguracionServer {
          return "User: " + user + " in environment " + environment;
     }
 
+    public long getTokenExpiration() {
+        return tokenExpiration;
+    }
+
+    public void setTokenExpiration(long tokenExpiration) {
+        this.tokenExpiration = tokenExpiration;
+    }
+
     @Override
     public String toString() {
-        return "Configuracion{" + "servidorServicio=" + servidorServicio + ", puertoServicio=" + puertoServicio + ", user=" + user + ", password=" + password + ", environment=" + environment + ", role=" + role + ", session=" + session + ", wsConnection=" + wsConnection + '}';
+        return "ConfiguracionServer{" + "servidorServicio=" + servidorServicio + ", puertoServicio=" + puertoServicio + ", user=" + user + ", environment=" + environment + ", role=" + role + ", session=" + session + ", wsConnection=" + wsConnection + ", tokenExpiration=" + tokenExpiration + '}';
     }
-    
+      
 }

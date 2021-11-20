@@ -21,6 +21,9 @@ import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
 import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -32,9 +35,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC; 
 import java.io.InputStream;  
+import java.security.Key;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List; 
 import java.util.regex.Pattern;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -85,7 +92,8 @@ public class Main {
         TestIsConnectedWS("TestIsConnectedWS"),
         TestLogoutWS("TestLogoutWS"),
         TestLogindWS("TestLogindWS"),
-        TestGetAddressBookWSWithSessionId("TestGetAddressBookWSWithSessionId");
+        TestGetAddressBookWSWithSessionId("TestGetAddressBookWSWithSessionId"),
+        CreateToken("CreateToken");
 
         public final String modesHidden;
 
@@ -167,7 +175,7 @@ public class Main {
                 && (mode == ModesOptions.TestGetMetadataWSAddressBook ||  mode == ModesOptions.TestLoggindAndGetAddressBookWS)
                 ) ||
                 (  !options.mode.isEmpty()    
-                && (modeHidden == ModesHiddenOptions.TestLogindWS)
+                && (modeHidden == ModesHiddenOptions.TestLogindWS || modeHidden == ModesHiddenOptions.CreateToken)
                 )
               )
             && (options.serverName.isEmpty()
@@ -267,6 +275,8 @@ public class Main {
             JDEServiceGrpc.JDEServiceBlockingStub stub = JDEServiceGrpc.newBlockingStub(channel);
             
             int sessionID = 0;
+            
+            String token = "";
              
             // ===========================  
             // Login                       
@@ -451,7 +461,7 @@ public class Main {
             
             Boolean isConnected = Boolean.FALSE;
              
-            if(modeHidden != null && modeHidden == ModesHiddenOptions.TestLogindWS)
+            if(modeHidden != null && (modeHidden == ModesHiddenOptions.TestLogindWS || modeHidden == ModesHiddenOptions.CreateToken))
             {
                 try {
                     
@@ -465,10 +475,20 @@ public class Main {
                                         .build());
 
                     sessionID = (int) tokenResponse.getSessionId();
+                    
+                    token = tokenResponse.getJwtToken();
 
                     System.out.println("User " + configuracion.getUserDetail() +  " connected with Session ID [" + tokenResponse.getSessionId() + "]");
-
-                    endMessage.add("User " + configuracion.getUserDetail() + " connected with Session ID " + tokenResponse.getSessionId());
+                    System.out.println("     Token [" + token + "]");
+   
+                    if(modeHidden == ModesHiddenOptions.TestLogindWS)
+                    {
+                        endMessage.add("User " + configuracion.getUserDetail() + " connected with Session ID " + tokenResponse.getSessionId());
+                        
+                    }
+                    
+                    endMessage.add("Token: [" + token + "]");
+                    
 
                 } catch (Exception ex) {
 
@@ -606,7 +626,7 @@ public class Main {
                     }
 
             }
-              
+           
             if(modeHidden != null && modeHidden == ModesHiddenOptions.GetLog)
             {
                 
@@ -737,6 +757,5 @@ public class Main {
         }
 
     }
- 
-      
+  
 }
