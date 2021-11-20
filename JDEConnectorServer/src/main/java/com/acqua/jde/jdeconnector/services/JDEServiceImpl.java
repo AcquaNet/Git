@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.cfg.MapperConfig;
 import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
-import com.jde.jdeserverwp.servicios.CapturarLogResponse;
+import com.jde.jdeserverwp.servicios.CapturarLogResponse; 
 import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
 import com.jde.jdeserverwp.servicios.GetJsonsForOperationResponse;
@@ -37,6 +37,7 @@ import com.jde.jdeserverwp.servicios.IsConnectedResponse;
 import com.jde.jdeserverwp.servicios.JDEServiceGrpc;
 import com.jde.jdeserverwp.servicios.Operacion;
 import com.jde.jdeserverwp.servicios.OperacionesResponse;
+import com.jde.jdeserverwp.servicios.ProcessTokenResponse;
 import com.jde.jdeserverwp.servicios.SessionResponse; 
 import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
 import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
@@ -76,8 +77,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import java.lang.reflect.Field;
 import java.nio.file.Paths;
 import java.security.Key;
-import java.util.Calendar;
-import java.util.logging.Level;
+import java.util.Calendar; 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
@@ -286,6 +286,116 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         logger.info("END TID: " + request.getTransactionID());
         logger.info("JDE Login: End Login");
         logger.info("-------------------------------------------------------------------------------");
+
+    } 
+    
+    @Override
+    public void processToken(com.jde.jdeserverwp.servicios.ProcessTokenRequest request,
+            io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.ProcessTokenResponse> responseObserver) {
+
+        
+    	logger.debug("BEGIN TID: " + request.getTransactionID() +  "======================================================================================");
+        logger.debug("JDE ATINA Process Token. Action " + request.getAction());
+        
+        // -----------------------------------------
+        // Generar Session
+        // -----------------------------------------
+        //
+        
+        try {
+        
+            Configuracion config = new Configuracion();
+            
+            if(request.getAction().equals("create"))
+            { 
+                config.setUser(request.getUser());
+
+                config.setPassword(request.getPassword());
+
+                config.setEnvironment(request.getEnvironment());
+
+                config.setRole(request.getRole());
+
+                config.setTokenExpiration(configuracion.getTokenExpiration());         
+
+                logger.info("              Request Received: " + config.toString());
+                
+                // -----------------------------------------
+                // Process JWT Token
+                // -----------------------------------------
+                // 
+
+                ProcessTokenResponse.Builder responseBuilder = ProcessTokenResponse.newBuilder();
+
+                responseBuilder.setJwtToken(getJWT(config)); 
+
+                responseObserver.onNext(responseBuilder.build());
+
+                responseObserver.onCompleted();
+
+
+            }
+
+            if(request.getAction().equals("parse"))
+            {
+
+                if(!request.getJwtToken().isEmpty())
+                {
+             
+                    config = getConfigFromJWT(request.getJwtToken()); 
+                
+                    logger.debug("              Token converted: " + config.toString());
+                   
+                } else
+                {
+                    
+                    throw new JDESingleConnectionException("Token not informed");
+                }
+                
+                // -----------------------------------------
+                // Process JWT Token
+                // -----------------------------------------
+                // 
+
+                ProcessTokenResponse.Builder responseBuilder = ProcessTokenResponse.newBuilder();
+
+                responseBuilder.setUser(METADATA); 
+                
+                responseBuilder.setEnvironment(METADATA);
+                
+                responseBuilder.setRole(METADATA);
+                
+                responseBuilder.setSessionId(counter);
+                  
+                responseObserver.onNext(responseBuilder.build());
+
+                responseObserver.onCompleted();
+                
+            }
+         
+        }  catch (Exception ex) {
+            
+            String msg = "Error Processing Token: " + ex.getMessage();
+            logger.error(msg, ex);
+            logger.error("END TID: " + request.getTransactionID());
+            logger.error("-------------------------------------------------------------------------------");
+            
+            StringBuilder sb = new StringBuilder();
+            sb.append("Error Processing Token");
+            sb.append("|");
+            sb.append(ex.getMessage().replaceAll("\\|", "/"));
+            sb.append("|%InternalServerException%");
+ 
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(sb.toString())
+                    .withCause(ex)
+                    .asRuntimeException());
+             
+        } 
+        
+        logger.debug("END TID: " + request.getTransactionID());
+        logger.debug("JDE End Process Token");
+        logger.debug("-------------------------------------------------------------------------------");
 
     } 
     
