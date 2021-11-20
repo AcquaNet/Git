@@ -8,7 +8,7 @@
   
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} %msg%n</pattern>
         </encoder>
     </appender>
   
@@ -42,7 +42,6 @@
     </logger>  
     
     <logger name="com.acqua.jde.jdeconnectorserver.JDEConnectorServer" level="DEBUG"/> 
-   
     
     <logger name="com.acqua.atina.jdeconnectorservice.JDEConnectorService" level="DEBUG"/>
     
