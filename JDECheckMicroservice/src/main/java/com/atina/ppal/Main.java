@@ -12,6 +12,7 @@ import com.jde.jdeserverwp.servicios.CapturarLogResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionRequest;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
+import com.jde.jdeserverwp.servicios.GetJsonsForOperationResponse;
 import com.jde.jdeserverwp.servicios.GetMetadataRequest;
 import com.jde.jdeserverwp.servicios.GetMetadataResponse;
 import com.jde.jdeserverwp.servicios.IsConnectedRequest;
@@ -99,6 +100,7 @@ public class Main {
         TestGetAddressBookWSWithSessionId("TestGetAddressBookWSWithSessionId"),
         CreateToken("CreateToken"),
         GetMetadataWS("GetMetadataWS"),
+        GetJsonWS("GetJsonWS"),
         GetMetadataOperations("GetMetadataOperations"),
         ParseToken("ParseToken");
 
@@ -183,6 +185,7 @@ public class Main {
                 ) ||
                 (  !options.mode.isEmpty()    
                 && (modeHidden == ModesHiddenOptions.GetMetadataWS 
+                    || modeHidden == ModesHiddenOptions.GetJsonWS
                     || modeHidden == ModesHiddenOptions.GetMetadataOperations
                     || modeHidden == ModesHiddenOptions.TestLogindWS 
                     || modeHidden == ModesHiddenOptions.CreateToken)
@@ -270,7 +273,7 @@ public class Main {
         
         if ( !options.mode.isEmpty() 
              && (modeHidden == ModesHiddenOptions.GetMetadataWS
-                )
+                || modeHidden == ModesHiddenOptions.GetJsonWS)
              && options.operationId.isEmpty())
         {
             printUsage(parser);    
@@ -336,7 +339,8 @@ public class Main {
             
             if(mode == ModesOptions.TestLoggindAndGetAddressBookWS 
                     || modeHidden == ModesHiddenOptions.GetMetadataWS
-                    || modeHidden == ModesHiddenOptions.GetMetadataOperations)  
+                    || modeHidden == ModesHiddenOptions.GetMetadataOperations
+                    || modeHidden == ModesHiddenOptions.GetJsonWS)  
             {
                 try {
 
@@ -484,6 +488,55 @@ public class Main {
                         fop.close();
                         
                         endMessage.add("Metadata File: " + output);
+                        
+                    } catch (Exception ex) {
+
+                        logger.error("Error getting Metadata: " + ex.getMessage(),ex);
+
+                        throw new RuntimeException("Error Logeando", ex);
+
+                    }
+
+                }
+                
+                // ===========================  
+                // Get Metadata                       
+                // ===========================  
+                //
+             
+                if(modeHidden == ModesHiddenOptions.GetJsonWS)
+                {
+                    try {
+
+                        GetJsonsForOperationResponse operaciones = stub.getJsonsForOperation(
+                                GetMetadataRequest.newBuilder()
+                                .setConnectorName("WS")
+                                .setUser(configuracion.getUser())
+                                .setPassword(configuracion.getPassword())
+                                .setEnvironment(configuracion.getEnvironment())
+                                .setRole(configuracion.getRole())
+                                .setSessionId(sessionID)
+                                .setWsconnection(configuracion.getWsConnection())
+                                .setOperacionKey(options.operationId)
+                                .build());
+ 
+                        String[] operationArray = options.operationId.split("\\.");
+                        
+                        File output = new File("/tmp/jd_" + operationArray[3] + "_" + operationArray[4] + "_" + operationArray[5] +".json");
+                        
+                        FileOutputStream fop = new FileOutputStream(output);
+                        
+                        if (!output.exists()) {
+                            output.createNewFile();
+                        }       
+                        
+                        ByteString.copyFromUtf8(operaciones.getInputAsJson()).writeTo(fop);
+                         
+                        fop.flush();
+                        
+                        fop.close();
+                        
+                        endMessage.add("JSON File: " + output);
                         
                     } catch (Exception ex) {
 
