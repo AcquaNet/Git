@@ -6,6 +6,9 @@
 package com.atina.ppal;
   
 import com.google.devtools.common.options.OptionsParser;
+import com.google.shade.protobuf.ByteString;
+import com.jde.jdeserverwp.servicios.CapturarLogRequest;
+import com.jde.jdeserverwp.servicios.CapturarLogResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionRequest;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
@@ -23,6 +26,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader; 
 import java.nio.charset.StandardCharsets;
@@ -32,7 +36,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC; 
 import java.io.InputStream;   
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays; 
+import java.util.Iterator;
 import java.util.List; 
 import java.util.regex.Pattern; 
 import org.apache.commons.lang3.StringUtils;
@@ -226,8 +233,25 @@ public class Main {
             System.out.println("   Mode ["+ options.mode + "] requires sessionId option"); 
             return;
         }
+        
+        if ( !options.mode.isEmpty() 
+             && (modeHidden == ModesHiddenOptions.GetLog 
+                )
+             && options.transactionId.isEmpty())
+        {
+            printUsage(parser);    
+            System.out.println("Error: "); 
+            System.out.println("   ");
+            System.out.println("   Mode ["+ options.mode + "] requires transactionId option"); 
+            return;
+        }
             
         String operationKey = "oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook";
+        
+        String transactionIdStr = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(LocalDateTime.now());
+        Long transactionId = Long.parseLong(transactionIdStr);
+        
+        System.out.println("TID: " + transactionIdStr); 
         
         ArrayList<String> endMessage = new ArrayList<>();
         
@@ -286,7 +310,8 @@ public class Main {
                                     .setPassword(configuracion.getPassword())
                                     .setEnvironment(configuracion.getEnvironment())
                                     .setRole(configuracion.getRole())
-                                    .setWsconnection(configuracion.getWsConnection())
+                                    .setWsconnection(configuracion.getWsConnection()) 
+                                    .setTransactionID(transactionId)
                                     .build());
 
                     sessionID = (int) tokenResponse.getSessionId();
@@ -324,6 +349,7 @@ public class Main {
                                         .setSessionId(sessionID)
                                         .setWsconnection(configuracion.getWsConnection())
                                         .setOperacionKey(operationKey)
+                                        .setTransactionID(transactionId)
                                         .build());
 
                         logger.info("Input  ");
@@ -384,6 +410,7 @@ public class Main {
                                         .setRole(configuracion.getRole())
                                         .setWsconnection(configuracion.getWsConnection())
                                         .setSessionId(sessionID)
+                                        .setTransactionID(transactionId)
                                         .addListaDeValores(item.build())
                                         .build());
 
@@ -428,6 +455,7 @@ public class Main {
                     SessionResponse tokenResponse = stub.logout(
                             LogoutRequest.newBuilder()
                                     .setSessionId(sessionID)
+                                    .setTransactionID(transactionId)
                                     .setWsconnection(configuracion.getWsConnection())
                                     .build());
 
@@ -465,6 +493,7 @@ public class Main {
                                         .setEnvironment(configuracion.getEnvironment())
                                         .setRole(configuracion.getRole())
                                         .setWsconnection(configuracion.getWsConnection())
+                                        .setTransactionID(transactionId)
                                         .build());
 
                     sessionID = (int) tokenResponse.getSessionId();
@@ -473,13 +502,8 @@ public class Main {
 
                     System.out.println("User " + configuracion.getUserDetail() +  " connected with Session ID [" + tokenResponse.getSessionId() + "]");
                     System.out.println("     Token [" + token + "]");
-   
-                    if(modeHidden == ModesHiddenOptions.TestLogindWS)
-                    {
-                        endMessage.add("User " + configuracion.getUserDetail() + " connected with Session ID " + tokenResponse.getSessionId());
-                        
-                    }
-                    
+ 
+                    endMessage.add("User " + configuracion.getUserDetail() + " connected with Session ID " + tokenResponse.getSessionId());
                     endMessage.add("Token: [" + token + "]");
                     
 
@@ -503,6 +527,7 @@ public class Main {
                             IsConnectedRequest.newBuilder()
                                     .setSessionId(sessionID)
                                     .setWsconnection(configuracion.getWsConnection())
+                                    .setTransactionID(transactionId)
                                     .build());
 
                     isConnected = tokenResponse.getConnected();
@@ -543,6 +568,7 @@ public class Main {
                             LogoutRequest.newBuilder()
                                     .setSessionId(sessionID)
                                     .setWsconnection(configuracion.getWsConnection())
+                                    .setTransactionID(transactionId)
                                     .build());
 
                     sessionID = (int) tokenResponse.getSessionId();
@@ -587,6 +613,7 @@ public class Main {
                                         .setWsconnection(configuracion.getWsConnection())
                                         .setSessionId(sessionID)
                                         .addListaDeValores(item.build())
+                                        .setTransactionID(transactionId)
                                         .build());
 
 
@@ -622,7 +649,36 @@ public class Main {
            
             if(modeHidden != null && modeHidden == ModesHiddenOptions.GetLog)
             {
+                // ===========================
+                // Get Logs
+                // ===========================
+                CapturarLogRequest request = CapturarLogRequest.newBuilder()
+                        .setTransactionID(Long.parseLong(options.transactionId))
+                        .build(); 
+
+                Iterator<CapturarLogResponse> response = stub.capturarLog(request);
                 
+                File output = new File("/tmp/jd" + options.transactionId + ".log");
+                
+                FileOutputStream fop = new FileOutputStream(output);
+
+                if (!output.exists()) {
+                    output.createNewFile();
+                }
+
+                while (response.hasNext()) {
+
+                    ByteString data = response.next().getFileData();
+
+                    data.writeTo(fop);
+
+                    fop.flush();
+ 
+                }
+
+                fop.close();
+                
+                endMessage.add("Log File: " + output);
             }
             
             logger.info("------------------------------------------------------------------------");

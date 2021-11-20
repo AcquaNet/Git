@@ -100,10 +100,20 @@ public class Options extends OptionsBase {
     )
     
     public String sessionId;
+    
+    @Option(
+            name = "transactionId",
+            abbrev = 't',
+            help = "Transaction Id",
+            category = "startup",
+            defaultValue = ""
+    )
+    
+    public String transactionId;
 
      
     public String values() {
-        return  "user=" + user + ", environment=" + environment + ", role=" + role + ", serverName=" + serverName + ", serverPort=" + serverPort + ", mode=" + mode + ", addressbookno=" + addressbookno + ", sessionId=" + sessionId;
+        return  "user=" + user + ", environment=" + environment + ", role=" + role + ", serverName=" + serverName + ", serverPort=" + serverPort + ", mode=" + mode + ", addressbookno=" + addressbookno + ", sessionId=" + sessionId + ", transactionId=" + transactionId;
     }
   
 }

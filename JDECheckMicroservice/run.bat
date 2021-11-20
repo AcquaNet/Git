@@ -5,3 +5,5 @@ java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -s 192.16
 java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -s 192.168.99.100 -p 8077 -m TestLogoutWS-i 614076411
 java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m ShowHidden 
 java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -u JDE -w Modus2020! -e JDV920 -r *ALL -s 192.168.99.100 -p 8077 -m TestGetAddressBookWSWithSessionId -a 28 -i 0
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -u JDE -w Modus2020! -e JDV920 -r *ALL -s 192.168.99.100 -p 8077 -m CreateToken
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -u JDE -s 192.168.99.100 -p 8077 -m GetLog -t 1111111
