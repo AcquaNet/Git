@@ -44,7 +44,7 @@ public class JDEConnectorServer {
     public boolean help;
 
     @Option(name = "-logdetail", usage = "Muestra Log con detalle")
-    public boolean logdetail;
+    public boolean logDetail;
     
     // -------------------------------------------------------------
     // PARAMETROS DEL SERVICIO DE ARRANQUE
@@ -160,22 +160,22 @@ public class JDEConnectorServer {
                 
             } catch (NoSuchPaddingException ex) {
                 valido = false;
-                logger.info("Invalid License: " + ex.getMessage());
+                logger.error("Invalid License: " + ex.getMessage());
             } catch (InvalidKeyException ex) {
                 valido = false;
-                logger.info("Invalid License: " + ex.getMessage());
+                logger.error("Invalid License: " + ex.getMessage());
             } catch (UnsupportedEncodingException ex) {
                 valido = false;
-                logger.info("Invalid License: " + ex.getMessage());
+                logger.error("Invalid License: " + ex.getMessage());
             } catch (IllegalBlockSizeException ex) {
                 valido = false;
-                logger.info("Invalid License: " + ex.getMessage());
+                logger.error("Invalid License: " + ex.getMessage());
             } catch (BadPaddingException ex) {
                 valido = false;
-                logger.info("Invalid License: " + ex.getMessage());
+                logger.error("Invalid License: " + ex.getMessage());
             } catch (Exception ex) {
                 valido = false;
-                logger.info("Invalid License: " + ex.getMessage());
+                logger.error("Invalid License: " + ex.getMessage());
             }
              
             if(!valido)
@@ -221,9 +221,9 @@ public class JDEConnectorServer {
 
             } catch (Exception ex) {
 
-                logger.info("Error. Cannot check config folder");
-                logger.info("     " + ex.getMessage());
-                logger.info("See log for more detail");
+                logger.error("Error. Cannot check config folder");
+                logger.error("     " + ex.getMessage());
+                logger.error("See log for more detail");
                 logger.error(ex.getMessage(), ex);
 
             }
@@ -276,9 +276,9 @@ public class JDEConnectorServer {
 
             } catch (Exception ex) {
 
-                logger.info("Error. Cannot load libraries:");
-                logger.info("     " + ex.getMessage());
-                logger.info("See log for more detail");
+                logger.error("Error. Cannot load libraries:");
+                logger.error("     " + ex.getMessage());
+                logger.error("See log for more detail");
                 logger.error(ex.getMessage(), ex);
 
             }
@@ -320,9 +320,9 @@ public class JDEConnectorServer {
             service.startServer();
 
         } catch (Exception ex) {
-            logger.info("Error. Cannot start service. Error:");
-            logger.info("     " + ex.getMessage());
-            logger.info("Ver log para mas detalle");
+            logger.error("Error. Cannot start service. Error:");
+            logger.error("     " + ex.getMessage());
+            logger.error("Ver log para mas detalle");
             logger.error(ex.getMessage(), ex);
         }
 
@@ -371,9 +371,9 @@ public class JDEConnectorServer {
 
         } catch (Exception ex) {
 
-            logger.info("Error. No se pudo iniciar la aplicacion:");
-            logger.info("     " + ex.getMessage());
-            logger.info("Ver log para mas detalle");
+            logger.error("Error. No se pudo iniciar la aplicacion:");
+            logger.error("     " + ex.getMessage());
+            logger.error("Ver log para mas detalle");
             logger.error(ex.getMessage(), ex);
 
         }

@@ -41,7 +41,7 @@
         <level value="INFO"/>
     </logger>  
     
-    <logger name="com.acqua.jde.jdeconnectorserver.JDEConnectorServer" level="DEBUG"/> 
+    <logger name="com.acqua.jde.jdeconnectorserver.JDEConnectorServer" level="INFO"/> 
     
     <logger name="com.acqua.atina.jdeconnectorservice.JDEConnectorService" level="DEBUG"/>
     

@@ -124,9 +124,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
     public void capturarLog(com.jde.jdeserverwp.servicios.CapturarLogRequest request,
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.CapturarLogResponse> responseObserver) {
         
-        logger.info("======================================================================================");
+        logger.debug("======================================================================================");
         
-        logger.info("JDE ATINA Capturando Log ...");
+        logger.debug("JDE ATINA Capturando Log ...");
          
         CapturarLogResponse.Builder responseBuilder = CapturarLogResponse.newBuilder();
         
@@ -142,7 +142,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         
         responseObserver.onCompleted();
  
-        logger.info("END Atina Transaction ID: " + request.getTransactionID());
+        logger.debug("END Atina Transaction ID: " + request.getTransactionID());
         
     }
     
