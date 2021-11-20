@@ -98,7 +98,7 @@ public class ConfiguracionServer {
     
     
     public String getUserDetail() {
-         return "User: " + user + " in environment " + environment;
+         return "User: " + user + " in environment " + environment + " with " + role;
     }
 
     public long getTokenExpiration() {

@@ -18,6 +18,8 @@ import com.jde.jdeserverwp.servicios.IsConnectedRequest;
 import com.jde.jdeserverwp.servicios.IsConnectedResponse;
 import com.jde.jdeserverwp.servicios.JDEServiceGrpc;
 import com.jde.jdeserverwp.servicios.LogoutRequest;
+import com.jde.jdeserverwp.servicios.ProcessTokenRequest;
+import com.jde.jdeserverwp.servicios.ProcessTokenResponse;
 import com.jde.jdeserverwp.servicios.SessionRequest;
 import com.jde.jdeserverwp.servicios.SessionResponse;
 import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
@@ -93,7 +95,8 @@ public class Main {
         TestLogoutWS("TestLogoutWS"),
         TestLogindWS("TestLogindWS"),
         TestGetAddressBookWSWithSessionId("TestGetAddressBookWSWithSessionId"),
-        CreateToken("CreateToken");
+        CreateToken("CreateToken"),
+        ParseToken("ParseToken");
 
         public final String modesHidden;
 
@@ -243,6 +246,18 @@ public class Main {
             System.out.println("Error: "); 
             System.out.println("   ");
             System.out.println("   Mode ["+ options.mode + "] requires transactionId option"); 
+            return;
+        }
+        
+        if ( !options.mode.isEmpty() 
+             && (modeHidden == ModesHiddenOptions.ParseToken
+                )
+             && options.token.isEmpty())
+        {
+            printUsage(parser);    
+            System.out.println("Error: "); 
+            System.out.println("   ");
+            System.out.println("   Mode ["+ options.mode + "] requires Token option"); 
             return;
         }
             
@@ -482,7 +497,7 @@ public class Main {
             
             Boolean isConnected = Boolean.FALSE;
              
-            if(modeHidden != null && (modeHidden == ModesHiddenOptions.TestLogindWS || modeHidden == ModesHiddenOptions.CreateToken))
+            if(modeHidden != null && (modeHidden == ModesHiddenOptions.TestLogindWS))
             {
                 try {
                     
@@ -505,6 +520,72 @@ public class Main {
  
                     endMessage.add("User " + configuracion.getUserDetail() + " connected with Session ID " + tokenResponse.getSessionId());
                     endMessage.add("Token: [" + token + "]");
+                    
+
+                } catch (Exception ex) {
+
+                    logger.error("Error with Login:  " + ex.getMessage(),ex) ;
+
+                    throw new RuntimeException("Error Logeando", null);
+
+                }
+                 
+            }
+            
+            if(modeHidden != null && (modeHidden == ModesHiddenOptions.CreateToken))
+            {
+                try {
+                     
+                    ProcessTokenResponse processTokenResponse = stub.processToken(
+                                        ProcessTokenRequest.newBuilder()
+                                        .setAction("create")
+                                        .setUser(configuracion.getUser()) 
+                                        .setEnvironment(configuracion.getEnvironment())
+                                        .setRole(configuracion.getRole()) 
+                                        .setTransactionID(transactionId)
+                                        .build());
+                     
+                    token = processTokenResponse.getJwtToken(); 
+                    System.out.println("User " + configuracion.getUserDetail() +  " with Session ID [" + configuracion.getSession().toString() + "]");
+                    System.out.println("     Token [" + token + "]");
+ 
+                    endMessage.add("User " + configuracion.getUserDetail() +  " with Session ID [" + configuracion.getSession().toString() + "]");
+                    endMessage.add("Token: [" + token + "]");
+                    
+
+                } catch (Exception ex) {
+
+                    logger.error("Error with Login:  " + ex.getMessage(),ex) ;
+
+                    throw new RuntimeException("Error Logeando", null);
+
+                }
+                 
+            }
+            
+            if(modeHidden != null && (modeHidden == ModesHiddenOptions.ParseToken))
+            {
+                try {
+                     
+                    ProcessTokenResponse processTokenResponse = stub.processToken(
+                                        ProcessTokenRequest.newBuilder()
+                                        .setAction("parse")
+                                        .setJwtToken(options.token) 
+                                        .setTransactionID(transactionId)
+                                        .build());
+                    
+                    ConfiguracionServer configuracionResponse = new ConfiguracionServer();
+                    
+                    configuracionResponse.setUser(processTokenResponse.getUser());
+                    configuracionResponse.setEnvironment(processTokenResponse.getEnvironment());
+                    configuracionResponse.setRole(processTokenResponse.getRole());
+                    configuracionResponse.setSession(((Long)processTokenResponse.getSessionId()).intValue());
+   
+                    System.out.println("User " + configuracionResponse.getUserDetail() +  " with Session ID [" + configuracionResponse.getSession().toString() + "]");
+                    System.out.println("     Token [" + options.token + "]");
+ 
+                    endMessage.add("User " + configuracionResponse.getUserDetail() +  " with Session ID [" + configuracionResponse.getSession().toString() + "]");
+                    endMessage.add("Token: [" + options.token + "]");
                     
 
                 } catch (Exception ex) {

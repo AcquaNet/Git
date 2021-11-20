@@ -10,7 +10,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath com.atina.ppal.Main -u JDE -w Modus2020! -e JDV920 -r *ALL -s 192.168.99.100 -p 8077 -m TestLogindWS</exec.args>
+                <exec.args>-classpath %classpath com.atina.ppal.Main -s localhost -p 8085 -m ParseToken -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NDM1MTgyLCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiIiLCJlbnZpcm9ubWVudCI6IkpEVjkyMCIsInJvbGUiOiIqQUxMIiwic2Vzc2lvbklkIjowLCJleHAiOjE2Mzc0Mzk5ODJ9.cKPVk2Z5f5XrMU1nrFBUYhMw5FX6n8DPlONtG9TYnu8</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
@@ -24,7 +24,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath com.atina.ppal.Main -u JDE -w Modus2020! -e JDV920 -r *ALL -s 192.168.99.100 -p 8077 -m TestLogindWS</exec.args>
+                <exec.args>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address} -classpath %classpath com.atina.ppal.Main -s localhost -p 8085 -m ParseToken -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NDM1MTgyLCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiIiLCJlbnZpcm9ubWVudCI6IkpEVjkyMCIsInJvbGUiOiIqQUxMIiwic2Vzc2lvbklkIjowLCJleHAiOjE2Mzc0Mzk5ODJ9.cKPVk2Z5f5XrMU1nrFBUYhMw5FX6n8DPlONtG9TYnu8</exec.args>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
             </properties>
@@ -39,7 +39,7 @@
                 <goal>org.codehaus.mojo:exec-maven-plugin:1.5.0:exec</goal>
             </goals>
             <properties>
-                <exec.args>-classpath %classpath com.atina.ppal.Main -u JDE -w Modus2020! -e JDV920 -r *ALL -s 192.168.99.100 -p 8077 -m TestLogindWS</exec.args>
+                <exec.args>-classpath %classpath com.atina.ppal.Main -s localhost -p 8085 -m ParseToken -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NDM1MTgyLCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiIiLCJlbnZpcm9ubWVudCI6IkpEVjkyMCIsInJvbGUiOiIqQUxMIiwic2Vzc2lvbklkIjowLCJleHAiOjE2Mzc0Mzk5ODJ9.cKPVk2Z5f5XrMU1nrFBUYhMw5FX6n8DPlONtG9TYnu8</exec.args>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>

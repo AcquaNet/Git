@@ -315,6 +315,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 config.setEnvironment(request.getEnvironment());
 
                 config.setRole(request.getRole());
+                
+                config.setSessionId(0);
 
                 config.setTokenExpiration(configuracion.getTokenExpiration());         
 
@@ -359,13 +361,13 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
                 ProcessTokenResponse.Builder responseBuilder = ProcessTokenResponse.newBuilder();
 
-                responseBuilder.setUser(METADATA); 
+                responseBuilder.setUser(config.getUser()); 
                 
-                responseBuilder.setEnvironment(METADATA);
+                responseBuilder.setEnvironment(config.getEnvironment());
                 
-                responseBuilder.setRole(METADATA);
+                responseBuilder.setRole(config.getRole());
                 
-                responseBuilder.setSessionId(counter);
+                responseBuilder.setSessionId(config.getSessionId());
                   
                 responseObserver.onNext(responseBuilder.build());
 

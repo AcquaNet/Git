@@ -110,8 +110,17 @@ public class Options extends OptionsBase {
     )
     
     public String transactionId;
-
-     
+    
+    @Option(
+            name = "token",
+            abbrev = 'k',
+            help = "Token",
+            category = "startup",
+            defaultValue = ""
+    )
+    
+    public String token;
+ 
     public String values() {
         return  "user=" + user + ", environment=" + environment + ", role=" + role + ", serverName=" + serverName + ", serverPort=" + serverPort + ", mode=" + mode + ", addressbookno=" + addressbookno + ", sessionId=" + sessionId + ", transactionId=" + transactionId;
     }
