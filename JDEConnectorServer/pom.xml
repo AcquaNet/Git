@@ -10,7 +10,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <io.grpc.version>1.14.0</io.grpc.version>
+        <io.grpc.version>1.42.0</io.grpc.version>
         <jdk.version>1.8</jdk.version>
         <jackson-version>2.9.6</jackson-version>
         <jersey-version>2.25.1</jersey-version>
@@ -129,9 +129,9 @@
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-netty-shaded</artifactId>
-            <version>1.14.0</version>
+            <version>${io.grpc.version}</version>
         </dependency>
-        
+          
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-protobuf</artifactId>
@@ -143,7 +143,7 @@
             <artifactId>grpc-stub</artifactId>
             <version>${io.grpc.version}</version>
         </dependency>
-
+        
         <!-- Logger --> 
             
         <dependency>
