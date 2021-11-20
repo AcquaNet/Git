@@ -32,7 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC; 
 import java.io.InputStream;  
-import java.util.List;
+import java.util.Arrays;
+import java.util.List; 
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -52,8 +53,9 @@ public class Main {
      
     
     public enum ModesOptions {
-        TestWS("TestWS"),
-        TestWSWithMetadata("TestWSWithMetadata");
+        TestGetAddressBookWS("TestGetAddressBookWS"),
+        TestIsConnected("TestIsConnected"),
+        TestGetMetadataWSAddressBook("TestGetMetadataWSAddressBook");
 
         public final String modes;
 
@@ -70,9 +72,34 @@ public class Main {
             return null;
         }
         
-        public static ModesOptions[] publicValues() 
-        { 
-            return ModesOptions.values();
+        public static List<ModesOptions> publicValues() 
+        {   
+            return Arrays.asList(ModesOptions.values());
+        
+        }
+    }
+    
+    public enum ModesHiddenOptions {
+        GetLog("GetLog");
+
+        public final String modesHidden;
+
+        private ModesHiddenOptions(String modes) {
+            this.modesHidden = modes;
+        }
+
+        public static ModesHiddenOptions valueOfLabel(String label) {
+            for (ModesHiddenOptions e : values()) {
+                if (e.modesHidden.equals(label)) {
+                    return e;
+                }
+            }
+            return null;
+        }
+        
+        public static List<ModesOptions> hiddenValues() 
+        {   
+            return Arrays.asList(ModesOptions.values());
         
         }
     }
@@ -122,18 +149,19 @@ public class Main {
         } 
         
         ModesOptions mode = ModesOptions.valueOfLabel(options.mode);
+        ModesHiddenOptions modeHidden = ModesHiddenOptions.valueOfLabel(options.mode);
         
-        if (mode==null)
+        if (mode==null && modeHidden == null)
         {
             printUsage(parser);        
             System.out.println("Error: "); 
             System.out.println("   ");
-            System.out.println("   Invalid Mode [" + options.mode + "] Valid values: " + java.util.Arrays.asList(ModesOptions.publicValues()));  
+            System.out.println("   Invalid Mode [" + options.mode + "] Valid values: " + ModesOptions.publicValues());  
             return;
         }
         
         if ( !options.mode.isEmpty() 
-             && mode == ModesOptions.TestWS
+             && mode == ModesOptions.TestGetAddressBookWS
              && options.addressbookno.isEmpty())
         {
             printUsage(parser);    
@@ -188,30 +216,177 @@ public class Main {
             // Login                       
             // ===========================  
             //
-            try {
+            
+            if(mode == ModesOptions.TestGetAddressBookWS || mode == ModesOptions.TestGetMetadataWSAddressBook)  
+            {
+                try {
 
-                SessionResponse tokenResponse = stub.login(
-                        SessionRequest.newBuilder()
-                                .setUser(configuracion.getUser())
-                                .setPassword(configuracion.getPassword())
-                                .setEnvironment(configuracion.getEnvironment())
-                                .setRole(configuracion.getRole())
-                                .setWsconnection(configuracion.getWsConnection())
-                                .build());
+                    SessionResponse tokenResponse = stub.login(
+                            SessionRequest.newBuilder()
+                                    .setUser(configuracion.getUser())
+                                    .setPassword(configuracion.getPassword())
+                                    .setEnvironment(configuracion.getEnvironment())
+                                    .setRole(configuracion.getRole())
+                                    .setWsconnection(configuracion.getWsConnection())
+                                    .build());
 
-                sessionID = (int) tokenResponse.getSessionId();
+                    sessionID = (int) tokenResponse.getSessionId();
 
-                System.out.println("User " + configuracion.getUserDetail() +  " connected with Session ID [" + tokenResponse.getSessionId() + "]");
+                    System.out.println("User " + configuracion.getUserDetail() +  " connected with Session ID [" + tokenResponse.getSessionId() + "]");
+
+                    endMessage.add("User " + configuracion.getUserDetail() + " connected with Session ID " + tokenResponse.getSessionId());
+
+                } catch (Exception ex) {
+
+                    logger.error("Error with Login:  " + ex.getMessage(),ex) ;
+
+                    throw new RuntimeException("Error Logeando", null);
+
+                }
                 
-                endMessage.add("User " + configuracion.getUserDetail() + " connected with Session ID " + tokenResponse.getSessionId());
+                // ===========================  
+                // Get Metadata                       
+                // ===========================  
+                //
+            
+                String operationKey = "oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook";
 
-            } catch (Exception ex) {
+                if(mode == ModesOptions.TestGetMetadataWSAddressBook)
+                {
+                    try {
 
-                logger.error("Error with Login:  " + ex.getMessage(),ex) ;
+                        GetMetadataResponse operaciones = stub.getMetadaParaOperacion(
+                                GetMetadataRequest.newBuilder()
+                                        .setConnectorName("WS")
+                                        .setUser(configuracion.getUser())
+                                        .setPassword(configuracion.getPassword())
+                                        .setEnvironment(configuracion.getEnvironment())
+                                        .setRole(configuracion.getRole())
+                                        .setSessionId(sessionID)
+                                        .setWsconnection(configuracion.getWsConnection())
+                                        .setOperacionKey(operationKey)
+                                        .build());
 
-                throw new RuntimeException("Error Logeando", null);
+                        logger.info("Input  ");
 
-            }
+                        for (TipoDelParametroInput parameter : operaciones.getListaDeParametrosInputList()) {
+
+                            int level = 0;
+
+                            printParameter(parameter, level);
+
+                        }
+
+                        logger.info("Output  ");
+
+                        for (TipoDelParametroOutput parameter : operaciones.getListaDeParametrosOutputList()) {
+
+                            int level = 0;
+
+                            printParameterOutput(parameter, level);
+
+                        }
+
+                    } catch (Exception ex) {
+
+                        logger.error("Error ejecutando metodo ");
+
+                        throw new RuntimeException("Error Logeando", ex);
+
+                    }
+
+                }
+                
+                // ===========================  
+                // Invoke WS              
+                // ===========================  
+                // 
+
+                if(mode == ModesOptions.TestGetAddressBookWS)
+                {
+
+                    try {
+
+                        EjecutarOperacionValores.Builder itemId = EjecutarOperacionValores.newBuilder();
+                        itemId.setNombreDelParametro("entityId");
+                        itemId.setValueAsInteger(Integer.parseInt(options.addressbookno));
+
+                        EjecutarOperacionValores.Builder item = EjecutarOperacionValores.newBuilder();
+                        item.setNombreDelParametro("entity");
+                        item.addListaDeValores(itemId);
+
+                        EjecutarOperacionResponse ejecutarOperacionesResponse = stub.ejecutarOperacion(
+                                EjecutarOperacionRequest.newBuilder()
+                                        .setConnectorName("WS")
+                                        .setOperacionKey(operationKey)
+                                        .setUser(configuracion.getUser())
+                                        .setPassword(configuracion.getPassword())
+                                        .setEnvironment(configuracion.getEnvironment())
+                                        .setRole(configuracion.getRole())
+                                        .setWsconnection(configuracion.getWsConnection())
+                                        .setSessionId(sessionID)
+                                        .addListaDeValores(item.build())
+                                        .build());
+
+
+                        List<EjecutarOperacionResponse> values = ejecutarOperacionesResponse.getListaDeValoresList();
+
+                        if (values != null && !values.isEmpty()) {
+
+                            for (EjecutarOperacionResponse response : values) {
+                                if (response.getNombreDelParametro().equals("addressBookResult")) {
+                                    for (EjecutarOperacionResponse response1 : response.getListaDeValoresList()) {
+                                        for (EjecutarOperacionResponse response2 : response1.getListaDeValoresList()) {
+                                            if (response2.getNombreDelParametro().equals("description1")) {
+                                                endMessage.add("Address Book Name: " + response2.getValueAsString());
+                                            }
+                                        } 
+                                    } 
+                                } 
+                            } 
+                        }
+
+                        logger.info("WS JP010000.AddressBookManager.getAddressBook has been called correctly");
+
+                    }
+                    catch (Exception ex) {
+
+                        logger.error("Error runnng isConnected" + ex.getMessage()) ;
+
+                        throw new RuntimeException("Error runnng isConnected", null);
+
+                    }
+
+                }
+                
+                // ===========================  
+                // Logout                   
+                // ===========================  
+                //
+            
+                try {
+
+                    SessionResponse tokenResponse = stub.logout(
+                            LogoutRequest.newBuilder()
+                                    .setSessionId(sessionID)
+                                    .setWsconnection(configuracion.getWsConnection())
+                                    .build());
+
+                    sessionID = (int) tokenResponse.getSessionId();
+
+                    System.out.println("Logout [" + sessionID + "]");
+
+                    endMessage.add("User " + configuracion.getUserDetail() + " disconnected. Current session ID " + tokenResponse.getSessionId());
+
+                } catch (Exception ex) {
+
+                    logger.error("Error runnng logout" + ex.getMessage()) ;
+
+                    throw new RuntimeException("Error runnng logout", null);
+
+                }
+            
+            }  
             
             // ===========================  
             // Is Connected                       
@@ -220,7 +395,7 @@ public class Main {
             
             Boolean isConnected = Boolean.FALSE;
             
-            if(options.mode.equals("1"))
+            if(mode == ModesOptions.TestIsConnected)  
             {
                
                 try {
@@ -244,154 +419,21 @@ public class Main {
                 }
             
             }
+              
             
-            // ===========================  
-            // Get Metadata                       
-            // ===========================  
-            //
-            
-            String operationKey = "oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook";
-            
-            if(mode == ModesOptions.TestWSWithMetadata)
-            {
-                try {
-
-                    GetMetadataResponse operaciones = stub.getMetadaParaOperacion(
-                            GetMetadataRequest.newBuilder()
-                                    .setConnectorName("WS")
-                                    .setUser(configuracion.getUser())
-                                    .setPassword(configuracion.getPassword())
-                                    .setEnvironment(configuracion.getEnvironment())
-                                    .setRole(configuracion.getRole())
-                                    .setSessionId(sessionID)
-                                    .setWsconnection(configuracion.getWsConnection())
-                                    .setOperacionKey(operationKey)
-                                    .build());
-
-                    logger.info("Input  ");
-
-                    for (TipoDelParametroInput parameter : operaciones.getListaDeParametrosInputList()) {
-
-                        int level = 0;
-
-                        printParameter(parameter, level);
-
-                    }
-
-                    logger.info("Output  ");
-
-                    for (TipoDelParametroOutput parameter : operaciones.getListaDeParametrosOutputList()) {
-
-                        int level = 0;
-
-                        printParameterOutput(parameter, level);
-
-                    }
-
-                } catch (Exception ex) {
-
-                    logger.error("Error ejecutando metodo ");
-
-                    throw new RuntimeException("Error Logeando", ex);
-
-                }
-            
-            }
-            
-            // ===========================  
-            // Invoke WS              
-            // ===========================  
-            // 
-            
-            if(mode == ModesOptions.TestWS)
+            if(modeHidden != null && modeHidden == ModesHiddenOptions.GetLog)
             {
                 
-                try {
-
-                    EjecutarOperacionValores.Builder itemId = EjecutarOperacionValores.newBuilder();
-                    itemId.setNombreDelParametro("entityId");
-                    itemId.setValueAsInteger(Integer.parseInt(options.addressbookno));
-
-                    EjecutarOperacionValores.Builder item = EjecutarOperacionValores.newBuilder();
-                    item.setNombreDelParametro("entity");
-                    item.addListaDeValores(itemId);
-
-                    EjecutarOperacionResponse ejecutarOperacionesResponse = stub.ejecutarOperacion(
-                            EjecutarOperacionRequest.newBuilder()
-                                    .setConnectorName("WS")
-                                    .setOperacionKey(operationKey)
-                                    .setUser(configuracion.getUser())
-                                    .setPassword(configuracion.getPassword())
-                                    .setEnvironment(configuracion.getEnvironment())
-                                    .setRole(configuracion.getRole())
-                                    .setWsconnection(configuracion.getWsConnection())
-                                    .setSessionId(sessionID)
-                                    .addListaDeValores(item.build())
-                                    .build());
-
-
-                    List<EjecutarOperacionResponse> values = ejecutarOperacionesResponse.getListaDeValoresList();
-
-                    if (values != null && !values.isEmpty()) {
-
-                        for (EjecutarOperacionResponse response : values) {
-                            if (response.getNombreDelParametro().equals("addressBookResult")) {
-                                for (EjecutarOperacionResponse response1 : response.getListaDeValoresList()) {
-                                    for (EjecutarOperacionResponse response2 : response1.getListaDeValoresList()) {
-                                        if (response2.getNombreDelParametro().equals("description1")) {
-                                            endMessage.add("Address Book Name: " + response2.getValueAsString());
-                                        }
-                                    } 
-                                } 
-                            } 
-                        } 
-                    }
-
-                    logger.info("WS JP010000.AddressBookManager.getAddressBook has been called correctly");
-
-                }
-                catch (Exception ex) {
-
-                    logger.error("Error runnng isConnected" + ex.getMessage()) ;
-
-                    throw new RuntimeException("Error runnng isConnected", null);
-
-                }
-            
-            }
-             
-            // ===========================  
-            // Logout                   
-            // ===========================  
-            //
-            try {
-
-                SessionResponse tokenResponse = stub.logout(
-                        LogoutRequest.newBuilder()
-                                .setSessionId(sessionID)
-                                .setWsconnection(configuracion.getWsConnection())
-                                .build());
-
-                sessionID = (int) tokenResponse.getSessionId();
-
-                System.out.println("Logout [" + sessionID + "]");
-                
-                endMessage.add("User " + configuracion.getUserDetail() + " disconnected. Current session ID " + tokenResponse.getSessionId());
-
-            } catch (Exception ex) {
-
-                logger.error("Error runnng logout" + ex.getMessage()) ;
-
-                throw new RuntimeException("Error runnng logout", null);
-
             }
             
             logger.info("------------------------------------------------------------------------");
             logger.info("CHECK SUCESSS");
             logger.info("------------------------------------------------------------------------");
+            
             for (String line : endMessage) {
                 logger.info(line);
             }
+            
             logger.info("------------------------------------------------------------------------");
              
                
@@ -419,8 +461,8 @@ public class Main {
         
         System.out.println("   ");
         
-        System.out.println("   " + "Mode values:" + java.util.Arrays.asList(ModesOptions.publicValues()));
-        
+        System.out.println("   " + "Mode values:" + ModesOptions.publicValues());
+         
         System.out.println("   ");
           
     }

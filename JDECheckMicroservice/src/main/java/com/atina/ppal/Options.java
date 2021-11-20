@@ -90,6 +90,16 @@ public class Options extends OptionsBase {
     )
     
     public String addressbookno;
+    
+    @Option(
+            name = "sessionId",
+            abbrev = 'i',
+            help = "Session Id",
+            category = "startup",
+            defaultValue = ""
+    )
+    
+    public String sessionId;
 
      
     public String values() {
