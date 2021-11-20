@@ -80,10 +80,12 @@ public class Main {
     }
     
     public enum ModesHiddenOptions {
+        ShowHidden("ShowHidden"),
         GetLog("GetLog"),
         TestIsConnectedWS("TestIsConnectedWS"),
         TestLogoutWS("TestLogoutWS"),
-        TestLogindWS("TestLogindWS");
+        TestLogindWS("TestLogindWS"),
+        TestGetAddressBookWSWithSessionId("TestGetAddressBookWSWithSessionId");
 
         public final String modesHidden;
 
@@ -100,9 +102,9 @@ public class Main {
             return null;
         }
         
-        public static List<ModesOptions> hiddenValues() 
+        public static List<ModesHiddenOptions> hiddenValues() 
         {   
-            return Arrays.asList(ModesOptions.values());
+            return Arrays.asList(ModesHiddenOptions.values());
         
         }
     }
@@ -152,6 +154,14 @@ public class Main {
             return;
         }
         
+        if (   !options.mode.isEmpty()    
+                && (modeHidden == ModesHiddenOptions.ShowHidden)
+           ) 
+        {
+            printUsageWithHiddenOptions(parser);
+            return;
+            
+        }
         
         if ( (  (  !options.mode.isEmpty()    
                 && (mode == ModesOptions.TestGetMetadataWSAddressBook ||  mode == ModesOptions.TestLoggindAndGetAddressBookWS)
@@ -173,7 +183,10 @@ public class Main {
         
         if ( (  
                 (  !options.mode.isEmpty()    
-                && (modeHidden == ModesHiddenOptions.TestIsConnectedWS || modeHidden == ModesHiddenOptions.TestLogoutWS || modeHidden == ModesHiddenOptions.GetLog )
+                && (modeHidden == ModesHiddenOptions.TestIsConnectedWS 
+                    || modeHidden == ModesHiddenOptions.TestLogoutWS 
+                    || modeHidden == ModesHiddenOptions.GetLog
+                    || modeHidden == ModesHiddenOptions.TestGetAddressBookWSWithSessionId)
                 )
               )
             && (    options.serverName.isEmpty()
@@ -201,7 +214,9 @@ public class Main {
         }
         
         if ( !options.mode.isEmpty() 
-             && (modeHidden == ModesHiddenOptions.TestIsConnectedWS || modeHidden == ModesHiddenOptions.TestLogoutWS )
+             && (modeHidden == ModesHiddenOptions.TestIsConnectedWS 
+                || modeHidden == ModesHiddenOptions.TestLogoutWS 
+                || modeHidden == ModesHiddenOptions.TestGetAddressBookWSWithSessionId )
              && options.sessionId.isEmpty())
         {
             printUsage(parser);    
@@ -211,6 +226,7 @@ public class Main {
             return;
         }
             
+        String operationKey = "oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook";
         
         ArrayList<String> endMessage = new ArrayList<>();
         
@@ -289,7 +305,7 @@ public class Main {
                 // ===========================  
                 //
             
-                String operationKey = "oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook";
+                
 
                 if(mode == ModesOptions.TestGetMetadataWSAddressBook)
                 {
@@ -531,6 +547,65 @@ public class Main {
                 }
                 
             }
+            
+            if(modeHidden != null && modeHidden == ModesHiddenOptions.TestGetAddressBookWSWithSessionId)
+            {
+
+                    try {
+
+                        sessionID = Integer.parseInt(options.sessionId);
+                        
+                        EjecutarOperacionValores.Builder itemId = EjecutarOperacionValores.newBuilder();
+                        itemId.setNombreDelParametro("entityId");
+                        itemId.setValueAsInteger(Integer.parseInt(options.addressbookno));
+
+                        EjecutarOperacionValores.Builder item = EjecutarOperacionValores.newBuilder();
+                        item.setNombreDelParametro("entity");
+                        item.addListaDeValores(itemId);
+
+                        EjecutarOperacionResponse ejecutarOperacionesResponse = stub.ejecutarOperacion(
+                                EjecutarOperacionRequest.newBuilder()
+                                        .setConnectorName("WS")
+                                        .setOperacionKey(operationKey)
+                                        .setUser(configuracion.getUser())
+                                        .setPassword(configuracion.getPassword())
+                                        .setEnvironment(configuracion.getEnvironment())
+                                        .setRole(configuracion.getRole())
+                                        .setWsconnection(configuracion.getWsConnection())
+                                        .setSessionId(sessionID)
+                                        .addListaDeValores(item.build())
+                                        .build());
+
+
+                        List<EjecutarOperacionResponse> values = ejecutarOperacionesResponse.getListaDeValoresList();
+
+                        if (values != null && !values.isEmpty()) {
+
+                            for (EjecutarOperacionResponse response : values) {
+                                if (response.getNombreDelParametro().equals("addressBookResult")) {
+                                    for (EjecutarOperacionResponse response1 : response.getListaDeValoresList()) {
+                                        for (EjecutarOperacionResponse response2 : response1.getListaDeValoresList()) {
+                                            if (response2.getNombreDelParametro().equals("description1")) {
+                                                endMessage.add("Address Book Name: " + response2.getValueAsString());
+                                            }
+                                        } 
+                                    } 
+                                } 
+                            } 
+                        }
+
+                        logger.info("WS JP010000.AddressBookManager.getAddressBook has been called correctly");
+
+                    }
+                    catch (Exception ex) {
+
+                        logger.error("Error runnng isConnected" + ex.getMessage()) ;
+
+                        throw new RuntimeException("Error runnng isConnected", null);
+
+                    }
+
+            }
               
             if(modeHidden != null && modeHidden == ModesHiddenOptions.GetLog)
             {
@@ -573,6 +648,20 @@ public class Main {
         System.out.println("   ");
         
         System.out.println("   " + "Mode values:" + ModesOptions.publicValues());
+         
+        System.out.println("   ");
+          
+    }
+    
+    private static void printUsageWithHiddenOptions(OptionsParser parser) {
+
+        System.out.println("Usage: java -jar jd-check-microservice OPTIONS");
+
+        System.out.println("   " + parser.describeOptions(Collections.<String, String>emptyMap(), OptionsParser.HelpVerbosity.LONG));
+        
+        System.out.println("   ");
+        
+        System.out.println("   " + "Mode Hidden values:" + ModesHiddenOptions.hiddenValues());
          
         System.out.println("   ");
           
