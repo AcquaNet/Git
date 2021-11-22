@@ -28,6 +28,7 @@ import com.jde.jdeserverwp.servicios.SessionRequest;
 import com.jde.jdeserverwp.servicios.SessionResponse;
 import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
 import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
+import io.grpc.ConnectivityState;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import java.io.BufferedReader;
@@ -47,7 +48,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays; 
 import java.util.Iterator;
 import java.util.List; 
-import java.util.regex.Pattern; 
+import java.util.regex.Pattern;  
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -134,6 +135,8 @@ public class Main {
     public static void main(String[] args) throws IOException {
  
         showBanner();
+        
+        boolean checkOK = true;
         
         // -----------------------------------------------
         // Setting Logging 
@@ -288,7 +291,7 @@ public class Main {
         String transactionIdStr = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(LocalDateTime.now());
         Long transactionId = Long.parseLong(transactionIdStr);
         
-        System.out.println("TID: " + transactionIdStr); 
+        System.out.println("Transaction ID: " + transactionIdStr); 
         
         ArrayList<String> endMessage = new ArrayList<>();
         
@@ -318,9 +321,37 @@ public class Main {
             // Crear Canal de Comunicacion  
             // ===========================  
             //
-            channel = ManagedChannelBuilder.forAddress(configuracion.getServidorServicio(), configuracion.getPuertoServicio())
-                    .usePlaintext()
-                    .build();
+            try {
+                
+                ManagedChannelBuilder<?> channelBuilder = ManagedChannelBuilder.forAddress(configuracion.getServidorServicio(), configuracion.getPuertoServicio());
+                
+                channel = channelBuilder
+                        .usePlaintext()
+                        .build();
+
+            
+            } catch (java.lang.NoSuchMethodError ex) {
+
+                logger.error("Error connecting to JD Microservice:  " + ex.getMessage());
+
+                checkOK = false;
+
+                endMessage.add("Error connecting to JD Microservice " + configuracion.getServidorServicio() + ":" + configuracion.getPuertoServicio());
+
+                throw new RuntimeException("Error connecting to JD Microservice : " + configuracion.getServidorServicio() + ":" + configuracion.getPuertoServicio(), null);
+
+
+            } catch (Exception ex) {
+
+                logger.error("Error connecting to JD Microservice:  " + ex.getMessage());
+
+                checkOK = false;
+
+                endMessage.add("Error connecting to JD Microservice " + configuracion.getServidorServicio() + ":" + configuracion.getPuertoServicio());
+
+                throw new RuntimeException("Error connecting to JD Microservice : " + configuracion.getServidorServicio() + ":" + configuracion.getPuertoServicio(), null);
+
+            }
             
             // =========================== 
             // Creacion del Stub           
@@ -331,7 +362,7 @@ public class Main {
             int sessionID = 0;
             
             String token = "";
-             
+                       
             // ===========================  
             // Login                       
             // ===========================  
@@ -361,10 +392,12 @@ public class Main {
                     endMessage.add("User " + configuracion.getUserDetail() + " connected with Session ID " + tokenResponse.getSessionId());
 
                 } catch (Exception ex) {
+ 
+                    checkOK = false;
+                    
+                    endMessage.add("Error with Login " + ex.getMessage());
 
-                    logger.error("Error with Login:  " + ex.getMessage(),ex) ;
-
-                    throw new RuntimeException("Error Logeando", null);
+                    throw new RuntimeException("Error with Login", null);
 
                 }
                 
@@ -412,10 +445,12 @@ public class Main {
                         endMessage.add("Metadata File: " + output);
                         
                     } catch (Exception ex) {
+ 
+                        checkOK = false;
 
-                        logger.error("Error getting Metadata Operations: " + ex.getMessage(),ex);
-
-                        throw new RuntimeException("Error Logeando", ex);
+                        endMessage.add("Error getting Metadata Operations: " + ex.getMessage());
+ 
+                        throw new RuntimeException("Error getting Metadata Operations: " + ex.getMessage(), ex);
 
                     }
                     
@@ -490,10 +525,12 @@ public class Main {
                         endMessage.add("Metadata File: " + output);
                         
                     } catch (Exception ex) {
+ 
+                        checkOK = false;
 
-                        logger.error("Error getting Metadata: " + ex.getMessage(),ex);
+                        endMessage.add("Error getting Metadata for Operation " + options.operationId + " : " + ex.getMessage());
 
-                        throw new RuntimeException("Error Logeando", ex);
+                        throw new RuntimeException("Error getting Metadata for Operation " + options.operationId + " : " + ex.getMessage(), ex);
 
                     }
 
@@ -539,10 +576,12 @@ public class Main {
                         endMessage.add("JSON File: " + output);
                         
                     } catch (Exception ex) {
+  
+                        checkOK = false;
 
-                        logger.error("Error getting Metadata: " + ex.getMessage(),ex);
+                        endMessage.add("Get JSON for operation " + options.operationId + " : " + ex.getMessage());
 
-                        throw new RuntimeException("Error Logeando", ex);
+                        throw new RuntimeException("Get JSON for operation " + options.operationId + " : " + ex.getMessage(), ex);
 
                     }
 
@@ -579,8 +618,7 @@ public class Main {
                                         .setTransactionID(transactionId)
                                         .addListaDeValores(item.build())
                                         .build());
-
-
+ 
                         List<EjecutarOperacionResponse> values = ejecutarOperacionesResponse.getListaDeValoresList();
 
                         if (values != null && !values.isEmpty()) {
@@ -603,9 +641,11 @@ public class Main {
                     }
                     catch (Exception ex) {
 
-                        logger.error("Error runnng isConnected" + ex.getMessage()) ;
+                        checkOK = false;
 
-                        throw new RuntimeException("Error runnng isConnected", null);
+                        endMessage.add("Error callin operation JP010000.AddressBookManager.getAddressBook: " + ex.getMessage());
+                         
+                        throw new RuntimeException("Error callin operation JP010000.AddressBookManager.getAddressBook: " + ex.getMessage(), null);
 
                     }
 
@@ -632,10 +672,12 @@ public class Main {
                     endMessage.add("User " + configuracion.getUserDetail() + " disconnected. Current session ID " + tokenResponse.getSessionId());
 
                 } catch (Exception ex) {
+ 
+                    checkOK = false;
 
-                    logger.error("Error runnng logout" + ex.getMessage()) ;
-
-                    throw new RuntimeException("Error runnng logout", null);
+                    endMessage.add("Error runnng logout: " + ex.getMessage());
+                          
+                    throw new RuntimeException("Error runnng logout: " + ex.getMessage(), null);
 
                 }
             
@@ -674,10 +716,12 @@ public class Main {
                     
 
                 } catch (Exception ex) {
+ 
+                    checkOK = false;
 
-                    logger.error("Error with Login:  " + ex.getMessage(),ex) ;
+                    endMessage.add("Error runnng Login: " + ex.getMessage());
 
-                    throw new RuntimeException("Error Logeando", null);
+                    throw new RuntimeException("Error Login: " + ex.getMessage(), null);
 
                 }
                  
@@ -706,9 +750,11 @@ public class Main {
 
                 } catch (Exception ex) {
 
-                    logger.error("Error with Login:  " + ex.getMessage(),ex) ;
+                    checkOK = false;
 
-                    throw new RuntimeException("Error Logeando", null);
+                    endMessage.add("Error creating Token: " + ex.getMessage());
+
+                    throw new RuntimeException("Error creating Token: " + ex.getMessage(), null);
 
                 }
                  
@@ -741,9 +787,11 @@ public class Main {
 
                 } catch (Exception ex) {
 
-                    logger.error("Error with Login:  " + ex.getMessage(),ex) ;
+                    checkOK = false;
 
-                    throw new RuntimeException("Error Logeando", null);
+                    endMessage.add("Error parsing Token: " + ex.getMessage());
+
+                    throw new RuntimeException("Error parsing Token: " + ex.getMessage(), null);
 
                 }
                  
@@ -773,6 +821,14 @@ public class Main {
                     if(msg.length == 3 && msg[1].startsWith("There is not a session in poll connections for session id"))
                     {
                         logger.error(msg[1]);
+                        
+                        checkOK = false;
+
+                        endMessage.add("Error runnng isConnected: " + msg[1]); 
+
+                        throw new RuntimeException("Error runnng isConnected: " + msg[1], null);
+                        
+                    
                     } else
                     {
                         throw new RuntimeException("Error runnng isConnected: " + ex.getMessage(), null);
@@ -781,9 +837,11 @@ public class Main {
  
                 } catch (Exception ex) {
 
-                    logger.error("Error runnng isConnected" + ex.getMessage()) ;
+                    checkOK = false;
 
-                    throw new RuntimeException("Error runnng isConnected", null);
+                    endMessage.add("Error runnng isConnected: " + ex.getMessage()); 
+
+                    throw new RuntimeException("Error runnng isConnected: " + ex.getMessage(), null);
 
                 }
                 
@@ -810,10 +868,12 @@ public class Main {
                     endMessage.add("User " + configuracion.getUserDetail() + " disconnected. Current session ID " + tokenResponse.getSessionId());
 
                 } catch (Exception ex) {
+ 
+                    checkOK = false;
 
-                    logger.error("Error runnng logout" + ex.getMessage()) ;
+                    endMessage.add("Error with logout operation: " + ex.getMessage()); 
 
-                    throw new RuntimeException("Error runnng logout", null);
+                    throw new RuntimeException("Error with logout operation: " + ex.getMessage(), null);
 
                 }
                 
@@ -871,9 +931,11 @@ public class Main {
                     }
                     catch (Exception ex) {
 
-                        logger.error("Error runnng isConnected" + ex.getMessage()) ;
+                        checkOK = false;
 
-                        throw new RuntimeException("Error runnng isConnected", null);
+                        endMessage.add("Error with getting AB with session ID: " + ex.getMessage()); 
+                     
+                        throw new RuntimeException("Error with getting AB with session ID: " + ex.getMessage(), null);
 
                     }
 
@@ -884,60 +946,87 @@ public class Main {
                 // ===========================
                 // Get Logs
                 // ===========================
-                CapturarLogRequest request = CapturarLogRequest.newBuilder()
-                        .setTransactionID(Long.parseLong(options.transactionId))
-                        .build(); 
-
-                Iterator<CapturarLogResponse> response = stub.capturarLog(request);
                 
-                File output = new File("/tmp/jd" + options.transactionId + ".log");
-                
-                FileOutputStream fop = new FileOutputStream(output);
+                try {
+                    
+                    CapturarLogRequest request = CapturarLogRequest.newBuilder()
+                            .setTransactionID(Long.parseLong(options.transactionId))
+                            .build();
+                    
+                      
+                    Iterator<CapturarLogResponse> response = stub.capturarLog(request);
 
-                if (!output.exists()) {
-                    output.createNewFile();
+                    File output = new File("/tmp/jd" + options.transactionId + ".log");
+
+                    FileOutputStream fop = new FileOutputStream(output);
+                    
+                    boolean first = true;
+                    
+                    while (response.hasNext()) {
+                        
+                        if (first) {
+                            
+                            if (!output.exists()) {
+                                output.createNewFile();
+                            }
+                            
+                            first = false;
+                        }
+
+                        ByteString data = response.next().getFileData();
+
+                        data.writeTo(fop);
+
+                        fop.flush();
+
+                    }
+
+                    fop.close();
+                    
+                    if (first) {
+                        
+                        endMessage.add("There is no log");
+                        
+                    } else
+                    {
+                        endMessage.add("Log File: " + output);
+                    }
+  
+                } catch (Exception ex) {
+
+                    checkOK = false;
+
+                    endMessage.add("Error getting logs: " + ex.getMessage());
+
+                    throw new RuntimeException("Error getting logs: " + ex.getMessage(), null);
+
                 }
-
-                while (response.hasNext()) {
-
-                    ByteString data = response.next().getFileData();
-
-                    data.writeTo(fop);
-
-                    fop.flush();
- 
-                }
-
-                fop.close();
-                
-                endMessage.add("Log File: " + output);
+                 
             }
-            
-            logger.info("------------------------------------------------------------------------");
-            logger.info("CHECK SUCESSS");
-            logger.info("------------------------------------------------------------------------");
-            
-            for (String line : endMessage) {
-                logger.info(line);
-            }
-            
-            logger.info("------------------------------------------------------------------------");
              
                
         } catch (Exception ex) {
             
             logger.error(ex.getMessage(), ex);
             
-             
+        }   finally {
+            
+            if (channel != null) {
+                channel.shutdown();
+            }
         }
-        
-        if(channel != null)
-        { 
-            channel.shutdown();
-        }
-        
-        
 
+        logger.info("------------------------------------------------------------------------");
+        logger.info("CHECK " + (checkOK ? "SUCESSS" : "ERROR"));
+        logger.info("------------------------------------------------------------------------");
+
+        for (String line : endMessage) {
+            logger.info(line);
+        }
+
+        logger.info("------------------------------------------------------------------------");
+            
+        
     }
 
     private static void printUsage(OptionsParser parser) {
