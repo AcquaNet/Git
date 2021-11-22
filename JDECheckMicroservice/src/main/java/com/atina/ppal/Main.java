@@ -627,7 +627,7 @@ public class Main {
                                 if (response.getNombreDelParametro().equals("addressBookResult")) {
                                     for (EjecutarOperacionResponse response1 : response.getListaDeValoresList()) {
                                         for (EjecutarOperacionResponse response2 : response1.getListaDeValoresList()) {
-                                            if (response2.getNombreDelParametro().equals("description1")) {
+                                            if (response2.getNombreDelParametro().equals("entityName")) {
                                                 endMessage.add("Address Book Name: " + response2.getValueAsString());
                                             }
                                         } 
