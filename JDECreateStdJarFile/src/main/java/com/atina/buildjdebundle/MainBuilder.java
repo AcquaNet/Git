@@ -748,7 +748,7 @@ public class MainBuilder {
                 // Unzipping WS and Creating Metadata
                 // -----------------------------------------------
                 //
-                logger.info("Descomprimiendo WS..");
+                logger.info("Unzipping WS..");
 
                 MetadataWSGenerator mt = new MetadataWSGenerator();
 
@@ -769,13 +769,13 @@ public class MainBuilder {
                     qty++;
                 }
 
-                summary.add("WS descomprimidos en " + FOLDER_WS_SBFJARS + " Total: " + Integer.toString(qty));
+                summary.add("WS unzipped in " + FOLDER_WS_SBFJARS + " Total: " + Integer.toString(qty));
 
                 // -----------------------------------------------
                 // Generate Metadata and Remove Protected 
                 // -----------------------------------------------
                 //
-                logger.info("Reemplazando Protected");
+                logger.info("Processing WS...");
 
                 Stream<Path> walk = Files.walk(Paths.get(FOLDER_WS_SBFJARS));
 
@@ -814,7 +814,7 @@ public class MainBuilder {
                 
                 walk.close();
                 
-                summary.add("JAVA Converter from protected to public:" + Integer.toString(qtyModifyFile) + " of " + Integer.toString(qtyJava));
+                summary.add("WS Converted:" + Integer.toString(qtyModifyFile) + " of " + Integer.toString(qtyJava));
                   
                 // -------------------------------------------------------------------
                 // Check Control
@@ -861,13 +861,13 @@ public class MainBuilder {
                 // Prepare Maven 
                 // -----------------------------------------------
                 //
-                logger.info("Preparando POM para compilar WS...");
+                logger.info("Preparing POM to compile WS...");
 
                 prepareWSMvn(FOLDER_METADATA, FOLDER_METADATA, jarsToUnzip, FOLDER_WS_SBFJARS, FOLDER_WS_SBFJARS, options.version);
 
                 if (!isSuccessful(resultFinal)) {
 
-                    logger.error("Error creando POM para la compilacion de WS");
+                    logger.error("Error creating POM file to compile WS");
 
                     throw new Exception("Error creando POM para la compilacion de WS");
                     
@@ -876,9 +876,9 @@ public class MainBuilder {
                     summary.add("WS Compilded correctly");
                 }
 
-                summary.add("POM de Ws creado en " + FOLDER_WS_SBFJARS);
+                summary.add("POM Ws created " + FOLDER_WS_SBFJARS);
 
-                logger.info("Compilando WS..");
+                logger.info("Compiling WS..");
                 
                 if(THREADS)
                 {
@@ -939,7 +939,7 @@ public class MainBuilder {
 
                 }
 
-                summary.add("WS instalado en Repositorio");
+                summary.add("WS installing in local repo");
                 
                 // -------------------------------------------------------------------
                 // Clean
@@ -992,7 +992,7 @@ public class MainBuilder {
 
     private static void printUsage(OptionsParser parser) {
 
-        System.out.println("Usage: java -jar server.jar OPTIONS");
+        System.out.println("Usage: java -jar jd-create-jar-files-1.0.0-jar-with-dependencies.jar OPTIONS");
 
         System.out.println(parser.describeOptions(Collections.<String, String>emptyMap(), OptionsParser.HelpVerbosity.LONG));
 

@@ -30,16 +30,16 @@ public class Options extends OptionsBase {
             abbrev = 'i',
             help = "Enter JDE Path installed",
             category = "startup",
-            defaultValue = ""
+            defaultValue = "/tmp/build_jde_libs/"
     )
     public String jdeInstallPath;
   
     @Option(
             name = "jdbcDriver",
             abbrev = 'j',
-            help = "Enter JDBC Driver",
+            help = "Enter JDBC Driver Folder",
             category = "startup",
-            defaultValue = ""
+            defaultValue = "/tmp/build_jde_libs/JDBC_Vendor_Drivers"
     )
     public String jdbcDriver;
 
