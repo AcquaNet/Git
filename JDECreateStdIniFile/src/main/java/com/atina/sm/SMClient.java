@@ -7,6 +7,7 @@ package com.atina.sm;
 
 import com.google.common.net.HttpHeaders;
 import java.io.IOException; 
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -15,7 +16,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.WWWAuthenticationProtocolHandler;
+import org.eclipse.jetty.client.api.AuthenticationStore;
 import org.eclipse.jetty.client.api.ContentResponse;  
+import org.eclipse.jetty.client.util.BasicAuthentication;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpVersion;
 
@@ -49,7 +53,11 @@ public class SMClient {
 
     public ContentResponse authenticate(String baseUrl, String authorization) throws InterruptedException, TimeoutException, ExecutionException, URISyntaxException {
           
-        ContentResponse response = client.newRequest(baseUrl)
+        ContentResponse response = null;
+        
+        client.getProtocolHandlers().remove(WWWAuthenticationProtocolHandler.NAME);
+        
+        response = client.newRequest(baseUrl)
                 .scheme("http")
                 .header(HttpHeaders.AUTHORIZATION, authorization) 
                 .agent("Jetty HTTP client")
@@ -57,6 +65,31 @@ public class SMClient {
                 .method(HttpMethod.POST)
                 .timeout(5, TimeUnit.MINUTES)
                 .send();
+        
+        
+            
+         
+
+        return response;
+    }
+    
+    public ContentResponse authenticate(String baseUrl,String realm, String username, String password) throws InterruptedException, TimeoutException, ExecutionException, URISyntaxException {
+          
+        ContentResponse response = null;
+        
+        URI uri =new URI("http://"+ baseUrl);
+            
+        AuthenticationStore auth  = client.getAuthenticationStore();
+        auth.addAuthentication(new BasicAuthentication(uri, realm, username, password));
+        
+        response = client.newRequest(baseUrl)
+                .scheme("http")
+                .agent("Jetty HTTP client")
+                .version(HttpVersion.HTTP_1_1) 
+                .method(HttpMethod.POST)
+                .timeout(5, TimeUnit.MINUTES)
+                .send();
+        
 
         return response;
     }

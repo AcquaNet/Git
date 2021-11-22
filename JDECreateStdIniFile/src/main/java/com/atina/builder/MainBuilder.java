@@ -53,6 +53,7 @@ public class MainBuilder {
     private static final String JDBJ = "jdbj.ini";
     private static final String INTEROP = "jdeinterop.ini";
     private static final String JDELOG = "jdelog.properties";
+    private static final String SETTING_XML = "settings.xml";
       
     /**
      * @param args the command line arguments
@@ -60,6 +61,8 @@ public class MainBuilder {
     public static void main(String[] args) throws IOException {
  
         showBanner();
+        
+        boolean checkOK = true;
                 
         // -----------------------------------------------
         // create the command line parser
@@ -89,6 +92,9 @@ public class MainBuilder {
 
         try {
             
+            System.out.println("------------------------------------------------------------------------");
+            System.out.println("Creating configuration files..."); 
+        
             // -----------------------------------------------
             // Setting Logging 
             // -----------------------------------------------
@@ -125,13 +131,15 @@ public class MainBuilder {
                         FileUtils.forceMkdir(workingFolderEnviroment); 
                         
                         logger.info("");
-                        logger.info("Folder : " + WORKING_FOLDER + File.separator + options.environment.toUpperCase() + " has been created");
+                        logger.info("Folder : " + WORKING_FOLDER + File.separator + options.environment.trim().toUpperCase() + " has been created");
                         logger.info("");
                 }
                 
                 FileUtils.deleteQuietly(new File(WORKING_FOLDER + File.separator + JDBJ));
                 FileUtils.deleteQuietly(new File(WORKING_FOLDER + File.separator + INTEROP));
                 FileUtils.deleteQuietly(new File(WORKING_FOLDER + File.separator + JDELOG));
+                FileUtils.deleteQuietly(new File(WORKING_FOLDER + File.separator + SETTING_XML));
+                
             }
              
             logger.info("Authenticating : " + options.server + (showDetail?API_AUTHENTICATE:""));  
@@ -142,16 +150,20 @@ public class MainBuilder {
   
             String authHeader = "Basic " + new String(encodedAuth);
              
-            ContentResponse authorization = smClient.authenticate(options.server+API_AUTHENTICATE,authHeader);
+             ContentResponse authorization = smClient.authenticate(options.server+API_AUTHENTICATE,authHeader);
+            //ContentResponse authorization = smClient.authenticate(options.server+API_AUTHENTICATE,"options.user.trim()",options.user.trim(),options.password.trim());
+             
             
             if(authorization.getStatus() !=204)
             {
-                logger.info("  Error validating JDE User."); 
-                logger.info("                  Server : " + options.server + (showDetail?API_AUTHENTICATE:"")); 
-                logger.info("                  Auth   : " + authHeader); 
-                logger.info("          Rest API return: " + authorization.getStatus() ); 
-                logger.info("                           " + authorization.getContentAsString());  
+                endMessage.add("  Error validating JDE User."); 
+                endMessage.add("                  Server : " + options.server + (showDetail?API_AUTHENTICATE:"")); 
+                endMessage.add("                  Auth   : " + authHeader); 
+                endMessage.add("          Rest API return: " + authorization.getStatus() ); 
+                endMessage.add("                           " + authorization.getContentAsString());  
                 
+                checkOK = false;
+ 
                 throw new RuntimeException("Error Validating JDE User");
                 
             }
@@ -184,9 +196,12 @@ public class MainBuilder {
             
             if(serverGroups.getStatus() !=200)
             {
-                logger.info("  Error getting Server Groups.  ");  
-                logger.info("          Rest API return: " + serverGroups.getStatus() );  
-                logger.info("                           " + serverGroups.getContentAsString());  
+                endMessage.add("  Error getting Server Groups.  ");  
+                endMessage.add("          Rest API return: " + serverGroups.getStatus() );  
+                endMessage.add("                           " + serverGroups.getContentAsString());  
+                
+                checkOK = false;
+                 
                 throw new RuntimeException("Error Getting Server Group Information");
                 
             } 
@@ -290,10 +305,12 @@ public class MainBuilder {
                   
                 if(instanceInfo.getStatus() !=200)
                 {
-                    logger.info("  Error getting Server Groups.  "); 
-                    logger.info("          Rest API return: " + instanceInfo.getStatus() ); 
-                    logger.info("                           " + instanceInfo.getContentAsString()); 
-
+                    endMessage.add("  Error getting Server Groups.  "); 
+                    endMessage.add("          Rest API return: " + instanceInfo.getStatus() ); 
+                    endMessage.add("                           " + instanceInfo.getContentAsString());
+                     
+                    checkOK = false;
+                    
                     throw new RuntimeException("Error Getting Server Group Information");
 
                 }
@@ -349,6 +366,15 @@ public class MainBuilder {
                 {
                     logger.info(status);  
                 }
+                
+                status = processIniFile(SETTING_XML,valuesInstanceInfo,"");
+                
+                endMessage.add(status);
+                
+                if(showDetail)
+                {
+                    logger.info(status);  
+                }
                  
              
             }
@@ -365,15 +391,16 @@ public class MainBuilder {
             
             logger.error(ex.getMessage(), ex);
             
-            if(smClient!=null)
-            {
-                smClient.stop();
-            }
+            
             
         }
         
+        if (smClient != null) {
+            smClient.stop();
+        }
+        
         logger.info("------------------------------------------------------------------------");
-        logger.info("GENERATION SUCESSS");
+        logger.info("GENERATION "  + (checkOK ? "SUCESSS" : "ERROR"));
         logger.info("------------------------------------------------------------------------");
         for (String line : endMessage) {
             logger.info(line);
