@@ -193,9 +193,9 @@ public class Main {
                 && (mode == ModesOptions.TestLoggindAndGetAddressBookWS)
                 ) ||
                 (  !options.mode.isEmpty()    
-                && (   modeHidden == ModesHiddenOptions.GetMetadataWS 
+                && (   (modeHidden == ModesHiddenOptions.GetMetadataWS && options.token.isEmpty())
                     || (modeHidden == ModesHiddenOptions.GetMetadataOperations && options.token.isEmpty())
-                    || modeHidden == ModesHiddenOptions.GetJsonWS
+                    || (modeHidden == ModesHiddenOptions.GetJsonWS && options.token.isEmpty())
                     || modeHidden == ModesHiddenOptions.LoginWithUserAndPassword 
                     || modeHidden == ModesHiddenOptions.CreateToken)
                 )
@@ -426,138 +426,7 @@ public class Main {
                     throw new RuntimeException("Error with Login", null);
 
                 }
-                 
-                // ===========================  
-                // Get Metadata                       
-                // ===========================  
-                //
-             
-                if(modeHidden == ModesHiddenOptions.GetMetadataWS)
-                {
-                    try {
-
-                        GetMetadataResponse operaciones = stub.getMetadaParaOperacion(
-                                GetMetadataRequest.newBuilder()
-                                        .setConnectorName("WS")
-                                        .setUser(configuracion.getUser())
-                                        .setPassword(configuracion.getPassword())
-                                        .setEnvironment(configuracion.getEnvironment())
-                                        .setRole(configuracion.getRole())
-                                        .setSessionId(sessionID)
-                                        .setWsconnection(configuracion.getWsConnection())
-                                        .setOperacionKey(options.operationId)
-                                        .setTransactionID(transactionId)
-                                        .build());
- 
-                        String[] operationArray = options.operationId.split("\\.");
-                        
-                        File output = new File("/tmp/jd_" + operationArray[3] + "_" + operationArray[4] + "_" + operationArray[5] +".txt");
-                        
-                        FileOutputStream fop = new FileOutputStream(output);
-                        
-                        if (!output.exists()) {
-                            output.createNewFile();
-                        }       
-                        
-                        ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
-                           
-                        ByteString.copyFromUtf8("--------------------------------------------------------------------------").writeTo(fop);                       
-                        ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
-                        ByteString.copyFromUtf8("Input").writeTo(fop);
-                        ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
-                        
-                        for (TipoDelParametroInput parameter : operaciones.getListaDeParametrosInputList()) {
-
-                            int level = 0;
-
-                            saveParameterInput(parameter, level, fop);
-
-                        } 
-                
-                        ByteString.copyFromUtf8("--------------------------------------------------------------------------").writeTo(fop);
-                        ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
-                        ByteString.copyFromUtf8("Ouptut").writeTo(fop);
-                        ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
-                         
-                        for (TipoDelParametroOutput parameter : operaciones.getListaDeParametrosOutputList()) {
-
-                            int level = 0;
-
-                            saveParameterOutput(parameter, level, fop);
-
-                        }
-                        
-                        ByteString.copyFromUtf8("--------------------------------------------------------------------------").writeTo(fop);
-                        
-                        fop.flush();
-                        
-                        fop.close();
-                        
-                        endMessage.add("Metadata File: " + output);
-                        
-                    } catch (Exception ex) {
- 
-                        checkOK = false;
-
-                        endMessage.add("Error getting Metadata for Operation " + options.operationId + " : " + ex.getMessage());
-
-                        throw new RuntimeException("Error getting Metadata for Operation " + options.operationId + " : " + ex.getMessage(), ex);
-
-                    }
-
-                }
-                
-                // ===========================  
-                // Get Metadata                       
-                // ===========================  
-                //
-             
-                if(modeHidden == ModesHiddenOptions.GetJsonWS)
-                {
-                    try {
-
-                        GetJsonsForOperationResponse operaciones = stub.getJsonsForOperation(
-                                GetMetadataRequest.newBuilder()
-                                .setConnectorName("WS")
-                                .setUser(configuracion.getUser())
-                                .setPassword(configuracion.getPassword())
-                                .setEnvironment(configuracion.getEnvironment())
-                                .setRole(configuracion.getRole())
-                                .setSessionId(sessionID)
-                                .setWsconnection(configuracion.getWsConnection())
-                                .setOperacionKey(options.operationId)
-                                .build());
- 
-                        String[] operationArray = options.operationId.split("\\.");
-                        
-                        File output = new File("/tmp/jd_" + operationArray[3] + "_" + operationArray[4] + "_" + operationArray[5] +".json");
-                        
-                        FileOutputStream fop = new FileOutputStream(output);
-                        
-                        if (!output.exists()) {
-                            output.createNewFile();
-                        }       
-                        
-                        ByteString.copyFromUtf8(operaciones.getInputAsJson()).writeTo(fop);
-                         
-                        fop.flush();
-                        
-                        fop.close();
-                        
-                        endMessage.add("JSON File: " + output);
-                        
-                    } catch (Exception ex) {
-  
-                        checkOK = false;
-
-                        endMessage.add("Get JSON for operation " + options.operationId + " : " + ex.getMessage());
-
-                        throw new RuntimeException("Get JSON for operation " + options.operationId + " : " + ex.getMessage(), ex);
-
-                    }
-
-                }
-                
+                  
                 // ===========================  
                 // Invoke WS              
                 // ===========================  
@@ -1113,6 +982,147 @@ public class Main {
                     endMessage.add("Error getting Metadata Operations: " + ex.getMessage());
 
                     throw new RuntimeException("Error getting Metadata Operations: " + ex.getMessage(), ex);
+
+                }
+
+            }
+            
+            // ===========================  
+            // Get Metadata                       
+            // ===========================  
+            //
+            if (modeHidden == ModesHiddenOptions.GetMetadataWS) {
+                try {
+
+                    GetMetadataResponse operaciones = stub.getMetadaParaOperacion(
+                            GetMetadataRequest.newBuilder()
+                                    .setConnectorName("WS")
+                                    .setUser(configuracion.getUser())
+                                    .setPassword(configuracion.getPassword())
+                                    .setEnvironment(configuracion.getEnvironment())
+                                    .setRole(configuracion.getRole())
+                                    .setSessionId(configuracion.getSession())
+                                    .setJwtToken(options.token)
+                                    .setWsconnection(configuracion.getWsConnection())
+                                    .setOperacionKey(options.operationId)
+                                    .setTransactionID(transactionId)
+                                    .build());
+                    
+                    sessionID = (int) operaciones.getSessionId();
+                    
+                    token = operaciones.getJwtToken();
+
+                    String[] operationArray = options.operationId.split("\\.");
+
+                    File output = new File("/tmp/jd_" + operationArray[3] + "_" + operationArray[4] + "_" + operationArray[5] + ".txt");
+
+                    FileOutputStream fop = new FileOutputStream(output);
+
+                    if (!output.exists()) {
+                        output.createNewFile();
+                    }
+
+                    ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
+
+                    ByteString.copyFromUtf8("--------------------------------------------------------------------------").writeTo(fop);
+                    ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
+                    ByteString.copyFromUtf8("Input").writeTo(fop);
+                    ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
+
+                    for (TipoDelParametroInput parameter : operaciones.getListaDeParametrosInputList()) {
+
+                        int level = 0;
+
+                        saveParameterInput(parameter, level, fop);
+
+                    }
+
+                    ByteString.copyFromUtf8("--------------------------------------------------------------------------").writeTo(fop);
+                    ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
+                    ByteString.copyFromUtf8("Ouptut").writeTo(fop);
+                    ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
+
+                    for (TipoDelParametroOutput parameter : operaciones.getListaDeParametrosOutputList()) {
+
+                        int level = 0;
+
+                        saveParameterOutput(parameter, level, fop);
+
+                    }
+
+                    ByteString.copyFromUtf8("--------------------------------------------------------------------------").writeTo(fop);
+
+                    fop.flush();
+
+                    fop.close();
+
+                    endMessage.add("Session ID [" + sessionID + "]");
+                    endMessage.add("Token: [" + token + "]"); 
+                    endMessage.add("Metadata File: " + output);
+
+                } catch (Exception ex) {
+
+                    checkOK = false;
+
+                    endMessage.add("Error getting Metadata for Operation " + options.operationId + " : " + ex.getMessage());
+
+                    throw new RuntimeException("Error getting Metadata for Operation " + options.operationId + " : " + ex.getMessage(), ex);
+
+                }
+
+            }
+
+            // ===========================  
+            // Get Metadata                       
+            // ===========================  
+            //
+            if (modeHidden == ModesHiddenOptions.GetJsonWS) {
+                try {
+
+                    GetJsonsForOperationResponse operaciones = stub.getJsonsForOperation(
+                            GetMetadataRequest.newBuilder()
+                                    .setConnectorName("WS")
+                                    .setUser(configuracion.getUser())
+                                    .setPassword(configuracion.getPassword())
+                                    .setEnvironment(configuracion.getEnvironment())
+                                    .setRole(configuracion.getRole())
+                                    .setSessionId(configuracion.getSession())
+                                    .setJwtToken(options.token)
+                                    .setWsconnection(configuracion.getWsConnection())
+                                    .setOperacionKey(options.operationId)
+                                    .build());
+
+                    sessionID = (int) operaciones.getSessionId();
+                    
+                    token = operaciones.getJwtToken();
+                    
+                    String[] operationArray = options.operationId.split("\\.");
+
+                    File output = new File("/tmp/jd_" + operationArray[3] + "_" + operationArray[4] + "_" + operationArray[5] + ".json");
+
+                    FileOutputStream fop = new FileOutputStream(output);
+
+                    if (!output.exists()) {
+                        output.createNewFile();
+                    }
+
+                    ByteString.copyFromUtf8(operaciones.getInputAsJson()).writeTo(fop);
+
+                    fop.flush();
+
+                    fop.close();
+
+                    endMessage.add("Session ID [" + sessionID + "]");
+                    endMessage.add("Token: [" + token + "]"); 
+                    endMessage.add("JSON File: " + output);
+
+                } catch (Exception ex) {
+
+                    checkOK = false;
+
+                    endMessage.add("Get JSON for operation " + options.operationId + " : " + ex.getMessage());
+
+                    throw new RuntimeException("Get JSON for operation " + options.operationId + " : " + ex.getMessage(), ex);
 
                 }
 

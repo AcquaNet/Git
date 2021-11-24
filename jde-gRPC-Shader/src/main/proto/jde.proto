@@ -152,12 +152,14 @@ message GetMetadataResponse {
   repeated TipoDelParametroInput listaDeParametrosInput = 1;
   repeated TipoDelParametroOutput listaDeParametrosOutput =2;
   string jwtToken = 3;
+  int64 sessionId = 4;
 }
 
 message GetJsonsForOperationResponse {
   string inputAsJson = 1;
   string outputAsJson =2;
   string jwtToken = 3;
+  int64 sessionId = 4;
 }
 
 message TipoDelParametroInput {

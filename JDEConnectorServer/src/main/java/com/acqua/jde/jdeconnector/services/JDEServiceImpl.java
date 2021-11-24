@@ -779,6 +779,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 responseObserver.onNext(response);
 
                 responseObserver.onCompleted();
+                
+                logger.info("Session ID: " + sessionID);
 
             }
         }
@@ -981,14 +983,14 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 
                 responseBuilder.setJwtToken(getJWT(config));
                 
+                responseBuilder.setSessionId(sessionID);
+                  
                 // --------------------------------------------------
                 // Generar Objecto Metadata
                 // --------------------------------------------------
                 // 
                 GetMetadataResponse metadataResponse = responseBuilder.build();
-                
-                
-
+                 
                 // --------------------------------------------------
                 // Crear el Objeto Mensaje de GetMetadataResponse
                 // --------------------------------------------------
@@ -996,6 +998,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 responseObserver.onNext(metadataResponse);
 
                 responseObserver.onCompleted();
+                
+                
+                logger.info("Session ID: " + sessionID);
                 
 
             }
@@ -1181,6 +1186,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 responseBuilder.setInputAsJson(inputAsJson);
                 
                 responseBuilder.setOutputAsJson(outputAsJson); 
+                
+                responseBuilder.setSessionId(sessionID);
            
                 responseBuilder.setJwtToken(getJWT(config));
 
@@ -1191,6 +1198,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 responseObserver.onNext(responseBuilder.build());
 
                 responseObserver.onCompleted();
+                
+                logger.info("Session ID: " + sessionID);
                 
 
             }

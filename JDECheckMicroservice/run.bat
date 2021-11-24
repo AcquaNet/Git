@@ -59,7 +59,7 @@ Checkear si aun esta conectado
  
 java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -s localhost -p 8085 -m LogoutWithToken -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NzY0ODYxLCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6LTk2NTY5NjgxOSwiZXhwIjoxNjM3NzY5NjYxfQ.AC_bWQ9GphaHA62E9tKEqObU38DWoM9U-oOWPGhMPMM
 
-java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -u JDE -s localhost -p 8085 -m ParseToken -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NzY1MDgxLCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MCwiZXhwIjoxNjM3NzY5ODgxfQ.jEKZtGt960OVIRu7vE_03UjKiBKjbbQRUW-9EFEJFfs
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -u JDE -s localhost -p 8085 -m ParseToken -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NzY4NTUwLCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6NDk2NDkxMDM1LCJleHAiOjE2Mzc3NzMzNTB9.CL3xzRV815RcsR6tb-hehMKCV7Uqn8wGtp2ihu6uUyA
 
 
 ------------------------------------------------------
@@ -87,14 +87,18 @@ Get Metadata Operations
 java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m GetMetadataOperations -s localhost -p 8085 -u JDE  -w Modus2020! -e JDV920 -r *ALL
 java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m GetMetadataOperations -s localhost -p 8085 -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NzY3MTU2LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MTY4MjE3NDkxMywiZXhwIjoxNjM3NzcxOTU2fQ.0OP5rJYoqnXRmZ5JKgdNXGWsMaDYW7uhFY9HKyTjZ1A
 
+-----------------------------------------------------------
+Get Metadata WS
+-----------------------------------------------------------
+ 
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m GetMetadataWS -s localhost -p 8085 -u JDE  -w Modus2020! -e JDV920 -r *ALL -o "oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook"
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m GetMetadataWS -s localhost -p 8085 -o "oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook" -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NzY4MTg2LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6LTE2MDM0MjM0MjN9.ePaqAQmvzoybFBvGjO1F6_bMkW-LFTJAvgi_uj2UK1Q
 
+-----------------------------------------------------------
+Get JSON Schema
+-----------------------------------------------------------
 
-java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m GetMetadataOperations -s localhost -p 8085 -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NzY1MDgxLCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MCwiZXhwIjoxNjM3NzY5ODgxfQ.jEKZtGt960OVIRu7vE_03UjKiBKjbbQRUW-9EFEJFfs
-
-
-
-
-java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m GetMetadataWS -s localhost -p 8085 -u JDE -w Modus2020! -e JDV920 -r *ALL   -o "oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook"
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m GetJsonWS -s localhost -p 8085 -u JDE -w Modus2020! -e JDV920 -r *ALL   -o "oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook"
 java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m GetJsonWS -s localhost -p 8085 -u JDE -w Modus2020! -e JDV920 -r *ALL   -o "oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook"
 
 
