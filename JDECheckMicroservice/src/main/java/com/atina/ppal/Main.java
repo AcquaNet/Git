@@ -97,7 +97,8 @@ public class Main {
         GetLog("GetLog"),
         TestIsConnectedWS("TestIsConnectedWS"),
         TestLogoutWS("TestLogoutWS"),
-        TestLogindWS("TestLogindWS"),
+        LoginWithUserAndPassword("LoginWithUserAndPassword"),
+        LoginWithToken("LoginWithToken"),
         TestGetAddressBookWSWithSessionId("TestGetAddressBookWSWithSessionId"),
         CreateToken("CreateToken"),
         GetMetadataWS("GetMetadataWS"),
@@ -183,6 +184,10 @@ public class Main {
             
         }
         
+        // ---------------------------------------------------------------
+        // Validate User Credentials for the following opereration:
+        // ----------------------------------------------------------------
+        
         if ( (  (  !options.mode.isEmpty()    
                 && (mode == ModesOptions.TestLoggindAndGetAddressBookWS)
                 ) ||
@@ -190,7 +195,7 @@ public class Main {
                 && (modeHidden == ModesHiddenOptions.GetMetadataWS 
                     || modeHidden == ModesHiddenOptions.GetJsonWS
                     || modeHidden == ModesHiddenOptions.GetMetadataOperations
-                    || modeHidden == ModesHiddenOptions.TestLogindWS 
+                    || modeHidden == ModesHiddenOptions.LoginWithUserAndPassword 
                     || modeHidden == ModesHiddenOptions.CreateToken)
                 )
               )
@@ -205,17 +210,12 @@ public class Main {
             return;
         } 
         
-        if ( (  
-                (  !options.mode.isEmpty()    
-                && (modeHidden == ModesHiddenOptions.TestIsConnectedWS 
-                    || modeHidden == ModesHiddenOptions.TestLogoutWS 
-                    || modeHidden == ModesHiddenOptions.GetLog
-                    || modeHidden == ModesHiddenOptions.TestGetAddressBookWSWithSessionId)
-                )
-              )
-            && (    options.serverName.isEmpty()
-                 || options.serverPort.isEmpty() 
-               )) {
+        // ---------------------------------------------------------------
+        // Check server name and porte
+        // ----------------------------------------------------------------
+        
+        if (    options.serverName.isEmpty()
+             || options.serverPort.isEmpty() ) {
 
             printUsage(parser);
             
@@ -225,6 +225,10 @@ public class Main {
 
             return;
         }
+        
+        // ---------------------------------------------------------------
+        // Option TestLoggindAndGetAddressBookWS requires addressbookno
+        // ----------------------------------------------------------------
           
         if ( !options.mode.isEmpty() 
              && mode == ModesOptions.TestLoggindAndGetAddressBookWS
@@ -262,6 +266,10 @@ public class Main {
             return;
         }
         
+        // ---------------------------------------------------------------
+        // Option ParseToken requires Token
+        // ----------------------------------------------------------------
+        
         if ( !options.mode.isEmpty() 
              && (modeHidden == ModesHiddenOptions.ParseToken
                 )
@@ -274,6 +282,10 @@ public class Main {
             return;
         }
         
+        // ---------------------------------------------------------------
+        // Options que requeren Operation ID
+        // ----------------------------------------------------------------
+        
         if ( !options.mode.isEmpty() 
              && (modeHidden == ModesHiddenOptions.GetMetadataWS
                 || modeHidden == ModesHiddenOptions.GetJsonWS)
@@ -285,7 +297,11 @@ public class Main {
             System.out.println("   Mode ["+ options.mode + "] requires operationId option"); 
             return;
         }
-            
+           
+        // ---------------------------------------------------------------
+        // Start Variables
+        // ----------------------------------------------------------------
+        
         String operationKey = "oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook";
         
         String transactionIdStr = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(LocalDateTime.now());
@@ -387,9 +403,9 @@ public class Main {
 
                     sessionID = (int) tokenResponse.getSessionId();
 
-                    System.out.println("User " + configuracion.getUserDetail() +  " connected with Session ID [" + tokenResponse.getSessionId() + "]");
+                    System.out.println(configuracion.getUserDetail() +  " connected with Session ID [" + tokenResponse.getSessionId() + "]");
 
-                    endMessage.add("User " + configuracion.getUserDetail() + " connected with Session ID " + tokenResponse.getSessionId());
+                    endMessage.add(configuracion.getUserDetail() + " connected with Session ID " + tokenResponse.getSessionId());
 
                 } catch (Exception ex) {
  
@@ -669,7 +685,7 @@ public class Main {
 
                     System.out.println("Logout [" + sessionID + "]");
 
-                    endMessage.add("User " + configuracion.getUserDetail() + " disconnected. Current session ID " + tokenResponse.getSessionId());
+                    endMessage.add(configuracion.getUserDetail() + " disconnected. Current session ID " + tokenResponse.getSessionId());
 
                 } catch (Exception ex) {
  
@@ -690,7 +706,7 @@ public class Main {
             
             Boolean isConnected = Boolean.FALSE;
              
-            if(modeHidden != null && (modeHidden == ModesHiddenOptions.TestLogindWS))
+            if(modeHidden != null && (modeHidden == ModesHiddenOptions.LoginWithUserAndPassword))
             {
                 try {
                     
@@ -708,10 +724,10 @@ public class Main {
                     
                     token = tokenResponse.getJwtToken();
 
-                    System.out.println("User " + configuracion.getUserDetail() +  " connected with Session ID [" + tokenResponse.getSessionId() + "]");
+                    System.out.println(configuracion.getUserDetail() +  " connected with Session ID [" + tokenResponse.getSessionId() + "]");
                     System.out.println("     Token [" + token + "]");
  
-                    endMessage.add("User " + configuracion.getUserDetail() + " connected with Session ID " + tokenResponse.getSessionId());
+                    endMessage.add(configuracion.getUserDetail() + " connected with Session ID " + tokenResponse.getSessionId());
                     endMessage.add("Token: [" + token + "]");
                     
 
@@ -741,10 +757,10 @@ public class Main {
                                         .build());
                      
                     token = processTokenResponse.getJwtToken(); 
-                    System.out.println("User " + configuracion.getUserDetail() +  " with Session ID [" + configuracion.getSession().toString() + "]");
+                    System.out.println(configuracion.getUserDetail() +  " with Session ID [" + configuracion.getSession().toString() + "]");
                     System.out.println("     Token [" + token + "]");
  
-                    endMessage.add("User " + configuracion.getUserDetail() +  " with Session ID [" + configuracion.getSession().toString() + "]");
+                    endMessage.add(configuracion.getUserDetail() +  " with Session ID [" + configuracion.getSession().toString() + "]");
                     endMessage.add("Token: [" + token + "]");
                     
 
@@ -865,7 +881,7 @@ public class Main {
 
                     System.out.println("Logout [" + sessionID + "]");
 
-                    endMessage.add("User " + configuracion.getUserDetail() + " disconnected. Current session ID " + tokenResponse.getSessionId());
+                    endMessage.add(configuracion.getUserDetail() + " disconnected. Current session ID " + tokenResponse.getSessionId());
 
                 } catch (Exception ex) {
  
