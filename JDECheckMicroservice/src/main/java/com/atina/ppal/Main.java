@@ -27,8 +27,7 @@ import com.jde.jdeserverwp.servicios.ProcessTokenResponse;
 import com.jde.jdeserverwp.servicios.SessionRequest;
 import com.jde.jdeserverwp.servicios.SessionResponse;
 import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
-import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
-import io.grpc.ConnectivityState;
+import com.jde.jdeserverwp.servicios.TipoDelParametroOutput; 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import java.io.BufferedReader;
@@ -95,10 +94,12 @@ public class Main {
     public enum ModesHiddenOptions {
         ShowHidden("ShowHidden"),
         GetLog("GetLog"),
-        TestIsConnectedWS("TestIsConnectedWS"),
-        TestLogoutWS("TestLogoutWS"),
+        IsConnectedWithSessionId("IsConnectedWithSessionId"),
+        IsConnectedWithToken("IsConnectedWithToken"),
+        LogoutWithSessionID("LogoutWithSessionID"),
         LoginWithUserAndPassword("LoginWithUserAndPassword"),
         LoginWithToken("LoginWithToken"),
+        LogoutWithToken("LogoutWithToken"),
         TestGetAddressBookWSWithSessionId("TestGetAddressBookWSWithSessionId"),
         CreateToken("CreateToken"),
         GetMetadataWS("GetMetadataWS"),
@@ -192,9 +193,9 @@ public class Main {
                 && (mode == ModesOptions.TestLoggindAndGetAddressBookWS)
                 ) ||
                 (  !options.mode.isEmpty()    
-                && (modeHidden == ModesHiddenOptions.GetMetadataWS 
+                && (   modeHidden == ModesHiddenOptions.GetMetadataWS 
+                    || (modeHidden == ModesHiddenOptions.GetMetadataOperations && options.token.isEmpty())
                     || modeHidden == ModesHiddenOptions.GetJsonWS
-                    || modeHidden == ModesHiddenOptions.GetMetadataOperations
                     || modeHidden == ModesHiddenOptions.LoginWithUserAndPassword 
                     || modeHidden == ModesHiddenOptions.CreateToken)
                 )
@@ -203,6 +204,7 @@ public class Main {
             || options.serverPort.isEmpty() 
             || options.user.isEmpty()
             || options.password.isEmpty()
+            || options.role.isEmpty()
             || options.environment.isEmpty())) {
 
             printUsage(parser);
@@ -241,9 +243,13 @@ public class Main {
             return;
         }
         
+        // ---------------------------------------------------------------
+        // Options que requieren Session ID
+        // ----------------------------------------------------------------
+        
         if ( !options.mode.isEmpty() 
-             && (modeHidden == ModesHiddenOptions.TestIsConnectedWS 
-                || modeHidden == ModesHiddenOptions.TestLogoutWS 
+             && (modeHidden == ModesHiddenOptions.IsConnectedWithSessionId 
+                || modeHidden == ModesHiddenOptions.LogoutWithSessionID 
                 || modeHidden == ModesHiddenOptions.TestGetAddressBookWSWithSessionId )
              && options.sessionId.isEmpty())
         {
@@ -253,6 +259,11 @@ public class Main {
             System.out.println("   Mode ["+ options.mode + "] requires sessionId option"); 
             return;
         }
+        
+        // ---------------------------------------------------------------
+        // Options Get Log que requiere Transaction ID
+        // ----------------------------------------------------------------
+        
         
         if ( !options.mode.isEmpty() 
              && (modeHidden == ModesHiddenOptions.GetLog 
@@ -272,8 +283,10 @@ public class Main {
         
         if ( !options.mode.isEmpty() 
              && (modeHidden == ModesHiddenOptions.ParseToken
-                )
-             && options.token.isEmpty())
+                 || modeHidden == ModesHiddenOptions.LoginWithToken
+                 || modeHidden == ModesHiddenOptions.LogoutWithToken
+                 || modeHidden == ModesHiddenOptions.IsConnectedWithToken)
+              && options.token.isEmpty())
         {
             printUsage(parser);    
             System.out.println("Error: "); 
@@ -384,10 +397,7 @@ public class Main {
             // ===========================  
             //
             
-            if(mode == ModesOptions.TestLoggindAndGetAddressBookWS 
-                    || modeHidden == ModesHiddenOptions.GetMetadataWS
-                    || modeHidden == ModesHiddenOptions.GetMetadataOperations
-                    || modeHidden == ModesHiddenOptions.GetJsonWS)  
+            if(mode == ModesOptions.TestLoggindAndGetAddressBookWS)  
             {
                 try {
 
@@ -416,62 +426,7 @@ public class Main {
                     throw new RuntimeException("Error with Login", null);
 
                 }
-                
-                // ===========================  
-                // Get Operations                       
-                // ===========================  
-                //
-                if(modeHidden == ModesHiddenOptions.GetMetadataOperations)
-                {
-                    try {
-
-                        OperacionesResponse operaciones = stub.operaciones(
-                            OperacionesRequest.newBuilder()
-                                    .setConnectorName("WS")
-                                    .setUser(configuracion.getUser())
-                                    .setPassword(configuracion.getPassword())
-                                    .setEnvironment(configuracion.getEnvironment())
-                                    .setRole(configuracion.getRole())
-                                    .setSessionId(sessionID)
-                                    .setWsconnection(configuracion.getWsConnection())
-                                    .build());
-   
-                        File output = new File("/tmp/jd_operations.txt");
-                        
-                        FileOutputStream fop = new FileOutputStream(output);
-                        
-                        if (!output.exists()) {
-                            output.createNewFile();
-                        }       
-                            
-                        ByteString.copyFromUtf8("--------------------------------------------------------------------------").writeTo(fop);
-                        ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
-                        
-                        for (Operacion operacion : operaciones.getOperacionesList()) {
-                            
-                            ByteString.copyFromUtf8("Operacion [" + operacion.getNombreOperacion() + "]").writeTo(fop);
-                            ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
-        
-                        }
- 
-                        fop.flush();
-                        
-                        fop.close();
-                        
-                        endMessage.add("Metadata File: " + output);
-                        
-                    } catch (Exception ex) {
- 
-                        checkOK = false;
-
-                        endMessage.add("Error getting Metadata Operations: " + ex.getMessage());
- 
-                        throw new RuntimeException("Error getting Metadata Operations: " + ex.getMessage(), ex);
-
-                    }
-                    
-                }
-                
+                 
                 // ===========================  
                 // Get Metadata                       
                 // ===========================  
@@ -716,6 +671,7 @@ public class Main {
                                         .setPassword(configuracion.getPassword())
                                         .setEnvironment(configuracion.getEnvironment())
                                         .setRole(configuracion.getRole())
+                                        .setSessionId(0)
                                         .setWsconnection(configuracion.getWsConnection())
                                         .setTransactionID(transactionId)
                                         .build());
@@ -743,6 +699,45 @@ public class Main {
                  
             }
             
+            if(modeHidden != null && (modeHidden == ModesHiddenOptions.LoginWithToken))
+            {
+                try {
+                    
+                    SessionResponse tokenResponse = stub.login(
+                                        SessionRequest.newBuilder()
+                                        .setUser("")
+                                        .setPassword("")
+                                        .setEnvironment("")
+                                        .setRole("")
+                                        .setJwtToken(options.token)
+                                        .setSessionId(0)
+                                        .setWsconnection(configuracion.getWsConnection())
+                                        .setTransactionID(transactionId)
+                                        .build());
+
+                    sessionID = (int) tokenResponse.getSessionId();
+                    
+                    token = tokenResponse.getJwtToken();
+
+                    System.out.println(configuracion.getUserDetail() +  " connected with Session ID [" + sessionID + "]");
+                    System.out.println("     Token [" + token + "]");
+ 
+                    endMessage.add(configuracion.getUserDetail() + " connected with Session ID " + sessionID);
+                    endMessage.add("Token: [" + token + "]");
+                    
+
+                } catch (Exception ex) {
+ 
+                    checkOK = false;
+
+                    endMessage.add("Error runnng Login: " + ex.getMessage());
+
+                    throw new RuntimeException("Error Login: " + ex.getMessage(), null);
+
+                }
+                 
+            }
+            
             if(modeHidden != null && (modeHidden == ModesHiddenOptions.CreateToken))
             {
                 try {
@@ -751,6 +746,7 @@ public class Main {
                                         ProcessTokenRequest.newBuilder()
                                         .setAction("create")
                                         .setUser(configuracion.getUser()) 
+                                        .setPassword(configuracion.getPassword())
                                         .setEnvironment(configuracion.getEnvironment())
                                         .setRole(configuracion.getRole()) 
                                         .setTransactionID(transactionId)
@@ -813,14 +809,14 @@ public class Main {
                  
             }
             
-            if(modeHidden != null && modeHidden == ModesHiddenOptions.TestIsConnectedWS)
+            if(modeHidden != null && modeHidden == ModesHiddenOptions.IsConnectedWithSessionId)
             {
                 try {
                     
                     sessionID = Integer.parseInt(options.sessionId);
 
                     IsConnectedResponse tokenResponse = stub.isConnected(
-                            IsConnectedRequest.newBuilder()
+                                    IsConnectedRequest.newBuilder()
                                     .setSessionId(sessionID)
                                     .setWsconnection(configuracion.getWsConnection())
                                     .setTransactionID(transactionId)
@@ -829,6 +825,8 @@ public class Main {
                     isConnected = tokenResponse.getConnected();
 
                     System.out.println("User is Connected with session ID [" + sessionID + "] ? " + isConnected);
+                    
+                    endMessage.add("User is Connected with session ID [" + sessionID + "] ? " + isConnected); 
 
                 } catch (io.grpc.StatusRuntimeException ex) {
  
@@ -863,7 +861,64 @@ public class Main {
                 
             }
             
-            if(modeHidden != null && modeHidden == ModesHiddenOptions.TestLogoutWS)
+            if(modeHidden != null && modeHidden == ModesHiddenOptions.IsConnectedWithToken)
+            {
+                try {
+                    
+                    sessionID = 0;
+
+                    IsConnectedResponse tokenResponse = stub.isConnected(
+                                    IsConnectedRequest.newBuilder()
+                                    .setSessionId(0)
+                                    .setJwtToken(options.token)
+                                    .setWsconnection(configuracion.getWsConnection())
+                                    .setTransactionID(transactionId)
+                                    .build());
+
+                    isConnected = tokenResponse.getConnected();
+
+                    System.out.println("User is Connected with session ID [" + sessionID + "] ? " + isConnected);
+                    
+                    endMessage.add("User is Connected with session ID [" + sessionID + "] ? " + isConnected); 
+
+                } catch (io.grpc.StatusRuntimeException ex) {
+ 
+                    String[] msg = ex.getMessage().split(Pattern.quote("|"));
+                    
+                    if(msg.length == 3 && msg[1].startsWith("There is not a session in poll connections for session id"))
+                    {
+                        logger.error(msg[1]);
+                        
+                        checkOK = false;
+
+                        endMessage.add("Error runnng isConnected: " + msg[1]); 
+
+                        throw new RuntimeException("Error runnng isConnected: " + msg[1], null);
+                        
+                    
+                    } else
+                    {
+                        throw new RuntimeException("Error runnng isConnected: " + ex.getMessage(), null);
+                    }
+                    
+ 
+                } catch (Exception ex) {
+
+                    checkOK = false;
+
+                    endMessage.add("Error runnng isConnected: " + ex.getMessage()); 
+
+                    throw new RuntimeException("Error runnng isConnected: " + ex.getMessage(), null);
+
+                }
+                
+            }
+            
+            // ---------------------------------------------------
+            // Operacion Logout with Session ID
+            // ---------------------------------------------------
+            
+            if(modeHidden != null && modeHidden == ModesHiddenOptions.LogoutWithSessionID)
             {
                 
                 try {
@@ -871,17 +926,62 @@ public class Main {
                     sessionID = Integer.parseInt(options.sessionId);
 
                     SessionResponse tokenResponse = stub.logout(
-                            LogoutRequest.newBuilder()
+                                    LogoutRequest.newBuilder()
                                     .setSessionId(sessionID)
+                                    .setJwtToken("")
                                     .setWsconnection(configuracion.getWsConnection())
                                     .setTransactionID(transactionId)
                                     .build());
 
                     sessionID = (int) tokenResponse.getSessionId();
+                    
+                    token = tokenResponse.getJwtToken();
 
-                    System.out.println("Logout [" + sessionID + "]");
+                    System.out.println("Logout [" + sessionID + "]"); 
+                    System.out.println("     Token [" + token + "]");
+                     
+                    endMessage.add("Token: [" + token + "]");
+                     
 
-                    endMessage.add(configuracion.getUserDetail() + " disconnected. Current session ID " + tokenResponse.getSessionId());
+                } catch (Exception ex) {
+ 
+                    checkOK = false;
+
+                    endMessage.add("Error with logout operation: " + ex.getMessage()); 
+
+                    throw new RuntimeException("Error with logout operation: " + ex.getMessage(), null);
+
+                }
+                
+            }
+            
+            // ---------------------------------------------------
+            // Operacion Logout with Session ID
+            // ---------------------------------------------------
+            
+            if(modeHidden != null && modeHidden == ModesHiddenOptions.LogoutWithToken)
+            {
+                
+                try {
+                    
+                    sessionID = 0;
+
+                    SessionResponse tokenResponse = stub.logout(
+                            LogoutRequest.newBuilder()
+                                    .setSessionId(0)
+                                    .setJwtToken(options.token)
+                                    .setWsconnection(configuracion.getWsConnection())
+                                    .setTransactionID(transactionId)
+                                    .build());
+
+                    sessionID = (int) tokenResponse.getSessionId();
+                    
+                    token = tokenResponse.getJwtToken();
+
+                    System.out.println("Logout [" + sessionID + "]"); 
+                    System.out.println("     Token [" + token + "]");
+                     
+                    endMessage.add("Token: [" + token + "]"); 
 
                 } catch (Exception ex) {
  
@@ -954,6 +1054,67 @@ public class Main {
                         throw new RuntimeException("Error with getting AB with session ID: " + ex.getMessage(), null);
 
                     }
+
+            }
+            
+            // ===========================  
+            // Get Operations                       
+            // ===========================  
+            //
+            if (modeHidden == ModesHiddenOptions.GetMetadataOperations) {
+                try {
+
+                    OperacionesResponse operaciones = stub.operaciones(
+                            OperacionesRequest.newBuilder()
+                                    .setConnectorName("WS")
+                                    .setUser(configuracion.getUser())
+                                    .setPassword(configuracion.getPassword())
+                                    .setEnvironment(configuracion.getEnvironment())
+                                    .setRole(configuracion.getRole())
+                                    .setSessionId(configuracion.getSession())
+                                    .setJwtToken(options.token)
+                                    .setWsconnection(configuracion.getWsConnection())
+                                    .build());
+                    
+                    sessionID = (int) operaciones.getSessionId();
+                    
+                    token = operaciones.getJwtToken();
+
+                    File output = new File("/tmp/jd_operations.txt");
+
+                    FileOutputStream fop = new FileOutputStream(output);
+
+                    if (!output.exists()) {
+                        output.createNewFile();
+                    }
+
+                    ByteString.copyFromUtf8("--------------------------------------------------------------------------").writeTo(fop);
+                    ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
+
+                    for (Operacion operacion : operaciones.getOperacionesList()) {
+
+                        ByteString.copyFromUtf8("Operacion [" + operacion.getNombreOperacion() + "]").writeTo(fop);
+                        ByteString.copyFrom(System.getProperty("line.separator").getBytes()).writeTo(fop);
+
+                    }
+
+                    fop.flush();
+
+                    fop.close();
+
+                    endMessage.add("Session ID [" + sessionID + "]");
+                    endMessage.add("Token: [" + token + "]"); 
+                    endMessage.add("Metadata File: " + output); 
+
+                } catch (Exception ex) {
+
+                    checkOK = false;
+
+                    endMessage.add("Error getting Metadata Operations: " + ex.getMessage());
+
+                    throw new RuntimeException("Error getting Metadata Operations: " + ex.getMessage(), ex);
+
+                }
 
             }
            

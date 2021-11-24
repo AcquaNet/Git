@@ -519,9 +519,16 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             if(configuracion.getMocking()!=1)
             {
                 JDEPoolConnections.getInstance().disconnect(config.getSessionId());
+                
+                config.setSessionId(0);
+                
             }
              
-            SessionResponse response = SessionResponse.newBuilder().setSessionId(0).build();
+            
+            SessionResponse response = SessionResponse.newBuilder()
+                    .setSessionId(0)
+                    .setJwtToken(getJWT(config)) 
+                    .build();
    
             responseObserver.onNext(response);
 
