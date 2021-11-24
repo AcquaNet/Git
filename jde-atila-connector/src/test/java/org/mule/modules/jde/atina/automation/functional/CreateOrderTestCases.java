@@ -2,7 +2,6 @@ package org.mule.modules.jde.atina.automation.functional;
 
 import static org.junit.Assert.*;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -53,9 +52,9 @@ public class CreateOrderTestCases extends AbstractTestCases {
             String text = IOUtils.toString(inputStreamJSON, StandardCharsets.UTF_8.name());
 
             logger.info("MULESOFT - INPUT: " + text);
-  
+
             entityData2 = new ObjectMapper().readValue(text, Map.class);
-            
+
         } catch (IOException e) {
             e.printStackTrace();
         }

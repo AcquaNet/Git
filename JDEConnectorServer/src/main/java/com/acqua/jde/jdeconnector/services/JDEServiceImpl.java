@@ -379,8 +379,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             
             String msg = "Error Processing Token: " + ex.getMessage();
             logger.error(msg, ex);
-            logger.error("END TID: " + request.getTransactionID());
-            logger.error("-------------------------------------------------------------------------------");
+            logger.info("END TID: " + request.getTransactionID());
+            logger.info("-------------------------------------------------------------------------------");
             
             StringBuilder sb = new StringBuilder();
             sb.append("Error Processing Token");
@@ -431,6 +431,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
 
         } catch (ExpiredJwtException | MalformedJwtException | UnsupportedJwtException | SignatureException | IllegalArgumentException ex) {
 
+            logger.error("Error GetConfigFromJWT: " + ex.getMessage(), ex);
+            
             throw new JDESingleConnectionException("Error Processing Token: " + ex.getMessage(), ex);
 
         }

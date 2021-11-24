@@ -102,7 +102,7 @@
         "rateExchangeOverride": 0.0,
         "currencyCodeTo": "USD",
         "processing": {
-            "actionType": "",
+            "actionType": "1",
             "processingVersion": "ZJDE0001"
         },
         "detail": [
