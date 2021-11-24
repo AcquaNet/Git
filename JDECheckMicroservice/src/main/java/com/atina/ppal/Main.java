@@ -96,10 +96,8 @@ public class Main {
         GetLog("GetLog"),
         IsConnectedWithSessionId("IsConnectedWithSessionId"),
         IsConnectedWithToken("IsConnectedWithToken"),
-        LogoutWithSessionID("LogoutWithSessionID"),
-        LoginWithUserAndPassword("LoginWithUserAndPassword"),
-        LoginWithToken("LoginWithToken"),
-        LogoutWithToken("LogoutWithToken"),
+        Login("Login"),
+        Logout("Logout"),
         TestGetAddressBookWSWithSessionId("TestGetAddressBookWSWithSessionId"),
         CreateToken("CreateToken"),
         GetMetadataWS("GetMetadataWS"),
@@ -196,7 +194,7 @@ public class Main {
                 && (   (modeHidden == ModesHiddenOptions.GetMetadataWS && options.token.isEmpty())
                     || (modeHidden == ModesHiddenOptions.GetMetadataOperations && options.token.isEmpty())
                     || (modeHidden == ModesHiddenOptions.GetJsonWS && options.token.isEmpty())
-                    || modeHidden == ModesHiddenOptions.LoginWithUserAndPassword 
+                    || (modeHidden == ModesHiddenOptions.Login && options.token.isEmpty())
                     || modeHidden == ModesHiddenOptions.CreateToken)
                 )
               )
@@ -249,14 +247,13 @@ public class Main {
         
         if ( !options.mode.isEmpty() 
              && (modeHidden == ModesHiddenOptions.IsConnectedWithSessionId 
-                || modeHidden == ModesHiddenOptions.LogoutWithSessionID 
                 || modeHidden == ModesHiddenOptions.TestGetAddressBookWSWithSessionId )
              && options.sessionId.isEmpty())
         {
             printUsage(parser);    
             System.out.println("Error: "); 
             System.out.println("   ");
-            System.out.println("   Mode ["+ options.mode + "] requires sessionId option"); 
+            System.out.println("   Mode ["+ options.mode + "] requires sessionId or token option"); 
             return;
         }
         
@@ -283,8 +280,6 @@ public class Main {
         
         if ( !options.mode.isEmpty() 
              && (modeHidden == ModesHiddenOptions.ParseToken
-                 || modeHidden == ModesHiddenOptions.LoginWithToken
-                 || modeHidden == ModesHiddenOptions.LogoutWithToken
                  || modeHidden == ModesHiddenOptions.IsConnectedWithToken)
               && options.token.isEmpty())
         {
@@ -530,7 +525,7 @@ public class Main {
             
             Boolean isConnected = Boolean.FALSE;
              
-            if(modeHidden != null && (modeHidden == ModesHiddenOptions.LoginWithUserAndPassword))
+            if(modeHidden != null && modeHidden == ModesHiddenOptions.Login)
             {
                 try {
                     
@@ -540,7 +535,8 @@ public class Main {
                                         .setPassword(configuracion.getPassword())
                                         .setEnvironment(configuracion.getEnvironment())
                                         .setRole(configuracion.getRole())
-                                        .setSessionId(0)
+                                        .setSessionId(configuracion.getSession())
+                                        .setJwtToken(options.token)
                                         .setWsconnection(configuracion.getWsConnection())
                                         .setTransactionID(transactionId)
                                         .build());
@@ -567,46 +563,7 @@ public class Main {
                 }
                  
             }
-            
-            if(modeHidden != null && (modeHidden == ModesHiddenOptions.LoginWithToken))
-            {
-                try {
-                    
-                    SessionResponse tokenResponse = stub.login(
-                                        SessionRequest.newBuilder()
-                                        .setUser("")
-                                        .setPassword("")
-                                        .setEnvironment("")
-                                        .setRole("")
-                                        .setJwtToken(options.token)
-                                        .setSessionId(0)
-                                        .setWsconnection(configuracion.getWsConnection())
-                                        .setTransactionID(transactionId)
-                                        .build());
-
-                    sessionID = (int) tokenResponse.getSessionId();
-                    
-                    token = tokenResponse.getJwtToken();
-
-                    System.out.println(configuracion.getUserDetail() +  " connected with Session ID [" + sessionID + "]");
-                    System.out.println("     Token [" + token + "]");
- 
-                    endMessage.add(configuracion.getUserDetail() + " connected with Session ID " + sessionID);
-                    endMessage.add("Token: [" + token + "]");
-                    
-
-                } catch (Exception ex) {
- 
-                    checkOK = false;
-
-                    endMessage.add("Error runnng Login: " + ex.getMessage());
-
-                    throw new RuntimeException("Error Login: " + ex.getMessage(), null);
-
-                }
-                 
-            }
-            
+             
             if(modeHidden != null && (modeHidden == ModesHiddenOptions.CreateToken))
             {
                 try {
@@ -787,17 +744,17 @@ public class Main {
             // Operacion Logout with Session ID
             // ---------------------------------------------------
             
-            if(modeHidden != null && modeHidden == ModesHiddenOptions.LogoutWithSessionID)
+            if(modeHidden != null && modeHidden == ModesHiddenOptions.Logout)
             {
                 
                 try {
                     
-                    sessionID = Integer.parseInt(options.sessionId);
+                    sessionID = 0;
 
                     SessionResponse tokenResponse = stub.logout(
                                     LogoutRequest.newBuilder()
                                     .setSessionId(sessionID)
-                                    .setJwtToken("")
+                                    .setJwtToken(options.token)
                                     .setWsconnection(configuracion.getWsConnection())
                                     .setTransactionID(transactionId)
                                     .build());
@@ -822,47 +779,7 @@ public class Main {
 
                 }
                 
-            }
-            
-            // ---------------------------------------------------
-            // Operacion Logout with Session ID
-            // ---------------------------------------------------
-            
-            if(modeHidden != null && modeHidden == ModesHiddenOptions.LogoutWithToken)
-            {
-                
-                try {
-                    
-                    sessionID = 0;
-
-                    SessionResponse tokenResponse = stub.logout(
-                            LogoutRequest.newBuilder()
-                                    .setSessionId(0)
-                                    .setJwtToken(options.token)
-                                    .setWsconnection(configuracion.getWsConnection())
-                                    .setTransactionID(transactionId)
-                                    .build());
-
-                    sessionID = (int) tokenResponse.getSessionId();
-                    
-                    token = tokenResponse.getJwtToken();
-
-                    System.out.println("Logout [" + sessionID + "]"); 
-                    System.out.println("     Token [" + token + "]");
-                     
-                    endMessage.add("Token: [" + token + "]"); 
-
-                } catch (Exception ex) {
- 
-                    checkOK = false;
-
-                    endMessage.add("Error with logout operation: " + ex.getMessage()); 
-
-                    throw new RuntimeException("Error with logout operation: " + ex.getMessage(), null);
-
-                }
-                
-            }
+            } 
             
             if(modeHidden != null && modeHidden == ModesHiddenOptions.TestGetAddressBookWSWithSessionId)
             {
