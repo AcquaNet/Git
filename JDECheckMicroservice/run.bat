@@ -7,59 +7,46 @@ OPTIONS
 Permite Logearse, invocar a un WS y deslogearse.
 ------------------------------------------------------
 
-java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -u JDE -w Modus2020! -e JDV920 -r *ALL -s localhost -p 8085 -m TestLoggindAndGetAddressBookWS -a 28
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m TestLoggindAndGetAddressBookWS  -s localhost -p 8085 -u JDE -w Modus2020! -e JDV920 -r *ALL -a 28
 
 ------------------------------------------------------
-LOGIN WITH USER/PWD With Credential
+LOGIN With Credential
 ------------------------------------------------------
-
-Input: User Credential
-
+  
 java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m Login -s localhost -p 8085 -u JDE -w Modus2020! -e JDV920 -r *ALL
 
-Output: Token que contiene la sesion.
-
-Ejecutar Parse Token para ver el detalle.
-Debe corresponder al Session ID infromado.
-
-java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -u JDE -s localhost -p 8085 -m ParseToken -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NzU2MzY5LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MTg5NjI2NjIwMSwiZXhwIjoxNjM3NzYxMTY5fQ.sMheTRywMR_0Bb6RoaeAMPx9cZlh9MdC_uSw6M2hMIM
-
+------------------------------------------------------
+PARSE TOKEN
+------------------------------------------------------
+ 
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m ParseToken -s localhost -p 8085 -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NzU2MzY5LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MTg5NjI2NjIwMSwiZXhwIjoxNjM3NzYxMTY5fQ.sMheTRywMR_0Bb6RoaeAMPx9cZlh9MdC_uSw6M2hMIM
 
 ------------------------------------------------------
-LOGOUT WITH Session Id
+CHECK Is Connected
 ------------------------------------------------------
 
-Checkear si aun esta conectado
-
-java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -s localhost -p 8085 -m IsConnectedWithSessionId -i 94311738
-
-java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -s localhost -p 8085 -m Logout -i 385635919
-
-java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -u JDE -s localhost -p 8085 -m ParseToken -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NzYwMDY3LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiIiwicGFzc3dvcmQiOiIiLCJlbnZpcm9ubWVudCI6IiIsInJvbGUiOiIiLCJzZXNzaW9uSWQiOjAsImV4cCI6MTYzNzc2NDg2N30.lc1SUeGj8oOvZsinKsK0alTkBWfeRohqItq9xNrjpz4
-
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m IsConnected -s localhost -p 8085  -i 94311738
 
 ------------------------------------------------------
-LOGIN - With Token
+LOGOUT With Session Id
+------------------------------------------------------
+  
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m Logout -s localhost -p 8085  -i 385635919
+ 
+------------------------------------------------------
+LOGIN With Token
 ------------------------------------------------------
 
 java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m CreateToken -s localhost -p 8085 -u JDE -w Modus2020! -e JDV920 -r *ALL
-
-java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m ParseToken -s localhost -p 8085  -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NzY0NDU1LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MCwiZXhwIjoxNjM3NzY5MjU1fQ.kY126wyjEL0lk1q-9k9kMuPmzbaMmwvPdRKLIszRBo0
-
-java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m Login -s localhost -p 8085  -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NzY0NDU1LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MCwiZXhwIjoxNjM3NzY5MjU1fQ.kY126wyjEL0lk1q-9k9kMuPmzbaMmwvPdRKLIszRBo0
-
-java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m IsConnectedWithToken -s localhost -p 8085  -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NzY0ODYxLCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6LTk2NTY5NjgxOSwiZXhwIjoxNjM3NzY5NjYxfQ.AC_bWQ9GphaHA62E9tKEqObU38DWoM9U-oOWPGhMPMM
-
-------------------------------------------------------
-LOGOUT WITH Token (LogoutWithSessionID)
-------------------------------------------------------
-
-Checkear si aun esta conectado
  
-java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -s localhost -p 8085 -m LogoutWithToken -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NzY0ODYxLCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6LTk2NTY5NjgxOSwiZXhwIjoxNjM3NzY5NjYxfQ.AC_bWQ9GphaHA62E9tKEqObU38DWoM9U-oOWPGhMPMM
-
-java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -u JDE -s localhost -p 8085 -m ParseToken -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NzY4NTUwLCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6NDk2NDkxMDM1LCJleHAiOjE2Mzc3NzMzNTB9.CL3xzRV815RcsR6tb-hehMKCV7Uqn8wGtp2ihu6uUyA
-
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m Login -s localhost -p 8085  -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3Nzc4MjIzLCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MCwiZXhwIjoxNjM3NzgzMDIzfQ.bnk8qOGfs2t87QK8jjGMOi5LOUC4t7z7Yr42gmlo9YQ
+ 
+------------------------------------------------------
+LOGOUT With Token
+------------------------------------------------------
+  
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m Logout -s localhost -p 8085 -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NzY0ODYxLCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6LTk2NTY5NjgxOSwiZXhwIjoxNjM3NzY5NjYxfQ.AC_bWQ9GphaHA62E9tKEqObU38DWoM9U-oOWPGhMPMM
+ 
 ------------------------------------------------------
 Show Options
 ------------------------------------------------------
@@ -76,7 +63,7 @@ java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -u JDE -w
 Get Logs
 -----------------------------------------------------------
 
-java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -s localhost -p 8085 -m GetLog -t  20211124115453
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m GetLog -s localhost -p 8085 -t 20211124115453
 
 -----------------------------------------------------------
 Get Metadata Operations
@@ -86,7 +73,7 @@ java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m GetMet
 java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m GetMetadataOperations -s localhost -p 8085 -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3NzY3MTU2LCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MTY4MjE3NDkxMywiZXhwIjoxNjM3NzcxOTU2fQ.0OP5rJYoqnXRmZ5JKgdNXGWsMaDYW7uhFY9HKyTjZ1A
 
 -----------------------------------------------------------
-Get Metadata WS
+Get Metadata Web Service
 -----------------------------------------------------------
  
 java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m GetMetadataWS -s localhost -p 8085 -u JDE  -w Modus2020! -e JDV920 -r *ALL -o "oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook"

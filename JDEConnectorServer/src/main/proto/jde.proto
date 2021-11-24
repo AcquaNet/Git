@@ -70,6 +70,8 @@ message IsConnectedRequest {
 
 message IsConnectedResponse { 
   bool  connected = 1;
+  int64 sessionId = 2;
+  string jwtToken = 3;
 }
 
 // Configuracion del la Conexion a JDE
@@ -230,6 +232,7 @@ message EjecutarOperacionResponse {
   bool repeatedParameter = 15;
   bool isObject = 16;
   string jwtToken = 17;
+  int64 sessionId = 18;
 }
 
 message CapturarLogRequest {

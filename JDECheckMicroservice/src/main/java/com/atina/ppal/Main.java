@@ -93,16 +93,15 @@ public class Main {
     
     public enum ModesHiddenOptions {
         ShowHidden("ShowHidden"),
-        GetLog("GetLog"),
-        IsConnectedWithSessionId("IsConnectedWithSessionId"),
-        IsConnectedWithToken("IsConnectedWithToken"),
-        Login("Login"),
+        Login("Login"), 
+        IsConnected("IsConnected"),
         Logout("Logout"),
-        TestGetAddressBookWSWithSessionId("TestGetAddressBookWSWithSessionId"),
-        CreateToken("CreateToken"),
+        TestGetAddressBookWSWithSessionId("TestGetAddressBookWSWithSessionId"), 
         GetMetadataWS("GetMetadataWS"),
-        GetJsonWS("GetJsonWS"),
+        GetJson("GetJson"),
         GetMetadataOperations("GetMetadataOperations"),
+        GetLog("GetLog"),
+        CreateToken("CreateToken"),
         ParseToken("ParseToken");
 
         public final String modesHidden;
@@ -193,7 +192,7 @@ public class Main {
                 (  !options.mode.isEmpty()    
                 && (   (modeHidden == ModesHiddenOptions.GetMetadataWS && options.token.isEmpty())
                     || (modeHidden == ModesHiddenOptions.GetMetadataOperations && options.token.isEmpty())
-                    || (modeHidden == ModesHiddenOptions.GetJsonWS && options.token.isEmpty())
+                    || (modeHidden == ModesHiddenOptions.GetJson && options.token.isEmpty())
                     || (modeHidden == ModesHiddenOptions.Login && options.token.isEmpty())
                     || modeHidden == ModesHiddenOptions.CreateToken)
                 )
@@ -246,8 +245,7 @@ public class Main {
         // ----------------------------------------------------------------
         
         if ( !options.mode.isEmpty() 
-             && (modeHidden == ModesHiddenOptions.IsConnectedWithSessionId 
-                || modeHidden == ModesHiddenOptions.TestGetAddressBookWSWithSessionId )
+             && (modeHidden == ModesHiddenOptions.IsConnected )
              && options.sessionId.isEmpty())
         {
             printUsage(parser);    
@@ -279,8 +277,7 @@ public class Main {
         // ----------------------------------------------------------------
         
         if ( !options.mode.isEmpty() 
-             && (modeHidden == ModesHiddenOptions.ParseToken
-                 || modeHidden == ModesHiddenOptions.IsConnectedWithToken)
+             && (modeHidden == ModesHiddenOptions.ParseToken)
               && options.token.isEmpty())
         {
             printUsage(parser);    
@@ -296,7 +293,7 @@ public class Main {
         
         if ( !options.mode.isEmpty() 
              && (modeHidden == ModesHiddenOptions.GetMetadataWS
-                || modeHidden == ModesHiddenOptions.GetJsonWS)
+                || modeHidden == ModesHiddenOptions.GetJson)
              && options.operationId.isEmpty())
         {
             printUsage(parser);    
@@ -635,77 +632,32 @@ public class Main {
                  
             }
             
-            if(modeHidden != null && modeHidden == ModesHiddenOptions.IsConnectedWithSessionId)
+            if(modeHidden != null && modeHidden == ModesHiddenOptions.IsConnected)
             {
                 try {
                     
-                    sessionID = Integer.parseInt(options.sessionId);
+                    sessionID = options.sessionId.isEmpty()?0:Integer.parseInt(options.sessionId);
 
                     IsConnectedResponse tokenResponse = stub.isConnected(
                                     IsConnectedRequest.newBuilder()
                                     .setSessionId(sessionID)
-                                    .setWsconnection(configuracion.getWsConnection())
-                                    .setTransactionID(transactionId)
-                                    .build());
-
-                    isConnected = tokenResponse.getConnected();
-
-                    System.out.println("User is Connected with session ID [" + sessionID + "] ? " + isConnected);
-                    
-                    endMessage.add("User is Connected with session ID [" + sessionID + "] ? " + isConnected); 
-
-                } catch (io.grpc.StatusRuntimeException ex) {
- 
-                    String[] msg = ex.getMessage().split(Pattern.quote("|"));
-                    
-                    if(msg.length == 3 && msg[1].startsWith("There is not a session in poll connections for session id"))
-                    {
-                        logger.error(msg[1]);
-                        
-                        checkOK = false;
-
-                        endMessage.add("Error runnng isConnected: " + msg[1]); 
-
-                        throw new RuntimeException("Error runnng isConnected: " + msg[1], null);
-                        
-                    
-                    } else
-                    {
-                        throw new RuntimeException("Error runnng isConnected: " + ex.getMessage(), null);
-                    }
-                    
- 
-                } catch (Exception ex) {
-
-                    checkOK = false;
-
-                    endMessage.add("Error runnng isConnected: " + ex.getMessage()); 
-
-                    throw new RuntimeException("Error runnng isConnected: " + ex.getMessage(), null);
-
-                }
-                
-            }
-            
-            if(modeHidden != null && modeHidden == ModesHiddenOptions.IsConnectedWithToken)
-            {
-                try {
-                    
-                    sessionID = 0;
-
-                    IsConnectedResponse tokenResponse = stub.isConnected(
-                                    IsConnectedRequest.newBuilder()
-                                    .setSessionId(0)
                                     .setJwtToken(options.token)
                                     .setWsconnection(configuracion.getWsConnection())
                                     .setTransactionID(transactionId)
                                     .build());
-
+                    
+                    sessionID = (int) tokenResponse.getSessionId(); 
+                    token = tokenResponse.getJwtToken();
+ 
                     isConnected = tokenResponse.getConnected();
 
                     System.out.println("User is Connected with session ID [" + sessionID + "] ? " + isConnected);
+                    System.out.println("     Token [" + token + "]");
+                    System.out.println("     Session ID [" + sessionID + "]");
                     
                     endMessage.add("User is Connected with session ID [" + sessionID + "] ? " + isConnected); 
+                    endMessage.add("     Token [" + token + "]"); 
+                    endMessage.add("     Session ID [" + sessionID + "]"); 
 
                 } catch (io.grpc.StatusRuntimeException ex) {
  
@@ -739,7 +691,7 @@ public class Main {
                 }
                 
             }
-            
+             
             // ---------------------------------------------------
             // Operacion Logout with Session ID
             // ---------------------------------------------------
@@ -748,8 +700,8 @@ public class Main {
             {
                 
                 try {
-                    
-                    sessionID = 0;
+                     
+                    sessionID = options.sessionId.isEmpty()?0:Integer.parseInt(options.sessionId);
 
                     SessionResponse tokenResponse = stub.logout(
                                     LogoutRequest.newBuilder()
@@ -765,6 +717,7 @@ public class Main {
 
                     System.out.println("Logout [" + sessionID + "]"); 
                     System.out.println("     Token [" + token + "]");
+                    System.out.println("     Session ID [" + sessionID + "]");
                      
                     endMessage.add("Token: [" + token + "]");
                      
@@ -786,7 +739,7 @@ public class Main {
 
                     try {
 
-                        sessionID = Integer.parseInt(options.sessionId);
+                        sessionID = options.sessionId.isEmpty()?0:Integer.parseInt(options.sessionId);
                         
                         EjecutarOperacionValores.Builder itemId = EjecutarOperacionValores.newBuilder();
                         itemId.setNombreDelParametro("entityId");
@@ -806,11 +759,15 @@ public class Main {
                                         .setRole(configuracion.getRole())
                                         .setWsconnection(configuracion.getWsConnection())
                                         .setSessionId(sessionID)
+                                        .setJwtToken(options.token)
                                         .addListaDeValores(item.build())
                                         .setTransactionID(transactionId)
                                         .build());
-
-
+                        
+                        sessionID = (int) ejecutarOperacionesResponse.getSessionId();
+                                
+                        token = ejecutarOperacionesResponse.getJwtToken();
+ 
                         List<EjecutarOperacionResponse> values = ejecutarOperacionesResponse.getListaDeValoresList();
 
                         if (values != null && !values.isEmpty()) {
@@ -829,6 +786,12 @@ public class Main {
                         }
 
                         logger.info("WS JP010000.AddressBookManager.getAddressBook has been called correctly");
+                        System.out.println("     Token [" + token + "]");
+                        System.out.println("     Session ID [" + sessionID + "]");
+                        
+                        endMessage.add("Token: [" + token + "]");
+                        endMessage.add("     Session ID [" + sessionID + "]");
+                    
 
                     }
                     catch (Exception ex) {
@@ -993,7 +956,7 @@ public class Main {
             // Get Metadata                       
             // ===========================  
             //
-            if (modeHidden == ModesHiddenOptions.GetJsonWS) {
+            if (modeHidden == ModesHiddenOptions.GetJson) {
                 try {
 
                     GetJsonsForOperationResponse operaciones = stub.getJsonsForOperation(

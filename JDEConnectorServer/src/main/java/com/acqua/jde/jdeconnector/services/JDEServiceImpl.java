@@ -627,7 +627,11 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 sessionId = config.getSessionId();
             }
              
-            IsConnectedResponse response = IsConnectedResponse.newBuilder().setConnected(sessionId!=0).build();
+            IsConnectedResponse response = IsConnectedResponse.newBuilder()
+                                                .setConnected(sessionId!=0)    
+                                                .setSessionId(config.getSessionId())
+                                                .setJwtToken(getJWT(config))  
+                                                .build();
             
             logger.info("JDE isConnected: " + Boolean.toString(sessionId!=0)); 
             
