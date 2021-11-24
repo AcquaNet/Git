@@ -1393,10 +1393,12 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 responseBuilder.setRepeatedParameter(false);
                 responseBuilder.setNullValue(false);
                 responseBuilder.setIsObject(true);
+                
                  
                 createOperationResponse(responseBuilder, outputParameters,returnValues,0);
                  
                 responseBuilder.setJwtToken(getJWT(config));
+                responseBuilder.setSessionId(sessionID);
                 
                 // --------------------------------------------------
                 // Crear el Objeto Mensaje de GetMetadataResponse
