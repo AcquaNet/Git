@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JDEAtinaConfigDriver {
     
-    private static final Logger logger = LoggerFactory.getLogger(JDEAtinaConfigDriver.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDEAtinaConnector.class);
     
     private String jdeUser;
     private String jdePassword;

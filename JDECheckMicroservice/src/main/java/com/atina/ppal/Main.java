@@ -6,6 +6,8 @@
 package com.atina.ppal;
   
 import com.atina.cliente.connector.JDEAtinaConfigDriver;
+import com.atina.cliente.connector.JDEAtinaConfiguracion;
+import com.atina.cliente.connector.JDEAtinaConnector;
 import com.google.devtools.common.options.OptionsParser;
 import com.google.shade.protobuf.ByteString;
 import com.jde.jdeserverwp.servicios.CapturarLogRequest;
@@ -49,8 +51,10 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays; 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List; 
+import java.util.Map;
 import java.util.regex.Pattern;  
 import org.apache.commons.lang3.StringUtils;
 
@@ -349,47 +353,60 @@ public class Main {
             // Crear Canal de Comunicacion  
             // ===========================  
             //
-            try {
-                
-                ManagedChannelBuilder<?> channelBuilder = ManagedChannelBuilder.forAddress(configuracion.getServidorServicio(), configuracion.getPuertoServicio());
-                
-                channel = channelBuilder
-                        .usePlaintext()
-                        .build();
-
-            
-            } catch (java.lang.NoSuchMethodError ex) {
-
-                logger.error("Error connecting to JD Microservice:  " + ex.getMessage());
-
-                checkOK = false;
-
-                endMessage.add("Error connecting to JD Microservice " + configuracion.getServidorServicio() + ":" + configuracion.getPuertoServicio());
-
-                throw new RuntimeException("Error connecting to JD Microservice : " + configuracion.getServidorServicio() + ":" + configuracion.getPuertoServicio(), null);
-
-
-            } catch (Exception ex) {
-
-                logger.error("Error connecting to JD Microservice:  " + ex.getMessage());
-
-                checkOK = false;
-
-                endMessage.add("Error connecting to JD Microservice " + configuracion.getServidorServicio() + ":" + configuracion.getPuertoServicio());
-
-                throw new RuntimeException("Error connecting to JD Microservice : " + configuracion.getServidorServicio() + ":" + configuracion.getPuertoServicio(), null);
-
-            }
-            
-            // =========================== 
-            // Creacion del Stub           
-            // ===========================  
-            // 
-            JDEServiceGrpc.JDEServiceBlockingStub stub = JDEServiceGrpc.newBlockingStub(channel);
             
             int sessionID = 0;
             
-            String token = "";
+            ManagedChannelBuilder<?> channelBuilder = null;
+            
+            JDEServiceGrpc.JDEServiceBlockingStub stub = null;
+            
+             String token = "";
+            
+            if(modeHidden != ModesHiddenOptions.ValidateLibrary)
+            {
+                try {
+
+                    channelBuilder = ManagedChannelBuilder.forAddress(configuracion.getServidorServicio(), configuracion.getPuertoServicio());
+
+                    channel = channelBuilder
+                            .usePlaintext()
+                            .build();
+
+
+                } catch (java.lang.NoSuchMethodError ex) {
+
+                    logger.error("Error connecting to JD Microservice:  " + ex.getMessage());
+
+                    checkOK = false;
+
+                    endMessage.add("Error connecting to JD Microservice " + configuracion.getServidorServicio() + ":" + configuracion.getPuertoServicio());
+
+                    throw new RuntimeException("Error connecting to JD Microservice : " + configuracion.getServidorServicio() + ":" + configuracion.getPuertoServicio(), null);
+
+
+                } catch (Exception ex) {
+
+                    logger.error("Error connecting to JD Microservice:  " + ex.getMessage());
+
+                    checkOK = false;
+
+                    endMessage.add("Error connecting to JD Microservice " + configuracion.getServidorServicio() + ":" + configuracion.getPuertoServicio());
+
+                    throw new RuntimeException("Error connecting to JD Microservice : " + configuracion.getServidorServicio() + ":" + configuracion.getPuertoServicio(), null);
+
+                }
+
+                // =========================== 
+                // Creacion del Stub           
+                // ===========================  
+                // 
+                stub = JDEServiceGrpc.newBlockingStub(channel);
+
+                sessionID = 0;
+
+                token = "";
+            
+            }
                        
             // ===========================  
             // Login                       
@@ -1130,19 +1147,86 @@ public class Main {
             if(modeHidden != null && modeHidden == ModesHiddenOptions.ValidateLibrary)
             {
                 
-                JDEAtinaConfigDriver driver = new JDEAtinaConfigDriver();
-                 
-                driver.connect(
-                        options.user, 
-                        options.password, 
-                        options.environment, 
-                        options.role, 
-                        new Boolean(true), 
-                        options.serverName, 
-                        Integer.parseInt(options.serverPort));
-
+                // =========================================================
+                // Set Configuration
+                // =========================================================
                 
-                driver.disconnect();
+                JDEAtinaConfiguracion jdConfiguration = new JDEAtinaConfiguracion(
+                        configuracion.getUser(),
+                        configuracion.getPassword(),
+                        configuracion.getEnvironment(),
+                        configuracion.getRole(),
+                        options.token,
+                        configuracion.getWsConnection(),
+                        configuracion.getServidorServicio(),
+                        configuracion.getSession());
+                
+                
+                // =========================================================
+                // Set Driver
+                // =========================================================
+                
+                JDEAtinaConfigDriver configure = new JDEAtinaConfigDriver();
+                 
+                configure.setJdeUser(configuracion.getUser());
+                configure.setJdePassword(configuracion.getPassword());
+                configure.setJdeEnvironment(configuracion.getEnvironment());
+                configure.setJdeRole(configuracion.getRole());
+                configure.setMicroServiceName(configuracion.getServidorServicio());
+                configure.setMicroServicePort(configuracion.getPuertoServicio());
+                configure.setWsConnection(configuracion.getWsConnection());
+                 
+                // =========================================================
+                // Connect
+                // =========================================================
+                
+                
+                configure.connect(  configuracion.getUser(), 
+                                    configuracion.getPassword(), 
+                                    configuracion.getEnvironment(), 
+                                    configuracion.getRole(), 
+                                    configuracion.getWsConnection(), 
+                                    configuracion.getServidorServicio(), 
+                                    configuracion.getPuertoServicio());
+                 
+                // =========================================================
+                // Create Connector
+                // =========================================================
+                
+                JDEAtinaConnector driver = new JDEAtinaConnector();
+                
+                driver.setConfig(configure);
+                
+                Map<String, Object> entityData = new HashMap<String, Object>();
+                
+                entityData.put("Transaction ID", transactionId);
+                entityData.put("JDE Token", "");
+                entityData.put("JDE User", options.user);
+                entityData.put("JDE Password", options.password);
+                entityData.put("JDE Environment", options.environment);
+                entityData.put("JDE Role", options.role);
+                entityData.put("Session Id", Integer.toString(sessionID));
+                 
+                
+                // =========================================================
+                // Authenticate Operation
+                // =========================================================
+                
+                // Values: FromUserData or FromTokenData
+                
+                
+                Map<String,Object> login = (Map<String,Object>) driver.authenticate("FromUserData", entityData);
+                
+                endMessage.add("Token: " + login.get("token"));
+                endMessage.add("Address Book No: " + login.get("userAddressBookNo"));
+                 
+                
+                // =========================================================
+                // Disconnect
+                // =========================================================
+                 
+                configure.disconnect();
+                
                 
                 
             }
