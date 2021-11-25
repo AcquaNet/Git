@@ -9,6 +9,9 @@ import com.google.devtools.common.options.OptionsParser;
 import com.google.shade.protobuf.ByteString;
 import com.jde.jdeserverwp.servicios.CapturarLogRequest;
 import com.jde.jdeserverwp.servicios.CapturarLogResponse;
+import com.jde.jdeserverwp.servicios.ConnectionPoolRequest;
+import com.jde.jdeserverwp.servicios.ConnectionPoolResponse;
+import com.jde.jdeserverwp.servicios.ConnectionPoolValue;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionRequest;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
@@ -101,6 +104,7 @@ public class Main {
         GetJson("GetJson"),
         GetMetadataOperations("GetMetadataOperations"),
         GetLog("GetLog"),
+        GetConnections("GetConnections"),
         CreateToken("CreateToken"),
         ParseToken("ParseToken");
 
@@ -310,6 +314,7 @@ public class Main {
         String operationKey = "oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook";
         
         String transactionIdStr = DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(LocalDateTime.now());
+        
         Long transactionId = Long.parseLong(transactionIdStr);
         
         System.out.println("Transaction ID: " + transactionIdStr); 
@@ -1070,6 +1075,54 @@ public class Main {
                 }
                  
             }
+            
+            if(modeHidden != null && modeHidden == ModesHiddenOptions.GetConnections)
+            {
+                // ===========================
+                // Get Connections
+                // ===========================
+                
+                try {
+                    
+                    ConnectionPoolRequest request = ConnectionPoolRequest.newBuilder() 
+                            .build();
+                     
+                    Iterator<ConnectionPoolResponse> response = stub.connectionPool(request);
+                     
+                    
+                    while(response.hasNext())
+                    {
+                        ConnectionPoolResponse poolConn = response.next();
+                        
+                        List<ConnectionPoolValue> list = poolConn.getListaDeValoresList();
+                        
+                        Iterator<ConnectionPoolValue> iterartoConn = list.iterator();
+                        
+                        endMessage.add(iterartoConn.hasNext()?"Connections:":"There is not connections.");
+                        
+                        while(iterartoConn.hasNext())
+                        {
+                            ConnectionPoolValue connection = iterartoConn.next();
+                            
+                            endMessage.add("   Session: " +  Long.toString(connection.getSessionId()) + " (" + (connection.getActive()?"Active":"No Active") + ")" + " User: " +  connection.getUser() + " Environment: " +  connection.getEnvironment() + " Role: "  + connection.getRole()  + " Tmp Folder: "  + connection.getTmpFolder()  + " Cache: "  + connection.getTmpCache() +  "]");
+                     
+                        }
+                          
+                    }
+                      
+  
+                } catch (Exception ex) {
+
+                    checkOK = false;
+
+                    endMessage.add("Error getting connections: " + ex.getMessage());
+
+                    throw new RuntimeException("Error getting connections: " + ex.getMessage(), null);
+
+                }
+                 
+            }
+            
              
                
         } catch (Exception ex) {

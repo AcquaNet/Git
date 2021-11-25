@@ -5,11 +5,12 @@
  */
 package com.acqua.atina.jdeconnectorservice.service.poolconnection;
 
+import com.acqua.atina.jdeconnector.internal.model.ConnectionDetail;
 import com.acqua.atina.jdeconnectorservice.JDEConnectorService;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectionException;
-import com.acqua.atina.jdeconnectorservice.service.JDESingleConnection;
-import com.acqua.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
+import com.acqua.atina.jdeconnectorservice.service.JDESingleConnection; 
 import com.acqua.atina.jdeconnectorservice.wsservice.JDESingleWSConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,5 +140,23 @@ public class JDEPoolConnections {
         }
          
     } 
+    
+    public ArrayList<ConnectionDetail> getPoolConnections() {
+
+        // ----------------------------------------------
+        // Checking connections
+        // ----------------------------------------------
+
+        ArrayList<ConnectionDetail> returnValue = new ArrayList<ConnectionDetail>();
+          
+        for(JDEConnection connection:pool.values())
+        {  
+            returnValue.add(connection.getConnectionInfo());
+        }
+        
+        return returnValue;
+
+    }
+    
     
 }

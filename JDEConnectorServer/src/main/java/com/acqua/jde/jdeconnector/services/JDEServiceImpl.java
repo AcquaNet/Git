@@ -6,6 +6,7 @@
 package com.acqua.jde.jdeconnector.services;
 
 
+import com.acqua.atina.jdeconnector.internal.model.ConnectionDetail;
 import com.acqua.atina.jdeconnector.internal.model.JDEBsfnParameter;
 import com.acqua.atina.jdeconnector.internal.model.metadata.ParameterTypeObject;
 import com.acqua.atina.jdeconnector.internal.model.metadata.ParameterTypeSimple;
@@ -29,6 +30,8 @@ import com.fasterxml.jackson.databind.cfg.MapperConfig;
 import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.jde.jdeserverwp.servicios.CapturarLogResponse; 
+import com.jde.jdeserverwp.servicios.ConnectionPoolResponse;
+import com.jde.jdeserverwp.servicios.ConnectionPoolValue;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
 import com.jde.jdeserverwp.servicios.GetJsonsForOperationResponse;
@@ -145,6 +148,71 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
         logger.debug("END Atina Transaction ID: " + request.getTransactionID());
         
     }
+    
+    @Override
+    public void connectionPool(com.jde.jdeserverwp.servicios.ConnectionPoolRequest request,
+            io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.ConnectionPoolResponse> responseObserver)
+    {
+        
+        logger.info("BEGIN TID: " + request.getTransactionID() +  "======================================================================================");
+        logger.info("JDE ATINA Connection Pool");
+        
+        
+        ArrayList<ConnectionDetail> connections = JDEPoolConnections.getInstance().getPoolConnections();
+        
+        try {
+            
+            ConnectionPoolResponse.Builder responseBuilder = ConnectionPoolResponse.newBuilder();
+            
+            for (ConnectionDetail conn : connections) {
+                
+                ConnectionPoolValue.Builder connBuilder = com.jde.jdeserverwp.servicios.ConnectionPoolValue.newBuilder();
+                
+                connBuilder.setUser(conn.getUser());
+                connBuilder.setEnvironment(conn.getEnvironment());
+                connBuilder.setRole(conn.getRole());
+                connBuilder.setTmpFolder(conn.getTmpFolder());
+                connBuilder.setTmpCache(conn.getTmpFolderCache());
+                connBuilder.setActive(conn.isActive());
+                connBuilder.setSessionId(Long.valueOf(conn.getiSessionID()));
+                 
+                responseBuilder.addListaDeValores(connBuilder);
+                
+            }
+             
+             
+            ConnectionPoolResponse response = responseBuilder.build();
+
+             responseObserver.onNext(response);
+
+              responseObserver.onCompleted();
+            
+        }  catch (Exception ex) {
+            
+            String msg = "Error WS Server: " + ex.getMessage();
+            logger.error(msg, ex);
+            logger.info("END TID: " + request.getTransactionID());
+            logger.info("-------------------------------------------------------------------------------");
+            
+            StringBuilder sb = new StringBuilder();
+            sb.append("Error Creating Connection");
+            sb.append("|");
+            sb.append(ex.getMessage().replaceAll("\\|", "/"));
+            sb.append("|%ServiceServerException%");
+ 
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription(sb.toString())
+                    .withCause(ex)
+                    .asRuntimeException());
+             
+        } 
+        
+        logger.debug("END Atina Transaction ID: " + request.getTransactionID());
+        
+        logger.info("-------------------------------------------------------------------------------");
+        
+    }
+  
     
     @Override
     public void login(com.jde.jdeserverwp.servicios.SessionRequest request,

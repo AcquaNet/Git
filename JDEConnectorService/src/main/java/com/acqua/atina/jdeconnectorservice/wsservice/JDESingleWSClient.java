@@ -406,5 +406,20 @@ public class JDESingleWSClient {
         JDEWSDriver.getInstance().bootstrap(this.tmpFolder);
     }
     
+    public String getUser() {
+        return user;
+    } 
+    
+    public String getEnvironment() {
+        return environment;
+    }
+ 
+    public String getRole() {
+        return role;
+    }
 
+    public int getiSessionID() {
+        return iSessionID;
+    } 
+ 
 }

@@ -14,8 +14,7 @@ import com.acqua.atina.jdeconnector.internal.JDETransactions;
 import com.acqua.atina.jdeconnector.internal.model.JDEBsfnParameter;  
 import com.acqua.atina.jdeconnectorservice.JDEConnectorService;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectionException;
-import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectorException; 
-import com.acqua.atina.jdeconnectorservice.service.poolconnection.JDEConnection;
+import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectorException;  
 import com.jdedwards.system.connector.dynamic.Connector;
 import java.io.File;
 import java.util.HashMap;
@@ -326,7 +325,20 @@ public class JDESingleClient {
         this.tmpFolderCache = tmpFolderCache;
     }
 
-   
+    public String getUser() {
+        return user;
+    } 
     
+    public String getEnvironment() {
+        return environment;
+    }
+ 
+    public String getRole() {
+        return role;
+    }
+
+    public int getiSessionID() {
+        return iSessionID;
+    } 
 
 }

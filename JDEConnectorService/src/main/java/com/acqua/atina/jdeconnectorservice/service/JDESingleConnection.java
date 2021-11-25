@@ -6,6 +6,7 @@
 package com.acqua.atina.jdeconnectorservice.service;
 
 import com.acqua.atina.jdeconnector.internal.JDEBoostrap;
+import com.acqua.atina.jdeconnector.internal.model.ConnectionDetail;
 import com.acqua.atina.jdeconnector.internal.model.JDEBsfnParameter; 
 import com.acqua.atina.jdeconnectorservice.JDEConnectorService;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectionException;
@@ -17,8 +18,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashMap; 
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -188,6 +188,12 @@ public class JDESingleConnection implements JDEConnection{
      
         return client.callJDEBsfn(bsfnName, inputObject, transactionID);
         
+    }
+    
+    public ConnectionDetail getConnectionInfo() {
+        
+        return new ConnectionDetail("BS", client.getUser(),client.getEnvironment(),client.getRole(),client.getTmpFolder().getName(),client.getTmpFolderCache().getName(),client.getiSessionID(),isJDEConnected()!=0);
+         
     }
      
     // ====================================================================================

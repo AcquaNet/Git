@@ -50,6 +50,8 @@ service JDEService {
   rpc EjecutarOperacion(EjecutarOperacionRequest) returns (EjecutarOperacionResponse) {}
 
   rpc CapturarLog(CapturarLogRequest) returns (stream CapturarLogResponse) {}
+
+  rpc ConnectionPool(ConnectionPoolRequest) returns (stream ConnectionPoolResponse) {}
    
 }
 
@@ -242,6 +244,26 @@ message CapturarLogRequest {
 message CapturarLogResponse {
   bytes fileData = 1;
   bool  pendingValue = 2;
+}
+
+message ConnectionPoolRequest {
+  int64 transactionID = 1;
+}
+
+message ConnectionPoolResponse {
+   
+  repeated ConnectionPoolValue listaDeValores =1;
+}
+
+message ConnectionPoolValue {
+   
+  string user = 1;
+  string environment = 2;
+  string role = 3;
+  string tmpFolder = 4;
+  string tmpCache = 5;
+  int64 sessionId = 6; 
+  bool  active = 7;
 }
 
 message BDecimal {

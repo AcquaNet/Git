@@ -6,6 +6,7 @@
 package com.acqua.atina.jdeconnectorservice.wsservice;
 
 import com.acqua.atina.jdeconnector.internal.JDEBoostrap;
+import com.acqua.atina.jdeconnector.internal.model.ConnectionDetail;
 import com.acqua.atina.jdeconnector.internal.model.metadata.ParameterTypeSimple;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleException;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectionException;
@@ -257,6 +258,11 @@ public class JDESingleWSConnection implements JDEConnection {
     
     public UserPreference getUserPreference(){
         return this.client.getUserPreference();
+    }
+
+    @Override
+    public ConnectionDetail getConnectionInfo() {
+        return new ConnectionDetail("WS", client.getUser(),client.getEnvironment(),client.getRole(),client.getTmpFolder().getAbsolutePath(),client.getTmpFolderCache().getAbsolutePath(),client.getiSessionID(),isJDEConnected()!=0);
     }
  
       

@@ -57,7 +57,7 @@ java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m ShowHi
 Test WS USado para verificar que funcione el microservicio
 -----------------------------------------------------------
 
-java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -u JDE -w Modus2020! -e JDV920 -r *ALL -s localhost -p 8085 -m TestGetAddressBookWSWithSessionId -a 28 -i 0
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m TestGetAddressBookWSWithSessionId -s localhost -p 8085 -u JDE -w Modus2020! -e JDV920 -r *ALL -a 28
 
 -----------------------------------------------------------
 Get Logs

@@ -5,6 +5,7 @@
  */
 package com.acqua.atina.jdeconnectorservice.service.poolconnection;
 
+import com.acqua.atina.jdeconnector.internal.model.ConnectionDetail;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectionException;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectorException;
 import com.jdedwards.base.resource.UserPreference;
@@ -24,5 +25,6 @@ public interface JDEConnection {
     public Set<String> getOperationList() throws JDESingleConnectorException;
     public HashMap<String, Object> callJDEOperation(String bsfnName, HashMap<String, Object> inputObject, Integer transactionID) throws JDESingleConnectorException;
     public UserPreference getUserPreference();
+    public ConnectionDetail getConnectionInfo();
     
 }
