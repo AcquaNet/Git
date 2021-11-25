@@ -620,9 +620,11 @@ public class Main {
    
                     System.out.println("User " + configuracionResponse.getUserDetail() +  " with Session ID [" + configuracionResponse.getSession().toString() + "]");
                     System.out.println("     Token [" + options.token + "]");
+                    System.out.println("     Expiration [" + processTokenResponse.getExpiration() + "]");
  
                     endMessage.add("User " + configuracionResponse.getUserDetail() +  " with Session ID [" + configuracionResponse.getSession().toString() + "]");
                     endMessage.add("Token: [" + options.token + "]");
+                    endMessage.add("Expiration: [" + processTokenResponse.getExpiration() + "]");
                     
 
                 } catch (Exception ex) {

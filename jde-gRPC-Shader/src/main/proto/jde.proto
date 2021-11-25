@@ -113,6 +113,7 @@ message ProcessTokenResponse {
     string role = 12; 
     string jwtToken = 13; 
     int64 sessionId = 14;
+    string expiration = 15; 
 }
 
 message OperacionesRequest {

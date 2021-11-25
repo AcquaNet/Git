@@ -86,7 +86,23 @@ Get JSON Schema
 java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m GetJsonWS -s localhost -p 8085 -u JDE -w Modus2020! -e JDV920 -r *ALL   -o "oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook"
 java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m GetJsonWS -s localhost -p 8085 -o "oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook" -k 
 
+-----------------------------------------------------------
+Get Connections
+-----------------------------------------------------------
 
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m GetConnections -s localhost -p 8085
+
+-----------------------------------------------------------
+Tokens
+-----------------------------------------------------------
+
+Create 
+
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m CreateToken -s localhost -p 8085 -u JDE -w Modus2020! -e JDV920 -r *ALL
+
+Parse
+
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m ParseToken -s localhost -p 8085 -k 
 
   
 *************************************
@@ -133,26 +149,34 @@ Output:
 
 
 
+--------------------------------
+Gestion de Local Session en JDE
+--------------------------------
+
+timeout = 0
+  
+IF UserSession.USERSESSION_TIMEOUT <> 0 AND UserSession.MANUAL_TIMEOUT
+	
+	timeout = MIN (UserSession.USERSESSION_TIMEOUT , UserSession.MANUAL_TIMEOUT)
+
+ELSE
+	
+	timeout = MAX (UserSession.USERSESSION_TIMEOUT , UserSession.MANUAL_TIMEOUT)
+
+
+END IF
+
+IF( UserSession.OUTBOUND_TIMEOUT <> 0)
+
+	timeout = MAX (timeout  , UserSession.OUTBOUND_TIMEOUT;
+
+END IF
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ 
 
 
 

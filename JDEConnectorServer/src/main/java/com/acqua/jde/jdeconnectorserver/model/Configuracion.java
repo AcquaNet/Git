@@ -5,6 +5,9 @@
  */
 package com.acqua.jde.jdeconnectorserver.model;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class Configuracion {
 
     private String user;
@@ -13,6 +16,7 @@ public class Configuracion {
     private String role;
     private Integer sessionId;
     private long tokenExpiration;
+    private Date tokenDateExpiration;
     private int mocking;
 
     public Configuracion(String user, String password, String environment, String role, Integer sessionId,long tokenExpiration, int mocking) {
@@ -81,9 +85,22 @@ public class Configuracion {
         this.tokenExpiration = tokenExpiration;
     }
 
+    public Date getTokenDateExpiration() {
+        return tokenDateExpiration;
+    }
+    
+    public String getTokenDateExpirationFormated() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        return sdf.format(this.tokenDateExpiration);
+    }
+
+    public void setTokenDateExpiration(Date tokenDateExpiration) {
+        this.tokenDateExpiration = tokenDateExpiration;
+    }
+     
     @Override
     public String toString() {
-        return "Configuracion{" + "user=" + user + ", password=" + password + ", environment=" + environment + ", role=" + role + ", sessionId=" + sessionId + ", tokenExpiration=" + tokenExpiration + ", mocking=" + mocking + '}';
+        return "Configuracion{" + "user=" + user + ", environment=" + environment + ", role=" + role + ", sessionId=" + sessionId + ", tokenExpiration=" + tokenExpiration + ", mocking=" + mocking + "}";
     }
  
     public int getMocking() {

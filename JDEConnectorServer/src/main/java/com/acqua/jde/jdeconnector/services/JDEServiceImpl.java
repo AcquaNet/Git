@@ -415,6 +415,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                     config = getConfigFromJWT(request.getJwtToken()); 
                 
                     logger.debug("              Token converted: " + config.toString());
+                    logger.debug("              Expiration: " + config.getTokenDateExpirationFormated());
                    
                 } else
                 {
@@ -436,6 +437,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 responseBuilder.setRole(config.getRole());
                 
                 responseBuilder.setSessionId(config.getSessionId());
+                
+                responseBuilder.setExpiration(config.getTokenDateExpirationFormated());
                   
                 responseObserver.onNext(responseBuilder.build());
 
@@ -494,7 +497,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             config.setTokenExpiration(this.configuracion.getTokenExpiration());
             
             config.setMocking(configuracion.getMocking());
-
+            
+            config.setTokenDateExpiration(claims.getExpiration());
+             
             logger.info("          Configuration Received: " + config.toString());
 
         } catch (ExpiredJwtException | MalformedJwtException | UnsupportedJwtException | SignatureException | IllegalArgumentException ex) {
@@ -541,7 +546,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             Date exp = new Date(expMillis);
             builder.setExpiration(exp);
         }  
-    
+          
         return builder.compact();
          
     }
