@@ -5,6 +5,7 @@
  */
 package com.atina.ppal;
   
+import com.atina.cliente.connector.JDEConnectorDriver;
 import com.google.devtools.common.options.OptionsParser;
 import com.google.shade.protobuf.ByteString;
 import com.jde.jdeserverwp.servicios.CapturarLogRequest;
@@ -106,7 +107,8 @@ public class Main {
         GetLog("GetLog"),
         GetConnections("GetConnections"),
         CreateToken("CreateToken"),
-        ParseToken("ParseToken");
+        ParseToken("ParseToken"),
+        ValidateLibrary("ValidateLibrary");
 
         public final String modesHidden;
 
@@ -1125,6 +1127,25 @@ public class Main {
                  
             }
             
+            if(modeHidden != null && modeHidden == ModesHiddenOptions.ValidateLibrary)
+            {
+                
+                JDEConnectorDriver driver = new JDEConnectorDriver();
+                 
+                driver.connect(
+                        options.user, 
+                        options.password, 
+                        options.environment, 
+                        options.role, 
+                        new Boolean(true), 
+                        options.serverName, 
+                        Integer.parseInt(options.serverPort));
+
+  
+                
+                
+                
+            }
              
                
         } catch (Exception ex) {
