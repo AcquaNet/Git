@@ -152,6 +152,12 @@ public class JDEPoolConnections {
         for(JDEConnection connection:pool.values())
         {  
             returnValue.add(connection.getConnectionInfo());
+            
+            if(!connection.getConnectionInfo().isActive())
+            {
+                pool.remove(connection.getConnectionInfo().getiSessionID());
+                
+            }
         }
         
         return returnValue;
