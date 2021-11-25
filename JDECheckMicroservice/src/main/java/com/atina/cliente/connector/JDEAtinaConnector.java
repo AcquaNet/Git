@@ -27,11 +27,38 @@ public class JDEAtinaConnector {
 
         Object entity = authenticateUser(entityType, entityData);
 
+        logger.info("JDE Atina - Authenticate: [" + entityType + "] Executed");
+
+        return entity;
+
+    }
+    
+    public Object invokeWS(String entityType, Map<String, Object> entityData)
+            throws InternalConnectorException, ConnectionException {
+
+        logger.info("JDE Atina - Invoke WS: [" + entityType + "]");
+
+        Object entity = invokeWebService(entityType, entityData);
+
         logger.info("JDE Atina - WS: [" + entityType + "] Executed");
 
         return entity;
 
     }
+    
+    public Object getJSONSchema(String entityType, Map<String, Object> entityData)
+            throws InternalConnectorException, ConnectionException {
+
+        logger.info("JDE Atina - Invoke WS: [" + entityType + "]");
+
+        Object entity = invokeGetSchema(entityType, entityData);
+
+        logger.info("JDE Atina - WS: [" + entityType + "] Executed");
+
+        return entity;
+
+    }
+    
     
     public JDEAtinaConfigDriver getConfig() {
         return config;
@@ -164,5 +191,24 @@ public class JDEAtinaConnector {
 
         return returnValue;
     }
+    
+     private Object invokeWebService(String entityType, Map<String, Object> entityData) {
+
+        Object returnValue = this.getConfig()
+                .getService()
+                .ejecutarServicio(config.getStub(), config.getConfiguracion(), entityType, entityData);
+
+        return returnValue;
+    }
+     
+      private Object invokeGetSchema(String entityType, Map<String, Object> entityData) {
+
+        Object returnValue = this.getConfig()
+                .getService()
+                .getJsonFromOperations(config.getStub(), config.getConfiguracion(), entityType, entityData);
+
+        return returnValue;
+    }
+
     
 }

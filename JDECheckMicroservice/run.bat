@@ -104,6 +104,14 @@ Parse
 
 java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m ParseToken -s localhost -p 8085 -k 
 
+-----------------------------------------------------------
+Connector
+-----------------------------------------------------------
+
+java -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m ValidateLibrary -s localhost -p 8085 -k eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxMjMxMjMxIiwiaWF0IjoxNjM3ODcwMzAxLCJzdWIiOiJTdWJqZWN0IiwiaXNzIjoiSXNzdWUiLCJ1c2VyIjoiSkRFIiwicGFzc3dvcmQiOiJNb2R1czIwMjAhIiwiZW52aXJvbm1lbnQiOiJKRFY5MjAiLCJyb2xlIjoiKkFMTCIsInNlc3Npb25JZCI6MCwiZXhwIjoxNjM3ODc1MTAxfQ.LoySx1uDFA11xEZpRG4LbTLxiUyag60tCjy9vMl7Ulo
+
+
+
   
 *************************************
 LOGIN

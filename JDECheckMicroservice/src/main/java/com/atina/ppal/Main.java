@@ -1197,6 +1197,15 @@ public class Main {
                 
                 driver.setConfig(configure);
                 
+                
+                 
+                
+                // =========================================================
+                // Authenticate Operation
+                // =========================================================
+                
+                // Values: FromUserData or FromTokenData
+                
                 Map<String, Object> entityData = new HashMap<String, Object>();
                 
                 entityData.put("Transaction ID", transactionId);
@@ -1206,21 +1215,27 @@ public class Main {
                 entityData.put("JDE Environment", options.environment);
                 entityData.put("JDE Role", options.role);
                 entityData.put("Session Id", Integer.toString(sessionID));
-                 
-                
-                // =========================================================
-                // Authenticate Operation
-                // =========================================================
-                
-                // Values: FromUserData or FromTokenData
-                
                 
                 Map<String,Object> login = (Map<String,Object>) driver.authenticate("FromUserData", entityData);
                 
                 endMessage.add("Token: " + login.get("token"));
                 endMessage.add("Address Book No: " + login.get("userAddressBookNo"));
-                 
                 
+                
+                // =========================================================
+                // Invoke WS
+                // =========================================================
+                 
+                Map<String, Object> entityDataWsEntity = new HashMap<String, Object>();
+                entityDataWsEntity.put("entityId", login.get("userAddressBookNo"));
+                
+                Map<String, Object> entityDataWs = new HashMap<String, Object>();
+                entityDataWs.put("entity", entityDataWsEntity);
+                 
+                Map<String,Object> ws = (Map<String,Object>) driver.invokeWS(operationKey, entityDataWs);
+                
+                endMessage.add("User Name: " + ((Map)((List)ws.get("addressBookResult")).get(0)).get("entityName"));
+                 
                 // =========================================================
                 // Disconnect
                 // =========================================================
