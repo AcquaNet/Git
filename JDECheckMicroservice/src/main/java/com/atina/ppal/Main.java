@@ -5,7 +5,7 @@
  */
 package com.atina.ppal;
   
-import com.atina.cliente.connector.JDEAtinaConnector;
+import com.atina.cliente.connector.JDEAtinaConfigDriver;
 import com.google.devtools.common.options.OptionsParser;
 import com.google.shade.protobuf.ByteString;
 import com.jde.jdeserverwp.servicios.CapturarLogRequest;
@@ -1130,7 +1130,7 @@ public class Main {
             if(modeHidden != null && modeHidden == ModesHiddenOptions.ValidateLibrary)
             {
                 
-                JDEAtinaConnector driver = new JDEAtinaConnector();
+                JDEAtinaConfigDriver driver = new JDEAtinaConfigDriver();
                  
                 driver.connect(
                         options.user, 
@@ -1142,7 +1142,7 @@ public class Main {
                         Integer.parseInt(options.serverPort));
 
                 
-                
+                driver.disconnect();
                 
                 
             }
