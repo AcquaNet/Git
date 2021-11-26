@@ -7,6 +7,8 @@ package com.mirrit.main;
 
 import com.atina.model.LoginRequest;
 import com.atina.model.LoginResponse;
+import com.atina.model.LogoutRequest;
+import com.atina.model.LogoutResponse;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 import io.quarkus.runtime.configuration.ProfileManager;
@@ -75,15 +77,26 @@ public class MainRoutes {
         return alfa;
     }
     
-    @Route(path = "/authenticate", methods = HttpMethod.POST, order = 1)
+    @Route(path = "/login", methods = HttpMethod.POST, order = 1)
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Tag(name = "Authenticate", description = "Authenticate in JDE")
-    LoginResponse authenticate(@Header("Token") String header, @Body LoginRequest login) {
+    @Tag(name = "Login", description = "Authenticate in JDE")
+    LoginResponse login(@Header("Token") String header, @Body LoginRequest login) {
     
         String activeProfile = ProfileManager.getActiveProfile();
   
-        return new LoginResponse("AAA");
+        return new LoginResponse();
+    }
+    
+    @Route(path = "/logout", methods = HttpMethod.POST, order = 1)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Tag(name = "Logout", description = "Authenticate in JDE")
+    LogoutResponse logout(@Header("Token") String header, @Body LogoutRequest login) {
+    
+        String activeProfile = ProfileManager.getActiveProfile();
+  
+        return new LogoutResponse(0L);
     }
     
      

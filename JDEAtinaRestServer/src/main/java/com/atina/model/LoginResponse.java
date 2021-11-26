@@ -12,17 +12,36 @@ package com.atina.model;
 public class LoginResponse {
     
     private String token;
+    private String addressBookNo;
+    private Long sessionId;
 
     public LoginResponse() {
 
     }
-    
-    public LoginResponse(String token) {
+
+    public LoginResponse(String token, String addressBookNo, Long sessionId) {
         this.token = token;
+        this.addressBookNo = addressBookNo;
+        this.sessionId = sessionId;
+    }
+     
+    public String getAddressBookNo() {
+        return addressBookNo;
+    }
+
+    public void setAddressBookNo(String addressBookNo) {
+        this.addressBookNo = addressBookNo;
+    }
+
+    public Long getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(Long sessionId) {
+        this.sessionId = sessionId;
     }
     
-    
-
+      
     public String getToken() {
         return token;
     }
@@ -30,7 +49,6 @@ public class LoginResponse {
     public void setToken(String token) {
         this.token = token;
     }
-    
-    
+     
     
 }

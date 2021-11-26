@@ -15,17 +15,19 @@ public class LoginRequest {
     private String password;
     private String environment;
     private String role;
+    private Long transactionId;
 
     public LoginRequest() {
     }
 
-    public LoginRequest(String user, String password, String environment, String role) {
+    public LoginRequest(String user, String password, String environment, String role, Long transactionId) {
         this.user = user;
         this.password = password;
         this.environment = environment;
         this.role = role;
+        this.transactionId = transactionId;
     }
- 
+     
     public String getUser() {
         return user;
     }
@@ -57,6 +59,13 @@ public class LoginRequest {
     public void setRole(String role) {
         this.role = role;
     }
-    
+
+    public Long getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(Long transactionId) {
+        this.transactionId = transactionId;
+    } 
     
 }
