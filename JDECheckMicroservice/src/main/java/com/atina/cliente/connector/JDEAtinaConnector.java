@@ -103,6 +103,7 @@ public class JDEAtinaConnector {
                             .login(config.getStub(), currentConfigurationToken, (Long) entityData.get("Transaction ID"));
 
                     returnValue.put("token", currentConfigurationToken.getToken());
+                    returnValue.put("sessionId", currentConfigurationToken.getSessionID());
                     returnValue.put("userAddressBookNo", currentConfigurationToken.getAddressBookNumber());
 
                 } else if (entityData.containsKey("JDE User") &&
@@ -129,6 +130,7 @@ public class JDEAtinaConnector {
                             .login(config.getStub(), currentConfigurationToken, (Long) entityData.get("Transaction ID"));
 
                     returnValue.put("token", currentConfigurationToken.getToken());
+                    returnValue.put("sessionId", currentConfigurationToken.getSessionID());
                     returnValue.put("userAddressBookNo", currentConfigurationToken.getAddressBookNumber());
 
                 } else

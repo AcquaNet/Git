@@ -13,13 +13,13 @@ public class LoginResponse {
     
     private String token;
     private String addressBookNo;
-    private Long sessionId;
+    private Integer sessionId;
 
     public LoginResponse() {
 
     }
 
-    public LoginResponse(String token, String addressBookNo, Long sessionId) {
+    public LoginResponse(String token, String addressBookNo, Integer sessionId) {
         this.token = token;
         this.addressBookNo = addressBookNo;
         this.sessionId = sessionId;
@@ -33,11 +33,11 @@ public class LoginResponse {
         this.addressBookNo = addressBookNo;
     }
 
-    public Long getSessionId() {
+    public Integer getSessionId() {
         return sessionId;
     }
 
-    public void setSessionId(Long sessionId) {
+    public void setSessionId(Integer sessionId) {
         this.sessionId = sessionId;
     }
     

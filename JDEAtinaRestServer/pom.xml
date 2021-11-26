@@ -79,6 +79,11 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-scheduler</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.atina</groupId>
+      <artifactId>jd-check-microservice</artifactId>
+      <version>1.0.0</version>
+    </dependency>  
   </dependencies>
   <build>
     <plugins>

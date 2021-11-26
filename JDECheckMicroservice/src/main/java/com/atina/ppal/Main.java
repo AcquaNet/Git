@@ -112,6 +112,8 @@ public class Main {
         GetConnections("GetConnections"),
         CreateToken("CreateToken"),
         ParseToken("ParseToken"),
+        LibraryLogin("LibraryLogin"),
+        LibraryLogout("LibraryLogout"),
         ValidateLibrary("ValidateLibrary");
 
         public final String modesHidden;
@@ -1144,24 +1146,15 @@ public class Main {
                  
             }
             
-            if(modeHidden != null && modeHidden == ModesHiddenOptions.ValidateLibrary)
+            if(modeHidden != null && modeHidden == ModesHiddenOptions.LibraryLogin)
             {
                 
-                // =========================================================
-                // Set Configuration
-                // =========================================================
                 
-                JDEAtinaConfiguracion jdConfiguration = new JDEAtinaConfiguracion(
-                        configuracion.getUser(),
-                        configuracion.getPassword(),
-                        configuracion.getEnvironment(),
-                        configuracion.getRole(),
-                        options.token,
-                        configuracion.getWsConnection(),
-                        configuracion.getServidorServicio(),
-                        configuracion.getSession());
-                
-                
+            }
+            
+            if(modeHidden != null && modeHidden == ModesHiddenOptions.ValidateLibrary)
+            {
+    
                 // =========================================================
                 // Set Driver
                 // =========================================================
@@ -1193,13 +1186,10 @@ public class Main {
                 // Create Connector
                 // =========================================================
                 
-                JDEAtinaConnector driver = new JDEAtinaConnector();
+                JDEAtinaConnector jdeAtinaConnector = new JDEAtinaConnector();
                 
-                driver.setConfig(configure);
-                
-                
-                 
-                
+                jdeAtinaConnector.setConfig(configure);
+                  
                 // =========================================================
                 // Authenticate Operation
                 // =========================================================
@@ -1216,7 +1206,7 @@ public class Main {
                 entityData.put("JDE Role", options.role);
                 entityData.put("Session Id", Integer.toString(sessionID));
                 
-                Map<String,Object> login = (Map<String,Object>) driver.authenticate("FromUserData", entityData);
+                Map<String,Object> login = (Map<String,Object>) jdeAtinaConnector.authenticate("FromUserData", entityData);
                 
                 endMessage.add("Token: " + login.get("token"));
                 endMessage.add("Address Book No: " + login.get("userAddressBookNo"));
@@ -1232,7 +1222,7 @@ public class Main {
                 Map<String, Object> entityDataWs = new HashMap<String, Object>();
                 entityDataWs.put("entity", entityDataWsEntity);
                  
-                Map<String,Object> ws = (Map<String,Object>) driver.invokeWS(operationKey, entityDataWs);
+                Map<String,Object> ws = (Map<String,Object>) jdeAtinaConnector.invokeWS(operationKey, entityDataWs);
                 
                 endMessage.add("User Name: " + ((Map)((List)ws.get("addressBookResult")).get(0)).get("entityName"));
                  
