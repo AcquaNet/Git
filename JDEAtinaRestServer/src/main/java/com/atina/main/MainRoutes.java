@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mirrit.main;
+package com.atina.main;
 
 import com.atina.model.LoginRequest;
 import com.atina.model.LoginResponse;
@@ -105,3 +105,4 @@ public class MainRoutes {
       response.setStatusCode(501).end(e.getMessage());
     }
 }
+ 

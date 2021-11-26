@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mirrit.scheduler;
+package com.atina.scheduler;
 
-import com.mirrit.facade.CleanerManager;
+import com.atina.facade.CleanerManager;
 import javax.enterprise.context.ApplicationScoped;
 import io.quarkus.scheduler.Scheduled;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
