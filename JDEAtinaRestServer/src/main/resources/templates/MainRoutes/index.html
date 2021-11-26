@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>{productName} - Console - {ambiente} {activeProfile}</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly-additions.min.css">
+
+    <style>
+        
+        /* ------------------------------------------ */
+        /* General                                    */
+        /* ------------------------------------------ */
+        
+        body, html {
+            height: 90%;
+            margin: 10px 10px 10px 10px;
+            margin: 1;
+            font-family: Arial;
+            background: #D8DFD8;
+        }
+        
+        /* ------------------------------------------ */
+        /* Header                                     */
+        /* ------------------------------------------ */
+        
+        .header {
+            background: #7DA6CE;
+            height: 100px;
+            width:100%;
+            padding: 12px 20px 12px 40px;
+        }
+        
+        .header-title {
+            font-size: 3.0em;
+            font-family: Arial; 
+            font-weight: bold;
+	    color: #FFFFFF;
+        }
+         
+        /* ------------------------------------------ */
+        /* Style the tab                              */
+        /* ------------------------------------------ */
+        .tab {
+          overflow: hidden;
+          border: 1px solid #ccc;
+          background-color: #7DA6CE;
+        }
+
+        /* Style the buttons that are used to open the tab content */
+        .tab button {
+          background-color: inherit;
+          float: left;
+          border: none;
+          outline: none;
+          cursor: pointer;
+          padding: 14px 16px;
+          transition: 0.3s;
+        }
+
+        /* Change background color of buttons on hover */
+        .tab button:hover {
+          background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        .tab button.active {
+          background-color: #ccc;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+          display: none;
+          padding: 6px 12px;
+          border: 1px solid #ccc;
+          border-top: none;
+        }
+        
+        .tabcontent {
+            animation: fadeEffect 1s; /* Fading effect takes 1 second */
+        }
+        
+        /* Style the tab content */
+        .subtabcontent {
+          display: none;
+          padding: 6px 12px;
+          border: 1px solid #ccc;
+          border-top: none;
+        }
+        
+        .subtabcontent {
+            animation: fadeEffect 1s; /* Fading effect takes 1 second */
+        }
+
+         
+        /* ------------------------------------------ */
+        /* Text Area                                  */
+        /* ------------------------------------------ */
+ 
+        #process { 
+          overflow: auto;
+          height: fit-content;
+          min-height: 300px;
+          background-color: #ccc;
+        }
+        
+        #status { 
+          overflow: auto;
+          height: fit-content;
+          min-height: 300px;
+          background-color: #ccc;
+        }
+        
+        #monitor-dragon { 
+          overflow: auto;
+          height: fit-content;
+          min-height: 300px;
+          background-color: #ccc;
+        } 
+        
+        .prod-detail { 
+          overflow: auto;
+          height: fit-content;
+          min-height: 300px;
+          background-color: #dcc;
+        } 
+        
+        /* ------------------------------------------ */
+        /* Table                                      */
+        /* ------------------------------------------ */
+      
+        table {
+          width:100%;
+        }
+        table, th, td {
+          border: 1px solid black;
+          border-collapse: collapse;
+        }
+        th, td {
+          padding: 15px;
+          text-align: left;
+        }
+         
+        /* ------------------------------------------ */
+        /* Fo*/
+        /* ------------------------------------------ */
+        
+        textarea {
+            /* box-sizing: padding-box; */
+              overflow:hidden;
+              /* demo only: */
+              padding:10px; 
+              width:100%;
+              font-size:12px; 
+              min-height: 100px;
+              display:block;
+              border-radius:5px;
+              border:2px solid #556677;
+        } 
+         
+        /* Change background color of buttons and botton on hover */
+        
+        button {
+          background-color: #356BA2;
+          color: #ffffff;
+        }
+        
+        button:hover {
+          background-color: #99CCFF;
+        }
+        
+        div.subtabcontent{
+            background-color: #f3f3f3;
+            height: fit-content;
+            min-height: 300px;
+            padding:20px; 
+        }
+        
+         
+        /* ------------------------------------------ */
+        /* Spinner                                    */
+        /* ------------------------------------------ */
+        
+        #overlay{	
+            position: fixed;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+            height:100%;
+            display: none;
+            background: rgba(0,0,0,0.6);
+          }
+          .cv-spinner {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;  
+          }
+          .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px #ddd solid;
+            border-top: 4px #2e93e6 solid;
+            border-radius: 50%;
+            animation: sp-anime 0.8s infinite linear;
+          }
+          @keyframes sp-anime {
+            100% { 
+              transform: rotate(360deg); 
+            }
+          }
+          .is-hide{
+            display:none;
+          }
+
+    </style>
+</head>
+
+<body>
+    
+    <div class="header">                  
+        <p class="header-title">{productName} - Console - {ambiente}</p>
+    </div>
+         
+</body>
+
+</html>
