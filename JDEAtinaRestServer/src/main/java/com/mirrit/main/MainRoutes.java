@@ -5,15 +5,22 @@
  */
 package com.mirrit.main;
 
+import com.atina.model.LoginRequest;
+import com.atina.model.LoginResponse;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 import io.quarkus.runtime.configuration.ProfileManager;
+import io.quarkus.vertx.web.Body;
+import io.quarkus.vertx.web.Header;
 import io.quarkus.vertx.web.Route;
 import io.quarkus.vertx.web.Route.HandlerType;
 import io.quarkus.vertx.web.Route.HttpMethod;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext; 
 import javax.enterprise.context.ApplicationScoped; 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import org.eclipse.microprofile.config.inject.ConfigProperty; 
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.info.Contact;
@@ -68,18 +75,15 @@ public class MainRoutes {
         return alfa;
     }
     
-    @Route(path = "/authenticate", methods = HttpMethod.GET, produces = "text/html", order = 1)
-    String authenticate(RoutingContext ctx) {
+    @Route(path = "/authenticate", methods = HttpMethod.POST, order = 1)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Tag(name = "Authenticate", description = "Authenticate in JDE")
+    LoginResponse authenticate(@Header("Token") String header, @Body LoginRequest login) {
     
         String activeProfile = ProfileManager.getActiveProfile();
-          
-        String alfa = Templates.index()
-                .data("activeProfile", activeProfile)
-                .data("ambiente",ambiente)
-                .data("productName",productName.toUpperCase())
-                .render(); 
-          
-        return alfa;
+  
+        return new LoginResponse("AAA");
     }
     
      
