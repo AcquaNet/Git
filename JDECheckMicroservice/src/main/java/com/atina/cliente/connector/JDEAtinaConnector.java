@@ -23,7 +23,7 @@ public class JDEAtinaConnector {
     JDEAtinaConfigDriver config;
     
     public Object authenticate(String entityType, Map<String, Object> entityData)
-            throws InternalConnectorException, ConnectionException {
+            throws ConnectionException {
 
         Object entity = authenticateUser(entityType, entityData);
 
