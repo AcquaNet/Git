@@ -9,6 +9,7 @@ import com.atina.cliente.connector.JDEAtinaConfigDriver;
 import com.atina.cliente.connector.JDEAtinaConnector;
 import com.atina.cliente.exception.ConnectionException;
 import java.util.HashMap;
+import java.util.Random;
 
 /**
  *
@@ -35,6 +36,30 @@ public class ConnectionPool {
         pool.remove(session);
     }
     
+    public Integer getAvailableChannel()
+    { 
+        
+        if(pool.size()>0)
+        {
+            if(pool.size() == 1)
+            {
+                return (Integer) pool.keySet().toArray()[0];
+                
+            } else
+            {
+                Random rand = new Random();
+                int randomNum = rand.nextInt((pool.size()-1 - 0) + 1) + 0; 
+                return (Integer) pool.keySet().toArray()[randomNum];
+            }
+            
+        } else
+        {
+            return GRPCConnection.getChannelId();
+        }
+         
+    }
+    
+    
     public JDEAtinaConnector getConnectorChannel(int channelId)
     {
         if(channelId == 0 || !pool.containsKey(channelId) )
@@ -48,7 +73,7 @@ public class ConnectionPool {
     
     public JDEAtinaConnector createConnectorChannel(String servidorName, Integer servidorPort, int channelId)
     {
-        
+ 
         JDEAtinaConnector jdeAtinaConnector = null;
 
         JDEAtinaConfigDriver configure = new JDEAtinaConfigDriver();

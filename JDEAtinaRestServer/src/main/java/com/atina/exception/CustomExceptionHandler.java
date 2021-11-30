@@ -28,8 +28,7 @@ public class CustomExceptionHandler implements ExceptionMapper<CustomException> 
             
             ErrorMessage em = new ErrorMessage();
             em.setErrorMessage(exc.getErrorMessage());
-            em.setMethod(exc.getMetodoDeLaOperacion());
-            em.setStatusCode(exc.getHttpStatus());
+            em.setErrorDetail(exc.getMetodoDeLaOperacion());  
             
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                         .entity(em)
@@ -42,8 +41,7 @@ public class CustomExceptionHandler implements ExceptionMapper<CustomException> 
             
             ErrorMessage em = new ErrorMessage();
             em.setErrorMessage(exc.getErrorMessage());
-            em.setMethod(exc.getMetodoDeLaOperacion());
-            em.setStatusCode(exc.getHttpStatus());
+            em.setErrorDetail(exc.getMetodoDeLaOperacion());  
             
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                         .header("ChannelId", e.getChannelID())
@@ -54,8 +52,7 @@ public class CustomExceptionHandler implements ExceptionMapper<CustomException> 
         {
             ErrorMessage em = new ErrorMessage();
             em.setErrorMessage(e.getMessage());
-            em.setMethod("");
-            em.setStatusCode(Response.Status.BAD_REQUEST.getStatusCode());
+            em.setErrorDetail("");  
             
             return Response.status(Response.Status.BAD_REQUEST)
                                 .header("ChannelId", e.getChannelID())

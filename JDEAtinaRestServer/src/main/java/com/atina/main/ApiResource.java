@@ -114,9 +114,10 @@ public class ApiResource {
               
             JDEAtinaConnector connector;
             
-            if(channelId == null || channelId.isEmpty())
+            if(channelId == null || channelId.isEmpty() || channelId.equals("0"))
             {
-                channelIdValue = GRPCConnection.getChannelId();
+                
+                channelIdValue = ConnectionPool.getInstance().getAvailableChannel();
                 
                 connector = ConnectionPool.getInstance().createConnectorChannel(
                                                     servidorName, 
@@ -180,13 +181,17 @@ public class ApiResource {
         int channelIdValue = 0;
         
         try {
-
-            
+ 
             JDEAtinaConnector connector;
             
-            if(channelId == null || channelId.isEmpty())
+            if(channelId == null || channelId.isEmpty() || channelId.equals("0"))
             {
-                throw new ConnectionException("Invalid Channel Id");
+                channelIdValue = ConnectionPool.getInstance().getAvailableChannel();
+                
+                connector = ConnectionPool.getInstance().createConnectorChannel(
+                                                    servidorName, 
+                                                    servidorPort, 
+                                                    channelIdValue);
                 
             } else
             {
@@ -205,9 +210,9 @@ public class ApiResource {
 
             ConnectionPool.getInstance().removeConnectorChannel(channelIdValue);
 
-            LogoutResponse response = new LogoutResponse((String) auth.get("token"), (Integer) auth.get("sessionID"));
+            LogoutResponse response = new LogoutResponse((String) auth.get("token"), 0);
 
-            return Response.ok(response).header("Token", auth.get("token")).header("ChannelId",  "0").build();
+            return Response.ok(response).header("Token", auth.get("token")).header("ChannelId",  "").build();
             
         } catch (ConnectionException | NumberFormatException ex) {
             

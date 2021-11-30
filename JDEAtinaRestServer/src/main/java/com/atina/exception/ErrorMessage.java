@@ -12,19 +12,18 @@ import java.io.Serializable;
  * @author jgodi
  */
 public class ErrorMessage implements Serializable {
-    
-    private String method;
-    private String errorMessage;
-    private int statusCode;
+     
+    private String errorMessage; 
+    private String errorDetail;
 
-    public String getMethod() {
-        return method;
+    public String getErrorDetail() {
+        return errorDetail;
     }
 
-    public void setMethod(String method) {
-        this.method = method;
+    public void setErrorDetail(String errorDetail) {
+        this.errorDetail = errorDetail;
     }
-
+ 
     public String getErrorMessage() {
         return errorMessage;
     }
@@ -32,13 +31,5 @@ public class ErrorMessage implements Serializable {
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
-
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
-     
+ 
 }
