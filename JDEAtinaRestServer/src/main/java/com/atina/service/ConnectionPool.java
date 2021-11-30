@@ -8,7 +8,6 @@ package com.atina.service;
 import com.atina.cliente.connector.JDEAtinaConfigDriver;
 import com.atina.cliente.connector.JDEAtinaConnector;
 import com.atina.cliente.exception.ConnectionException;
-import com.atina.model.ChannelKey;
 import java.util.HashMap;
 
 /**
@@ -30,75 +29,50 @@ public class ConnectionPool {
 
         private static final ConnectionPool INSTANCE = new ConnectionPool();
     }
-    
-    public JDEAtinaConnector getConnectorChannel(Integer session)
-    {
-        if(pool.containsKey(session))
-        {
-            return pool.get(session);
-            
-        } else
-        {
-            throw new ConnectionException("Invalid Session ID");
-        }
-        
-    }
-    
+ 
     public void removeConnectorChannel(Integer session)
     {
         pool.remove(session);
     }
     
-    public JDEAtinaConnector getConnectorChannel(String servidorName, Integer servidorPort, ChannelKey key)
+    public JDEAtinaConnector getConnectorChannel(int channelId)
+    {
+        if(channelId == 0 || !pool.containsKey(channelId) )
+        {
+            throw new ConnectionException("Invalid Channel Id");
+        }
+        
+        return pool.get(channelId);
+        
+    }
+    
+    public JDEAtinaConnector createConnectorChannel(String servidorName, Integer servidorPort, int channelId)
     {
         
         JDEAtinaConnector jdeAtinaConnector = null;
-        
-        int hashCode = key.hashCode();
-        
-        if(pool.containsKey(hashCode))
-        {
-            jdeAtinaConnector = pool.get(hashCode);
-            
-        } else
-        {
-            JDEAtinaConfigDriver configure = new JDEAtinaConfigDriver();
 
-            configure.setJdeUser(key.getUser());
-            configure.setJdePassword(key.getPassword());
-            configure.setJdeEnvironment(key.getEnvironment());
-            configure.setJdeRole(key.getRole());
-            configure.setMicroServiceName(servidorName);
-            configure.setMicroServicePort(servidorPort);
-            configure.setWsConnection(true);
+        JDEAtinaConfigDriver configure = new JDEAtinaConfigDriver();
+        configure.setMicroServiceName(servidorName);
+        configure.setMicroServicePort(servidorPort);
+        configure.setWsConnection(true);
 
-            // =========================================================
-            // Connect
-            // =========================================================
-            configure.connect(  configure.getJdeUser(),
-                                configure.getJdePassword(),
-                                configure.getJdeEnvironment(),
-                                configure.getJdeRole(),
-                                configure.getWsConnection(),
-                                configure.getMicroServiceName(),
-                                configure.getMicroServicePort());
+        // =========================================================
+        // Connect
+        // =========================================================
+        configure.connect(configure.getWsConnection(),
+                configure.getMicroServiceName(),
+                configure.getMicroServicePort());
 
-            // =========================================================
-            // Create JD Atina Connector
-            // =========================================================
+        // =========================================================
+        // Create JD Atina Connector
+        // =========================================================
+        jdeAtinaConnector = new JDEAtinaConnector();
 
-            jdeAtinaConnector = new JDEAtinaConnector();
+        jdeAtinaConnector.setConfig(configure);
 
-            jdeAtinaConnector.setConfig(configure);
-            
-            pool.put(hashCode, jdeAtinaConnector);
-            
-        }
+        pool.put(channelId, jdeAtinaConnector);
          
         return jdeAtinaConnector;
     }
-    
-    
-    
-    
+     
 }

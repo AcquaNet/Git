@@ -17,13 +17,13 @@ public class JDEAtinaConfiguracion {
         super();
     }
 
-    public JDEAtinaConfiguracion(String jdeUser, String jdePassword, String jdeEnvironment, String jdeRole, String token,
+    public JDEAtinaConfiguracion( String token,
             Boolean wsConnection, String microServiceName, Integer microServicePort) {
         super();
-        this.jdeUser = jdeUser;
-        this.jdePassword = jdePassword;
-        this.jdeEnvironment = jdeEnvironment;
-        this.jdeRole = jdeRole;
+        this.jdeUser = "";
+        this.jdePassword = "";
+        this.jdeEnvironment = "";
+        this.jdeRole = "";
         this.token = token;
         this.wsConnection = wsConnection;
         this.microServiceName = microServiceName;
@@ -101,20 +101,7 @@ public class JDEAtinaConfiguracion {
     public void setToken(String token) {
         this.token = token;
     }
-
-    public JDEAtinaConfiguracion(String jdeUser, String jdeEnvironment, String jdeRole, Boolean wsConnection,
-            String microServiceName, Integer microServicePort, long sessionID, String token) {
-        super();
-        this.jdeUser = jdeUser;
-        this.jdeEnvironment = jdeEnvironment;
-        this.jdeRole = jdeRole;
-        this.wsConnection = wsConnection;
-        this.microServiceName = microServiceName;
-        this.microServicePort = microServicePort;
-        this.sessionID = sessionID;
-        this.token = token;
-    }
-
+  
     public String getAddressBookNumber() {
         return addressBookNumber;
     }

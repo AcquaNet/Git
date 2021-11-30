@@ -27,10 +27,6 @@ public class JDEAtinaConfigDriver {
     
     private static final Logger logger = LoggerFactory.getLogger(JDEAtinaConnector.class);
     
-    private String jdeUser;
-    private String jdePassword;
-    private String jdeEnvironment;
-    private String jdeRole;
     private Boolean wsConnection;
     private String microServiceName;
     private Integer microServicePort;
@@ -41,39 +37,7 @@ public class JDEAtinaConfigDriver {
     private JDEServiceBlockingStub stub;
 
     private long startLogin = 0L;
-
-    public String getJdeUser() {
-        return jdeUser;
-    }
-
-    public void setJdeUser(String jdeUser) {
-        this.jdeUser = jdeUser;
-    }
-
-    public String getJdePassword() {
-        return jdePassword;
-    }
-
-    public void setJdePassword(String jdePassword) {
-        this.jdePassword = jdePassword;
-    }
-
-    public String getJdeEnvironment() {
-        return jdeEnvironment;
-    }
-
-    public void setJdeEnvironment(String jdeEnvironment) {
-        this.jdeEnvironment = jdeEnvironment;
-    }
-
-    public String getJdeRole() {
-        return jdeRole;
-    }
-
-    public void setJdeRole(String jdeRole) {
-        this.jdeRole = jdeRole;
-    }
-
+ 
     public Boolean getWsConnection() {
         return wsConnection;
     }
@@ -98,27 +62,8 @@ public class JDEAtinaConfigDriver {
         this.microServicePort = microServicePort;
     }
 
-    public void testConnect(final String jdeUser,
-            final String jdePassword,
-             final String jdeEnvironment,
-             final String jdeRole,
-             final Boolean wsConnection,
-            final String microServiceName,
-            final Integer microServicePort) throws ConnectionException {
-
-        logger.debug("JDE ATILA Connector - Config - testConnect() - Begin: Testing connection...");
-
-        this.connect(jdeUser, jdePassword, jdeEnvironment, jdeRole, wsConnection, microServiceName, microServicePort);
-
-        this.disconnect();
-
-        logger.debug("JDE ATILA Connector - Config - testConnect() - End: Testing connection.");
-
-    }
-    public void connect(final String jdeUser,
-            final String jdePassword,
-            final String jdeEnvironment,
-            final String jdeRole,
+     
+    public void connect( 
             final Boolean wsConnection,
             final String microServiceName,
             final Integer microServicePort) throws ConnectionException {
@@ -131,8 +76,7 @@ public class JDEAtinaConfigDriver {
 
         if (this.configuracion == null) {
 
-            this.configuracion = new JDEAtinaConfiguracion(jdeUser, jdePassword, jdeEnvironment, jdeRole, "", wsConnection,
-                    microServiceName, microServicePort);
+            this.configuracion = new JDEAtinaConfiguracion("", wsConnection, microServiceName, microServicePort);
 
         }
 
@@ -154,9 +98,7 @@ public class JDEAtinaConfigDriver {
             logger.info("JDE ATILA Connector - Login to JDE...");
 
             ConnectorServiceImpl servicio = (ConnectorServiceImpl) getService();
-
-            //servicio.login(stub, this.configuracion, 0L);
-
+ 
             logger.info("JDE ATILA Connector - JDE Logged");
 
         } catch (ExternalConnectorException e) {

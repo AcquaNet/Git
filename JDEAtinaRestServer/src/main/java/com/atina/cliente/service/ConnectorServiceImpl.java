@@ -189,8 +189,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
 
                 String[] tokens = StringUtils.split(e.getMessage(), "|");
 
-                String errorMessage = tokens[0];
-                String claseDeLaOperacion = tokens[1];
+                String errorMessage = tokens[1];
+                String claseDeLaOperacion = tokens[0];
                 String metodoDeLaOperacion = tokens[2];
                 int httpStatus = 0;
                 String httpStatusReason = "";

@@ -5,27 +5,25 @@
  */
 package com.atina.main;
  
-import com.atina.cliente.connector.JDEAtinaConnector;
+import com.atina.cliente.connector.JDEAtinaConnector; 
 import com.atina.cliente.exception.ConnectionException;
 import com.atina.exception.CustomException;
-import com.atina.model.ChannelKey;
 import com.atina.model.LoginRequest;
 import com.atina.model.LoginResponse;
 import com.atina.model.LogoutResponse;
-import com.atina.service.ConnectionPool;
-import com.jde.jdeserverwp.servicios.LogoutRequest;
+import com.atina.service.GRPCConnection;
+import com.atina.service.ConnectionPool; 
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 import io.quarkus.runtime.configuration.ProfileManager; 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import javax.ws.rs.Consumes; 
-import javax.ws.rs.GET;
-import javax.ws.rs.NotAcceptableException;
+import javax.ws.rs.GET; 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.Produces; 
 import javax.ws.rs.core.MediaType; 
 import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -39,8 +37,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.jboss.resteasy.annotations.jaxrs.HeaderParam;
-import org.jboss.resteasy.reactive.RestHeader;
+import org.jboss.resteasy.annotations.jaxrs.HeaderParam; 
   
 /**
  *
@@ -108,18 +105,34 @@ public class ApiResource {
                                     schema = @Schema(type = SchemaType.OBJECT, implementation = LoginResponse.class)))
             }
     ) 
-    public Response login(@HeaderParam("Token") String token ,LoginRequest loginRequest) {
+    public Response login(@HeaderParam("Token") String token, @HeaderParam("ChannelId") String channelId ,LoginRequest loginRequest) {
      
+        int channelIdValue = 0;
+        
         try
         {
-        
-            ChannelKey channelKey = new ChannelKey(loginRequest.getUser(),loginRequest.getPassword(), loginRequest.getEnvironment(),loginRequest.getRole());
+              
+            JDEAtinaConnector connector;
             
-            JDEAtinaConnector connector = ConnectionPool.getInstance().getConnectorChannel(
+            if(channelId == null || channelId.isEmpty())
+            {
+                channelIdValue = GRPCConnection.getChannelId();
+                
+                connector = ConnectionPool.getInstance().createConnectorChannel(
                                                     servidorName, 
                                                     servidorPort, 
-                                                    channelKey);
-
+                                                    channelIdValue);
+                
+            } else
+            {
+                channelIdValue = Integer.parseInt(channelId);
+                
+                connector = ConnectionPool.getInstance().getConnectorChannel(channelIdValue);
+            
+            }
+            
+             
+                
             Map<String, Object> entityData = new HashMap<String, Object>();
 
             entityData.put("Transaction ID", loginRequest.getTransactionId());
@@ -132,13 +145,17 @@ public class ApiResource {
            
             Map<String,Object> auth = (Map<String,Object>) connector.authenticate("FromUserData", entityData);
             
-            LoginResponse response = new LoginResponse((String)  auth.get("token"),(String)  auth.get("userAddressBookNo"), ((Long) auth.get("sessionId")).intValue());
+            LoginResponse response = new LoginResponse((String)  auth.get("userAddressBookNo"), ((Long) auth.get("sessionId")).intValue());
             
-            return Response.ok(response).build();
+            return Response.ok(response).header("Token", (String)  auth.get("token")).header("ChannelId",  Integer.toString(channelIdValue)).build();
             
-        } catch (Exception ex)
+        } catch (ConnectionException | NumberFormatException ex)
         {
-            throw new CustomException(ex.getMessage(), ex); 
+            throw new CustomException(ex.getMessage(), ex,Integer.toString(channelIdValue)); 
+            
+        }  catch (Exception  ex)
+        {
+            throw new CustomException(ex.getMessage(), ex,Integer.toString(channelIdValue)); 
             
         }  
         
@@ -158,27 +175,49 @@ public class ApiResource {
                                     schema = @Schema(type = SchemaType.OBJECT, implementation = LogoutResponse.class)))
             }
     )
-    public Response logout(@HeaderParam("Token") String token, LogoutRequest logoutRequest) {
+    public Response logout(@HeaderParam("Token") String token,  @HeaderParam("ChannelId") String channelId , com.atina.model.LogoutRequest logoutRequest) {
+         
+        int channelIdValue = 0;
         
-        String sessionId = "0";
-        
-        JDEAtinaConnector connector = ConnectionPool.getInstance().getConnectorChannel( 
-                                                Integer.parseInt(sessionId));
-        
-        Map<String, Object> entityData = new HashMap<String, Object>();
+        try {
 
-        entityData.put("Transaction ID", logoutRequest.getTransactionID());
-        entityData.put("JDE Token", token); 
+            
+            JDEAtinaConnector connector;
+            
+            if(channelId == null || channelId.isEmpty())
+            {
+                throw new ConnectionException("Invalid Channel Id");
                 
-        Map<String,Object> auth = (Map<String,Object>) connector.authenticate("LogoutTokenData", entityData);
-        
-        ConnectionPool.getInstance().removeConnectorChannel( 
-                                                Integer.parseInt(sessionId));
-        
-        LogoutResponse response = new LogoutResponse("", 0);
+            } else
+            {
+                channelIdValue = Integer.parseInt(channelId);
+                
+                connector = ConnectionPool.getInstance().getConnectorChannel(channelIdValue);
+            
+            }
 
-        return Response.ok(response).build();
-        
+            Map<String, Object> entityData = new HashMap<String, Object>();
+
+            entityData.put("Transaction ID", logoutRequest.getTransactionId());
+            entityData.put("JDE Token", token);
+
+            Map<String, Object> auth = (Map<String, Object>) connector.authenticate("LogoutTokenData", entityData);
+
+            ConnectionPool.getInstance().removeConnectorChannel(channelIdValue);
+
+            LogoutResponse response = new LogoutResponse((String) auth.get("token"), (Integer) auth.get("sessionID"));
+
+            return Response.ok(response).header("Token", auth.get("token")).header("ChannelId",  "0").build();
+            
+        } catch (ConnectionException | NumberFormatException ex) {
+            
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue));
+
+        } catch (Exception ex) {
+            
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue));
+
+        }
     }
          
 }

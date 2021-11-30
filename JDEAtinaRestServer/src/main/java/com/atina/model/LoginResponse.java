@@ -10,8 +10,7 @@ package com.atina.model;
  * @author jgodi
  */
 public class LoginResponse {
-    
-    private String token;
+     
     private String addressBookNo;
     private Integer sessionId;
 
@@ -19,8 +18,7 @@ public class LoginResponse {
 
     }
 
-    public LoginResponse(String token, String addressBookNo, Integer sessionId) {
-        this.token = token;
+    public LoginResponse(String addressBookNo, Integer sessionId) {
         this.addressBookNo = addressBookNo;
         this.sessionId = sessionId;
     }
@@ -40,15 +38,5 @@ public class LoginResponse {
     public void setSessionId(Integer sessionId) {
         this.sessionId = sessionId;
     }
-    
-      
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
      
-    
 }
