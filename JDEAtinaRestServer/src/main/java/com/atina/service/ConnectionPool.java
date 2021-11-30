@@ -7,7 +7,7 @@ package com.atina.service;
 
 import com.atina.cliente.connector.JDEAtinaConfigDriver;
 import com.atina.cliente.connector.JDEAtinaConnector;
-import com.atina.cliente.exceptions.ConnectionException;
+import com.atina.cliente.exception.ConnectionException;
 import com.atina.model.ChannelKey;
 import java.util.HashMap;
 

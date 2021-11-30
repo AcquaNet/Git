@@ -28,10 +28,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
-                <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
-                </configuration>
             </plugin>
             
             <plugin>
@@ -40,14 +36,16 @@
                 <version>3.3</version>
             </plugin>
             
+           <!-- Migracion JAVA 11 https://github.com/grpc/grpc-java -->
+           
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
-                <version>0.5.1</version>
+                <version>0.6.1</version>
                 <configuration>
-                    <protocArtifact>com.google.protobuf:protoc:3.5.1-1:exe:${os.detected.classifier}</protocArtifact>
+                    <protocArtifact>com.google.protobuf:protoc:3.17.2:exe:${os.detected.classifier}</protocArtifact>
                     <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.14.0:exe:${os.detected.classifier}</pluginArtifact>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.42.1:exe:${os.detected.classifier}</pluginArtifact>
                 </configuration>
                 <executions>
                     <execution>
@@ -151,7 +149,14 @@
             <artifactId>grpc-stub</artifactId>
             <version>${io.grpc.version}</version>
         </dependency>
- 
+
+        <!-- Migracion JAVA 11 https://github.com/grpc/grpc-java -->
+        <dependency> <!-- necessary for Java 9+ -->
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>annotations-api</artifactId>
+          <version>6.0.53</version>
+          <scope>provided</scope>
+        </dependency>
 
     </dependencies>
     
