@@ -616,22 +616,12 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
     }
 
     @Override
-    public Object getJsonFromOperations(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, String entityType, Map<String, Object> entityData)
+    public Object getJsonFromOperations(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, String entityType, Map<String, Object> entityData, Long transactionID)
             throws InternalConnectorException, ExternalConnectorException {
 
         logger.info("----------------------------------------------------------------");
         logger.info("JDE Atina Service - ConnectorServiceImpl - getJsonFromOperations ...");
-
-        Long transactionID = 0L;
-
-        if (entityData.containsKey("Transaction ID"))
-        {
-            transactionID = (Long) entityData.get("Transaction ID");
-
-            entityData.remove("Transaction ID");
-
-        }
-
+ 
         // ----------------------------------
         // Generacion de la Transaccion
         // ----------------------------------
@@ -706,11 +696,16 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<TipoDelParametroInput> getInputMetadataForOperation(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, String operation)
+    public List<TipoDelParametroInput> getInputMetadataForOperation(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, String operation,  Long transactionID)
             throws InternalConnectorException , ExternalConnectorException {
 
         logger.info("----------------------------------------------------------------");
         logger.info("DRAGONFISH - ConnectorServiceImpl - getInputMetadataForOperation for operation: " + operation);
+        
+        if (transactionID == 0)
+        {
+            transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
+        }
 
         this.stub = stub;
         this.configuracion = configuracion;
@@ -744,11 +739,16 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<TipoDelParametroOutput> getOutputMetadataForOperation(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, String operation)
+    public List<TipoDelParametroOutput> getOutputMetadataForOperation(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, String operation,  Long transactionID)
             throws InternalConnectorException, ExternalConnectorException {
 
         logger.info("----------------------------------------------------------------");
         logger.info("DRAGONFISH - ConnectorServiceImpl - getOutputMetadataForOperation for operation: " + operation);
+        
+        if (transactionID == 0)
+        {
+            transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
+        }
 
         this.stub = stub;
         this.configuracion = configuracion;

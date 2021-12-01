@@ -8,8 +8,13 @@ package com.atina.cliente.connector;
  
 import com.atina.cliente.exception.ConnectionException;
 import com.atina.cliente.exception.InternalConnectorException;
+import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
+import com.jde.jdeserverwp.servicios.TipoDelParametroOutput;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -234,7 +239,7 @@ public class JDEAtinaConnector {
 
         Object returnValue = this.getConfig()
                 .getService()
-                .getJsonFromOperations(config.getStub(), config.getConfiguracion(), entityType, entityData);
+                .getJsonFromOperations(config.getStub(), config.getConfiguracion(), entityType, entityData, (Long) entityData.get("Transaction ID"));
 
         return returnValue;
     }
@@ -274,6 +279,78 @@ public class JDEAtinaConnector {
                     returnValue.put("sessionId", currentConfigurationToken.getSessionID()); 
                     returnValue.put("Transaction ID", currentConfigurationToken.getTransactionID()); 
                     returnValue.put("Operations", operations); 
+                     
+            }
+            
+            if (entityType.equals("Input"))
+            {
+
+                JDEAtinaConfiguracion currentConfigurationToken = new JDEAtinaConfiguracion();
+
+                    currentConfigurationToken.setJdeUser("");
+                    currentConfigurationToken.setJdePassword("");
+                    currentConfigurationToken.setJdeEnvironment("");
+                    currentConfigurationToken.setJdeRole("");
+                    currentConfigurationToken.setSessionID(0L);
+                    currentConfigurationToken.setToken((String) entityData.get("JDE Token"));
+                    currentConfigurationToken.setWsConnection(true);
+
+                    logger.info("           Information received: [" + currentConfigurationToken.toString() + "]");
+
+                    List<TipoDelParametroInput> parameters = this.getConfig()
+                        .getService()
+                        .getInputMetadataForOperation(config.getStub(), currentConfigurationToken,(String) entityData.get("Operation"), (Long) entityData.get("Transaction ID"));
+ 
+                    ArrayList<String> output = new ArrayList<String>();
+                    
+                    for (TipoDelParametroInput parameter : parameters) {
+
+                        int level = 0;
+
+                        saveParameterInput(parameter, level, output);
+
+                    }
+                    
+                    returnValue.put("token", currentConfigurationToken.getToken());
+                    returnValue.put("sessionId", currentConfigurationToken.getSessionID()); 
+                    returnValue.put("Transaction ID", currentConfigurationToken.getTransactionID()); 
+                    returnValue.put("Parameters", output); 
+                     
+            }
+            
+            if (entityType.equals("Output"))
+            {
+
+                JDEAtinaConfiguracion currentConfigurationToken = new JDEAtinaConfiguracion();
+
+                    currentConfigurationToken.setJdeUser("");
+                    currentConfigurationToken.setJdePassword("");
+                    currentConfigurationToken.setJdeEnvironment("");
+                    currentConfigurationToken.setJdeRole("");
+                    currentConfigurationToken.setSessionID(0L);
+                    currentConfigurationToken.setToken((String) entityData.get("JDE Token"));
+                    currentConfigurationToken.setWsConnection(true);
+
+                    logger.info("           Information received: [" + currentConfigurationToken.toString() + "]");
+
+                    List<TipoDelParametroOutput> parameters = this.getConfig()
+                        .getService()
+                        .getOutputMetadataForOperation(config.getStub(), currentConfigurationToken,(String) entityData.get("Operation"), (Long) entityData.get("Transaction ID"));
+  
+                    ArrayList<String> output = new ArrayList<String>();
+                    
+                    for (TipoDelParametroOutput parameter : parameters) {
+
+                        int level = 0;
+
+                        saveParameterOutput(parameter, level, output);
+
+                    }
+                    
+                    returnValue.put("token", currentConfigurationToken.getToken());
+                    returnValue.put("sessionId", currentConfigurationToken.getSessionID()); 
+                    returnValue.put("Transaction ID", currentConfigurationToken.getTransactionID()); 
+                    returnValue.put("Parameters", output); 
                      
             }
   
@@ -363,6 +440,40 @@ public class JDEAtinaConnector {
         }
 
         return returnValue;
+    }
+      
+    private static void saveParameterInput(TipoDelParametroInput parameter, int level, ArrayList<String> output) {
+
+        level++;
+
+        String space = StringUtils.repeat(".", level * 2);
+
+        output.add(space + "[" + parameter.getNombreDelParametro() + "]" + " Type [" + parameter.getTipoDelParametroJava() + "] Repeated: " + parameter.getRepeatedParameter());
+
+        for (TipoDelParametroInput input : parameter.getSubParametroList()) {
+            if (!input.getNombreDelParametro().isEmpty()) {
+                saveParameterInput(input, level, output);
+            }
+
+        }
+        
+    }
+    
+    private static void saveParameterOutput(TipoDelParametroOutput parameter, int level, ArrayList<String> output) {
+
+        level++;
+
+        String space = StringUtils.repeat(".", level * 2);
+
+        output.add(space + "[" + parameter.getNombreDelParametro() + "]" + " Type [" + parameter.getTipoDelParametroJava() + "] Repeated: " + parameter.getRepeatedParameter());
+
+        for (TipoDelParametroOutput input : parameter.getSubParametroList()) {
+            if (!input.getNombreDelParametro().isEmpty()) {
+                saveParameterOutput(input, level, output);
+            }
+
+        }
+        
     }
       
     

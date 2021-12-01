@@ -22,6 +22,7 @@ import io.quarkus.qute.TemplateInstance;
 import io.quarkus.runtime.configuration.ProfileManager;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import javax.ws.rs.Consumes;
@@ -453,6 +454,136 @@ public class ApiResource {
             transactionId = (Long) responseVal.get("Transaction ID");
              
             return Response.ok(((Map)responseVal.get("Operations")).values()).header("Token", responseVal.get("token"))
+                                        .header("ChannelId",  Integer.toString(channelIdValue))
+                                        .header("SessionId",  responseVal.get("sessionId"))
+                                        .header("TransactionId", transactionId )
+                                        .build();
+
+        } catch (ConnectionException | NumberFormatException ex) {
+
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+
+        } catch (Exception ex) {
+
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+
+        }
+    }
+    
+    @GET
+    @Path("/metadata/input-parameters/{operationName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Tag(name = "Metadata", description = "Process Metadata")
+            @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "Parameters has been retrieved",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = OperationsResponse.class)))
+            }
+    )
+    public Response getOperationMetadataInput(@HeaderParam("Token") String token,  @HeaderParam("ChannelId") String channelId, @HeaderParam("TransactionId") Long transactionId, @PathParam("operationName") String operation) {
+
+        int channelIdValue = 0;
+
+        try {
+
+            JDEAtinaConnector connector;
+
+            if(channelId == null || channelId.isEmpty() || channelId.equals("0"))
+            {
+                channelIdValue = ConnectionPool.getInstance().getAvailableChannel();
+
+                connector = ConnectionPool.getInstance().createConnectorChannel(
+                                                    servidorName,
+                                                    servidorPort,
+                                                    channelIdValue);
+
+            } else
+            {
+                channelIdValue = Integer.parseInt(channelId);
+
+                connector = ConnectionPool.getInstance().getConnectorChannel(channelIdValue);
+
+            }
+
+            Map<String, Object> entityData = new HashMap<String, Object>();
+
+            entityData.put("Transaction ID", transactionId);
+            entityData.put("JDE Token", token);
+            entityData.put("Operation", operation);
+             
+            Map<String, Object> responseVal = (Map<String, Object>) connector.metadata("Input", entityData);
+            
+            transactionId = (Long) responseVal.get("Transaction ID");
+             
+            return Response.ok(((List)responseVal.get("Parameters"))).header("Token", responseVal.get("token"))
+                                        .header("ChannelId",  Integer.toString(channelIdValue))
+                                        .header("SessionId",  responseVal.get("sessionId"))
+                                        .header("TransactionId", transactionId )
+                                        .build();
+
+        } catch (ConnectionException | NumberFormatException ex) {
+
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+
+        } catch (Exception ex) {
+
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+
+        }
+    }
+    
+    @GET
+    @Path("/metadata/output-parameters/{operationName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Tag(name = "Metadata", description = "Process Metadata")
+            @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "Parameters has been retrieved",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = OperationsResponse.class)))
+            }
+    )
+    public Response getOperationMetadataOutput(@HeaderParam("Token") String token,  @HeaderParam("ChannelId") String channelId, @HeaderParam("TransactionId") Long transactionId, @PathParam("operationName") String operation) {
+
+        int channelIdValue = 0;
+
+        try {
+
+            JDEAtinaConnector connector;
+
+            if(channelId == null || channelId.isEmpty() || channelId.equals("0"))
+            {
+                channelIdValue = ConnectionPool.getInstance().getAvailableChannel();
+
+                connector = ConnectionPool.getInstance().createConnectorChannel(
+                                                    servidorName,
+                                                    servidorPort,
+                                                    channelIdValue);
+
+            } else
+            {
+                channelIdValue = Integer.parseInt(channelId);
+
+                connector = ConnectionPool.getInstance().getConnectorChannel(channelIdValue);
+
+            }
+
+            Map<String, Object> entityData = new HashMap<String, Object>();
+
+            entityData.put("Transaction ID", transactionId);
+            entityData.put("JDE Token", token);
+            entityData.put("Operation", operation);
+             
+            Map<String, Object> responseVal = (Map<String, Object>) connector.metadata("Output", entityData);
+            
+            transactionId = (Long) responseVal.get("Transaction ID");
+             
+            return Response.ok(((List)responseVal.get("Parameters"))).header("Token", responseVal.get("token"))
                                         .header("ChannelId",  Integer.toString(channelIdValue))
                                         .header("SessionId",  responseVal.get("sessionId"))
                                         .header("TransactionId", transactionId )

@@ -36,17 +36,17 @@ public interface ConnectorServiceInterface {
     public Map<String, String> getMetadataOperations(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, Long transactionID, String filter)
             throws InternalConnectorException, ExternalConnectorException;
 
-    public List<TipoDelParametroInput> getInputMetadataForOperation(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, String operation)
+    public List<TipoDelParametroInput> getInputMetadataForOperation(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, String operation,  Long transactionID)
             throws InternalConnectorException, ExternalConnectorException;
 
-    public List<TipoDelParametroOutput> getOutputMetadataForOperation(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, String operation)
+    public List<TipoDelParametroOutput> getOutputMetadataForOperation(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, String operation,  Long transactionID)
             throws InternalConnectorException, ExternalConnectorException;
 
     public Object ejecutarServicio(JDEServiceBlockingStub stub,
             com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, String entityType, Map<String, Object> entityData)
             throws InternalConnectorException, ExternalConnectorException;
 
-    public Object getJsonFromOperations(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, String entityType, Map<String, Object> entityData)
+    public Object getJsonFromOperations(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, String entityType, Map<String, Object> entityData,  Long transactionID)
             throws InternalConnectorException;
     
 }
