@@ -13,12 +13,14 @@ import com.atina.model.LoginRequest;
 import com.atina.model.LoginResponse;
 import com.atina.model.LogoutRequest;
 import com.atina.model.LogoutResponse;
+import com.atina.model.OperationsResponse;
 import com.atina.model.ParseTokenResponse;
 import com.atina.service.GRPCConnection;
 import com.atina.service.ConnectionPool;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 import io.quarkus.runtime.configuration.ProfileManager;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -367,6 +369,71 @@ public class ApiResource {
                                                                 (String) responseVal.get("Token Expiration"));
 
             return Response.ok(response).header("Token", responseVal.get("token"))
+                                        .header("ChannelId",  Integer.toString(channelIdValue))
+                                        .header("SessionId",  responseVal.get("sessionId"))
+                                        .header("TransactionId", transactionId )
+                                        .build();
+
+        } catch (ConnectionException | NumberFormatException ex) {
+
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+
+        } catch (Exception ex) {
+
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+
+        }
+    }
+    
+    @GET
+    @Path("/metadata/operations/{filter}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Tag(name = "Metadata", description = "Process Metadata")
+            @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "Operations has been retrived",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = OperationsResponse.class)))
+            }
+    )
+    public Response getOperations(@HeaderParam("Token") String token,  @HeaderParam("ChannelId") String channelId, @HeaderParam("TransactionId") Long transactionId, String filter) {
+
+        int channelIdValue = 0;
+
+        try {
+
+            JDEAtinaConnector connector;
+
+            if(channelId == null || channelId.isEmpty() || channelId.equals("0"))
+            {
+                channelIdValue = ConnectionPool.getInstance().getAvailableChannel();
+
+                connector = ConnectionPool.getInstance().createConnectorChannel(
+                                                    servidorName,
+                                                    servidorPort,
+                                                    channelIdValue);
+
+            } else
+            {
+                channelIdValue = Integer.parseInt(channelId);
+
+                connector = ConnectionPool.getInstance().getConnectorChannel(channelIdValue);
+
+            }
+
+            Map<String, Object> entityData = new HashMap<String, Object>();
+
+            entityData.put("Transaction ID", transactionId);
+            entityData.put("JDE Token", token);
+             
+            Map<String, Object> responseVal = (Map<String, Object>) connector.metadata("Operations", entityData);
+            
+            transactionId = (Long) responseVal.get("Transaction ID");
+             
+            return Response.ok(((Map)responseVal.get("Operations")).values()).header("Token", responseVal.get("token"))
                                         .header("ChannelId",  Integer.toString(channelIdValue))
                                         .header("SessionId",  responseVal.get("sessionId"))
                                         .header("TransactionId", transactionId )

@@ -71,6 +71,17 @@ public class JDEAtinaConnector {
 
     }
     
+    public Object metadata(String entityType, Map<String, Object> entityData)
+            throws InternalConnectorException, ConnectionException {
+
+        Object entity = processMetadata(entityType, entityData);
+
+        logger.info("JDE Atina - Metadata Operations: [" + entityType + "] Executed");
+
+        return entity;
+
+    }
+    
     
     public JDEAtinaConfigDriver getConfig() {
         return config;
@@ -224,6 +235,54 @@ public class JDEAtinaConnector {
         Object returnValue = this.getConfig()
                 .getService()
                 .getJsonFromOperations(config.getStub(), config.getConfiguracion(), entityType, entityData);
+
+        return returnValue;
+    }
+      
+      private Object processMetadata(String entityType, Map<String, Object> entityData) throws ConnectionException {
+
+        Map<String, Object> returnValue = new HashMap<String, Object>();
+
+        try {
+
+            JDEAtinaConfiguracion currentConfiguration = config.getConfiguracion();
+
+            logger.info("JDE Atina - Process Metadata with Option: [" + entityType + "]");
+            logger.info("           Current Configuration: [" + currentConfiguration.toString());
+            logger.info("           Transaction ID: [" + entityData.get("Transaction ID"));
+
+            if (entityType.equals("Operations"))
+            {
+
+                JDEAtinaConfiguracion currentConfigurationToken = new JDEAtinaConfiguracion();
+
+                    currentConfigurationToken.setJdeUser("");
+                    currentConfigurationToken.setJdePassword("");
+                    currentConfigurationToken.setJdeEnvironment("");
+                    currentConfigurationToken.setJdeRole("");
+                    currentConfigurationToken.setSessionID(0L);
+                    currentConfigurationToken.setToken((String) entityData.get("JDE Token"));
+                    currentConfigurationToken.setWsConnection(true);
+
+                    logger.info("           Information received: [" + currentConfigurationToken.toString() + "]");
+
+                    Map<String, String> operations = this.getConfig()
+                        .getService()
+                        .getMetadataOperations(config.getStub(), currentConfigurationToken, (Long) entityData.get("Transaction ID"));
+
+                    returnValue.put("token", currentConfigurationToken.getToken());
+                    returnValue.put("sessionId", currentConfigurationToken.getSessionID()); 
+                    returnValue.put("Transaction ID", currentConfigurationToken.getTransactionID()); 
+                    returnValue.put("Operations", operations); 
+                     
+            }
+  
+        } catch (Exception e) {
+
+            logger.error("ERROR JDE ATILA Process Metadata: " + e.getMessage(), e);
+
+            throw new ConnectionException("JDE ATILA Error Metadata: " + e.getMessage(), e);
+        }
 
         return returnValue;
     }

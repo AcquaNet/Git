@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package com.atina.cliente.service;
-
+ 
 import com.atina.cliente.exception.ExternalConnectorException;
 import com.atina.cliente.exception.InternalConnectorException; 
 import java.util.List;
@@ -33,14 +33,14 @@ public interface ConnectorServiceInterface {
     public boolean isConnected(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, Long transactionID)
             throws InternalConnectorException, ExternalConnectorException;
 
-    public Map<String, String> getMetadataOperations(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion)
-            throws InternalConnectorException;
+    public Map<String, String> getMetadataOperations(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, Long transactionID)
+            throws InternalConnectorException, ExternalConnectorException;
 
     public List<TipoDelParametroInput> getInputMetadataForOperation(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, String operation)
-            throws InternalConnectorException;
+            throws InternalConnectorException, ExternalConnectorException;
 
     public List<TipoDelParametroOutput> getOutputMetadataForOperation(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, String operation)
-            throws InternalConnectorException;
+            throws InternalConnectorException, ExternalConnectorException;
 
     public Object ejecutarServicio(JDEServiceBlockingStub stub,
             com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, String entityType, Map<String, Object> entityData)

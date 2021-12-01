@@ -516,16 +516,19 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
         return false;
 
     }
-
+ 
     @Override
-    public Map<String, String> getMetadataOperations(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion)
-            throws InternalConnectorException {
+    public Map<String, String> getMetadataOperations(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, Long transactionID)
+            throws InternalConnectorException, ExternalConnectorException {
 
         // ----------------------------------
         // Generacion de la Transaccion
         // ----------------------------------
 
-        Long transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
+        if (transactionID == 0)
+        {
+            transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
+        } 
 
         logger.info("----------------------------------------------------------------");
         logger.info("JDE Atina Service - ConnectorServiceImpl - getMetadataOperations ...");
@@ -551,7 +554,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
 
             for (Operacion operacion : operacionesResponse.getOperacionesList()) {
 
-                logger.info("Operation: " + operacion.getIdOperacion() + " > " + operacion.getNombreOperacion());
+                logger.debug("Operation: " + operacion.getIdOperacion() + " > " + operacion.getNombreOperacion());
 
                 operations.put(operacion.getIdOperacion(), operacion.getNombreOperacion());
 
@@ -563,17 +566,18 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
 
             String[] tokens = StringUtils.split(e.getMessage(), "|");
 
-            String errorMessage = tokens[0];
-            String claseDeLaOperacion = tokens[1];
-            String metodoDeLaOperacion = tokens[2];
-            int httpStatus = 510;
-            String httpStatusReason = "";
-            String request = "";
-            String response = "";
+                String errorMessage = tokens[0];
+                String claseDeLaOperacion = tokens[1];
+                String metodoDeLaOperacion = tokens[2];
+                int httpStatus = 0;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
+                String e1Message = "";
 
-            captureLog(stub, transactionID);
+                captureLog(stub, transactionID);
 
-            throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+            throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e1Message, e);
 
         } catch (Exception e) {
 
@@ -592,13 +596,19 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
             throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
 
         }
+        
+        configuracion.setSessionID(operacionesResponse.getSessionId()); 
+
+        configuracion.setToken(operacionesResponse.getJwtToken());
+        
+        configuracion.setTransactionID(transactionID);
 
         return operations;
     }
 
     @Override
     public Object getJsonFromOperations(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, String entityType, Map<String, Object> entityData)
-            throws InternalConnectorException {
+            throws InternalConnectorException, ExternalConnectorException {
 
         logger.info("----------------------------------------------------------------");
         logger.info("JDE Atina Service - ConnectorServiceImpl - getJsonFromOperations ...");
@@ -651,17 +661,18 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
 
             String[] tokens = StringUtils.split(e.getMessage(), "|");
 
-            String errorMessage = tokens[0];
-            String claseDeLaOperacion = tokens[1];
-            String metodoDeLaOperacion = tokens[2];
-            int httpStatus = 510;
-            String httpStatusReason = "";
-            String request = "";
-            String response = "";
+                String errorMessage = tokens[0];
+                String claseDeLaOperacion = tokens[1];
+                String metodoDeLaOperacion = tokens[2];
+                int httpStatus = 0;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
+                String e1Message = "";
 
-            captureLog(stub, transactionID);
+                captureLog(stub, transactionID);
 
-            throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+            throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e1Message, e);
 
         } catch (Exception e) {
 
@@ -687,7 +698,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
     @SuppressWarnings("unchecked")
     @Override
     public List<TipoDelParametroInput> getInputMetadataForOperation(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, String operation)
-            throws InternalConnectorException {
+            throws InternalConnectorException , ExternalConnectorException {
 
         logger.info("----------------------------------------------------------------");
         logger.info("DRAGONFISH - ConnectorServiceImpl - getInputMetadataForOperation for operation: " + operation);
@@ -725,7 +736,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
     @SuppressWarnings("unchecked")
     @Override
     public List<TipoDelParametroOutput> getOutputMetadataForOperation(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, String operation)
-            throws InternalConnectorException {
+            throws InternalConnectorException, ExternalConnectorException {
 
         logger.info("----------------------------------------------------------------");
         logger.info("DRAGONFISH - ConnectorServiceImpl - getOutputMetadataForOperation for operation: " + operation);
