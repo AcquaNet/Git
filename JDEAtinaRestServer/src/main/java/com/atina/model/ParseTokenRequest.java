@@ -9,9 +9,9 @@ package com.atina.model;
  *
  * @author jgodi
  */
-public class LogoutRequest {
-
-    public LogoutRequest() {
-    }
+public class ParseTokenRequest {
      
+    public ParseTokenRequest() {
+    }
+ 
 }

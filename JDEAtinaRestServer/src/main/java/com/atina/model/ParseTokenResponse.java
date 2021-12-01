@@ -9,21 +9,23 @@ package com.atina.model;
  *
  * @author jgodi
  */
-public class LoginRequest {
+public class ParseTokenResponse {
     
     private String user;
     private String password;
     private String environment;
     private String role; 
+    private String tokenExpiration;
 
-    public LoginRequest() {
+    public ParseTokenResponse() {
     }
 
-    public LoginRequest(String user, String password, String environment, String role, Long transactionId) {
+    public ParseTokenResponse(String user, String password, String environment, String role, String tokenExpiration) {
         this.user = user;
         this.password = password;
         this.environment = environment;
         this.role = role; 
+        this.tokenExpiration = tokenExpiration;
     }
      
     public String getUser() {
@@ -58,4 +60,12 @@ public class LoginRequest {
         this.role = role;
     }
 
+    public String getTokenExpiration() {
+        return tokenExpiration;
+    }
+
+    public void setTokenExpiration(String tokenExpiration) {
+        this.tokenExpiration = tokenExpiration;
+    }
+   
 }

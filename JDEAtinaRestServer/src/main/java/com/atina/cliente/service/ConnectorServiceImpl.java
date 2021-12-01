@@ -53,6 +53,8 @@ import com.jde.jdeserverwp.servicios.LogoutRequest;
 import com.jde.jdeserverwp.servicios.Operacion;
 import com.jde.jdeserverwp.servicios.OperacionesRequest;
 import com.jde.jdeserverwp.servicios.OperacionesResponse;
+import com.jde.jdeserverwp.servicios.ProcessTokenRequest;
+import com.jde.jdeserverwp.servicios.ProcessTokenResponse;
 import com.jde.jdeserverwp.servicios.SessionRequest;
 import com.jde.jdeserverwp.servicios.SessionResponse;
 import com.jde.jdeserverwp.servicios.TipoDelParametroInput;
@@ -141,6 +143,119 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
                 .
                 build(metadataOutput);
     } 
+    
+    @Override
+    public void processToken(String action, JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, Long transactionID) throws InternalConnectorException, ExternalConnectorException {
+        // ----------------------------------
+        // Generacion de la Transaccion
+        // ----------------------------------
+
+        if (transactionID == 0)
+        {
+            transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
+        }
+
+        logger.info("----------------------------------------------------------------");
+
+        logger.info("JDE Atina Service - Process Token with " + action + " and Transaction ID " + transactionID);
+
+        logger.info("JDE Atina Service - Config " + configuracion.toString());
+
+        ProcessTokenResponse processTokenResponse = null;
+
+        try {
+
+            processTokenResponse = stub.processToken(
+                                        ProcessTokenRequest.newBuilder()
+                                        .setAction(action)
+                                        .setUser(configuracion.getJdeUser()) 
+                                        .setPassword(configuracion.getJdePassword())
+                                        .setEnvironment(configuracion.getJdeEnvironment())
+                                        .setRole(configuracion.getJdeRole()) 
+                                        .setJwtToken(configuracion.getToken())
+                                        .setTransactionID(transactionID)
+                                        .build());
+              
+        } catch (StatusRuntimeException e) {
+
+            logger.error("JDE Atina Service + Error: " + e.getMessage());
+
+            if (e.getMessage()
+                    .endsWith("%ExternalServiceException%") ||
+                    e.getMessage()
+                            .endsWith("%InternalServiceException%"))
+            {
+
+                String[] tokens = StringUtils.split(e.getMessage(), "|");
+
+                String errorMessage = tokens[0];
+                String claseDeLaOperacion = tokens[2];
+                String metodoDeLaOperacion = tokens[1];
+                int httpStatus = 0;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
+                String e1Message = "";
+
+                captureLog(stub, transactionID);
+
+                throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e1Message, e);
+
+            }
+            else
+            {
+
+                String errorMessage = e.getMessage();
+                String claseDeLaOperacion = "ParseToken";
+                String metodoDeLaOperacion = "ParseToken";
+                int httpStatus = 500;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
+
+                throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+
+            }
+
+        } catch (NullPointerException e) {
+            
+            String errorMessage = "NullPointerException";
+            String claseDeLaOperacion = "ParseToken";
+            String metodoDeLaOperacion = "ParseToken";
+            int httpStatus = 500;
+            String httpStatusReason = "";
+            String request = "";
+            String response = "";
+
+            throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+        }
+
+        if (processTokenResponse != null) {
+
+            logger.info("JDE Atina Service - SessionID: [" + processTokenResponse.getSessionId() + "]");
+        }
+
+        logger.info("JDE Atina Service - End Process Token ");
+
+        configuracion.setSessionID(processTokenResponse.getSessionId() );
+        
+        configuracion.setJdePassword("");
+        
+        configuracion.setJdeUser(processTokenResponse.getUser());
+        
+        configuracion.setJdeEnvironment(processTokenResponse.getEnvironment());
+        
+        configuracion.setJdeRole(processTokenResponse.getRole());
+         
+        configuracion.setToken(processTokenResponse.getJwtToken());
+        
+        configuracion.setTokenExpiration(processTokenResponse.getExpiration());
+        
+        configuracion.setTransactionID(transactionID);
+         
+        
+    }
+    
     
     @Override
     public void login(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, Long transactionID)
@@ -232,6 +347,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
         configuracion.setAddressBookNumber(tokenResponse.getAddressBookNumber());
 
         configuracion.setToken(tokenResponse.getJwtToken());
+        
+        configuracion.setTransactionID(transactionID);
 
     }
 
@@ -314,6 +431,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
         logger.info("JDE Atina Service - End logout ");
 
         configuracion.setSessionID(tokenResponse.getSessionId());
+        
+        configuracion.setTransactionID(transactionID);
     }
 
     @Override
@@ -2161,5 +2280,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
         }
 
     }
+
+    
     
 }

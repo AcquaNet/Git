@@ -12,15 +12,13 @@ package com.atina.model;
 public class LoginResponse {
      
     private String addressBookNo;
-    private Integer sessionId;
-
+  
     public LoginResponse() {
 
     }
 
-    public LoginResponse(String addressBookNo, Integer sessionId) {
+    public LoginResponse(String addressBookNo) {
         this.addressBookNo = addressBookNo;
-        this.sessionId = sessionId;
     }
      
     public String getAddressBookNo() {
@@ -30,13 +28,5 @@ public class LoginResponse {
     public void setAddressBookNo(String addressBookNo) {
         this.addressBookNo = addressBookNo;
     }
-
-    public Integer getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(Integer sessionId) {
-        this.sessionId = sessionId;
-    }
-     
+ 
 }

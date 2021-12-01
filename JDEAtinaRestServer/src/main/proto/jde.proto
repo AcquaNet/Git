@@ -114,6 +114,7 @@ message ProcessTokenResponse {
     string jwtToken = 13; 
     int64 sessionId = 14;
     string expiration = 15; 
+    int64 transactionID = 16;
 }
 
 message OperacionesRequest {

@@ -11,32 +11,7 @@ package com.atina.model;
  */
 public class LogoutResponse {
 
-    private String token;
-    private Integer sessionId;
-
     public LogoutResponse() {
-
     }
- 
-    public LogoutResponse(String token, Integer sessionId) {
-        this.token = token;
-        this.sessionId = sessionId;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public Integer getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(Integer sessionId) {
-        this.sessionId = sessionId;
-    }
-     
+  
 }

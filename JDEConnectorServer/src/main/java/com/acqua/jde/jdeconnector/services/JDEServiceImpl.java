@@ -439,6 +439,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 responseBuilder.setSessionId(config.getSessionId());
                 
                 responseBuilder.setExpiration(config.getTokenDateExpirationFormated());
+                
+                responseBuilder.setJwtToken(request.getJwtToken());
                   
                 responseObserver.onNext(responseBuilder.build());
 

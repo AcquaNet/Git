@@ -10,8 +10,10 @@ public class JDEAtinaConfiguracion {
     private String microServiceName;
     private Integer microServicePort;
     private long sessionID;
+    private long transactionID;
     private String token;
     private String addressBookNumber;
+    private String tokenExpiration;
 
     public JDEAtinaConfiguracion() {
         super();
@@ -110,6 +112,22 @@ public class JDEAtinaConfiguracion {
         this.addressBookNumber = addressBookNumber;
     }
 
+    public long getTransactionID() {
+        return transactionID;
+    }
+
+    public void setTransactionID(long transactionID) {
+        this.transactionID = transactionID;
+    }
+
+    public String getTokenExpiration() {
+        return tokenExpiration;
+    }
+
+    public void setTokenExpiration(String tokenExpiration) {
+        this.tokenExpiration = tokenExpiration;
+    }
+     
     @Override
     public String toString() {
         return "JDEAtilaConfiguracion [jdeUser=" + jdeUser + ", jdeEnvironment=" + jdeEnvironment + ", jdeRole="

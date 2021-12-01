@@ -16,14 +16,20 @@ public class CustomException extends
     private static final long serialVersionUID = 1L;
     
     private final String channelID;
+    private final Long TransactionId;
 
-    public CustomException(String message, Throwable cause, String channelID) {
+    public CustomException(String message, Throwable cause, String channelID, Long TransactionId) {
         super(message, cause);
         this.channelID = channelID;
+        this.TransactionId = TransactionId;
     }
 
     public String getChannelID() {
         return channelID;
+    }
+
+    public Long getTransactionId() {
+        return TransactionId;
     }
      
 }

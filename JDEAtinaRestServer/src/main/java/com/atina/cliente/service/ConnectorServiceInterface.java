@@ -24,6 +24,9 @@ public interface ConnectorServiceInterface {
     public void login(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, Long transactionID)
             throws InternalConnectorException, ExternalConnectorException;
     
+    public void processToken(String action, JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, Long transactionID)
+            throws InternalConnectorException, ExternalConnectorException;
+    
     public void logout(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, Long transactionID)
             throws InternalConnectorException, ExternalConnectorException;
 

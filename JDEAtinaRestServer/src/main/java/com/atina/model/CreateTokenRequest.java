@@ -9,17 +9,17 @@ package com.atina.model;
  *
  * @author jgodi
  */
-public class LoginRequest {
+public class CreateTokenRequest {
     
     private String user;
     private String password;
     private String environment;
     private String role; 
 
-    public LoginRequest() {
+    public CreateTokenRequest() {
     }
 
-    public LoginRequest(String user, String password, String environment, String role, Long transactionId) {
+    public CreateTokenRequest(String user, String password, String environment, String role) {
         this.user = user;
         this.password = password;
         this.environment = environment;
@@ -57,5 +57,5 @@ public class LoginRequest {
     public void setRole(String role) {
         this.role = role;
     }
-
+  
 }

@@ -60,6 +60,17 @@ public class JDEAtinaConnector {
 
     }
     
+    public Object processAtinaToken(String entityType, Map<String, Object> entityData)
+            throws InternalConnectorException, ConnectionException {
+
+        Object entity = processToken(entityType, entityData);
+
+        logger.info("JDE Atina - Process Token: [" + entityType + "] Executed");
+
+        return entity;
+
+    }
+    
     
     public JDEAtinaConfigDriver getConfig() {
         return config;
@@ -106,6 +117,7 @@ public class JDEAtinaConnector {
                     returnValue.put("token", currentConfigurationToken.getToken());
                     returnValue.put("sessionId", currentConfigurationToken.getSessionID());
                     returnValue.put("userAddressBookNo", currentConfigurationToken.getAddressBookNumber());
+                    returnValue.put("Transaction ID", currentConfigurationToken.getTransactionID()); 
 
                 } else if (entityData.containsKey("JDE User") &&
                         entityData.containsKey("JDE Password") &&
@@ -133,6 +145,7 @@ public class JDEAtinaConnector {
                     returnValue.put("token", currentConfigurationToken.getToken());
                     returnValue.put("sessionId", currentConfigurationToken.getSessionID());
                     returnValue.put("userAddressBookNo", currentConfigurationToken.getAddressBookNumber());
+                    returnValue.put("Transaction ID", currentConfigurationToken.getTransactionID()); 
 
                 } else
                 {
@@ -155,6 +168,7 @@ public class JDEAtinaConnector {
 
                     returnValue.put("token", config.getConfiguracion()
                             .getToken());
+                    returnValue.put("Transaction ID", currentConfigurationToken.getTransactionID()); 
                 }
 
             }
@@ -179,7 +193,8 @@ public class JDEAtinaConnector {
                             .getService()
                             .logout(config.getStub(), currentConfigurationToken, (Long) entityData.get("Transaction ID"));
 
-                    returnValue.put("token", "");
+                    returnValue.put("token", (String) entityData.get("JDE Token"));
+                    returnValue.put("Transaction ID", currentConfigurationToken.getTransactionID()); 
 
                 }
 
@@ -189,7 +204,7 @@ public class JDEAtinaConnector {
 
             logger.error("ERROR JDE ATILA authenticateUser:  ..." + e.getMessage(), e);
 
-            throw new ConnectionException("JDE ATILA Error Connection: ", e);
+            throw new ConnectionException("JDE ATILA Error Connection: " + e.getMessage(), e);
         }
 
         return returnValue;
@@ -213,5 +228,83 @@ public class JDEAtinaConnector {
         return returnValue;
     }
 
+      private Object processToken(String entityType, Map<String, Object> entityData) throws ConnectionException {
+
+        Map<String, Object> returnValue = new HashMap<String, Object>();
+
+        try {
+
+            JDEAtinaConfiguracion currentConfiguration = config.getConfiguracion();
+
+            logger.info("JDE Atina - Process Token with Option: [" + entityType + "]");
+            logger.info("           Current Configuration: [" + currentConfiguration.toString());
+            logger.info("           Transaction ID: [" + entityData.get("Transaction ID"));
+
+            if (entityType.equals("CreateToken"))
+            {
+
+                JDEAtinaConfiguracion currentConfigurationToken = new JDEAtinaConfiguracion();
+
+                    currentConfigurationToken.setJdeUser((String) entityData.get("JDE User"));
+                    currentConfigurationToken.setJdePassword((String) entityData.get("JDE Password"));
+                    currentConfigurationToken.setJdeEnvironment((String) entityData.get("JDE Environment"));
+                    currentConfigurationToken.setJdeRole((String) entityData.get("JDE Role"));
+                    currentConfigurationToken.setSessionID(config.getConfiguracion()
+                            .getSessionID());
+                    currentConfigurationToken.setToken("");
+                    currentConfigurationToken.setWsConnection(true);
+
+                    logger.info("           Information received: [" + currentConfigurationToken.toString() + "]");
+
+                    this.getConfig()
+                            .getService()
+                            .processToken("create", config.getStub(), currentConfigurationToken, (Long) entityData.get("Transaction ID"));
+
+                    returnValue.put("token", currentConfigurationToken.getToken());
+                    returnValue.put("sessionId", currentConfigurationToken.getSessionID()); 
+                    returnValue.put("Transaction ID", currentConfigurationToken.getTransactionID()); 
+
+            }
+
+            if (entityType.equals("ParseToken"))
+            {
+
+                 JDEAtinaConfiguracion currentConfigurationToken = new JDEAtinaConfiguracion();
+
+                    currentConfigurationToken.setJdeUser("");
+                    currentConfigurationToken.setJdePassword("");
+                    currentConfigurationToken.setJdeEnvironment("");
+                    currentConfigurationToken.setJdeRole("");
+                    currentConfigurationToken.setSessionID(config.getConfiguracion()
+                            .getSessionID());
+                    currentConfigurationToken.setToken((String) entityData.get("JDE Token"));
+                    currentConfigurationToken.setWsConnection(true);
+
+                    logger.info("           Information received: [" + currentConfigurationToken.toString() + "]");
+
+                    this.getConfig()
+                            .getService()
+                            .processToken("parse", config.getStub(), currentConfigurationToken, (Long) entityData.get("Transaction ID"));
+
+                    returnValue.put("JDE User", currentConfigurationToken.getJdeUser());
+                    returnValue.put("JDE Environment", currentConfigurationToken.getJdeEnvironment());
+                    returnValue.put("JDE Role", currentConfigurationToken.getJdeRole()); 
+                    returnValue.put("token", currentConfigurationToken.getToken());
+                    returnValue.put("sessionId", currentConfigurationToken.getSessionID()); 
+                    returnValue.put("Transaction ID", currentConfigurationToken.getTransactionID()); 
+                    returnValue.put("Token Expiration", currentConfigurationToken.getTokenExpiration()); 
+ 
+            }
+
+        } catch (Exception e) {
+
+            logger.error("ERROR JDE ATILA Process Token: " + e.getMessage(), e);
+
+            throw new ConnectionException("JDE ATILA Error Connection: " + e.getMessage(), e);
+        }
+
+        return returnValue;
+    }
+      
     
 }
