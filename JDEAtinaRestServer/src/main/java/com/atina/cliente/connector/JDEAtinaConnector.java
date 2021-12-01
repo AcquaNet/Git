@@ -444,11 +444,12 @@ public class JDEAtinaConnector {
       
     private static void saveParameterInput(TipoDelParametroInput parameter, int level, ArrayList<String> output) {
 
+         
+        String space = StringUtils.repeat(".", level * 1);
+        
         level++;
 
-        String space = StringUtils.repeat(".", level * 2);
-
-        output.add(space + "[" + parameter.getNombreDelParametro() + "]" + " Type [" + parameter.getTipoDelParametroJava() + "] Repeated: " + parameter.getRepeatedParameter());
+        output.add(space + parameter.getNombreDelParametro() + (parameter.getRepeatedParameter()?": List":":") + " <" + parameter.getTipoDelParametroJava() + ">");
 
         for (TipoDelParametroInput input : parameter.getSubParametroList()) {
             if (!input.getNombreDelParametro().isEmpty()) {
@@ -461,11 +462,12 @@ public class JDEAtinaConnector {
     
     private static void saveParameterOutput(TipoDelParametroOutput parameter, int level, ArrayList<String> output) {
 
+         
+        String space = StringUtils.repeat(".", level * 1);
+        
         level++;
 
-        String space = StringUtils.repeat(".", level * 2);
-
-        output.add(space + "[" + parameter.getNombreDelParametro() + "]" + " Type [" + parameter.getTipoDelParametroJava() + "] Repeated: " + parameter.getRepeatedParameter());
+        output.add(space + parameter.getNombreDelParametro() + (parameter.getRepeatedParameter()?": List":":") + " <" + parameter.getTipoDelParametroJava() + ">");
 
         for (TipoDelParametroOutput input : parameter.getSubParametroList()) {
             if (!input.getNombreDelParametro().isEmpty()) {
