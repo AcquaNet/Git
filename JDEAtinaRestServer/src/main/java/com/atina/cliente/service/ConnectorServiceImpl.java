@@ -518,7 +518,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
     }
  
     @Override
-    public Map<String, String> getMetadataOperations(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, Long transactionID)
+    public Map<String, String> getMetadataOperations(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, Long transactionID, String filter)
             throws InternalConnectorException, ExternalConnectorException {
 
         // ----------------------------------
@@ -556,7 +556,16 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
 
                 logger.debug("Operation: " + operacion.getIdOperacion() + " > " + operacion.getNombreOperacion());
 
-                operations.put(operacion.getIdOperacion(), operacion.getNombreOperacion());
+                if(filter.isEmpty())
+                {
+                    operations.put(operacion.getIdOperacion(), operacion.getNombreOperacion());
+                } else
+                {
+                    if(operacion.getNombreOperacion().contains(filter))
+                    {
+                        operations.put(operacion.getIdOperacion(), operacion.getNombreOperacion());
+                    }
+                }   
 
             }
 

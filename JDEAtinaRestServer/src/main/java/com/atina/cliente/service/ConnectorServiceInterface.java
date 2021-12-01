@@ -33,7 +33,7 @@ public interface ConnectorServiceInterface {
     public boolean isConnected(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, Long transactionID)
             throws InternalConnectorException, ExternalConnectorException;
 
-    public Map<String, String> getMetadataOperations(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, Long transactionID)
+    public Map<String, String> getMetadataOperations(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, Long transactionID, String filter)
             throws InternalConnectorException, ExternalConnectorException;
 
     public List<TipoDelParametroInput> getInputMetadataForOperation(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, String operation)

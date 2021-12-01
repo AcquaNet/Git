@@ -268,7 +268,7 @@ public class JDEAtinaConnector {
 
                     Map<String, String> operations = this.getConfig()
                         .getService()
-                        .getMetadataOperations(config.getStub(), currentConfigurationToken, (Long) entityData.get("Transaction ID"));
+                        .getMetadataOperations(config.getStub(), currentConfigurationToken, (Long) entityData.get("Transaction ID"),(String) entityData.get("Filter"));
 
                     returnValue.put("token", currentConfigurationToken.getToken());
                     returnValue.put("sessionId", currentConfigurationToken.getSessionID()); 

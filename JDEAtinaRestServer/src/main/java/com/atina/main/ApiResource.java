@@ -28,6 +28,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -386,20 +387,37 @@ public class ApiResource {
     }
     
     @GET
-    @Path("/metadata/operations/{filter}")
+    @Path("/metadata/operations")
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     @Tag(name = "Metadata", description = "Process Metadata")
             @APIResponses(
             value = {
                     @APIResponse(
                             responseCode = "200",
-                            description = "Operations has been retrived",
+                            description = "Operations has been retrieved",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(type = SchemaType.OBJECT, implementation = OperationsResponse.class)))
             }
     )
-    public Response getOperations(@HeaderParam("Token") String token,  @HeaderParam("ChannelId") String channelId, @HeaderParam("TransactionId") Long transactionId, String filter) {
+    public Response getOperations(@HeaderParam("Token") String token,  @HeaderParam("ChannelId") String channelId, @HeaderParam("TransactionId") Long transactionId) {
+
+        return getOperationsWithFilter(token,channelId,transactionId,"");
+    }
+    
+    @GET
+    @Path("/metadata/operations/{filter}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Tag(name = "Metadata", description = "Process Metadata")
+            @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "Operations has been retrieved",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = OperationsResponse.class)))
+            }
+    )
+    public Response getOperationsWithFilter(@HeaderParam("Token") String token,  @HeaderParam("ChannelId") String channelId, @HeaderParam("TransactionId") Long transactionId, @PathParam("filter") String filter) {
 
         int channelIdValue = 0;
 
@@ -428,6 +446,7 @@ public class ApiResource {
 
             entityData.put("Transaction ID", transactionId);
             entityData.put("JDE Token", token);
+            entityData.put("Filter", filter);
              
             Map<String, Object> responseVal = (Map<String, Object>) connector.metadata("Operations", entityData);
             
