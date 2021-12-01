@@ -599,5 +599,137 @@ public class ApiResource {
 
         }
     }
+    
+    @GET
+    @Path("/metadata/input-payload/{operationName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Tag(name = "Metadata", description = "Process Metadata")
+            @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "Payload has been retrieved",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = OperationsResponse.class)))
+            }
+    )
+    public Response getInputPayloadForOperation(@HeaderParam("Token") String token,  @HeaderParam("ChannelId") String channelId, @HeaderParam("TransactionId") Long transactionId, @PathParam("operationName") String operation) {
+
+        int channelIdValue = 0;
+
+        try {
+
+            JDEAtinaConnector connector;
+
+            if(channelId == null || channelId.isEmpty() || channelId.equals("0"))
+            {
+                channelIdValue = ConnectionPool.getInstance().getAvailableChannel();
+
+                connector = ConnectionPool.getInstance().createConnectorChannel(
+                                                    servidorName,
+                                                    servidorPort,
+                                                    channelIdValue);
+
+            } else
+            {
+                channelIdValue = Integer.parseInt(channelId);
+
+                connector = ConnectionPool.getInstance().getConnectorChannel(channelIdValue);
+
+            }
+
+            Map<String, Object> entityData = new HashMap<String, Object>();
+
+            entityData.put("Transaction ID", transactionId);
+            entityData.put("JDE Token", token);
+            entityData.put("Operation", operation);
+             
+            Map<String, Object> responseVal = (Map<String, Object>) connector.metadata("Payload", entityData);
+            
+            transactionId = (Long) responseVal.get("Transaction ID");
+             
+            return Response.ok((((Map)responseVal.get("Parameters"))).get("JSON Schema Input")).header("Token", responseVal.get("token"))
+                                        .header("ChannelId",  Integer.toString(channelIdValue))
+                                        .header("SessionId",  responseVal.get("sessionId"))
+                                        .header("TransactionId", transactionId )
+                                        .build();
+
+        } catch (ConnectionException | NumberFormatException ex) {
+
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+
+        } catch (Exception ex) {
+
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+
+        }
+    }
+    
+    @GET
+    @Path("/metadata/output-payload/{operationName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Tag(name = "Metadata", description = "Process Metadata")
+            @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "Payload has been retrieved",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = OperationsResponse.class)))
+            }
+    )
+    public Response getOutputPayloadForOperation(@HeaderParam("Token") String token,  @HeaderParam("ChannelId") String channelId, @HeaderParam("TransactionId") Long transactionId, @PathParam("operationName") String operation) {
+
+        int channelIdValue = 0;
+
+        try {
+
+            JDEAtinaConnector connector;
+
+            if(channelId == null || channelId.isEmpty() || channelId.equals("0"))
+            {
+                channelIdValue = ConnectionPool.getInstance().getAvailableChannel();
+
+                connector = ConnectionPool.getInstance().createConnectorChannel(
+                                                    servidorName,
+                                                    servidorPort,
+                                                    channelIdValue);
+
+            } else
+            {
+                channelIdValue = Integer.parseInt(channelId);
+
+                connector = ConnectionPool.getInstance().getConnectorChannel(channelIdValue);
+
+            }
+
+            Map<String, Object> entityData = new HashMap<String, Object>();
+
+            entityData.put("Transaction ID", transactionId);
+            entityData.put("JDE Token", token);
+            entityData.put("Operation", operation);
+             
+            Map<String, Object> responseVal = (Map<String, Object>) connector.metadata("Payload", entityData);
+            
+            transactionId = (Long) responseVal.get("Transaction ID");
+             
+            return Response.ok((((Map)responseVal.get("Parameters"))).get("JSON Schema Output")).header("Token", responseVal.get("token"))
+                                        .header("ChannelId",  Integer.toString(channelIdValue))
+                                        .header("SessionId",  responseVal.get("sessionId"))
+                                        .header("TransactionId", transactionId )
+                                        .build();
+
+        } catch (ConnectionException | NumberFormatException ex) {
+
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+
+        } catch (Exception ex) {
+
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+
+        }
+    }
+    
+    
 
 }

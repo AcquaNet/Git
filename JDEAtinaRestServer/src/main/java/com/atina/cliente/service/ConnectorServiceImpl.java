@@ -616,7 +616,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
     }
 
     @Override
-    public Object getJsonFromOperations(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, String entityType, Map<String, Object> entityData, Long transactionID)
+    public Object getJsonFromOperations(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, String operation, Long transactionID)
             throws InternalConnectorException, ExternalConnectorException {
 
         logger.info("----------------------------------------------------------------");
@@ -644,15 +644,15 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
                             .setPassword(configuracion.getJdePassword())
                             .setEnvironment(configuracion.getJdeEnvironment())
                             .setRole(configuracion.getJdeRole())
-                            .setJwtToken((String) entityData.get("JDE Token"))
+                            .setJwtToken((String) configuracion.getToken())
                             .setSessionId(configuracion.getSessionID())
                             .setWsconnection(configuracion.getWsConnection())
-                            .setOperacionKey(entityType)
+                            .setOperacionKey(operation)
                             .setTransactionID(transactionID)
                             .build());
-
-            operations.put("JDE Token", operacionesResponse.getJwtToken());
-            operations.put("JSON Schema", operacionesResponse.getInputAsJson());
+ 
+            operations.put("JSON Schema Input", operacionesResponse.getInputAsJson());
+            operations.put("JSON Schema Output", operacionesResponse.getOutputAsJson());
 
         } catch (StatusRuntimeException e) {
 
@@ -690,6 +690,12 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
             throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
 
         }
+        
+        configuracion.setSessionID(operacionesResponse.getSessionId()); 
+
+        configuracion.setToken(operacionesResponse.getJwtToken());
+        
+        configuracion.setTransactionID(transactionID);
 
         return operations;
     }

@@ -51,20 +51,7 @@ public class JDEAtinaConnector {
         return entity;
 
     }
-    
-    public Object getJSONSchema(String entityType, Map<String, Object> entityData)
-            throws InternalConnectorException, ConnectionException {
-
-        logger.info("JDE Atina - Invoke WS: [" + entityType + "]");
-
-        Object entity = invokeGetSchema(entityType, entityData);
-
-        logger.info("JDE Atina - WS: [" + entityType + "] Executed");
-
-        return entity;
-
-    }
-    
+     
     public Object processAtinaToken(String entityType, Map<String, Object> entityData)
             throws InternalConnectorException, ConnectionException {
 
@@ -235,14 +222,7 @@ public class JDEAtinaConnector {
         return returnValue;
     }
      
-      private Object invokeGetSchema(String entityType, Map<String, Object> entityData) {
-
-        Object returnValue = this.getConfig()
-                .getService()
-                .getJsonFromOperations(config.getStub(), config.getConfiguracion(), entityType, entityData, (Long) entityData.get("Transaction ID"));
-
-        return returnValue;
-    }
+      
       
       private Object processMetadata(String entityType, Map<String, Object> entityData) throws ConnectionException {
 
@@ -351,6 +331,32 @@ public class JDEAtinaConnector {
                     returnValue.put("sessionId", currentConfigurationToken.getSessionID()); 
                     returnValue.put("Transaction ID", currentConfigurationToken.getTransactionID()); 
                     returnValue.put("Parameters", output); 
+                     
+            }
+            
+            if (entityType.equals("Payload"))
+            {
+
+                JDEAtinaConfiguracion currentConfigurationToken = new JDEAtinaConfiguracion();
+
+                    currentConfigurationToken.setJdeUser("");
+                    currentConfigurationToken.setJdePassword("");
+                    currentConfigurationToken.setJdeEnvironment("");
+                    currentConfigurationToken.setJdeRole("");
+                    currentConfigurationToken.setSessionID(0L);
+                    currentConfigurationToken.setToken((String) entityData.get("JDE Token"));
+                    currentConfigurationToken.setWsConnection(true);
+
+                    logger.info("           Information received: [" + currentConfigurationToken.toString() + "]");
+
+                    Object payload = this.getConfig()
+                        .getService() 
+                        .getJsonFromOperations(config.getStub(), currentConfigurationToken,(String) entityData.get("Operation"), (Long) entityData.get("Transaction ID"));
+   
+                    returnValue.put("token", currentConfigurationToken.getToken());
+                    returnValue.put("sessionId", currentConfigurationToken.getSessionID()); 
+                    returnValue.put("Transaction ID", currentConfigurationToken.getTransactionID()); 
+                    returnValue.put("Parameters", payload); 
                      
             }
   
