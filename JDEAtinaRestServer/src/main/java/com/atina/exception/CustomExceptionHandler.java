@@ -33,6 +33,7 @@ public class CustomExceptionHandler implements ExceptionMapper<CustomException> 
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                         .entity(em)
                         .header("ChannelId", e.getChannelID())
+                        .header("TransactionId", e.getTransactionId())
                         .build();
              
         } else if(origin instanceof ExternalConnectorException)
@@ -45,6 +46,7 @@ public class CustomExceptionHandler implements ExceptionMapper<CustomException> 
             
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                         .header("ChannelId", e.getChannelID())
+                        .header("TransactionId", e.getTransactionId())
                         .entity(em)
                         .build();
             
@@ -56,6 +58,7 @@ public class CustomExceptionHandler implements ExceptionMapper<CustomException> 
             
             return Response.status(Response.Status.BAD_REQUEST)
                                 .header("ChannelId", e.getChannelID())
+                                .header("TransactionId", e.getTransactionId())
                                 .entity(em)
                                 .build();
         }

@@ -54,11 +54,8 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -207,8 +204,7 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
         } 
         
-        logger.debug("END Atina Transaction ID: " + request.getTransactionID());
-        
+        logger.debug("END Atina Transaction ID: " + request.getTransactionID()); 
         logger.info("-------------------------------------------------------------------------------");
         
     }
@@ -362,8 +358,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
             io.grpc.stub.StreamObserver<com.jde.jdeserverwp.servicios.ProcessTokenResponse> responseObserver) {
 
         
-    	logger.debug("BEGIN TID: " + request.getTransactionID() +  "======================================================================================");
-        logger.debug("JDE ATINA Process Token. Action " + request.getAction());
+    	logger.info("BEGIN TID: " + request.getTransactionID() +  "======================================================================================");
+        logger.info("JDE ATINA Process Token. Action " + request.getAction());
         
         // -----------------------------------------
         // Generar Session
@@ -414,8 +410,8 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
                     config = getConfigFromJWT(request.getJwtToken()); 
                 
-                    logger.debug("              Token converted: " + config.toString());
-                    logger.debug("              Expiration: " + config.getTokenDateExpirationFormated());
+                    logger.info("              Token converted: " + config.toString());
+                    logger.info("              Expiration: " + config.getTokenDateExpirationFormated());
                    
                 } else
                 {
@@ -468,9 +464,9 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
              
         } 
         
-        logger.debug("END TID: " + request.getTransactionID());
-        logger.debug("JDE End Process Token");
-        logger.debug("-------------------------------------------------------------------------------");
+        logger.info("END TID: " + request.getTransactionID());
+        logger.info("JDE End Process Token");
+        logger.info("-------------------------------------------------------------------------------");
 
     } 
     

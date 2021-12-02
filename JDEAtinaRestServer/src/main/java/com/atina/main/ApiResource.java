@@ -16,12 +16,13 @@ import com.atina.model.LogoutResponse;
 import com.atina.model.OperationsResponse;
 import com.atina.model.ParseTokenResponse; 
 import com.atina.model.ConnectionsResponse; 
-import com.atina.model.ConnectedResponse;
-import com.atina.model.LogsResponse;
+import com.atina.model.ConnectedResponse; 
 import com.atina.service.ConnectionPool;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
 import io.quarkus.runtime.configuration.ProfileManager; 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map; 
@@ -65,6 +66,8 @@ import org.jboss.resteasy.annotations.jaxrs.HeaderParam;
 )
 @Path("/")
 public class ApiResource {
+    
+    private static String DATE_FORMAT_TRANSACTION = "yyyyMMddHHmmssSSS";
 
     @ConfigProperty(name = "SERVIDOR_NAME")
     String servidorName;
@@ -121,6 +124,10 @@ public class ApiResource {
 
         try
         {
+            if (transactionId == 0) {
+                
+                transactionId = Long.parseLong(new SimpleDateFormat(DATE_FORMAT_TRANSACTION).format(new Date()));
+            }
 
             JDEAtinaConnector connector;
 
@@ -140,9 +147,7 @@ public class ApiResource {
 
                 connector = ConnectionPool.getInstance().getConnectorChannel(channelIdValue);
 
-            }
-
-
+            } 
 
             Map<String, Object> entityData = new HashMap<String, Object>();
 
@@ -200,6 +205,11 @@ public class ApiResource {
 
         try {
 
+            if (transactionId == 0) {
+                
+                transactionId = Long.parseLong(new SimpleDateFormat(DATE_FORMAT_TRANSACTION).format(new Date()));
+            }
+            
             JDEAtinaConnector connector;
 
             if(channelId == null || channelId.isEmpty() || channelId.equals("0"))
@@ -240,11 +250,11 @@ public class ApiResource {
 
         } catch (ConnectionException | NumberFormatException ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         } catch (Exception ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         }
     }
@@ -270,6 +280,11 @@ public class ApiResource {
         int channelIdValue = 0;
 
         try {
+            
+            if (transactionId == 0) {
+                
+                transactionId = Long.parseLong(new SimpleDateFormat(DATE_FORMAT_TRANSACTION).format(new Date()));
+            }
 
             JDEAtinaConnector connector;
 
@@ -311,11 +326,11 @@ public class ApiResource {
 
         } catch (ConnectionException | NumberFormatException ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         } catch (Exception ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         }
     }
@@ -341,6 +356,11 @@ public class ApiResource {
         int channelIdValue = 0;
 
         try {
+            
+            if (transactionId == 0) {
+                
+                transactionId = Long.parseLong(new SimpleDateFormat(DATE_FORMAT_TRANSACTION).format(new Date()));
+            }
 
             JDEAtinaConnector connector;
 
@@ -385,11 +405,11 @@ public class ApiResource {
 
         } catch (ConnectionException | NumberFormatException ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         } catch (Exception ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         }
     }
@@ -416,6 +436,11 @@ public class ApiResource {
 
         try {
 
+            if (transactionId == 0) {
+                
+                transactionId = Long.parseLong(new SimpleDateFormat(DATE_FORMAT_TRANSACTION).format(new Date()));
+            }
+            
             JDEAtinaConnector connector;
 
             if(channelId == null || channelId.isEmpty() || channelId.equals("0"))
@@ -459,11 +484,11 @@ public class ApiResource {
 
         } catch (ConnectionException | NumberFormatException ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         } catch (Exception ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         }
     }
@@ -508,6 +533,11 @@ public class ApiResource {
         int channelIdValue = 0;
 
         try {
+            
+            if (transactionId == 0) {
+                
+                transactionId = Long.parseLong(new SimpleDateFormat(DATE_FORMAT_TRANSACTION).format(new Date()));
+            }
 
             JDEAtinaConnector connector;
 
@@ -546,11 +576,11 @@ public class ApiResource {
 
         } catch (ConnectionException | NumberFormatException ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         } catch (Exception ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         }
     }
@@ -576,6 +606,11 @@ public class ApiResource {
 
         try {
 
+            if (transactionId == 0) {
+                
+                transactionId = Long.parseLong(new SimpleDateFormat(DATE_FORMAT_TRANSACTION).format(new Date()));
+            }
+            
             JDEAtinaConnector connector;
 
             if(channelId == null || channelId.isEmpty() || channelId.equals("0"))
@@ -613,11 +648,11 @@ public class ApiResource {
 
         } catch (ConnectionException | NumberFormatException ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         } catch (Exception ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         }
     }
@@ -642,6 +677,11 @@ public class ApiResource {
         int channelIdValue = 0;
 
         try {
+            
+            if (transactionId == 0) {
+                
+                transactionId = Long.parseLong(new SimpleDateFormat(DATE_FORMAT_TRANSACTION).format(new Date()));
+            }
 
             JDEAtinaConnector connector;
 
@@ -680,11 +720,11 @@ public class ApiResource {
 
         } catch (ConnectionException | NumberFormatException ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         } catch (Exception ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         }
     }
@@ -710,6 +750,11 @@ public class ApiResource {
 
         try {
 
+            if (transactionId == 0) {
+                
+                transactionId = Long.parseLong(new SimpleDateFormat(DATE_FORMAT_TRANSACTION).format(new Date()));
+            }
+            
             JDEAtinaConnector connector;
 
             if(channelId == null || channelId.isEmpty() || channelId.equals("0"))
@@ -747,11 +792,11 @@ public class ApiResource {
 
         } catch (ConnectionException | NumberFormatException ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         } catch (Exception ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         }
     }
@@ -777,6 +822,11 @@ public class ApiResource {
 
         try {
 
+            if (transactionId == 0) {
+                
+                transactionId = Long.parseLong(new SimpleDateFormat(DATE_FORMAT_TRANSACTION).format(new Date()));
+            }
+            
             JDEAtinaConnector connector;
 
             if(channelId == null || channelId.isEmpty() || channelId.equals("0"))
@@ -814,11 +864,11 @@ public class ApiResource {
 
         } catch (ConnectionException | NumberFormatException ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         } catch (Exception ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         }
     }
@@ -843,6 +893,11 @@ public class ApiResource {
         int channelIdValue = 0;
 
         try {
+            
+            if (transactionId == 0) {
+                
+                transactionId = Long.parseLong(new SimpleDateFormat(DATE_FORMAT_TRANSACTION).format(new Date()));
+            }
 
             JDEAtinaConnector connector;
 
@@ -878,11 +933,11 @@ public class ApiResource {
 
         } catch (ConnectionException | NumberFormatException ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         } catch (Exception ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         }
     }
@@ -907,6 +962,11 @@ public class ApiResource {
         int channelIdValue = 0;
 
         try {
+            
+            if (transactionId == 0) {
+                
+                transactionId = Long.parseLong(new SimpleDateFormat(DATE_FORMAT_TRANSACTION).format(new Date()));
+            }
 
             JDEAtinaConnector connector;
 
@@ -942,11 +1002,11 @@ public class ApiResource {
 
         } catch (ConnectionException | NumberFormatException ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         } catch (Exception ex) {
 
-            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
 
         }
     }

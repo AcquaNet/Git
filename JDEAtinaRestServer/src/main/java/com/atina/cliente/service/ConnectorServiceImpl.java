@@ -471,6 +471,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
         } catch (StatusRuntimeException e) {
 
             logger.error("JDE Atina Service + Error: " + e.getMessage());
+            
+            configuracion.setTransactionID(transactionID);
 
             if (e.getMessage()
                     .endsWith("%ExternalServiceException%") ||
@@ -509,6 +511,19 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
 
             }
 
+        } catch (Exception e) {
+            
+            
+            String errorMessage = e.getMessage();
+                String claseDeLaOperacion = "Logout";
+                String metodoDeLaOperacion = "Logout";
+                int httpStatus = 510;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
+
+                throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+            
         }
         
  
@@ -653,10 +668,10 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
         ArrayList<Map<String,Object>> returnValue = new ArrayList<Map<String,Object>>();
 
         try {
-            
-            
+             
             responseConnections = stub.connectionPool(
                                         ConnectionPoolRequest.newBuilder()  
+                                        .setTransactionID(transactionID)
                                         .build());
             
             
@@ -944,6 +959,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
         {
             transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
         }
+        
+        configuracion.setTransactionID(transactionID);
 
         this.stub = stub;
         this.configuracion = configuracion;
@@ -988,6 +1005,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
             transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
         }
 
+        configuracion.setTransactionID(transactionID);
+        
         this.stub = stub;
         this.configuracion = configuracion;
 
@@ -2387,6 +2406,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
                             .setJwtToken(configuracion.getToken())
                             .setWsconnection(configuracion.getWsConnection())
                             .setOperacionKey(operation)
+                            .setTransactionID(configuracion.getTransactionID())
                             .build());
 
             for (TipoDelParametroInput tipoDelParametroInput : metadataResponse.getListaDeParametrosInputList()) {
@@ -2432,6 +2452,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
                             .setJwtToken(configuracion.getToken())
                             .setWsconnection(configuracion.getWsConnection())
                             .setOperacionKey(operation)
+                            .setTransactionID(configuracion.getTransactionID())
                             .build());
 
             List<TipoDelParametroOutput> valoresMetadata = metadataResponse.getListaDeParametrosOutputList();
