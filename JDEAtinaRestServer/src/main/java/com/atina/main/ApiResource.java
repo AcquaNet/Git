@@ -17,6 +17,7 @@ import com.atina.model.OperationsResponse;
 import com.atina.model.ParseTokenResponse; 
 import com.atina.model.ConnectionsResponse; 
 import com.atina.model.ConnectedResponse;
+import com.atina.model.LogsResponse;
 import com.atina.service.ConnectionPool;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
@@ -823,7 +824,7 @@ public class ApiResource {
     }
     
     @GET
-    @Operation(summary = "Get connectios opened",
+    @Operation(summary = "Get connections opened",
             description = "Show all user connected to microservices")
     @Path("/monitor/connections")
     @Produces(MediaType.APPLICATION_JSON)
@@ -837,7 +838,7 @@ public class ApiResource {
                                     schema = @Schema(type = SchemaType.OBJECT, implementation = ConnectionsResponse.class)))
             }
     )
-    public Response getConnectios(@HeaderParam("ChannelId") String channelId, @HeaderParam("TransactionId") Long transactionId) {
+    public Response getConnections(@HeaderParam("ChannelId") String channelId, @HeaderParam("TransactionId") Long transactionId) {
 
         int channelIdValue = 0;
 
@@ -871,6 +872,70 @@ public class ApiResource {
             transactionId = (Long) responseVal.get("Transaction ID");
              
             return Response.ok((((List)responseVal.get("Connections"))))
+                                        .header("ChannelId",  Integer.toString(channelIdValue))
+                                        .header("TransactionId", transactionId )
+                                        .build();
+
+        } catch (ConnectionException | NumberFormatException ex) {
+
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+
+        } catch (Exception ex) {
+
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+
+        }
+    }
+    
+    @GET
+    @Operation(summary = "Get microservice logs",
+            description = "Get microservice logs by transactions Id.")
+    @Path("/monitor/logs")
+    @Produces(MediaType.TEXT_PLAIN)
+    @Tag(name = "Monitor", description = "Monitor Microservice")
+            @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "Log Detail",
+                            content = @Content(mediaType = "text/plain",
+                                    schema = @Schema(type = SchemaType.STRING, example="VALOR")))
+            }
+    )
+    public Response getLogs(@HeaderParam("ChannelId") String channelId, @HeaderParam("TransactionId") Long transactionId) {
+
+        int channelIdValue = 0;
+
+        try {
+
+            JDEAtinaConnector connector;
+
+            if(channelId == null || channelId.isEmpty() || channelId.equals("0"))
+            {
+                channelIdValue = ConnectionPool.getInstance().getAvailableChannel();
+
+                connector = ConnectionPool.getInstance().createConnectorChannel(
+                                                    servidorName,
+                                                    servidorPort,
+                                                    channelIdValue);
+
+            } else
+            {
+                channelIdValue = Integer.parseInt(channelId);
+
+                connector = ConnectionPool.getInstance().getConnectorChannel(channelIdValue);
+
+            }
+
+            Map<String, Object> entityData = new HashMap<String, Object>();
+
+            entityData.put("Transaction ID", transactionId);
+   
+            Map<String, Object> responseVal = (Map<String, Object>) connector.monitor("Logs", entityData);
+            
+            transactionId = (Long) responseVal.get("Transaction ID");
+             
+            return Response.ok((((String)responseVal.get("Logs"))))
                                         .header("ChannelId",  Integer.toString(channelIdValue))
                                         .header("TransactionId", transactionId )
                                         .build();

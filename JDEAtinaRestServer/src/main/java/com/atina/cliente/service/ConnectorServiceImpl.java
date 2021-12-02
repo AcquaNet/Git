@@ -524,7 +524,111 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
         logger.info("JDE Atina Service - End isConnected ");
 
         return false;
+  
+    }
+     
+    @Override
+    public String getLogs(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, Long transactionID) throws InternalConnectorException, ExternalConnectorException {
+        // ----------------------------------
+        // Generacion de la Transaccion
+        // ----------------------------------
 
+        if (transactionID == 0)
+        {
+            transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
+        }
+
+        logger.info("----------------------------------------------------------------");
+
+        logger.info("JDE Atina Service - Get Logs.  Transaction ID " + transactionID);
+
+        logger.info("JDE Atina Service - Config " + configuracion.toString());
+  
+        String returnValue = "";
+
+        try {
+            
+            CapturarLogRequest request = CapturarLogRequest.newBuilder()
+                        .setTransactionID(transactionID)
+                        .build();
+
+            Iterator<CapturarLogResponse> response = stub.capturarLog(request);
+                 
+            StringBuffer str = new StringBuffer();
+            
+            while (response.hasNext()) {
+                
+                ByteString data = response.next()
+                            .getFileData();
+                
+                str.append(data.toStringUtf8());
+                
+            }
+            
+            returnValue = str.toString();
+             
+              
+        } catch (StatusRuntimeException e) {
+
+            logger.error("JDE Atina Service + Error: " + e.getMessage());
+
+            if (e.getMessage()
+                    .endsWith("%ExternalServiceException%") ||
+                    e.getMessage()
+                            .endsWith("%InternalServiceException%"))
+            {
+
+                String[] tokens = StringUtils.split(e.getMessage(), "|");
+
+                String errorMessage = tokens[0];
+                String claseDeLaOperacion = tokens[2];
+                String metodoDeLaOperacion = tokens[1];
+                int httpStatus = 0;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
+                String e1Message = "";
+
+                captureLog(stub, transactionID);
+
+                throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e1Message, e);
+
+            }
+            else
+            {
+
+                String errorMessage = e.getMessage();
+                String claseDeLaOperacion = "Connections";
+                String metodoDeLaOperacion = "Connections";
+                int httpStatus = 500;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
+
+                throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+
+            }
+
+        } catch (NullPointerException e) {
+            
+            String errorMessage = "NullPointerException";
+            String claseDeLaOperacion = "Connections";
+            String metodoDeLaOperacion = "Connections";
+            int httpStatus = 500;
+            String httpStatusReason = "";
+            String request = "";
+            String response = "";
+
+            throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+        }
+
+         
+        logger.info("JDE Atina Service - End Process Logs");
+  
+        configuracion.setTransactionID(transactionID);
+        
+        return returnValue;
+          
     }
     
     @Override

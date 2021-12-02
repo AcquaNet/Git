@@ -525,6 +525,29 @@ public class JDEAtinaConnector {
                     returnValue.put("Connections", connections); 
                      
             }
+            
+            if (entityType.equals("Logs"))
+            {
+                JDEAtinaConfiguracion currentConfigurationToken = new JDEAtinaConfiguracion();
+
+                currentConfigurationToken.setJdeUser("");
+                currentConfigurationToken.setJdePassword("");
+                currentConfigurationToken.setJdeEnvironment("");
+                currentConfigurationToken.setJdeRole("");
+                currentConfigurationToken.setSessionID(0L);
+                currentConfigurationToken.setToken("");
+                currentConfigurationToken.setWsConnection(true);
+
+                logger.info("           Information received: [" + currentConfigurationToken.toString() + "]");
+
+                String logs = this.getConfig()
+                        .getService()
+                        .getLogs(config.getStub(), currentConfigurationToken, (Long) entityData.get("Transaction ID"));
+
+                returnValue.put("Transaction ID", currentConfigurationToken.getTransactionID());
+                returnValue.put("Logs", logs);
+                    
+            }
              
   
         } catch (Exception e) {

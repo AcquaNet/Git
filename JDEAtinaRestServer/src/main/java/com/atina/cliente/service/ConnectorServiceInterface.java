@@ -52,4 +52,7 @@ public interface ConnectorServiceInterface {
     public List<Map<String,Object>> getConnections(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, Long transactionID) 
             throws InternalConnectorException, ExternalConnectorException;
     
+    public String getLogs(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, Long transactionID) 
+            throws InternalConnectorException, ExternalConnectorException;
+    
 }
