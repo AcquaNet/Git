@@ -214,6 +214,35 @@ public class JDEAtinaConnector {
                 }
 
             }
+            
+            if (entityType.equals("IsConnected"))
+            {
+
+                if (entityData.containsKey("JDE Token") && !(((String) entityData.get("JDE Token")).isEmpty()))
+                {
+                    JDEAtinaConfiguracion currentConfigurationToken = new JDEAtinaConfiguracion();
+
+                    currentConfigurationToken.setJdeUser("");
+                    currentConfigurationToken.setJdePassword("");
+                    currentConfigurationToken.setJdeEnvironment("");
+                    currentConfigurationToken.setJdeRole("");
+                    currentConfigurationToken.setSessionID(config.getConfiguracion()
+                            .getSessionID());
+                    currentConfigurationToken.setWsConnection(true);
+                    currentConfigurationToken.setToken((String) entityData.get("JDE Token"));
+
+                    Boolean connected = this.getConfig()
+                            .getService()
+                            .isConnected(config.getStub(), currentConfigurationToken, (Long) entityData.get("Transaction ID"));
+
+                    returnValue.put("token", currentConfigurationToken.getToken());
+                    returnValue.put("sessionId", currentConfigurationToken.getSessionID()); 
+                    returnValue.put("Transaction ID", currentConfigurationToken.getTransactionID()); 
+                    returnValue.put("Connected", connected); 
+
+                }
+
+            }
 
         } catch (Exception e) {
 
