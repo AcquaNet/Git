@@ -15,6 +15,7 @@ import com.atina.model.LogoutRequest;
 import com.atina.model.LogoutResponse;
 import com.atina.model.OperationsResponse;
 import com.atina.model.ParseTokenResponse; 
+import com.atina.model.ConnectionsResponse; 
 import com.atina.service.ConnectionPool;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
@@ -748,6 +749,68 @@ public class ApiResource {
         }
     }
     
-    
+    @GET
+    @Operation(summary = "Get connectios opened",
+            description = "Show all user connected to microservices")
+    @Path("/monitor/connections")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Tag(name = "Monitor", description = "Monitor Microservice")
+            @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "Payload has been retrieved",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = ConnectionsResponse.class)))
+            }
+    )
+    public Response getConnectios(@HeaderParam("ChannelId") String channelId, @HeaderParam("TransactionId") Long transactionId) {
+
+        int channelIdValue = 0;
+
+        try {
+
+            JDEAtinaConnector connector;
+
+            if(channelId == null || channelId.isEmpty() || channelId.equals("0"))
+            {
+                channelIdValue = ConnectionPool.getInstance().getAvailableChannel();
+
+                connector = ConnectionPool.getInstance().createConnectorChannel(
+                                                    servidorName,
+                                                    servidorPort,
+                                                    channelIdValue);
+
+            } else
+            {
+                channelIdValue = Integer.parseInt(channelId);
+
+                connector = ConnectionPool.getInstance().getConnectorChannel(channelIdValue);
+
+            }
+
+            Map<String, Object> entityData = new HashMap<String, Object>();
+
+            entityData.put("Transaction ID", transactionId);
+   
+            Map<String, Object> responseVal = (Map<String, Object>) connector.monitor("Connections", entityData);
+            
+            transactionId = (Long) responseVal.get("Transaction ID");
+             
+            return Response.ok((((List)responseVal.get("Connections"))))
+                                        .header("ChannelId",  Integer.toString(channelIdValue))
+                                        .header("TransactionId", transactionId )
+                                        .build();
+
+        } catch (ConnectionException | NumberFormatException ex) {
+
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+
+        } catch (Exception ex) {
+
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),0L);
+
+        }
+    }
 
 }

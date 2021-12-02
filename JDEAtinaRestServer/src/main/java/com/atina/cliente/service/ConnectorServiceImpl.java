@@ -39,6 +39,9 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
 import com.jde.jdeserverwp.servicios.CapturarLogRequest;
 import com.jde.jdeserverwp.servicios.CapturarLogResponse;
+import com.jde.jdeserverwp.servicios.ConnectionPoolRequest;
+import com.jde.jdeserverwp.servicios.ConnectionPoolResponse;
+import com.jde.jdeserverwp.servicios.ConnectionPoolValue;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionRequest;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionResponse;
 import com.jde.jdeserverwp.servicios.EjecutarOperacionValores;
@@ -515,6 +518,124 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
 
         return false;
 
+    }
+    
+    @Override
+    public List<Map<String,Object>> getConnections(JDEServiceBlockingStub stub, JDEAtinaConfiguracion configuracion, Long transactionID) throws InternalConnectorException, ExternalConnectorException {
+        // ----------------------------------
+        // Generacion de la Transaccion
+        // ----------------------------------
+
+        if (transactionID == 0)
+        {
+            transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
+        }
+
+        logger.info("----------------------------------------------------------------");
+
+        logger.info("JDE Atina Service - Get Connections.  Transaction ID " + transactionID);
+
+        logger.info("JDE Atina Service - Config " + configuracion.toString());
+
+        Iterator<ConnectionPoolResponse> responseConnections = null;
+        
+        ArrayList<Map<String,Object>> returnValue = new ArrayList<Map<String,Object>>();
+
+        try {
+            
+            
+            responseConnections = stub.connectionPool(
+                                        ConnectionPoolRequest.newBuilder()  
+                                        .build());
+            
+            
+            while (responseConnections.hasNext()) {
+                
+                ConnectionPoolResponse poolConn = responseConnections.next();
+
+                List<ConnectionPoolValue> list = poolConn.getListaDeValoresList();
+
+                Iterator<ConnectionPoolValue> iterartoConn = list.iterator();
+                
+                while (iterartoConn.hasNext()) {
+                    ConnectionPoolValue connection = iterartoConn.next();
+
+                    HashMap<String, Object> conn = new HashMap<String, Object>();
+                    conn.put("Session", Long.toString(connection.getSessionId()));
+                    conn.put("Active", connection.getActive());
+                    conn.put("User", connection.getUser());
+                    conn.put("Environment", connection.getEnvironment());
+                    conn.put("Role", connection.getRole());
+                    conn.put("Tmp-Folder", connection.getTmpFolder());
+                    conn.put("Tmp-Cache", connection.getTmpCache());
+                    
+                    returnValue.add(conn);
+
+                }
+            }
+
+              
+        } catch (StatusRuntimeException e) {
+
+            logger.error("JDE Atina Service + Error: " + e.getMessage());
+
+            if (e.getMessage()
+                    .endsWith("%ExternalServiceException%") ||
+                    e.getMessage()
+                            .endsWith("%InternalServiceException%"))
+            {
+
+                String[] tokens = StringUtils.split(e.getMessage(), "|");
+
+                String errorMessage = tokens[0];
+                String claseDeLaOperacion = tokens[2];
+                String metodoDeLaOperacion = tokens[1];
+                int httpStatus = 0;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
+                String e1Message = "";
+
+                captureLog(stub, transactionID);
+
+                throw new ExternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e1Message, e);
+
+            }
+            else
+            {
+
+                String errorMessage = e.getMessage();
+                String claseDeLaOperacion = "Connections";
+                String metodoDeLaOperacion = "Connections";
+                int httpStatus = 500;
+                String httpStatusReason = "";
+                String request = "";
+                String response = "";
+
+                throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+
+            }
+
+        } catch (NullPointerException e) {
+            
+            String errorMessage = "NullPointerException";
+            String claseDeLaOperacion = "Connections";
+            String metodoDeLaOperacion = "Connections";
+            int httpStatus = 500;
+            String httpStatusReason = "";
+            String request = "";
+            String response = "";
+
+            throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
+        }
+
+         
+        logger.info("JDE Atina Service - End Process Connections");
+  
+        configuracion.setTransactionID(transactionID);
+        
+        return returnValue;
+          
     }
  
     @Override

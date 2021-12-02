@@ -49,4 +49,7 @@ public interface ConnectorServiceInterface {
     public Object getJsonFromOperations(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, String operation, Long transactionID)
             throws InternalConnectorException, ExternalConnectorException;
     
+    public List<Map<String,Object>> getConnections(JDEServiceBlockingStub stub, com.atina.cliente.connector.JDEAtinaConfiguracion configuracion, Long transactionID) 
+            throws InternalConnectorException, ExternalConnectorException;
+    
 }
