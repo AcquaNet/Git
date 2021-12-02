@@ -16,16 +16,18 @@ public class ParseTokenResponse {
     private String environment;
     private String role; 
     private String tokenExpiration;
+    private Long sessionId;
 
     public ParseTokenResponse() {
     }
 
-    public ParseTokenResponse(String user, String password, String environment, String role, String tokenExpiration) {
+    public ParseTokenResponse(String user, String password, String environment, String role, String tokenExpiration, Long sessionId) {
         this.user = user;
         this.password = password;
         this.environment = environment;
         this.role = role; 
         this.tokenExpiration = tokenExpiration;
+        this.sessionId = sessionId;
     }
      
     public String getUser() {
@@ -67,5 +69,13 @@ public class ParseTokenResponse {
     public void setTokenExpiration(String tokenExpiration) {
         this.tokenExpiration = tokenExpiration;
     }
-   
+
+    public Long getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(Long sessionId) {
+        this.sessionId = sessionId;
+    } 
+    
 }

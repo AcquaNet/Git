@@ -447,7 +447,8 @@ public class ApiResource {
                                                                 "",
                                                                 (String) responseVal.get("JDE Environment"),
                                                                 (String) responseVal.get("JDE Role"),
-                                                                (String) responseVal.get("Token Expiration"));
+                                                                (String) responseVal.get("Token Expiration"),
+                                                                (Long) responseVal.get("sessionId"));
 
             return Response.ok(response).header("Token", responseVal.get("token"))
                                         .header("ChannelId",  Integer.toString(channelIdValue))
