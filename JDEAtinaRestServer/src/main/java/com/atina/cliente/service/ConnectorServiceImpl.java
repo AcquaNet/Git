@@ -435,6 +435,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
 
         configuracion.setSessionID(tokenResponse.getSessionId());
         
+        configuracion.setToken(tokenResponse.getJwtToken());
+        
         configuracion.setTransactionID(transactionID);
     }
 

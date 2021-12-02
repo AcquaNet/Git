@@ -208,7 +208,8 @@ public class JDEAtinaConnector {
                             .getService()
                             .logout(config.getStub(), currentConfigurationToken, (Long) entityData.get("Transaction ID"));
 
-                    returnValue.put("token", (String) entityData.get("JDE Token"));
+                    returnValue.put("token", (String) currentConfigurationToken.getToken());
+                    returnValue.put("sessionId", currentConfigurationToken.getSessionID()); 
                     returnValue.put("Transaction ID", currentConfigurationToken.getTransactionID()); 
 
                 }
