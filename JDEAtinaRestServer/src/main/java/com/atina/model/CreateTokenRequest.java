@@ -15,15 +15,17 @@ public class CreateTokenRequest {
     private String password;
     private String environment;
     private String role; 
+    private Long tokenExpiration;
 
     public CreateTokenRequest() {
     }
 
-    public CreateTokenRequest(String user, String password, String environment, String role) {
+    public CreateTokenRequest(String user, String password, String environment, String role, Long tokenExpiration) {
         this.user = user;
         this.password = password;
         this.environment = environment;
         this.role = role; 
+        this.tokenExpiration = tokenExpiration;
     }
      
     public String getUser() {
@@ -57,5 +59,13 @@ public class CreateTokenRequest {
     public void setRole(String role) {
         this.role = role;
     }
-  
+
+    public Long getTokenExpiration() {
+        return tokenExpiration;
+    }
+
+    public void setTokenExpiration(Long tokenExpiration) {
+        this.tokenExpiration = tokenExpiration;
+    }
+     
 }

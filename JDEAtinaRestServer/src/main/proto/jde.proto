@@ -104,6 +104,7 @@ message ProcessTokenRequest {
   string role = 13;  
   string jwtToken = 14; 
   int64 transactionID = 16;
+  int64 expirationMilliseconds = 17;
 }
 
 // Configuracion del la Conexion a JDE

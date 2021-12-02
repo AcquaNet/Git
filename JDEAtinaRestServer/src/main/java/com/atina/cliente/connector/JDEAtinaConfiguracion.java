@@ -11,6 +11,7 @@ public class JDEAtinaConfiguracion {
     private Integer microServicePort;
     private long sessionID;
     private long transactionID;
+    private long tokenExpirationMilliseconds;
     private String token;
     private String addressBookNumber;
     private String tokenExpiration;
@@ -30,6 +31,7 @@ public class JDEAtinaConfiguracion {
         this.wsConnection = wsConnection;
         this.microServiceName = microServiceName;
         this.microServicePort = microServicePort;
+        this.tokenExpirationMilliseconds = 0;
     }
 
     public String getJdeUser() {
@@ -127,6 +129,14 @@ public class JDEAtinaConfiguracion {
     public void setTokenExpiration(String tokenExpiration) {
         this.tokenExpiration = tokenExpiration;
     }
+
+    public long getTokenExpirationMilliseconds() {
+        return tokenExpirationMilliseconds;
+    }
+
+    public void setTokenExpirationMilliseconds(long tokenExpirationMilliseconds) {
+        this.tokenExpirationMilliseconds = tokenExpirationMilliseconds;
+    } 
      
     @Override
     public String toString() {

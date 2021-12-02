@@ -381,9 +381,15 @@ public class JDEServiceImpl extends JDEServiceGrpc.JDEServiceImplBase {
                 config.setRole(request.getRole());
                 
                 config.setSessionId(0);
-
-                config.setTokenExpiration(configuracion.getTokenExpiration());         
-
+                
+                if(request.getExpirationMilliseconds()>0)
+                {
+                    config.setTokenExpiration(request.getExpirationMilliseconds());   
+                } else
+                {
+                    config.setTokenExpiration(configuracion.getTokenExpiration());     
+                }
+ 
                 logger.info("              Request Received: " + config.toString());
                 
                 // -----------------------------------------

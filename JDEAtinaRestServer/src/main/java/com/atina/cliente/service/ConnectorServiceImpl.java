@@ -176,6 +176,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
                                         .setEnvironment(configuracion.getJdeEnvironment())
                                         .setRole(configuracion.getJdeRole()) 
                                         .setJwtToken(configuracion.getToken())
+                                        .setExpirationMilliseconds(configuracion.getTokenExpirationMilliseconds())
                                         .setTransactionID(transactionID)
                                         .build());
               

@@ -388,6 +388,7 @@ public class ApiResource {
             entityData.put("JDE Password", createTokenRequest.getPassword());
             entityData.put("JDE Environment", createTokenRequest.getEnvironment());
             entityData.put("JDE Role", createTokenRequest.getRole());
+            entityData.put("JDE Token Expiration", createTokenRequest.getTokenExpiration());
             entityData.put("JDE Token", token);
 
             

@@ -433,6 +433,7 @@ public class JDEAtinaConnector {
                     currentConfigurationToken.setJdePassword((String) entityData.get("JDE Password"));
                     currentConfigurationToken.setJdeEnvironment((String) entityData.get("JDE Environment"));
                     currentConfigurationToken.setJdeRole((String) entityData.get("JDE Role"));
+                    currentConfigurationToken.setTokenExpirationMilliseconds((Long) entityData.get("JDE Token Expiration"));
                     currentConfigurationToken.setSessionID(config.getConfiguracion()
                             .getSessionID());
                     currentConfigurationToken.setToken("");
