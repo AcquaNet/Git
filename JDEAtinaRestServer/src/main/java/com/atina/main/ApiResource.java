@@ -14,17 +14,14 @@ import com.atina.model.LoginResponse;
 import com.atina.model.LogoutRequest;
 import com.atina.model.LogoutResponse;
 import com.atina.model.OperationsResponse;
-import com.atina.model.ParseTokenResponse;
-import com.atina.service.GRPCConnection;
+import com.atina.model.ParseTokenResponse; 
 import com.atina.service.ConnectionPool;
 import io.quarkus.qute.CheckedTemplate;
 import io.quarkus.qute.TemplateInstance;
-import io.quarkus.runtime.configuration.ProfileManager;
-import java.util.Collection;
+import io.quarkus.runtime.configuration.ProfileManager; 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.Map; 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -44,6 +41,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.jboss.resteasy.annotations.jaxrs.HeaderParam;
 
 /**
@@ -99,10 +97,12 @@ public class ApiResource {
     }
 
     @POST
+    @Operation(summary = "API use to login into JDE.",
+            description = "You can provide user credentials otherwise you can use Token instead.")
     @Path("/login")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Tag(name = "Credentials", description = "Authenticate in JDE")
+    @Tag(name = "Credentials", description = "Credentials API's")
             @APIResponses(
             value = {
                     @APIResponse(
@@ -176,10 +176,12 @@ public class ApiResource {
     }
 
     @POST
+    @Operation(summary = "API use to logout from JDE.",
+            description = "You need to provide Token. This process will disconnect all JDE connections too.")
     @Path("/logout")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Tag(name = "Credentials", description = "Disconnect From JDE")
+    @Tag(name = "Credentials", description = "Credentials API's")
             @APIResponses(
             value = {
                     @APIResponse(
@@ -245,10 +247,12 @@ public class ApiResource {
     }
 
     @POST
+    @Operation(summary = "API use to create a Token.",
+            description = "The token can be used instead of user credentials due exposing passwords to developers.")
     @Path("/token/create")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Tag(name = "Credentials", description = "Process Token")
+    @Tag(name = "Credentials", description = "Credentials API's")
             @APIResponses(
             value = {
                     @APIResponse(
@@ -317,10 +321,12 @@ public class ApiResource {
     }
     
     @POST
+    @Operation(summary = "API use to view a Token values.",
+            description = "This API is used to check tokens. User, Environment, Roles, Sessions, and token expiration.")
     @Path("/token/parse")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Tag(name = "Credentials", description = "Process Token")
+    @Tag(name = "Credentials", description = "Credentials API's")
             @APIResponses(
             value = {
                     @APIResponse(
@@ -388,6 +394,8 @@ public class ApiResource {
     }
     
     @GET
+    @Operation(summary = "List all Web Services exposed.",
+            description = "Show all web services that you can invoke.")
     @Path("/metadata/operations")
     @Produces(MediaType.APPLICATION_JSON)
     @Tag(name = "Metadata", description = "Process Metadata")
@@ -406,6 +414,8 @@ public class ApiResource {
     }
     
     @GET
+    @Operation(summary = "List all Web Services exposed using filter.",
+            description = "Show all web services that you can invoke filtering by name.")
     @Path("/metadata/operations/{filter}")
     @Produces(MediaType.APPLICATION_JSON)
     @Tag(name = "Metadata", description = "Process Metadata")
@@ -471,7 +481,9 @@ public class ApiResource {
     }
     
     @GET
-    @Path("/metadata/input-parameters/{operationName}")
+    @Operation(summary = "Show input parameters for a Web Service.",
+            description = "Show input parameters for a Web Service expecified.")
+    @Path("/metadata/parameters-input/{operationName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Tag(name = "Metadata", description = "Process Metadata")
             @APIResponses(
@@ -536,7 +548,9 @@ public class ApiResource {
     }
     
     @GET
-    @Path("/metadata/output-parameters/{operationName}")
+    @Operation(summary = "Show output parameters for a Web Service.",
+            description = "Show output parameters for a Web Service expecified.")
+    @Path("/metadata/parameters-output/{operationName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Tag(name = "Metadata", description = "Process Metadata")
             @APIResponses(
@@ -601,7 +615,9 @@ public class ApiResource {
     }
     
     @GET
-    @Path("/metadata/input-payload/{operationName}")
+    @Operation(summary = "Create input payload for a Web Service.",
+            description = "Create input payload for a Web Service that you can use to invoke a WS.")
+    @Path("/metadata/payload-input/{operationName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Tag(name = "Metadata", description = "Process Metadata")
             @APIResponses(
@@ -666,7 +682,9 @@ public class ApiResource {
     }
     
     @GET
-    @Path("/metadata/output-payload/{operationName}")
+    @Operation(summary = "Create output payload for a Web Service.",
+            description = "Show output payload for a Web Service.")
+    @Path("/metadata/payload-output/{operationName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Tag(name = "Metadata", description = "Process Metadata")
             @APIResponses(
