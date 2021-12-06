@@ -167,7 +167,7 @@ public class JDEJavaDNSCacheLoader {
 
         } else {
 
-            logger.info("There isn't [OCM_SERVERS] section inside jdeinterop.ini file");
+            logger.info("There isn't [DNS_SERVERS] section inside jdeinterop.ini file");
 
         }
 

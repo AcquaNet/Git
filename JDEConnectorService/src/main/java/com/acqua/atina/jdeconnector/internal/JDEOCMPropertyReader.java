@@ -106,9 +106,9 @@ public class JDEOCMPropertyReader {
                  
                 // OCM Servers
 
-                if (l.startsWith("[OCM_SERVERS]")) {
+                if (l.startsWith("[DNS_SERVERS]")) {
 
-                    logger.info("                             BEGIN [OCM_SERVERS]");
+                    logger.info("                             BEGIN [DNS_SERVERS]");
 
                     ocmServerFound = true;
 
@@ -126,9 +126,9 @@ public class JDEOCMPropertyReader {
 
                 }
 
-                if (l.startsWith("[") && ocmServerFound && !l.startsWith("[OCM_SERVERS]")) {
+                if (l.startsWith("[") && ocmServerFound && !l.startsWith("[DNS_SERVERS]")) {
 
-                    logger.info("                             END [OCM_SERVERS]");
+                    logger.info("                             END [DNS_SERVERS]");
 
                     ocmServerFound = false;
 
