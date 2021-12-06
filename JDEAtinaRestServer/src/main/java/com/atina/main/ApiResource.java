@@ -1011,5 +1011,78 @@ public class ApiResource {
 
         }
     }
+    
+    @POST
+    @Operation(summary = "Invoke Web Service.",
+            description = "Invoke Web Service expecified.")
+    @Path("/operation/invoke/{operationName}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Tag(name = "Operation", description = "Operations")
+            @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "Operation has been executed",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = Map.class)))
+            }
+    )
+    public Response invokeOperation(@HeaderParam("Token") String token,  @HeaderParam("ChannelId") String channelId, @HeaderParam("TransactionId") Long transactionId, @PathParam("operationName") String operation, Map request) {
+
+        int channelIdValue = 0;
+
+        try {
+
+            if (transactionId == 0) {
+                
+                transactionId = Long.parseLong(new SimpleDateFormat(DATE_FORMAT_TRANSACTION).format(new Date()));
+            }
+            
+            JDEAtinaConnector connector;
+
+            if(channelId == null || channelId.isEmpty() || channelId.equals("0"))
+            {
+                channelIdValue = ConnectionPool.getInstance().getAvailableChannel();
+
+                connector = ConnectionPool.getInstance().createConnectorChannel(
+                                                    servidorName,
+                                                    servidorPort,
+                                                    channelIdValue);
+
+            } else
+            {
+                channelIdValue = Integer.parseInt(channelId);
+
+                connector = ConnectionPool.getInstance().getConnectorChannel(channelIdValue);
+
+            }
+
+            Map<String, Object> entityData = new HashMap<String, Object>();
+
+            entityData.put("Transaction ID", transactionId);
+            entityData.put("JDE Token", token);
+            entityData.put("Request", request);
+             
+            Map<String, Object> responseVal = (Map<String, Object>) connector.invokeWS(operation, entityData);
+            
+            transactionId = (Long) responseVal.get("Transaction ID");
+             
+            return Response.ok(((Map)responseVal.get("Response"))).header("Token", responseVal.get("token"))
+                                        .header("ChannelId",  Integer.toString(channelIdValue))
+                                        .header("SessionId",  responseVal.get("sessionId"))
+                                        .header("TransactionId", transactionId )
+                                        .build();
+
+        } catch (ConnectionException | NumberFormatException ex) {
+
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
+
+        } catch (Exception ex) {
+
+            throw new CustomException(ex.getMessage(), ex, Integer.toString(channelIdValue),transactionId);
+
+        }
+    }
 
 }

@@ -462,6 +462,8 @@ public class Main {
                         EjecutarOperacionValores.Builder item = EjecutarOperacionValores.newBuilder();
                         item.setNombreDelParametro("entity");
                         item.addListaDeValores(itemId);
+                        
+                        EjecutarOperacionValores request = item.build();
 
                         EjecutarOperacionResponse ejecutarOperacionesResponse = stub.ejecutarOperacion(
                                 EjecutarOperacionRequest.newBuilder()
@@ -474,7 +476,7 @@ public class Main {
                                         .setWsconnection(configuracion.getWsConnection())
                                         .setSessionId(sessionID)
                                         .setTransactionID(transactionId)
-                                        .addListaDeValores(item.build())
+                                        .addListaDeValores(request)
                                         .build());
  
                         List<EjecutarOperacionResponse> values = ejecutarOperacionesResponse.getListaDeValoresList();

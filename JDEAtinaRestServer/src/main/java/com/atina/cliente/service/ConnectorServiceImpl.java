@@ -1041,16 +1041,31 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
     @SuppressWarnings("unchecked")
     @Override
     public Object ejecutarServicio(JDEServiceBlockingStub stub,
-            JDEAtinaConfiguracion configuracion, String entityType, Map<String, Object> entityData)
+            JDEAtinaConfiguracion configuracion, String entityType, Map<String, Object> entityData, Long transactionID)
             throws InternalConnectorException, ExternalConnectorException {
-
-        logger.info("----------------------------------------------------------------");
-
+ 
         this.stub = stub;
 
         this.configuracion = configuracion;
 
         Object returnValue = null;
+        
+        EjecutarOperacionResponse ejecutarOperacionesResponse;
+        
+        // ----------------------------------
+        // Generacion de la Transaccion
+        // ----------------------------------
+
+        if (transactionID == 0)
+        {
+            transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
+        }
+
+        logger.info("----------------------------------------------------------------");
+
+        logger.info("JDE Atina Service - Login with Transaction ID " + transactionID);
+
+        logger.info("JDE Atina Service - Config " + configuracion.toString());
 
         // --------------------------------------------------------------
         // Optener Metadata de Input
@@ -1069,8 +1084,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
 
             String errorMessage = e.getCause()
                     .getMessage();
-            String claseDeLaOperacion = tokens[1];
-            String metodoDeLaOperacion = tokens[2];
+            String claseDeLaOperacion = tokens[2];
+            String metodoDeLaOperacion = tokens[1];
             int httpStatus = 510;
             String httpStatusReason = "";
             String request = "";
@@ -1092,8 +1107,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
 
             String errorMessage = e.getCause()
                     .getMessage();
-            String claseDeLaOperacion = tokens[1];
-            String metodoDeLaOperacion = tokens[2];
+            String claseDeLaOperacion = tokens[2];
+            String metodoDeLaOperacion = tokens[1];
             int httpStatus = 510;
             String httpStatusReason = "";
             String request = "";
@@ -1120,8 +1135,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
 
             String errorMessage = e.getCause()
                     .getMessage();
-            String claseDeLaOperacion = tokens[1];
-            String metodoDeLaOperacion = tokens[2];
+            String claseDeLaOperacion = tokens[2];
+            String metodoDeLaOperacion = tokens[1];
             int httpStatus = 510;
             String httpStatusReason = "";
             String request = "";
@@ -1135,70 +1150,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
         // request
         // --------------------------------------------------------------
         //
-
-        String token = "";
-
-        try {
-
-            if (entityData.containsKey("JDE Token"))
-            {
-                token = (String) entityData.get("JDE Token");
-
-                entityData.remove("JDE Token");
-
-            }
-
-        } catch (Exception e) {
-
-            String errorMessage = e.getMessage();
-            String claseDeLaOperacion = this.getClass()
-                    .getSimpleName();
-            String metodoDeLaOperacion = "ejecutarServicio";
-            int httpStatus = 510;
-            String httpStatusReason = "";
-            String request = "";
-            String response = "";
-
-            throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
-
-        }
-
-        Long transactionID = 0L;
-
-        try {
-
-            if (entityData.containsKey("Transaction ID"))
-            {
-                transactionID = (Long) entityData.get("Transaction ID");
-
-                entityData.remove("Transaction ID");
-
-            }
-
-            // ----------------------------------
-            // Generacion de la Transaccion
-            // ----------------------------------
-
-            if (transactionID == 0)
-            {
-                transactionID = Long.parseLong(new SimpleDateFormat(LOGS_DATE_FORMAT).format(new Date()));
-            }
-
-        } catch (Exception e) {
-
-            String errorMessage = e.getMessage();
-            String claseDeLaOperacion = this.getClass()
-                    .getSimpleName();
-            String metodoDeLaOperacion = "ejecutarServicio";
-            int httpStatus = 510;
-            String httpStatusReason = "";
-            String request = "";
-            String response = "";
-
-            throw new InternalConnectorException(errorMessage, claseDeLaOperacion, metodoDeLaOperacion, httpStatus, httpStatusReason, request, response, e);
-
-        }
-
+ 
         try {
 
             // --------------------------------------------------------------
@@ -1217,7 +1169,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
             // --------------------------------------------------------------
             //
 
-            EjecutarOperacionResponse ejecutarOperacionesResponse = stub.ejecutarOperacion(EjecutarOperacionRequest
+            ejecutarOperacionesResponse = stub.ejecutarOperacion(EjecutarOperacionRequest
                     .newBuilder()
                     .setConnectorName("WS")
                     .setOperacionKey(entityType)
@@ -1226,7 +1178,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
                     .setEnvironment(configuracion.getJdeEnvironment())
                     .setRole(configuracion.getJdeRole())
                     .setSessionId(configuracion.getSessionID())
-                    .setJwtToken(token)
+                    .setJwtToken(configuracion.getToken())
                     .setTransactionID(transactionID)
                     .setWsconnection(configuracion.getWsConnection())
                     .addAllListaDeValores(valores)
@@ -1270,8 +1222,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
 
                 }
 
-                returnValue = response;
-                ((HashMap<String, Object>) returnValue).put("JDE Token", (String) ejecutarOperacionesResponse.getJwtToken());
+                returnValue = response; 
 
             } else if (ejecutarOperacionesResponse.getIsObject())
             {
@@ -1292,15 +1243,13 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
 
                 }
 
-                returnValue = response;
-                ((HashMap<String, Object>) returnValue).put("JDE Token", (String) ejecutarOperacionesResponse.getJwtToken());
+                returnValue = response; 
 
             } else if (ejecutarOperacionesResponse.getTipoDelParametro()
                     .isEmpty()) {
 
                 returnValue = new HashMap<String, Object>();
-
-                ((HashMap<String, Object>) returnValue).put("JDE Token", (String) ejecutarOperacionesResponse.getJwtToken());
+ 
 
             } else
             {
@@ -1317,8 +1266,7 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
 
                 }
 
-                returnValue = response.get(ejecutarOperacionesResponse.getNombreDelParametro());
-                ((HashMap<String, Object>) returnValue).put("JDE Token", (String) ejecutarOperacionesResponse.getJwtToken());
+                returnValue = response.get(ejecutarOperacionesResponse.getNombreDelParametro()); 
 
             }
 
@@ -1331,8 +1279,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
                 String[] tokens = StringUtils.split(e.getMessage(), "|");
 
                 String errorMessage = tokens[0];
-                String claseDeLaOperacion = tokens[1];
-                String metodoDeLaOperacion = tokens[2];
+                String claseDeLaOperacion = tokens[2];
+                String metodoDeLaOperacion = tokens[1];
                 int httpStatus = 510;
                 String httpStatusReason = "";
                 String request = "";
@@ -1350,8 +1298,8 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
                 String[] tokens = StringUtils.split(e.getMessage(), "|");
 
                 String errorMessage = tokens[0];
-                String claseDeLaOperacion = tokens[1];
-                String metodoDeLaOperacion = tokens[2];
+                String claseDeLaOperacion = tokens[2];
+                String metodoDeLaOperacion = tokens[1];
                 int httpStatus = 510;
                 String httpStatusReason = "";
                 String request = "";
@@ -1366,9 +1314,9 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
             {
                 String[] tokens = StringUtils.split(e.getMessage(), "|");
 
-                String errorMessage = e.getMessage();
-                String claseDeLaOperacion = tokens[1];
-                String metodoDeLaOperacion = tokens[2];
+                String errorMessage = tokens[0];
+                String claseDeLaOperacion = tokens[2];
+                String metodoDeLaOperacion = tokens[1];
                 int httpStatus = 510;
                 String httpStatusReason = "";
                 String request = "";
@@ -1379,6 +1327,12 @@ public class ConnectorServiceImpl implements ConnectorServiceInterface{
             }
 
         }
+        
+        configuracion.setSessionID(ejecutarOperacionesResponse.getSessionId()); 
+
+        configuracion.setToken(ejecutarOperacionesResponse.getJwtToken());
+        
+        configuracion.setTransactionID(transactionID);
 
         return returnValue;
     }

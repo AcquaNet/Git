@@ -257,11 +257,47 @@ public class JDEAtinaConnector {
     
      private Object invokeWebService(String entityType, Map<String, Object> entityData) {
 
-        Object returnValue = this.getConfig()
-                .getService()
-                .ejecutarServicio(config.getStub(), config.getConfiguracion(), entityType, entityData);
+       Map<String, Object> returnValue = new HashMap<String, Object>();
+
+        try {
+            
+            JDEAtinaConfiguracion currentConfiguration = config.getConfiguracion();
+
+            logger.info("JDE Atina - Authenticate User with Option: [" + entityType + "]");
+            logger.info("           Current Configuration: [" + currentConfiguration.toString());
+            logger.info("           Transaction ID: [" + entityData.get("Transaction ID"));
+            
+            JDEAtinaConfiguracion currentConfigurationToken = new JDEAtinaConfiguracion();
+
+            currentConfigurationToken.setJdeUser("");
+            currentConfigurationToken.setJdePassword("");
+            currentConfigurationToken.setJdeEnvironment("");
+            currentConfigurationToken.setJdeRole("");
+            currentConfigurationToken.setSessionID(config.getConfiguracion()
+                    .getSessionID());
+            currentConfigurationToken.setWsConnection(true);
+            currentConfigurationToken.setToken((String) entityData.get("JDE Token"));
+                    
+            Object returnValuea = this.getConfig()
+                    .getService()
+                    .ejecutarServicio(config.getStub(), currentConfigurationToken, entityType, (Map<String, Object>) entityData.get("Request"), (Long) entityData.get("Transaction ID"));
+            
+            returnValue.put("token", currentConfigurationToken.getToken());
+            returnValue.put("sessionId", currentConfigurationToken.getSessionID()); 
+            returnValue.put("Transaction ID", currentConfigurationToken.getTransactionID()); 
+            returnValue.put("Response", returnValuea); 
+ 
+        
+        }  catch (Exception e) {
+
+            logger.error("ERROR JDE ATILA authenticateUser:  ..." + e.getMessage(), e);
+
+            throw new ConnectionException("JDE ATILA Error Connection: " + e.getMessage(), e);
+        }
 
         return returnValue;
+        
+         
     }
      
       

@@ -1,0 +1,1 @@
+java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000 -jar target/jd-check-microservice-1.0.0-jar-with-dependencies.jar -m TestLoggindAndGetAddressBookWS -s localhost -p 8085 -u JDE -w Modus2020! -e JDV920 -r *ALL -a 28

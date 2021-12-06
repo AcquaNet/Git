@@ -1,0 +1,1 @@
+java -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=y -jar target/jd-create-ini-files-1.0.0-jar-with-dependencies.jar -e JPS920 -u jde_admin -p Modusbox2020! -s http://mdx-alpha-wls.westus.cloudapp.azure.com:8999/manage
