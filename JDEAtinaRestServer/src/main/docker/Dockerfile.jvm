@@ -7,18 +7,18 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.jvm -t quarkus/websockets-quickstart-jvm .
+# docker build -f src/main/docker/Dockerfile.jvm -t 92455890/jd-atina-rest-server .
 #
 # Then run the container using:
 #
-# docker run -i --rm -p 8080:8080 quarkus/websockets-quickstart-jvm
+# docker run -i --rm -p 80:80  -p 9090:9090 -p 443:443 92455890/jd-atina-rest-server
 #
 # If you want to include the debug port into your docker image
 # you will have to expose the debug port (default 5005) like this :  EXPOSE 8080 5050
 #
 # Then run the container using :
 #
-# docker run -i --rm -p 8080:8080 -p 5005:5005 -e JAVA_ENABLE_DEBUG="true" quarkus/websockets-quickstart-jvm
+# docker run -i --rm -p 80:80 -p 5005:5005 -e JAVA_ENABLE_DEBUG="true" quarkus/websockets-quickstart-jvm
 #
 ###
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.3 
@@ -49,7 +49,9 @@ COPY --chown=1001 target/quarkus-app/*.jar /deployments/
 COPY --chown=1001 target/quarkus-app/app/ /deployments/app/
 COPY --chown=1001 target/quarkus-app/quarkus/ /deployments/quarkus/
 
-EXPOSE 8080
+EXPOSE 80
+EXPOSE 9090
+EXPOSE 443
 USER 1001
 
 ENTRYPOINT [ "/deployments/run-java.sh" ]

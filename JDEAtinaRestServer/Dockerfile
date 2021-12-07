@@ -1,6 +1,20 @@
-FROM registry.access.redhat.com/ubi8/ubi-minimal
-WORKDIR /work/
-COPY target/*-runner /work/application
-RUN chmod 775 /work
+FROM java:8-jdk-alpine
+MAINTAINER fjgodino@gmail.com
+#
+# ====================================
+# COPY APP
+# ==================================== 
+#
+COPY target/quarkus-app /usr/app/
+#
 EXPOSE 443
-CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]
+#
+# ====================================
+# Start
+# ====================================
+WORKDIR /usr/app/
+#
+ENTRYPOINT java -jar quarkus-run.jar
+
+
+

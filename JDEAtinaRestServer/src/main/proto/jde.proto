@@ -19,10 +19,9 @@ option java_outer_classname = "JDEProto";
 option objc_class_prefix = "JDE";
 
 package servicios;
-
-import "google/protobuf/any.proto";
+ 
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/empty.proto";
+ 
 
 // Interface exported by the server.
 service JDEService {

@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  jd-atina-rest-server:
+    build: .
+    image: 92455890/jd-atina-rest-server:1.0.0
+    container_name: jd-atina-rest-server
+    user: root
