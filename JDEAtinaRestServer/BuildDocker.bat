@@ -8,25 +8,18 @@ set JAVA_HOME=C:\Program Files\Java\openjdk-11
 set Path=%JAVA_HOME%\bin;%Path%
 echo Java 11 activated.
 # 
-#
-CALL docker build -t 92455890/jd-atina-rest-server:1.0.0 .
-docker run -p 443:443 92455890/jd-atina-rest-server
-#
-#
 ECHO **************************************************************************************
 ECHO Building Console Docker
 ECHO **************************************************************************************
-# 
+#
 #
 CALL mvnw package
-CALL docker build -f src/main/docker/Dockerfile.jvm -t 92455890/jd-atina-rest-server .
-CALL docker run -i --rm -p 443:443 92455890/jd-atina-rest-server
+CALL docker build -f src/main/docker/Dockerfile.jvm -t 92455890/jd-atina-rest-server:1.0.0 .
+CALL docker run -i --rm -p 80:80 -p 443:443 92455890/jd-atina-rest-server
 #
-ECHO **************************************************************************************
-ECHO Running Locally
-ECHO **************************************************************************************
+CALL docker login -u 92455890 -p 97bcd883-fde2-46c6-9135-abda7d2c3a56
+CALL docker push 92455890/jd-atina-rest-server:1.0.0
 #
-CALL java -jar target/quarkus-app/quarkus-run.jar
 #
 ECHO **************************************************************************************
 ECHO Create Image Native
