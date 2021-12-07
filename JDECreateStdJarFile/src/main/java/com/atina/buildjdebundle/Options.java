@@ -66,7 +66,7 @@ public class Options extends OptionsBase {
             abbrev = 's',
             help = "settings.xml to use Ex. /apache-maven-3.8.1/conf/settings.xml",
             category = "startup",
-            defaultValue = ""
+            defaultValue = "/tmp/build_jde_libs/settings.xml"
     )
     public String settings;
     
