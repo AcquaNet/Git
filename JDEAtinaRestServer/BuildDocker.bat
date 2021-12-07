@@ -12,7 +12,19 @@ ECHO ***************************************************************************
 ECHO Building Console Docker
 ECHO **************************************************************************************
 # 
-CALL mvnw clean package -Dquarkus.container-image.push=true -Dquarkus.profile=cintelink-full
+#
+CALL mvnw package
+#
+ECHO **************************************************************************************
+ECHO Running Locally
+ECHO **************************************************************************************
+#
+CALL java -jar target/quarkus-app/quarkus-run.jar
+#
+
+#
+#
+
 
 
 
