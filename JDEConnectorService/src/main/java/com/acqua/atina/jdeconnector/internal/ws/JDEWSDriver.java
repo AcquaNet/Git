@@ -64,11 +64,18 @@ public class JDEWSDriver {
         // ================================================
         // 
         
+        logger.info("ATINA - JDEWSDriver: bootstrap() Saving Metadata locally ...");
+        
         MetadataWSDriver.saveMetadataLocallyFromResource(tmpFolder.getAbsolutePath());
         
-        this.operaciones = loadOperacionesMetadata(tmpFolder);
+        logger.info("ATINA - JDEWSDriver: bootstrap() Loading Operations ...");
+        
+        operaciones = loadOperacionesMetadata(tmpFolder.getAbsolutePath());
+         
+        logger.info("ATINA - JDEWSDriver: bootstrap() Loading Models ...");
 
-        this.models = loadValueObjectsMetadata(tmpFolder);
+        models = loadValueObjectsMetadata(tmpFolder.getAbsolutePath());
+         
         
     }
 
@@ -86,7 +93,7 @@ public class JDEWSDriver {
 
         File functionsFile = new File(cacheFolder + File.separator + WS_LIST);
 
-        logger.info("ATINA - SpecsGenerator: BussinessFunctionList() Checking file: " + cacheFolder + File.separator + WS_LIST);
+        logger.info("ATINA - JDEWSDriver: getWSList() Checking file: " + cacheFolder + File.separator + WS_LIST + " Exists: " + functionsFile.exists());
 
         if (functionsFile.exists()) {
 
@@ -100,29 +107,29 @@ public class JDEWSDriver {
 
                 wsList = mapper.readValue(functionsFile, TreeSet.class);
 
-                logger.info("ATINA - SpecsGenerator: BussinessFunctionList() File Readed");
+                logger.info("ATINA - JDEWSDriver: getWSList() File Readed. Qty: " + wsList.size());
 
             } catch (JsonParseException e) {
 
-                logger.error("ATINA - SpecsGenerator: Error parsing file", e);
+                logger.error("ATINA - JDEWSDriver: getWSList(): Error parsing file", e);
 
                 throw new JDESingleException("Fail to read functions: " + e.getMessage(), e);
 
             } catch (JsonMappingException e) {
 
-                logger.error("ATINA - SpecsGenerator: Error Mapping JSON file", e);
+                logger.error("ATINA - JDEWSDriver: getWSList(): Error Mapping JSON file", e);
 
                 throw new JDESingleException("Fail to read functions: " + e.getMessage(), e);
 
             } catch (IOException e) {
 
-                logger.error("ATINA - SpecsGenerator: Error reading functions file", e);
+                logger.error("ATINA - JDEWSDriver: getWSList(): Error reading functions file", e);
 
                 throw new JDESingleException("Fail to read functions: " + e.getMessage(), e);
 
             } catch (Exception ex) {
 
-                logger.error("ATINA - SpecsGenerator: Error reading functions file", ex);
+                logger.error("ATINA - JDEWSDriver: getWSList(): Error reading functions file", ex);
 
                 throw new JDESingleException("Fail to connect to Oneworld Database " + ex.getMessage(), ex);
 
@@ -132,7 +139,9 @@ public class JDEWSDriver {
   
             try {
 
-                MetadataWSDriver.saveMetadataLocallyFromResource(cacheFolder.getAbsolutePath());
+                // MetadataWSDriver.saveMetadataLocallyFromResource(cacheFolder.getAbsolutePath());
+                
+                logger.info("ATINA - JDEWSDriver: getWSList() Creating : " + cacheFolder + File.separator + WS_LIST + " Exists: Operations list: " + operaciones.getOperations().size());
                 
                 Iterator it = operaciones.getOperations().entrySet().iterator();
                 
@@ -140,9 +149,11 @@ public class JDEWSDriver {
                     Map.Entry pair = (Map.Entry) it.next();
                     System.out.println(pair.getKey() + " = " + pair.getValue());
                     wsList.add(((Operation) pair.getValue()).getOperationModelPackage() + "." + ((Operation) pair.getValue()).getOperationClass() + "." + ((Operation) pair.getValue()).getOperationMethod());
-                    it.remove(); // avoids a ConcurrentModificationException
+                    //it.remove(); // avoids a ConcurrentModificationException
                 }
-                   
+                
+                logger.info("ATINA - JDEWSDriver: getWSList() wsList Size : " + wsList.size());
+
                 // ================
                 // Persists List
                 // ================
@@ -154,21 +165,21 @@ public class JDEWSDriver {
 
                     mapper.writeValue(functionsFile, wsList);
 
-                    logger.info("ATINA - SpecsGenerator: BussinessFunctionList() Functions saved on "
-                            + functionsFile.getAbsoluteFile());
+                    logger.info("ATINA - JDEWSDriver: getWSList() Functions saved on "
+                            + functionsFile.getAbsoluteFile() + " Size : " + wsList.size() + " Operations : " + operaciones.getOperations().size());
 
                 } catch (Exception e) {
 
-                    logger.error("ATINA - SpecsGenerator: BussinessFunctionList() Error saving functions on "
+                    logger.error("ATINA - JDEWSDriver: getWSList() Error saving functions on "
                             + functionsFile.getAbsoluteFile());
 
-                    throw new JDESingleException("Fail to save functions " + e.getMessage(), e);
+                    throw new JDESingleException("ATINA - JDEWSDriver: Fail to save functions " + e.getMessage(), e);
 
                 }
  
             } catch (Exception ex) {
 
-                throw new JDESingleException("Fail to connect to Oneworld Database " + ex.getMessage(), ex);
+                throw new JDESingleException("ATINA - JDEWSDriver: Fail to connect to Oneworld Database " + ex.getMessage(), ex);
 
             }
 
@@ -188,9 +199,9 @@ public class JDEWSDriver {
         // ================================================
         // 
         logger.info("----------------------------------------------------");
-        logger.info("Get Input Parameter For : " + operation);
+        logger.info("ATINA - JDEWSDriver getWSInputParameter: Operation [" + operation + "] Operations Size: " + operaciones.getOperations().size());
         
-        String inputModel = this.operaciones.getInputValueObject(operation);
+        String inputModel = operaciones.getInputValueObject(operation);
 
         if (!inputModel.isEmpty()) {
 
@@ -221,9 +232,9 @@ public class JDEWSDriver {
         // ================================================
         // 
         logger.info("----------------------------------------------------");
-        logger.info("Get Output Parameter For : " + operation);
+        logger.info("ATINA - JDEWSDriver getWSOutputParameter: Operation [" + operation + "] Operations: " + operaciones.getOperations().size());
         
-        String inputModel = this.operaciones.getOutputValueObject(operation);
+        String inputModel = operaciones.getOutputValueObject(operation);
 
         if (!inputModel.isEmpty()) {
             
@@ -319,7 +330,7 @@ public class JDEWSDriver {
         //
         logger.info("Call JDE WS. Operation: " + operation); 
         
-        String inputModelClass = this.operaciones.getInputValueObject(operation);
+        String inputModelClass = operaciones.getInputValueObject(operation);
         
         logger.info("Call JDE WS. Input Model Class: " + inputModelClass);
         
@@ -332,14 +343,14 @@ public class JDEWSDriver {
         // ================================================
         //
         
-        HashMap<String, Object> outputObject = JDEWSCreateAndInvokeWS.invokeObject(e1ppal,this.operaciones,this.models,operation,inputObject);
+        HashMap<String, Object> outputObject = JDEWSCreateAndInvokeWS.invokeObject(e1ppal,operaciones,models,operation,inputObject);
          
         
         return outputObject;
     }
      
     
-    private Operations loadOperacionesMetadata(File metadataDir) throws JDESingleException {
+    private Operations loadOperacionesMetadata(String metadataDir) throws JDESingleException {
 
         Operations returnValue = null;
         
@@ -347,7 +358,11 @@ public class JDEWSDriver {
         
         try {
 
+            logger.info("Reading Operations: " + metadataDir + File.separator + WS_JSON);
+            
             returnValue= objectMapper.readValue(new File(metadataDir + File.separator + WS_JSON), Operations.class);
+            
+            logger.info("Operations: " + metadataDir + File.separator + WS_JSON + " readed. Qty: " + returnValue.getOperations().size() );
 
         } catch (IOException ex) {
 
@@ -360,7 +375,7 @@ public class JDEWSDriver {
         return returnValue;
     }
     
-    private Models loadValueObjectsMetadata(File metadataDir) throws JDESingleException {
+    private Models loadValueObjectsMetadata(String metadataDir) throws JDESingleException {
 
         Models returnValue = null;
         
@@ -368,7 +383,11 @@ public class JDEWSDriver {
         
         try {
 
+            logger.info("Reading Models: " + metadataDir + File.separator + WS_JSON);
+            
             returnValue= objectMapper.readValue(new File(metadataDir + File.separator + VO_JSON), Models.class);
+            
+            logger.info("Models: " + metadataDir + File.separator + VO_JSON + " readed. Qty: " + returnValue.getModels().size() );
 
         } catch (IOException ex) {
 

@@ -5,14 +5,19 @@
  */
 package com.acqua.atina.jdeconnector.internal.model.metadata;
  
+import com.acqua.atina.jdeconnectorservice.JDEConnectorService;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author jgodi
  */
 public class Operations {
+    
+   private static final Logger logger = LoggerFactory.getLogger(JDEConnectorService.class);
 
    private Map<String, Operation> operations;
 
@@ -35,16 +40,22 @@ public class Operations {
     public String getInputValueObject(String operation) {
 
         String returnValue = "";
+        
+        logger.info("ATINA - Operations: getInputValueObject for : [" + operation + "] Exists: " + operations.containsKey(operation));
+        
+        logger.info("ATINA - Operations: getInputValueObject Size : " + operations.size() );
 
         Operation operacion = operations.get(operation);
 
         if (operacion != null) {
 
             Parameter parameter = operacion.getParameters().getParameters().get("vo");
+            
+            logger.info("ATINA - Operations: Parameter : [" + parameter.getParameterType());
 
             return parameter.getParameterType();
 
-        }
+        } 
 
         return returnValue;
 
