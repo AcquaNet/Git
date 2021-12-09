@@ -12,8 +12,10 @@ docker-compose up --no-start
 ECHO ==========================================================
 ECHO Docker Files
 ECHO ==========================================================
+del jd-docker-files.zip
 "C:\Program Files\7-Zip\7z.exe" a -tzip jd-docker-files.zip .env docker-compose-dist.yml
 mvn deploy:deploy-file -DgroupId=com.atina -DartifactId=jd-docker-files -Dversion=1.0.0 -DrepositoryId=acquanet-central -Dpackaging=zip -Dfile=jd-docker-files.zip -Durl=http://157.245.236.175:8081/artifactory/libs-release 
+del jd-docker-files.zip
 PAUSE >nul
 ECHO ==========================================================
 ECHO Press Enter to continue
