@@ -14,7 +14,7 @@ EXPOSE 443
 # ====================================
 WORKDIR /usr/app/
 #
-ENTRYPOINT java -jar quarkus-run.jar
+ENTRYPOINT java -Djava.net.preferIPv4Stack=true -jar quarkus-run.jar
 
 
 

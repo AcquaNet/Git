@@ -25,11 +25,11 @@ ECHO ***************************************************************************
 ECHO Create Image Native
 ECHO **************************************************************************************
 #
-CALL mvnw package -Pnative -Dquarkus.native.remote-container-build=true -Dquarkus.container-image.build=true
+#CALL mvnw package -Pnative -Dquarkus.native.remote-container-build=true -Dquarkus.container-image.build=true
 #
-CALL mvnw clean package -Dquarkus.container-image.push=true
+#CALL mvnw clean package -Dquarkus.container-image.push=true
 #
-CALL docker run -i --rm -p 443:443 registry-1.docker.io/92455890/jd-atina-rest-server:1.0.0
+#CALL docker run -i --rm -p 443:443 registry-1.docker.io/92455890/jd-atina-rest-server:1.0.0
 #
 
 
