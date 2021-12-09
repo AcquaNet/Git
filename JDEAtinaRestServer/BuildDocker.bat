@@ -15,7 +15,7 @@ ECHO ***************************************************************************
 #
 CALL mvnw package
 CALL docker build -f src/main/docker/Dockerfile.jvm -t 92455890/jd-atina-rest-server:1.0.0 .
-CALL docker run -i --rm -p 80:80 -p 443:443 92455890/jd-atina-rest-server
+CALL docker run -i --rm -p 80:80 -p 443:443 92455890/jd-atina-rest-server:1.0.0
 #
 CALL docker login -u 92455890 -p 97bcd883-fde2-46c6-9135-abda7d2c3a56
 CALL docker push 92455890/jd-atina-rest-server:1.0.0

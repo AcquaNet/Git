@@ -35,8 +35,9 @@ services:
     image: 92455890/jd-atina-rest-server:1.0.0
     container_name: jd-atina-rest-server   
     ports:
-     - "443:443"
-     - "80:80"
+    ports:
+     - "443:8082"
+     - "80:8081"
     networks:
       jdemicronet:
         ipv4_address: 172.28.0.3
