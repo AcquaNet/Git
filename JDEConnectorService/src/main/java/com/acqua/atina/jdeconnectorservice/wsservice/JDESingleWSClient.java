@@ -421,5 +421,11 @@ public class JDESingleWSClient {
     public int getiSessionID() {
         return iSessionID;
     } 
+
+    public E1Principal getE1ppal() {
+        return e1ppal;
+    }
+    
+    
  
 }

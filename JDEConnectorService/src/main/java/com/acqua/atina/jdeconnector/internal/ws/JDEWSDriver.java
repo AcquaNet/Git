@@ -36,7 +36,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 import oracle.e1.bssvfoundation.impl.security.E1Principal;
-import org.mule.util.StringUtils;
+ 
 
 /**
  *
@@ -350,7 +350,7 @@ public class JDEWSDriver {
     }
      
     
-    private Operations loadOperacionesMetadata(String metadataDir) throws JDESingleException {
+    public Operations loadOperacionesMetadata(String metadataDir) throws JDESingleException {
 
         Operations returnValue = null;
         
@@ -375,7 +375,7 @@ public class JDEWSDriver {
         return returnValue;
     }
     
-    private Models loadValueObjectsMetadata(String metadataDir) throws JDESingleException {
+    public Models loadValueObjectsMetadata(String metadataDir) throws JDESingleException {
 
         Models returnValue = null;
         
@@ -399,6 +399,13 @@ public class JDEWSDriver {
  
         return returnValue;
     }
-     
 
+    public Models getModels() {
+        return models;
+    }
+
+    public Operations getOperaciones() {
+        return operaciones;
+    }
+     
 }

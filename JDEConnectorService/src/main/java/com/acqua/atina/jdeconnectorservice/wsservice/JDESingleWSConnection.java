@@ -264,6 +264,9 @@ public class JDESingleWSConnection implements JDEConnection {
     public ConnectionDetail getConnectionInfo() {
         return new ConnectionDetail("WS", client.getUser(),client.getEnvironment(),client.getRole(),client.getTmpFolder().getAbsolutePath(),client.getTmpFolderCache().getAbsolutePath(),client.getiSessionID(),isJDEConnected()!=0);
     }
- 
-      
+
+    public JDESingleWSClient getClient() {
+        return client;
+    }
+     
 }
