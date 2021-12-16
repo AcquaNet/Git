@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.atina</groupId>
+    <artifactId>jd-generate-ws</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    <name>jd-generate-ws</name>
+    
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <io.grpc.version>1.14.0</io.grpc.version>
+        <jdk.version>1.8</jdk.version>
+    </properties>
+      
+    <build>
+        <plugins>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.2</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target> 
+                    <encoding>UTF-8</encoding>
+                    <encoding>Cp1252</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.2</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.sonatype.plexus</groupId>
+                        <artifactId>plexus-cipher</artifactId>
+                        <version>1.4</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <downloadSources>true</downloadSources>
+                    <downloadJavadocs>false</downloadJavadocs>
+                </configuration>
+            </plugin>
+             
+            
+            <!-- Maven Assembly Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <!-- get all project dependencies -->
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <finalName>${project.build.finalName}</finalName>
+                    <appendAssemblyId>true</appendAssemblyId>
+                    <!-- MainClass in mainfest make a executable jar -->
+                    <archive>
+                        <manifest>
+                            <mainClass>com.atina.ppal.Main</mainClass>
+                        </manifest>
+                    </archive>
+
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <!-- bind to the packaging phase -->
+                        <phase>package</phase> 
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.atina.ppal.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>  
+            
+        </plugins> 
+    </build>
+    
+    
+    <dependencies>
+           
+        
+        <dependency>
+            <groupId>com.atina</groupId>
+            <artifactId>StdWebService</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.atina</groupId>
+            <artifactId>jde-lib-wrapped</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.atina</groupId>
+            <artifactId>JDEConnectorService</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.atina</groupId>
+            <artifactId>JDEConnectorServer</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.atina</groupId>
+            <artifactId>jd-create-jar-files</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+         
+    </dependencies>
+    
+    
+    <repositories>
+        
+        <repository>
+            <id>Central-Repository</id>
+            <name>Maven</name>
+            <url>http://central.maven.org/maven2/</url>
+            <layout>default</layout>
+        </repository>
+         
+        <repository>
+            <id>Maven</id>
+            <name>Maven</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
+            <layout>default</layout>
+        </repository>
+        
+        <repository>
+            <id>Sonatype</id>
+            <name>Sonatype</name>
+            <url>https://oss.sonatype.org/content/repositories/releases/</url>
+            <layout>default</layout>
+        </repository>
+        
+        <repository>
+            <id>Sonatype Snap</id>
+            <name>Sonatype Snap</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <layout>default</layout>
+        </repository>
+		  
+    </repositories> 
+     
+    <distributionManagement>
+        <repository>
+            <id>AcquaNet-central</id>
+            <url>http://157.245.236.175:8081/artifactory/libs-release-local</url>
+        </repository>
+    </distributionManagement>
+    
+</project>
