@@ -5,8 +5,8 @@ import java.io.Serializable;
 
 import java.util.ArrayList;
 
-import oracle.e1.bssv.J0900002.valueobject.InternalInsertBatchJournalEntryStaging;
-import oracle.e1.bssv.J0900002.valueobject.InternalInsertBatchJournaleEntryStagingFields;
+import oracle.e1.bssv.J5900002.valueobject.InternalInsertBatchJournalEntryStaging;
+import oracle.e1.bssv.J5900002.valueobject.InternalInsertBatchJournaleEntryStagingFields;
 import oracle.e1.bssvfoundation.base.IContext;
 import oracle.e1.bssvfoundation.base.ValueObject;
 import oracle.e1.bssvfoundation.connection.IConnection;

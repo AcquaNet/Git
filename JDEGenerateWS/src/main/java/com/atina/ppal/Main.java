@@ -13,6 +13,10 @@ import java.io.IOException;
 import oracle.e1.bssv.JP010000.AddressBookManager;
 import oracle.e1.bssv.JP010000.valueobject.GetAddressBook;
 import oracle.e1.bssv.JP010000.valueobject.ShowAddressBook;
+import oracle.e1.bssv.JP590000.FinancialsManager;
+import oracle.e1.bssv.JP590000.valueobject.ConfirmInsertBatchJournalEntryStaging;
+import oracle.e1.bssv.JP590000.valueobject.InsertBatchJournalEntry;
+import oracle.e1.bssv.JP590000.valueobject.InsertBatchJournalEntryStagingFields;
 import oracle.e1.bssv.util.J0100010.valueobject.Entity;
 import oracle.e1.bssvfoundation.base.IContext;
 import oracle.e1.bssvfoundation.exception.BusinessServiceException;
@@ -88,9 +92,39 @@ public class Main {
          // Set Context
          // ==============================================================
          
-        IContext context = new oracle.e1.bssvfoundation.impl.base.Context(true,e1ppal,"JP010000", "getAddressBook"); 
+//        IContext context = new oracle.e1.bssvfoundation.impl.base.Context(true,e1ppal,"JP010000", "getAddressBook"); 
+//        
+//        context.setApplicationID("JP010000");
+//        context.setGUID("AddressBookManager");
+//        context.setWorkstationName("WS");
+//        
+//        ((Context) context).incrementPublishedMethodCounter();
         
-        context.setApplicationID("JP010000");
+         // ==============================================================
+         // Call Operation
+         // ==============================================================
+         // String operation = "oracle.e1.bssv.JP590000.FinancialsManager.getGLAccount";
+         // oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook
+         
+//        AddressBookManager objectToCall = new oracle.e1.bssv.JP010000.AddressBookManager();
+//        
+//        GetAddressBook account = new oracle.e1.bssv.JP010000.valueobject.GetAddressBook();
+//        
+//        Entity entity = new Entity();
+//        entity.setEntityId(28);
+//        
+//        account.setEntity(entity);
+//         
+//        ShowAddressBook returnValue = objectToCall.getAddressBook(context, null, account);
+//        
+        
+        // ==============================================================
+         // Set Context
+         // ==============================================================
+         
+        IContext context = new oracle.e1.bssvfoundation.impl.base.Context(true,e1ppal,"JP090000", "insertBatchJournalEntry"); 
+        
+        context.setApplicationID("JP090000");
         context.setGUID("AddressBookManager");
         context.setWorkstationName("WS");
         
@@ -102,16 +136,24 @@ public class Main {
          // String operation = "oracle.e1.bssv.JP590000.FinancialsManager.getGLAccount";
          // oracle.e1.bssv.JP010000.AddressBookManager.getAddressBook
          
-        AddressBookManager objectToCall = new oracle.e1.bssv.JP010000.AddressBookManager();
+        oracle.e1.bssv.JP590000.FinancialsManager objectToCall = new oracle.e1.bssv.JP590000.FinancialsManager();
         
-        GetAddressBook account = new oracle.e1.bssv.JP010000.valueobject.GetAddressBook();
+        oracle.e1.bssv.JP590000.valueobject.InsertBatchJournalEntry vo = new oracle.e1.bssv.JP590000.valueobject.InsertBatchJournalEntry();
+          
+        vo.setInsertFields(new InsertBatchJournalEntryStagingFields[1]);
         
-        Entity entity = new Entity();
-        entity.setEntityId(28);
+        vo.getInsertFields()[0] = new InsertBatchJournalEntryStagingFields();
         
-        account.setEntity(entity);
+        vo.getInsertFields(0).getEDITransaction().setEdiUserId("039");
+        vo.getInsertFields(0).getEDITransaction().setEdiTransactionNumber("1");
+        vo.getInsertFields(0).getGLAccount().setBusinessUnit("1");
+        vo.getInsertFields(0).getGLAccount().setObjectAccount("4206");
+        vo.getInsertFields(0).getEntity().setEntityId(6001);
          
-        ShowAddressBook returnValue = objectToCall.getAddressBook(context, null, account);
+                
+         ConfirmInsertBatchJournalEntryStaging returnValue = objectToCall.insertBatchJournalEntry(context, null, vo);
+        
+        
         
         
         

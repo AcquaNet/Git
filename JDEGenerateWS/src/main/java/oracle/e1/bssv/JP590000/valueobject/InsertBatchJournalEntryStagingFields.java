@@ -8,7 +8,7 @@ import java.util.Calendar;
 
 import java.util.Date;
 
-import oracle.e1.bssv.J0900002.valueobject.InternalInsertBatchJournaleEntryStagingFields;
+import oracle.e1.bssv.J5900002.valueobject.InternalInsertBatchJournaleEntryStagingFields;
 import oracle.e1.bssv.util.J0100010.EntityProcessor;
 import oracle.e1.bssvfoundation.base.ValueObject;
 import oracle.e1.bssv.util.J0100010.valueobject.Entity;

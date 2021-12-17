@@ -2,7 +2,7 @@ package oracle.e1.bssv.JP590000.valueobject;
 
 import java.io.Serializable;
 
-import oracle.e1.bssv.J0900002.valueobject.InternalInsertBatchJournalEntryStaging;
+import oracle.e1.bssv.J5900002.valueobject.InternalInsertBatchJournalEntryStaging;
 import oracle.e1.bssvfoundation.base.MessageValueObject;
 
 
