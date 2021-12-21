@@ -268,5 +268,20 @@ public class JDESingleWSConnection implements JDEConnection {
     public JDESingleWSClient getClient() {
         return client;
     }
+    
+    @Override
+    public Integer startTransaction() throws JDESingleConnectorException {
+         return 0;
+    }
+
+    @Override
+    public Integer commitTransaction(Integer transactionID) throws JDESingleConnectorException {
+        return 0;
+    }
+
+    @Override
+    public Integer rollbackTransaction(Integer transactionID) throws JDESingleConnectorException {
+        return 0;
+    }
      
 }

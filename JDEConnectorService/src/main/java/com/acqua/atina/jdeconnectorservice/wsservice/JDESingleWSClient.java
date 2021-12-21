@@ -345,9 +345,7 @@ public class JDESingleWSClient {
     //************************************************************************
     // BSFN Operations
     //************************************************************************
-    
-    
-    
+     
     public Set<String> getOperationList() throws JDESingleConnectorException{
           
         if(iSessionID==0 || tmpFolder == null )

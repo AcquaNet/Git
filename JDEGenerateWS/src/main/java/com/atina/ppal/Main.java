@@ -100,6 +100,11 @@ public class Main {
          
         Set<JDEBsfnParameter> parameters = singleConnection.getBSFNParameter("AddressBookMasterMBF");
          
+         // ==============================================================
+         // Start Transaction
+         // ==============================================================
+         
+         Integer tid = singleConnection.startTransaction();
         
         // ==============================================================
         // Call BSFN
@@ -113,6 +118,12 @@ public class Main {
         inputValues.put("mnAddressBookNumber", 1); 
         
          HashMap<String, Object> reponse = singleConnection.callJDEOperation("AddressBookMasterMBF", inputValues, 0);
+         
+         // ==============================================================
+         // Commit Transaction
+         // ==============================================================
+         
+         singleConnection.commitTransaction(tid);
         
         // ==============================================================
         // Logout

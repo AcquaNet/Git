@@ -51,8 +51,6 @@ import com.jdedwards.system.connector.dynamic.util.SpecImageValidator.Validation
 import com.jdedwards.system.kernel.CallObjectErrorList;
 import com.jdedwards.system.security.UserOCMContextSession; 
 import com.acqua.atina.jdeconnector.internal.model.JDEBsfnParameter; 
-import com.acqua.atina.jdeconnector.internal.model.metadata.E1ReturnBSFNValue;
-import com.acqua.atina.jdeconnector.internal.model.metadata.E1ReturnWSValue;
 import com.acqua.atina.jdeconnector.internal.ws.JDEWSCreateAndInvokeWS;
 import com.acqua.atina.jdeconnectorservice.JDEConnectorService;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleException;
@@ -62,6 +60,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.cfg.MapperConfig;
 import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+import com.jdedwards.system.connector.dynamic.ServerFailureException;
 import com.jdedwards.system.kernel.CallObjectErrorItem;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -69,8 +68,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;  
-import java.util.logging.Level;
-import oracle.e1.bssvfoundation.base.MessageValueObject;
 import oracle.e1.bssvfoundation.util.E1Message;
 import oracle.e1.bssvfoundation.util.E1MessageList;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -89,8 +86,10 @@ public class JDEBsfnDriver {
     private static final String FUNTIONS_RANGE_TO = "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ";
 
     private static final String FUNTIONS_LIST = "bsfnlist.json";
-    
-    private boolean validateSpecs = false;
+      
+    public static enum TransactionMode {
+	START, COMMIT, ROLLBACK
+    }
 
     public static JDEBsfnDriver getInstance() {
         return JDEBsfnDriverHolder.INSTANCE;
@@ -106,7 +105,7 @@ public class JDEBsfnDriver {
 
     public Set<String> getBSFNListFromEnterpriseServer(int session, File cacheFolder) throws JDESingleException {
 
-        Set<String> bsfnList = new TreeSet<String>();
+        Set<String> bsfnList = new TreeSet<>();
         
         File functionsFile = new File(cacheFolder + File.separator + FUNTIONS_LIST);
 
@@ -306,37 +305,7 @@ public class JDEBsfnDriver {
              }
 
              logger.debug("ATINA - JDEConnectorService:  - getBSFNParameterList() Ready parameters from xml specs.");
-
-             // Validate Spec
-             if (specSource != null && validateSpecs) {
-
-                 logger.debug("ATINA - JDEConnectorService:  - getBSFNParameterList() Validate Spec.");
-
-                 SpecImageValidator validator = new com.jdedwards.system.connector.dynamic.util.SpecImageValidator(specSource);
-
-                 ValidationResultSet validationResult = null;
-                 
-                 try {
-                     validationResult = validator.validate(specSource);
-                     
-                 } catch (SpecFailureException ex) {
-                     
-                     logger.debug("ATINA - JDEConnectorService:  - getBSFNParameterList() BSFN Changed.");
-
-                     flagReadCache = false;
-                     
-                 }
-
-                 if (validationResult != null && validationResult.hasDifference()) {
-
-                     logger.debug("ATINA - JDEConnectorService:  - getBSFNParameterList() BSFN Changed.");
-
-                     flagReadCache = false;
-
-                 }
-
-             }
-
+ 
          }
 
          // ===================================================
@@ -493,6 +462,135 @@ public class JDEBsfnDriver {
          return returnValue;
  
     } 
+     
+    public synchronized Integer transaction(TransactionMode transactionMode, int iSessionID, Integer tid) throws JDESingleException
+    {
+        logger.debug("transaction() Mode: " + transactionMode.name());
+        
+        Integer returnValue = 0;
+ 
+        OneworldTransaction transaction = null;
+         
+        switch (transactionMode) {
+            
+            case START:
+
+                UserSession userSession = com.jdedwards.system.connector.dynamic.Connector.getInstance()
+                        .getUserSession(iSessionID);
+
+                transaction = userSession.createOneworldTransaction(true);
+
+                try {
+
+                    transaction.begin();
+
+                } catch (ServerFailureException e) {
+
+                    logger.error(
+                            "transaction() error: "
+                            + e.getMessage());
+
+                    throw new JDESingleException(e.getMessage(), e);
+
+                }
+                 
+                returnValue = JDETransactionPool.getInstance().addTransaction(transaction);
+                
+                logger.debug("transaction() Id: " + Integer.toString(returnValue));
+
+                break;
+                    
+            case COMMIT:
+                
+                transaction = JDETransactionPool.getInstance().getTransaction(tid);
+                
+                if (transaction != null) 
+                {
+                    
+                     try {
+
+                        transaction.commit();
+
+                    } catch (ServerFailureException e) {
+
+                        logger.error(
+                            "transaction() error: "
+                            + e.getMessage());
+
+                        throw new JDESingleException(e.getMessage(), e);
+                    }
+                     
+                     logger.debug("transaction() Commited: " + Integer.toString(tid));
+                      
+                    JDETransactionPool.getInstance().removeTransaction(tid);
+                    
+                    if (!JDETransactionPool.getInstance().existAPendingTransaction()) {
+                        
+                        com.jdedwards.system.connector.dynamic.Connector.getInstance().getUserSession(iSessionID)
+                            .setCommitMode(true);
+
+                    }
+                    
+                    
+                } else
+                {
+                    logger.error(
+                            "transaction() error: The Transaction ID is not valid "
+                             ); 
+                    
+                    throw new JDESingleException("The Transaction ID is not valid");
+                }
+            
+                break;
+                     
+                    
+            case ROLLBACK:
+            
+                transaction = JDETransactionPool.getInstance().getTransaction(tid);
+                
+                if (transaction != null) 
+                {
+                    
+                     try {
+
+                        transaction.rollback();
+
+                    } catch (ServerFailureException e) {
+
+                        logger.error(
+                            "transaction() error: "
+                            + e.getMessage());
+
+                        throw new JDESingleException(e.getMessage(), e);
+                    }
+                     
+                     logger.debug("transaction() Commited: " + Integer.toString(tid));
+                      
+                    JDETransactionPool.getInstance().removeTransaction(tid);
+                    
+                    if (!JDETransactionPool.getInstance().existAPendingTransaction()) {
+                        
+                        com.jdedwards.system.connector.dynamic.Connector.getInstance().getUserSession(iSessionID)
+                            .setCommitMode(true);
+
+                    }
+                    
+                    
+                } else
+                {
+                    logger.error(
+                            "transaction() error: The Transaction ID is not valid "
+                             ); 
+                    
+                    throw new JDESingleException("The Transaction ID is not valid");
+                }
+                
+                break;                                  
+            
+        }
+        
+        return returnValue;
+    }
      
     public synchronized HashMap<String, Object> callJDEBsfn(int session, String bsfnName, Map<String, Object> inputObject, Integer transactionID, File tmpFolderCache)
     {

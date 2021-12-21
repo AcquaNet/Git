@@ -26,5 +26,8 @@ public interface JDEConnection {
     public HashMap<String, Object> callJDEOperation(String bsfnName, HashMap<String, Object> inputObject, Integer transactionID) throws JDESingleConnectorException;
     public UserPreference getUserPreference();
     public ConnectionDetail getConnectionInfo();
+    public Integer startTransaction() throws JDESingleConnectorException;
+    public Integer commitTransaction(Integer transactionID) throws JDESingleConnectorException;
+    public Integer rollbackTransaction(Integer transactionID) throws JDESingleConnectorException;
     
 }

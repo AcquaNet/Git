@@ -282,6 +282,21 @@ public class JDESingleConnection implements JDEConnection{
     public UserPreference getUserPreference() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public Integer startTransaction() throws JDESingleConnectorException {
+         return client.startTransaction();
+    }
+
+    @Override
+    public Integer commitTransaction(Integer transactionID) throws JDESingleConnectorException {
+        return client.commitTransaction(transactionID);
+    }
+
+    @Override
+    public Integer rollbackTransaction(Integer transactionID) throws JDESingleConnectorException {
+        return client.rollbackTransaction(transactionID);
+    }
     
       
 }

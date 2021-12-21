@@ -281,9 +281,7 @@ public class JDESingleClient {
     //************************************************************************
     // BSFN Operations
     //************************************************************************
-    
-    
-    
+     
     public Set<String> getOperationList() throws JDESingleConnectorException{
           
         if(iSessionID==0 || tmpFolder == null )
@@ -299,6 +297,21 @@ public class JDESingleClient {
         return JDEBsfnDriver.getInstance().getBSFNParameter(iSessionID,bsfnName,tmpFolderCache);
     }
     
+    public Integer startTransaction() throws JDESingleConnectorException{
+     
+        return JDEBsfnDriver.getInstance().transaction(JDEBsfnDriver.TransactionMode.START, iSessionID, 0);
+    }
+    
+    public Integer commitTransaction(Integer transactionID) throws JDESingleConnectorException{
+     
+        return JDEBsfnDriver.getInstance().transaction(JDEBsfnDriver.TransactionMode.COMMIT, iSessionID, transactionID);
+    }
+    
+    public Integer rollbackTransaction(Integer transactionID) throws JDESingleConnectorException{
+     
+        return JDEBsfnDriver.getInstance().transaction(JDEBsfnDriver.TransactionMode.ROLLBACK, iSessionID, transactionID);
+    }
+        
     public HashMap<String, Object> callJDEBsfn(String bsfnName, Map<String, Object>  inputObject, Integer transactionID) throws JDESingleConnectorException{
     
        // login();
