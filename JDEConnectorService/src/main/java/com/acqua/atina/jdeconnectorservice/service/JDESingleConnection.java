@@ -297,6 +297,11 @@ public class JDESingleConnection implements JDEConnection{
     public Integer rollbackTransaction(Integer transactionID) throws JDESingleConnectorException {
         return client.rollbackTransaction(transactionID);
     }
+
+    @Override
+    public HashMap<String,Object> getTableDefinition(String tableName) throws JDESingleConnectorException {
+        return client.getTableDefinition(tableName);
+    }
     
       
 }

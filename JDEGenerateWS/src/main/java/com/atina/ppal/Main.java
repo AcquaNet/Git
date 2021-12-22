@@ -48,9 +48,61 @@ public class Main {
         
         //createZFile(args);
         
-        callBSFN(args);
+        // callBSFN(args);
+        
+        getTableDef(args);
         
     } 
+    
+    private static void getTableDef(String[] args) throws BusinessServiceException
+    {
+        
+        Configuracion config = new Configuracion();
+        
+        config.setUser("JDE");
+
+        config.setPassword("Modus2020!");
+
+        config.setEnvironment("JPS920");
+
+        config.setRole("*ALL");
+
+        config.setSessionId(0);
+        
+        config.setTokenExpiration(2400000);
+        
+        config.setMocking(0);
+        
+        int sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
+                                                                                config.getPassword(), 
+                                                                                config.getEnvironment(), 
+                                                                                config.getRole(), 
+                                                                                config.getSessionIdAsInt(),
+                                                                                false);
+        config.setSessionId(sessionID);
+         
+        logger.info("              Request Received: " + config.toString());
+        
+      
+        // ==============================================================
+        // Get Connection
+        // ==============================================================
+        
+        JDESingleConnection singleConnection = (JDESingleConnection) JDEPoolConnections.getInstance().getSingleConnection(sessionID);
+        
+         // ==============================================================
+         // Get BSFN List
+         // ==============================================================
+         HashMap<String, Object> table = singleConnection.getTableDefinition("F0911Z1");
+        
+        // ==============================================================
+        // Logout
+        // ==============================================================
+        
+        JDEPoolConnections.getInstance().disconnect(config.getSessionId());
+        
+        
+    }
     
     private static void callBSFN(String[] args) throws BusinessServiceException
     {

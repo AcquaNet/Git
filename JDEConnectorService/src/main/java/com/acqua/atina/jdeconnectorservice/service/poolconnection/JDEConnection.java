@@ -29,5 +29,6 @@ public interface JDEConnection {
     public Integer startTransaction() throws JDESingleConnectorException;
     public Integer commitTransaction(Integer transactionID) throws JDESingleConnectorException;
     public Integer rollbackTransaction(Integer transactionID) throws JDESingleConnectorException;
+    public HashMap<String,Object> getTableDefinition(String tableName) throws JDESingleConnectorException;
     
 }

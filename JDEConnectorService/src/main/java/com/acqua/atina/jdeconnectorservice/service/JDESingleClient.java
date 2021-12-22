@@ -11,6 +11,7 @@ import com.jdedwards.system.connector.dynamic.UserSession;
 import com.acqua.atina.jdeconnector.internal.JDEBsfnDriver;
 import com.acqua.atina.jdeconnector.internal.JDEConnectionLocker;
 import com.acqua.atina.jdeconnector.internal.JDETransactions; 
+import com.acqua.atina.jdeconnector.internal.JDEXMLRequestDriver;
 import com.acqua.atina.jdeconnector.internal.model.JDEBsfnParameter;  
 import com.acqua.atina.jdeconnectorservice.JDEConnectorService;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectionException;
@@ -317,7 +318,18 @@ public class JDESingleClient {
        // login();
         return JDEBsfnDriver.getInstance().callJDEBsfn(iSessionID,bsfnName, inputObject, transactionID, tmpFolderCache);
     }
-          
+    
+    //************************************************************************
+    // Tables Methods
+    //************************************************************************
+    
+    public HashMap<String,Object> getTableDefinition(String tableName) throws JDESingleConnectorException{
+    
+        
+         return JDEXMLRequestDriver.getInstance().getTableDefintion(iSessionID, tableName);
+         
+    }
+     
     //************************************************************************
     // Setters and Getters
     //************************************************************************

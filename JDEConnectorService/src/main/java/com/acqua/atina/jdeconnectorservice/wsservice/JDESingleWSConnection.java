@@ -283,5 +283,10 @@ public class JDESingleWSConnection implements JDEConnection {
     public Integer rollbackTransaction(Integer transactionID) throws JDESingleConnectorException {
         return 0;
     }
+
+    @Override
+    public HashMap<String,Object> getTableDefinition(String tableName) throws JDESingleConnectorException {
+        return null;
+    }
      
 }
