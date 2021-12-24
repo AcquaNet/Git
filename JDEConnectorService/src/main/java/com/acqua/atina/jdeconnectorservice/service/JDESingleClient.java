@@ -329,6 +329,17 @@ public class JDESingleClient {
          return JDEXMLRequestDriver.getInstance().getTableDefintion(iSessionID, tableName);
          
     }
+    
+    //************************************************************************
+    // Report Methods
+    //************************************************************************
+    
+    public HashMap<String,Object> getReportDefinition(String tableName) throws JDESingleConnectorException{
+    
+        
+         return JDEXMLRequestDriver.getInstance().getReportDefintion(iSessionID, tableName, tmpFolderCache.getAbsolutePath());
+         
+    }
      
     //************************************************************************
     // Setters and Getters

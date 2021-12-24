@@ -302,6 +302,11 @@ public class JDESingleConnection implements JDEConnection{
     public HashMap<String,Object> getTableDefinition(String tableName) throws JDESingleConnectorException {
         return client.getTableDefinition(tableName);
     }
+
+    @Override
+    public HashMap<String, Object> getReportDefinition(String reportName) throws JDESingleConnectorException {
+        return client.getReportDefinition(reportName);
+    }
     
       
 }

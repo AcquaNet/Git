@@ -288,5 +288,10 @@ public class JDESingleWSConnection implements JDEConnection {
     public HashMap<String,Object> getTableDefinition(String tableName) throws JDESingleConnectorException {
         return null;
     }
+
+    @Override
+    public HashMap<String, Object> getReportDefinition(String tableName) throws JDESingleConnectorException {
+        return null;
+    }
      
 }

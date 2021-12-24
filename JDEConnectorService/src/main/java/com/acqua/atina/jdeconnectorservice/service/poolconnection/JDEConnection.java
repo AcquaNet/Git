@@ -30,5 +30,6 @@ public interface JDEConnection {
     public Integer commitTransaction(Integer transactionID) throws JDESingleConnectorException;
     public Integer rollbackTransaction(Integer transactionID) throws JDESingleConnectorException;
     public HashMap<String,Object> getTableDefinition(String tableName) throws JDESingleConnectorException;
+    public HashMap<String,Object> getReportDefinition(String tableName) throws JDESingleConnectorException;
     
 }
