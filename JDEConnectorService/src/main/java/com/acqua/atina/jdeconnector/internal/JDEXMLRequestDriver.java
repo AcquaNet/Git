@@ -339,204 +339,8 @@ public class JDEXMLRequestDriver {
             // --------------------------------------------
             // Check Cache
             // --------------------------------------------
-            
-            
-              
-            String reportFile = cacheFolder + (cacheFolder.trim().endsWith(File.separator) ? "":File.separator) + "UBE_" + reportName + ".xml";
-            
-            File reportCache = new File(reportFile);
-                     
-            boolean cacheExists = reportCache.exists() && !reportCache.isDirectory();
-            
-            // --------------------------------------------
-            // Generate Defintion
-            // --------------------------------------------
-            
-            if(cacheExists)
-            {
-                
-                logger.debug("JDEXMLRequestDriver: Reading cache: [" + reportFile + "] " );
-                
-                // ===================================================
-                // Generate Doc and String Doc from local repository
-                // ===================================================
-
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
-                try {
-
-                    factory.setNamespaceAware(true);
-                    DocumentBuilder builder = factory.newDocumentBuilder();
-                    docRequestResult = builder.parse(reportCache);
-                    
-                    logger.debug("JDEXMLRequestDriver: cache: [" + reportFile + "] loaded" );
-
-                } catch (Exception e) {
-
-                    logger.debug("JDEXMLRequestDriver: Error reading xml cached:  [" + reportFile + "]" );
-                     
-                    throw new SpecFailureException("JDEXMLRequestDriver: Error reading xml cached:  [" + reportFile + "] " , e);
-                
-                }
-
-                logger.debug("MULESOFT - UBEDefinition:  - getDefinition() Specs from Cache readed");
-                
-            } else
-            {
-                
-                logger.debug("JDEXMLRequestDriver: getting specs: [" + reportFile + "] " );
-                
-                // --------------------------------------------
-                // Get User Session
-                // --------------------------------------------
-
-                SessionValues sv = new SessionValues(iSessionID,this.sessionIdleMinutes);
-                
-                // --------------------------------------------
-                // Create XML Request
-                // --------------------------------------------
-
-                String xmlDoc = new String();
-                    xmlDoc += "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
-                    xmlDoc += "<jdeRequest type=\"ube\" user=\"" + sv.svUserSession.getUserName() + "\" pwd=\"" + sv.svPassword + "\" role=\"" + sv.svUserSession.getUserRole() + "\" environment=\"" + sv.svUserSession.getUserEnvironment() + "\" session=\"" + sv.svSession + "\" sessionidle=\"" + sv.svSessionIdle + "\">"; 
-                    xmlDoc += "<ACTION TEMPLATE_TYPE=\"LAUNCH_JOB\" TYPE=\"CREATE_XML\">";
-                    xmlDoc += "<REPORT_NAME VALUE=\""+ubeName+"\"/>";
-                    xmlDoc += "<REPORT_VERSION VALUE=\""+ubeVersion+"\"/>";
-                    xmlDoc += "<JARGON_SYSTEM_CODE VALUE='1'/>";
-                    xmlDoc += "<COMMENTS VALUE='1'/>";
-                    xmlDoc += "<DATA_TYPING VALUE='1'/>";
-                    xmlDoc += "<BUSINESS_VIEW VALUE='0'/>";
-                    xmlDoc += "<PRINTER_INFORMATION VALUE='0'/>";
-                    xmlDoc += "<POPULATED VALUE='1'/>";
-                    xmlDoc += "</ACTION>";
-                    xmlDoc += "</jdeRequest>";
-
-                logger.debug("JDEXMLRequestDriver request: " + xmlDoc );
-                
-                // --------------------------------------------
-                // Execute Request
-                // --------------------------------------------
- 
-                XMLRequest xmlRequest = new XMLRequest(sv.svUserSession.getHost(),sv.svUserSession.getPort(), xmlDoc);
-
-                String szDocRequestResult = xmlRequest.execute(500000);
-
-                logger.debug("JDEXMLRequestDriver response: " + szDocRequestResult);
-
-                // --------------------------------------------
-                // Save Last Request Time
-                // --------------------------------------------
-
-                lastRequest = Instant.now();
-                
-                // --------------------------------------------
-                // Convert Response to Document
-                // --------------------------------------------
-                 
-                szDocRequestResult = cleanNonValidXMLCharacters(szDocRequestResult);
-                
-                dbFactory = DocumentBuilderFactory.newInstance();
-                dBuilder = dbFactory.newDocumentBuilder();
-
-                InputSource is = new InputSource(new StringReader(szDocRequestResult));
-
-                docRequestResult = dBuilder.parse(is);
-                
-                if (docRequestResult != null) 
-                {
-                    docRequestResult.getDocumentElement().normalize();
-                } else
-                {
-                    logger.debug("JDEXMLRequestDriver: Error converting XML response:  [" + reportFile + "]" );
-                     
-                    throw new SpecFailureException("JDEXMLRequestDriver: Error converting XML response:  [" + reportFile + "] ");
-                    
-                }
-                
-                // --------------------------------------------
-                // Check Error
-                // --------------------------------------------
-                
-                /* 
-                
-                <?xml version='1.0' encoding='UTF-8' ?>
-                <jdeResponse environment='JPS920' role='*ALL' type='ube' user='JDE'>
-                        <ACTION TYPE='ERROR_MESSAGE'>
-                                <ERROR VALUE='XJDE0001 Version is not available forR004251Report'/>
-                        </ACTION>
-                </jdeResponse>
-                */
-                 
-                nodeDoc = docRequestResult.getElementsByTagName("ERROR").item(0);
-                
-                if(nodeDoc!=null)
-                {
-                    attr = nodeDoc.getAttributes();
-                    
-                    if (attr != null && attr.getNamedItem("VALUE") != null) {
-
-                        nodeAttr = attr.getNamedItem("VALUE");
-
-                        String errorReturnValue = nodeAttr.getNodeValue();
-                        
-                        logger.debug("JDEXMLRequestDriver: Error getting UBE specs:  [" + errorReturnValue + "]" );
-                     
-                        throw new SpecFailureException("JDEXMLRequestDriver: Error getting UBE specs:  [" + errorReturnValue + "] ");
-
-                    }
-                    
-                }
-                
-                nodeDoc = docRequestResult.getElementsByTagName("returnCode").item(0);
-                
-                if (nodeDoc != null) {
-
-                    attr = nodeDoc.getAttributes();
-
-                    if (attr != null && attr.getNamedItem("code") != null) {
-
-                        nodeAttr = attr.getNamedItem("code");
-
-                        String errorReturnValue = "";
-
-                        if (nodeAttr.getTextContent()
-                                .compareTo("0") != 0) {
-
-                            errorReturnValue = nodeAttr.getNodeValue();
-
-                            logger.debug("JDEXMLRequestDriver: Error getting UBE specs:  [" + errorReturnValue + "]");
-
-                            throw new SpecFailureException("JDEXMLRequestDriver: Error getting UBE specs:  [" + errorReturnValue + "] ");
-                        }
-
-                    }
-
-                }
-                
-                // --------------------------------------------
-                // Save Cache
-                // --------------------------------------------
-                
-                if(!cacheExists)
-                {
-                    
-                    TransformerFactory transformerFactory;
-                    Transformer transformer;
-                    DOMSource source;
-                    StreamResult result;
-                    
-                    logger.debug("JDEXMLRequestDriver: saving specs: [" + reportFile + "] " );
-                     
-                    
-                    transformerFactory = TransformerFactory.newInstance();
-                    transformer = transformerFactory.newTransformer();
-                    source = new DOMSource(docRequestResult);
-                    result = new StreamResult(new File(reportFile).getAbsolutePath());
-                    transformer.transform(source, result);
-                      
-                }
-                 
-            }
+             
+            docRequestResult = getReportDefinition(iSessionID, cacheFolder, reportName, ubeName, ubeVersion);
             
             // --------------------------------------------
             // Prepare Response
@@ -666,7 +470,220 @@ public class JDEXMLRequestDriver {
         
     }
     
-    
+    private Document getReportDefinition(int iSessionID, String cacheFolder, String reportName, String ubeName, String ubeVersion)
+    {
+        
+        Document docRequestResult;
+
+        DocumentBuilderFactory dbFactory;
+        DocumentBuilder dBuilder;
+ 
+        Node nodeDoc = null;
+        Node nodeAttr = null;
+        NamedNodeMap attr = null;
+
+        try {
+
+            String reportFile = cacheFolder + (cacheFolder.trim().endsWith(File.separator) ? "" : File.separator) + "UBE_" + reportName + ".xml";
+
+            File reportCache = new File(reportFile);
+
+            boolean cacheExists = reportCache.exists() && !reportCache.isDirectory();
+
+            // --------------------------------------------
+            // Generate Defintion
+            // --------------------------------------------
+            if (cacheExists) {
+
+                logger.debug("JDEXMLRequestDriver: Reading cache: [" + reportFile + "] ");
+
+                // ===================================================
+                // Generate Doc and String Doc from local repository
+                // ===================================================
+                //
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+                try {
+
+                    factory.setNamespaceAware(true);
+                    DocumentBuilder builder = factory.newDocumentBuilder();
+                    docRequestResult = builder.parse(reportCache);
+
+                    logger.debug("JDEXMLRequestDriver: cache: [" + reportFile + "] loaded");
+
+                } catch (Exception e) {
+
+                    logger.debug("JDEXMLRequestDriver: Error reading xml cached:  [" + reportFile + "]");
+
+                    throw new SpecFailureException("JDEXMLRequestDriver: Error reading xml cached:  [" + reportFile + "] ", e);
+
+                }
+
+                logger.debug("MULESOFT - UBEDefinition:  - getDefinition() Specs from Cache readed");
+
+            } else {
+
+                logger.debug("JDEXMLRequestDriver: getting specs: [" + reportFile + "] ");
+
+                // --------------------------------------------
+                // Get User Session
+                // --------------------------------------------
+                //
+                SessionValues sv = new SessionValues(iSessionID, this.sessionIdleMinutes);
+
+                // --------------------------------------------
+                // Create XML Request
+                // --------------------------------------------
+                //
+                String xmlDoc = new String();
+                xmlDoc += "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
+                xmlDoc += "<jdeRequest type=\"ube\" user=\"" + sv.svUserSession.getUserName() + "\" pwd=\"" + sv.svPassword + "\" role=\"" + sv.svUserSession.getUserRole() + "\" environment=\"" + sv.svUserSession.getUserEnvironment() + "\" session=\"" + sv.svSession + "\" sessionidle=\"" + sv.svSessionIdle + "\">";
+                xmlDoc += "<ACTION TEMPLATE_TYPE=\"LAUNCH_JOB\" TYPE=\"CREATE_XML\">";
+                xmlDoc += "<REPORT_NAME VALUE=\"" + ubeName + "\"/>";
+                xmlDoc += "<REPORT_VERSION VALUE=\"" + ubeVersion + "\"/>";
+                xmlDoc += "<JARGON_SYSTEM_CODE VALUE='1'/>";
+                xmlDoc += "<COMMENTS VALUE='1'/>";
+                xmlDoc += "<DATA_TYPING VALUE='1'/>";
+                xmlDoc += "<BUSINESS_VIEW VALUE='0'/>";
+                xmlDoc += "<PRINTER_INFORMATION VALUE='0'/>";
+                xmlDoc += "<POPULATED VALUE='1'/>";
+                xmlDoc += "</ACTION>";
+                xmlDoc += "</jdeRequest>";
+
+                logger.debug("JDEXMLRequestDriver request: " + xmlDoc);
+
+                // --------------------------------------------
+                // Execute Request
+                // --------------------------------------------
+                //
+                XMLRequest xmlRequest = new XMLRequest(sv.svUserSession.getHost(), sv.svUserSession.getPort(), xmlDoc);
+
+                String szDocRequestResult = xmlRequest.execute(500000);
+
+                logger.debug("JDEXMLRequestDriver response: " + szDocRequestResult);
+
+                // --------------------------------------------
+                // Save Last Request Time
+                // --------------------------------------------
+                //
+                lastRequest = Instant.now();
+
+                // --------------------------------------------
+                // Convert Response to Document
+                // --------------------------------------------
+                //
+                szDocRequestResult = cleanNonValidXMLCharacters(szDocRequestResult);
+
+                dbFactory = DocumentBuilderFactory.newInstance();
+                dBuilder = dbFactory.newDocumentBuilder();
+
+                InputSource is = new InputSource(new StringReader(szDocRequestResult));
+
+                docRequestResult = dBuilder.parse(is);
+
+                if (docRequestResult != null) {
+                    docRequestResult.getDocumentElement().normalize();
+                } else {
+                    logger.debug("JDEXMLRequestDriver: Error converting XML response:  [" + reportFile + "]");
+
+                    throw new SpecFailureException("JDEXMLRequestDriver: Error converting XML response:  [" + reportFile + "] ");
+
+                }
+
+                // --------------------------------------------
+                // Check Error
+                // --------------------------------------------
+                /* 
+                
+                <?xml version='1.0' encoding='UTF-8' ?>
+                <jdeResponse environment='JPS920' role='*ALL' type='ube' user='JDE'>
+                        <ACTION TYPE='ERROR_MESSAGE'>
+                                <ERROR VALUE='XJDE0001 Version is not available forR004251Report'/>
+                        </ACTION>
+                </jdeResponse>
+                
+                 */
+                nodeDoc = docRequestResult.getElementsByTagName("ERROR").item(0);
+
+                if (nodeDoc != null) {
+                    attr = nodeDoc.getAttributes();
+
+                    if (attr != null && attr.getNamedItem("VALUE") != null) {
+
+                        nodeAttr = attr.getNamedItem("VALUE");
+
+                        String errorReturnValue = nodeAttr.getNodeValue();
+
+                        logger.debug("JDEXMLRequestDriver: Error getting UBE specs:  [" + errorReturnValue + "]");
+
+                        throw new SpecFailureException("JDEXMLRequestDriver: Error getting UBE specs:  [" + errorReturnValue + "] ");
+
+                    }
+
+                }
+
+                nodeDoc = docRequestResult.getElementsByTagName("returnCode").item(0);
+
+                if (nodeDoc != null) {
+
+                    attr = nodeDoc.getAttributes();
+
+                    if (attr != null && attr.getNamedItem("code") != null) {
+
+                        nodeAttr = attr.getNamedItem("code");
+
+                        String errorReturnValue = "";
+
+                        if (nodeAttr.getTextContent()
+                                .compareTo("0") != 0) {
+
+                            errorReturnValue = nodeAttr.getNodeValue();
+
+                            logger.debug("JDEXMLRequestDriver: Error getting UBE specs:  [" + errorReturnValue + "]");
+
+                            throw new SpecFailureException("JDEXMLRequestDriver: Error getting UBE specs:  [" + errorReturnValue + "] ");
+                        }
+
+                    }
+
+                }
+
+                // --------------------------------------------
+                // Save Cache
+                // --------------------------------------------
+                //
+                if (!cacheExists) {
+
+                    TransformerFactory transformerFactory;
+                    Transformer transformer;
+                    DOMSource source;
+                    StreamResult result;
+
+                    logger.debug("JDEXMLRequestDriver: saving specs: [" + reportFile + "] ");
+
+                    transformerFactory = TransformerFactory.newInstance();
+                    transformer = transformerFactory.newTransformer();
+                    source = new DOMSource(docRequestResult);
+                    result = new StreamResult(new File(reportFile).getAbsolutePath());
+                    transformer.transform(source, result);
+
+                }
+
+            }
+            
+        } catch (Exception e) {
+
+            logger.error(
+                    "transaction() error: "
+                    + e.getMessage());
+
+            throw new JDESingleException(e.getMessage(), e);
+
+        }
+        
+        return docRequestResult;
+        
+    }
     
     public HashMap<String,Object> submitReport(int iSessionID, String reportName, Map<String, Object> inputValues, String cacheFolder) throws JDESingleException {
         
