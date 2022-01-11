@@ -95,7 +95,10 @@ public class Main {
          // ==============================================================
          // Get BSFN List
          // ==============================================================
-         HashMap<String, Object> table = singleConnection.getReportDefinition("R00425-XJDE0001");
+         // R0018IA XJDE0001
+         // R76A8060-ZJDE0001
+         //R0008P-ZJDE0001
+         HashMap<String, Object> table = singleConnection.getReportDefinition("R76A8060-ZJDE0001");
         
         // ==============================================================
         // Logout

@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.time.Duration;
 import java.time.Instant; 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.StringTokenizer;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -300,7 +301,12 @@ public class JDEXMLRequestDriver {
         String ubeVersion = "";
         Document docRequestResult;
         DocumentBuilderFactory dbFactory;
-        DocumentBuilder dBuilder;
+        DocumentBuilder dBuilder; 
+        Node nodeDoc = null;
+        Node nodeAttr = null;
+        NamedNodeMap attr = null;
+        
+        HashMap<String,Object> returnValue = new HashMap<String,Object>();
             
         try {
             
@@ -447,7 +453,63 @@ public class JDEXMLRequestDriver {
                 // --------------------------------------------
                 // Check Error
                 // --------------------------------------------
+                
+                /* 
+                
+                <?xml version='1.0' encoding='UTF-8' ?>
+                <jdeResponse environment='JPS920' role='*ALL' type='ube' user='JDE'>
+                        <ACTION TYPE='ERROR_MESSAGE'>
+                                <ERROR VALUE='XJDE0001 Version is not available forR004251Report'/>
+                        </ACTION>
+                </jdeResponse>
+                */
                  
+                nodeDoc = docRequestResult.getElementsByTagName("ERROR").item(0);
+                
+                if(nodeDoc!=null)
+                {
+                    attr = nodeDoc.getAttributes();
+                    
+                    if (attr != null && attr.getNamedItem("VALUE") != null) {
+
+                        nodeAttr = attr.getNamedItem("VALUE");
+
+                        String errorReturnValue = nodeAttr.getNodeValue();
+                        
+                        logger.debug("JDEXMLRequestDriver: Error getting UBE specs:  [" + errorReturnValue + "]" );
+                     
+                        throw new SpecFailureException("JDEXMLRequestDriver: Error getting UBE specs:  [" + errorReturnValue + "] ");
+
+                    }
+                    
+                }
+                
+                nodeDoc = docRequestResult.getElementsByTagName("returnCode").item(0);
+                
+                if (nodeDoc != null) {
+
+                    attr = nodeDoc.getAttributes();
+
+                    if (attr != null && attr.getNamedItem("code") != null) {
+
+                        nodeAttr = attr.getNamedItem("code");
+
+                        String errorReturnValue = "";
+
+                        if (nodeAttr.getTextContent()
+                                .compareTo("0") != 0) {
+
+                            errorReturnValue = nodeAttr.getNodeValue();
+
+                            logger.debug("JDEXMLRequestDriver: Error getting UBE specs:  [" + errorReturnValue + "]");
+
+                            throw new SpecFailureException("JDEXMLRequestDriver: Error getting UBE specs:  [" + errorReturnValue + "] ");
+                        }
+
+                    }
+
+                }
+                
                 // --------------------------------------------
                 // Save Cache
                 // --------------------------------------------
@@ -472,6 +534,120 @@ public class JDEXMLRequestDriver {
                 }
                  
             }
+            
+            // --------------------------------------------
+            // Prepare Response
+            // --------------------------------------------
+            
+            // Processing Options
+            
+            nodeDoc = docRequestResult.getElementsByTagName("AVAILABLE_MEMBERS").item(0);
+              
+            HashMap<String,Object> pos = new HashMap<String,Object>();
+            
+            if (nodeDoc != null) {
+
+                if (nodeDoc.getParentNode().getNodeName().equals("PROCESSING_OPTIONS")) {
+
+                    NodeList nodesMember = nodeDoc.getChildNodes();
+
+                    if (nodesMember != null && nodesMember.getLength() > 0) {
+
+                        for (int i = 0; i < nodesMember.getLength(); i++) {
+
+                            attr = nodesMember.item(i).getAttributes();
+
+                            String name = "";
+                            String value = "";
+
+                            if (attr != null && attr.getNamedItem("ID") != null) {
+
+                                name = attr.getNamedItem("ID").getNodeValue();
+
+                            }
+
+                            if (attr != null && attr.getNamedItem("VALUE") != null) {
+
+                                value = attr.getNamedItem("VALUE").getNodeValue();
+
+                            }
+
+                            pos.put(name,value);
+
+                        }
+
+                    }
+
+                }
+
+            }
+            
+            returnValue.put("PROCESSING_OPTIONS", pos);
+            
+            // Report Interconnect
+            
+            nodeDoc = docRequestResult.getElementsByTagName("REPORT_INTERCONNECT").item(0); 
+            
+            HashMap<String,Object> ris = new HashMap<String,Object>();
+            
+            if (nodeDoc != null) {
+
+                NodeList nodesMember = nodeDoc.getChildNodes();
+
+                if (nodesMember != null && nodesMember.getLength() > 0) {
+
+                    for (int i = 0; i < nodesMember.getLength(); i++) {
+
+                        attr = nodesMember.item(i).getAttributes();
+
+                        String name = "";
+                            String value = "";
+
+                        if (attr != null && attr.getNamedItem("ID") != null) {
+
+                            name = attr.getNamedItem("ID").getNodeValue();
+
+                        }
+
+                        if (attr != null && attr.getNamedItem("VALUE") != null) {
+
+                            value = attr.getNamedItem("VALUE").getNodeValue();
+
+                        }
+
+                        ris.put(name,value);
+
+                    }
+
+                }
+
+            }
+            
+            returnValue.put("REPORT_INTERCONNECT", ris);
+            
+            // JOBQUEUE
+            
+            nodeDoc = docRequestResult.getElementsByTagName("JOBQUEUE").item(0);
+            
+            String jobQueue = "";
+
+            if (nodeDoc != null) {
+
+                attr = nodeDoc.getAttributes();
+
+                if (attr != null && attr.getNamedItem("VALUE") != null) {
+
+                    nodeAttr = attr.getNamedItem("VALUE");
+
+                    jobQueue = nodeAttr.getNodeValue();
+
+                }
+
+            }
+
+            returnValue.put("JOBQUEUE", jobQueue);
+            
+            
              
         } catch (Exception e) {
 
@@ -483,7 +659,7 @@ public class JDEXMLRequestDriver {
 
         }
 
-        return null;
+        return returnValue;
         
     }
     
