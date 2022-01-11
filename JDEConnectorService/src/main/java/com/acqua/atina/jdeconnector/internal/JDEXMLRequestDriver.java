@@ -18,6 +18,7 @@ import java.time.Duration;
 import java.time.Instant; 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.StringTokenizer;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -338,6 +339,8 @@ public class JDEXMLRequestDriver {
             // --------------------------------------------
             // Check Cache
             // --------------------------------------------
+            
+            
               
             String reportFile = cacheFolder + (cacheFolder.trim().endsWith(File.separator) ? "":File.separator) + "UBE_" + reportName + ".xml";
             
@@ -647,6 +650,60 @@ public class JDEXMLRequestDriver {
 
             returnValue.put("JOBQUEUE", jobQueue);
             
+            
+             
+        } catch (Exception e) {
+
+            logger.error(
+                    "transaction() error: "
+                    + e.getMessage());
+
+            throw new JDESingleException(e.getMessage(), e);
+
+        }
+
+        return returnValue;
+        
+    }
+    
+    
+    
+    public HashMap<String,Object> submitReport(int iSessionID, String reportName, Map<String, Object> inputValues, String cacheFolder) throws JDESingleException {
+        
+        String ubeName = "";
+        String ubeVersion = "";
+        
+        
+        HashMap<String,Object> returnValue = new HashMap<String,Object>();
+            
+        try {
+            
+            // --------------------------------------------
+            // Split Report Name to get name and version
+            // --------------------------------------------
+ 
+            StringTokenizer st = new StringTokenizer(reportName, "-");
+
+            if (st.hasMoreElements()) {
+                ubeName = (String) st.nextElement();
+
+            }
+
+            if (st.hasMoreElements()) {
+                ubeVersion = (String) st.nextElement();
+
+            }
+            
+            if(ubeName.isEmpty() || ubeVersion.isEmpty() )
+            {
+                logger.debug("JDEXMLRequestDriver: Invalid UBE Name: [" + reportName + "] " );
+                     
+                throw new ParserConfigurationException("JDEXMLRequestDriver: Invalid UBE Name: [" + reportName + "]  ");
+                
+            }
+            
+            
+             
             
              
         } catch (Exception e) {
