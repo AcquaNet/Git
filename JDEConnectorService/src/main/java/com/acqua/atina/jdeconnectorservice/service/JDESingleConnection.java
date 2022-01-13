@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap; 
+import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -306,6 +307,12 @@ public class JDESingleConnection implements JDEConnection{
     @Override
     public HashMap<String, Object> getReportDefinition(String reportName) throws JDESingleConnectorException {
         return client.getReportDefinition(reportName);
+    }
+ 
+
+    @Override
+    public HashMap<String, Object> submitReport(String reportName, Map<String, Object> inputValues) throws JDESingleConnectorException {
+        return client.submitReport(reportName, inputValues);
     }
     
       

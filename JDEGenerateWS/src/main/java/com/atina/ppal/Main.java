@@ -52,9 +52,82 @@ public class Main {
         
          // getTableDef(args);
         
-        getUbeDef(args);
+        //getUbeDef(args);
+        
+        submitUBE(args);
         
     } 
+    
+    private static void submitUBE(String[] args) throws BusinessServiceException
+    {
+        
+        Configuracion config = new Configuracion();
+        
+        config.setUser("JDE");
+
+        config.setPassword("Modus2020!");
+
+        config.setEnvironment("JPS920");
+
+        config.setRole("*ALL");
+
+        config.setSessionId(0);
+        
+        config.setTokenExpiration(2400000);
+        
+        config.setMocking(0);
+        
+        int sessionID = JDEPoolConnections.getInstance().createConnection(  config.getUser(), 
+                                                                                config.getPassword(), 
+                                                                                config.getEnvironment(), 
+                                                                                config.getRole(), 
+                                                                                config.getSessionIdAsInt(),
+                                                                                false);
+        config.setSessionId(sessionID);
+         
+        logger.info("              Request Received: " + config.toString());
+        
+      
+        // ==============================================================
+        // Get Connection
+        // ==============================================================
+        
+        JDESingleConnection singleConnection = (JDESingleConnection) JDEPoolConnections.getInstance().getSingleConnection(sessionID);
+        
+         // ==============================================================
+         // Get BSFN List
+         // ==============================================================
+         // R0018IA XJDE0001
+         // R76A8060-ZJDE0001
+         //R0008P-ZJDE0001
+         
+         HashMap<String,Object> inputValue = new HashMap<String,Object>();
+         
+         
+         HashMap<String,Object> pos = new HashMap<String,Object>();
+         
+         pos.put("szCompany", "00001"); 
+         
+         HashMap<String,Object> ris = new HashMap<String,Object>();
+         
+         ris.put("szCompany", "00001"); 
+         
+         
+         inputValue.put("JOBQUEUE", "");
+         inputValue.put("DATA_SELECTION", "");
+         inputValue.put("PROCESSING_OPTIONS", pos);
+         inputValue.put("REPORT_INTERCONNECT", ris);
+         
+         HashMap<String, Object> table = singleConnection.submitReport("R76A8060-ZJDE0001",inputValue);
+        
+        // ==============================================================
+        // Logout
+        // ==============================================================
+        
+        JDEPoolConnections.getInstance().disconnect(config.getSessionId());
+        
+        
+    }
     
     private static void getUbeDef(String[] args) throws BusinessServiceException
     {

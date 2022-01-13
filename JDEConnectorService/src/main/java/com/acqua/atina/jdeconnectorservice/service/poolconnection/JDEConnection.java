@@ -10,6 +10,7 @@ import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectionExceptio
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleConnectorException;
 import com.jdedwards.base.resource.UserPreference;
 import java.util.HashMap; 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -31,5 +32,6 @@ public interface JDEConnection {
     public Integer rollbackTransaction(Integer transactionID) throws JDESingleConnectorException;
     public HashMap<String,Object> getTableDefinition(String tableName) throws JDESingleConnectorException;
     public HashMap<String,Object> getReportDefinition(String tableName) throws JDESingleConnectorException;
+    public HashMap<String,Object> submitReport(String tableName, Map<String, Object> inputValues) throws JDESingleConnectorException;
     
 }

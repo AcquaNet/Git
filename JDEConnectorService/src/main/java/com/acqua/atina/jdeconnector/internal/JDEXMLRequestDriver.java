@@ -11,11 +11,15 @@ import com.acqua.atina.jdeconnectorservice.exception.JDESingleException;
 import com.jdedwards.system.connector.dynamic.UserSession;
 import com.jdedwards.system.connector.dynamic.spec.SpecFailureException;
 import com.jdedwards.system.xml.XMLRequest; 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.Instant; 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -24,6 +28,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -43,6 +49,8 @@ import org.xml.sax.InputSource;
 public class JDEXMLRequestDriver {
      
     private static final Logger logger = LoggerFactory.getLogger(JDEConnectorService.class);
+    
+    private static final Integer TIMEOUT = 500000;
     
     private String currentSessionId = "";
     private final long sessionIdleMinutes = 10;
@@ -99,7 +107,7 @@ public class JDEXMLRequestDriver {
             
             XMLRequest xmlRequest = new XMLRequest(sv.svUserSession.getHost(),sv.svUserSession.getPort(), xmlDoc);
              
-            String szDocRequestResult = xmlRequest.execute();
+            String szDocRequestResult = xmlRequest.execute(TIMEOUT);
             
             logger.debug("JDEXMLRequestDriver response: " + szDocRequestResult);
              
@@ -337,7 +345,7 @@ public class JDEXMLRequestDriver {
             
             
             // --------------------------------------------
-            // Check Cache
+            // Get Report Definition
             // --------------------------------------------
              
             docRequestResult = getReportDefinition(iSessionID, cacheFolder, reportName, ubeName, ubeVersion);
@@ -558,7 +566,7 @@ public class JDEXMLRequestDriver {
                 //
                 XMLRequest xmlRequest = new XMLRequest(sv.svUserSession.getHost(), sv.svUserSession.getPort(), xmlDoc);
 
-                String szDocRequestResult = xmlRequest.execute(500000);
+                String szDocRequestResult = xmlRequest.execute(TIMEOUT);
 
                 logger.debug("JDEXMLRequestDriver response: " + szDocRequestResult);
 
@@ -690,10 +698,23 @@ public class JDEXMLRequestDriver {
         String ubeName = "";
         String ubeVersion = "";
         
+        Document docRequestResult; 
+        Node nodeDoc = null;
+        Node nodeAttr = null;
+        NamedNodeMap attr = null;
+        
+        DocumentBuilderFactory dbFactory;
+        DocumentBuilder dBuilder;
         
         HashMap<String,Object> returnValue = new HashMap<String,Object>();
             
         try {
+            
+            // --------------------------------------------
+            // Get User Session
+            // --------------------------------------------
+            
+            SessionValues sv = new SessionValues(iSessionID,this.sessionIdleMinutes);
             
             // --------------------------------------------
             // Split Report Name to get name and version
@@ -720,7 +741,355 @@ public class JDEXMLRequestDriver {
             }
             
             
+            // --------------------------------------------
+            // Get Report Definition
+            // --------------------------------------------
              
+            docRequestResult = getReportDefinition(iSessionID, cacheFolder, reportName, ubeName, ubeVersion);
+            
+            // --------------------------------------------
+            // Prepare Request
+            // --------------------------------------------
+             
+            // -----------------------------------------
+            // Replace JOBQ
+            // -----------------------------------------
+            //
+            
+            if(inputValues.containsKey("JOBQUEUE") && !((String)inputValues.get("JOBQUEUE")).isEmpty())
+            {
+                
+                nodeDoc = docRequestResult.getElementsByTagName("JOBQUEUE").item(0);
+
+                if (nodeDoc != null) {
+
+                    attr = nodeDoc.getAttributes();
+
+                    if (attr != null) {
+
+                        nodeAttr = attr.getNamedItem("VALUE");
+
+                        if (nodeAttr != null) {
+
+                            nodeAttr.setNodeValue((String) inputValues.get("JOBQUEUE"));
+
+                        }
+
+                    }
+
+                }
+            
+            }
+             
+            // -----------------------------------------
+            // Replace DS
+            // -----------------------------------------
+            //
+             
+            if(inputValues.containsKey("DATA_SELECTION") &&  !((String)inputValues.get("DATA_SELECTION")).isEmpty())
+            {
+                
+                nodeDoc = docRequestResult.getElementsByTagName("DATA_SELECTION").item(0);
+
+                if (nodeDoc != null) {
+
+                    // Get and Remove Current Selection
+
+                    NodeList list = nodeDoc.getChildNodes();
+
+                    if (list != null && list.getLength() > 0) {
+
+                        // Remove Current Selection
+
+                        for (int i = 0; i < list.getLength(); i++) {
+
+                                Node node = list.item(i);
+
+                                nodeDoc.removeChild(node);
+
+                            }
+
+                        }
+
+                }
+
+                // Add new Data Selection 
+
+                String sqlSentence = (String) inputValues.get("DATA_SELECTION");
+
+                if(!sqlSentence.isEmpty())
+                {
+
+                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+                    factory.setNamespaceAware(true);
+
+                    DocumentBuilder builder = factory.newDocumentBuilder();
+
+                    Document doc2 = builder.parse(new ByteArrayInputStream(sqlSentence.getBytes(Charset.forName("UTF-8"))));
+
+                    Node clauses = doc2.getElementsByTagName("ROOT")
+                            .item(0);
+
+                    if (clauses != null) {
+
+                        // Get and Remove Current Selection
+                        NodeList listClauses = clauses.getChildNodes();
+
+                        if (listClauses != null && listClauses.getLength() > 0) {
+
+                            for (int i = 0; i < listClauses.getLength(); i++) {
+
+                                Node node = listClauses.item(i);
+
+                                Node nodeSql = docRequestResult.importNode(node, true);
+
+                                nodeDoc.appendChild(nodeSql);
+
+                            }
+
+                        }
+
+                    } 
+
+                }
+            
+            }
+            
+            // -----------------------------------------
+            // Replace PO
+            // -----------------------------------------
+            //
+              
+            if(inputValues.containsKey("PROCESSING_OPTIONS") && inputValues.get("PROCESSING_OPTIONS") instanceof Map && !((Map)inputValues.get("PROCESSING_OPTIONS")).isEmpty())
+            {
+                 
+                nodeDoc = docRequestResult.getElementsByTagName("AVAILABLE_MEMBERS").item(0);
+
+                if (nodeDoc != null) {
+
+                    if (nodeDoc.getParentNode().getNodeName().equals("PROCESSING_OPTIONS")) {
+
+                        NodeList nodesMember = nodeDoc.getChildNodes();
+
+                        if (nodesMember != null && nodesMember.getLength() > 0) {
+
+                            for (int i = 0; i < nodesMember.getLength(); i++) {
+
+                                attr = nodesMember.item(i).getAttributes();
+
+                                String name = ""; 
+
+                                if (attr != null && attr.getNamedItem("ID") != null) {
+
+                                    name = attr.getNamedItem("ID").getNodeValue();
+
+                                }
+
+                                HashMap<String,Object> pos = (HashMap<String,Object>) inputValues.get("PROCESSING_OPTIONS");
+
+                                if(pos.containsKey(name))
+                                {
+
+                                    if (attr != null && attr.getNamedItem("VALUE") != null) {
+
+                                        attr.getNamedItem("VALUE").setNodeValue((String) pos.get(name));
+
+                                    }
+
+                                } 
+
+                            }
+
+                        }
+
+                    }
+
+                }
+            
+            }
+            
+            // -----------------------------------------
+            // Replace RI
+            // -----------------------------------------
+            //
+            
+            if(inputValues.containsKey("REPORT_INTERCONNECT") && inputValues.get("REPORT_INTERCONNECT") instanceof Map &&  !((Map)inputValues.get("REPORT_INTERCONNECT")).isEmpty())
+            {
+                 
+                nodeDoc = docRequestResult.getElementsByTagName("REPORT_INTERCONNECT").item(0); 
+
+                if (nodeDoc != null) {
+
+                    NodeList nodesMember = nodeDoc.getChildNodes();
+
+                    if (nodesMember != null && nodesMember.getLength() > 0) {
+
+                        for (int i = 0; i < nodesMember.getLength(); i++) {
+
+                            attr = nodesMember.item(i).getAttributes();
+
+                            String name = "";
+
+                            if (attr != null && attr.getNamedItem("ID") != null) {
+
+                                name = attr.getNamedItem("ID").getNodeValue();
+
+                            }
+
+                            HashMap<String,Object> ris = (HashMap<String,Object>) inputValues.get("REPORT_INTERCONNECT");
+
+                            if(ris.containsKey(name))
+                            {
+
+                                if (attr != null && attr.getNamedItem("VALUE") != null) {
+
+                                     attr.getNamedItem("VALUE").setNodeValue((String) ris.get(name));
+
+                                } 
+
+                            }
+
+                        }
+
+                    }
+
+                } 
+            
+            }
+            
+            // ----------------------------------------
+            // Submit UBE
+            // ----------------------------------------
+            //
+            
+            String request = parseDocRequest(docRequestResult);
+            
+            logger.debug("JDEXMLRequestDriver: Request: [" + request + "] " );
+            
+            // ----------------------------------------
+            // Submit UBE
+            // ----------------------------------------
+            // 
+            
+            XMLRequest xmlRequest = new XMLRequest(sv.svUserSession.getHost(), sv.svUserSession.getPort(), request);
+
+            
+            String szDocRequestResult = xmlRequest.execute(TIMEOUT);
+
+            
+            logger.debug("JDEXMLRequestDriver response: " + szDocRequestResult);
+            
+            // --------------------------------------------
+            // Save Last Request Time
+            // --------------------------------------------
+            
+            lastRequest = Instant.now();
+             
+            
+            // --------------------------------------------
+            // Convert Response to Document
+            // --------------------------------------------
+            //
+            
+            szDocRequestResult = cleanNonValidXMLCharacters(szDocRequestResult);
+
+            dbFactory = DocumentBuilderFactory.newInstance();
+            dBuilder = dbFactory.newDocumentBuilder();
+
+            InputSource is = new InputSource(new StringReader(szDocRequestResult));
+
+            docRequestResult = dBuilder.parse(is);
+
+            if (docRequestResult != null) {
+                    docRequestResult.getDocumentElement().normalize();
+            } else {
+                    
+                logger.debug("JDEXMLRequestDriver: Error converting XML response:  [" + reportName + "]");
+
+                throw new SpecFailureException("JDEXMLRequestDriver: Error converting XML response:  [" + reportName + "] ");
+
+            }
+
+            // --------------------------------------------
+            // Check Error
+            // --------------------------------------------
+            /* 
+
+            <?xml version='1.0' encoding='UTF-8' ?>
+            <jdeResponse environment='JPS920' role='*ALL' type='ube' user='JDE'>
+                    <ACTION TYPE='ERROR_MESSAGE'>
+                            <ERROR VALUE='XJDE0001 Version is not available forR004251Report'/>
+                    </ACTION>
+            </jdeResponse>
+
+             */
+            nodeDoc = docRequestResult.getElementsByTagName("ERROR").item(0);
+
+            if (nodeDoc != null) {
+                attr = nodeDoc.getAttributes();
+
+                if (attr != null && attr.getNamedItem("VALUE") != null) {
+
+                    nodeAttr = attr.getNamedItem("VALUE");
+
+                    String errorReturnValue = nodeAttr.getNodeValue();
+
+                    logger.debug("JDEXMLRequestDriver: Error getting UBE specs:  [" + errorReturnValue + "]");
+
+                    throw new SpecFailureException("JDEXMLRequestDriver: Error getting UBE specs:  [" + errorReturnValue + "] ");
+
+                }
+
+            }
+
+            nodeDoc = docRequestResult.getElementsByTagName("returnCode").item(0);
+
+            if (nodeDoc != null) {
+
+                attr = nodeDoc.getAttributes();
+
+                if (attr != null && attr.getNamedItem("code") != null) {
+
+                    nodeAttr = attr.getNamedItem("code");
+
+                    String errorReturnValue = "";
+
+                    if (nodeAttr.getTextContent()
+                            .compareTo("0") != 0) {
+
+                        errorReturnValue = nodeAttr.getNodeValue();
+
+                        logger.debug("JDEXMLRequestDriver: Error getting UBE specs:  [" + errorReturnValue + "]");
+
+                        throw new SpecFailureException("JDEXMLRequestDriver: Error getting UBE specs:  [" + errorReturnValue + "] ");
+                    }
+
+                }
+
+            }
+            
+            // JOBQUEUE
+            
+            nodeDoc = docRequestResult.getElementsByTagName("JOBID").item(0);
+            
+            String jobId = "";
+
+            if (nodeDoc != null) {
+
+                attr = nodeDoc.getAttributes();
+
+                if (attr != null && attr.getNamedItem("VALUE") != null) {
+
+                    nodeAttr = attr.getNamedItem("VALUE");
+
+                    jobId = nodeAttr.getNodeValue();
+
+                }
+
+            }
+
+            returnValue.put("JOBID", jobId);
             
              
         } catch (Exception e) {
@@ -737,6 +1106,39 @@ public class JDEXMLRequestDriver {
         
     }
     
+    private String parseDocRequest(Document docRequestResult) throws TransformerConfigurationException, TransformerException {
+        
+        // ===================================================
+        // Initialize Output Var
+        // ===================================================
+        
+        String returnValue = "";
+        
+        // ===================================================
+        // Initialize Working Variable
+        // ===================================================
+        
+        TransformerFactory transformerFactory;
+        Transformer transformer;
+        DOMSource domSource;
+        StringWriter stringWriter;
+        StreamResult streamResult;
+        
+        // ===================================================
+        // Convert Doc Request
+        // ===================================================
+        
+        transformerFactory = TransformerFactory.newInstance();
+        transformer = transformerFactory.newTransformer();
+        domSource = new DOMSource(docRequestResult);
+        stringWriter = new StringWriter();
+        streamResult = new StreamResult(stringWriter);
+        transformer.transform(domSource, streamResult);
+        returnValue = stringWriter.getBuffer().toString();
+            
+        return returnValue;
+        
+    }
     
     private String cleanNonValidXMLCharacters(String in) {
         

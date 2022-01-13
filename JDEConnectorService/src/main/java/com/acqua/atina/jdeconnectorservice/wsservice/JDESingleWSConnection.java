@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -291,6 +292,11 @@ public class JDESingleWSConnection implements JDEConnection {
 
     @Override
     public HashMap<String, Object> getReportDefinition(String tableName) throws JDESingleConnectorException {
+        return null;
+    } 
+
+    @Override
+    public HashMap<String, Object> submitReport(String tableName, Map<String, Object> inputValues) throws JDESingleConnectorException {
         return null;
     }
      
