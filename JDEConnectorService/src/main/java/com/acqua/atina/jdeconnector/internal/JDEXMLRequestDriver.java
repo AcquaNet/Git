@@ -5,6 +5,7 @@
  */
 package com.acqua.atina.jdeconnector.internal;
 
+import com.acqua.atina.jdeconnector.sqltransform.TransformSQSentenceLtoXMLSentece;
 import com.acqua.atina.jdeconnectorservice.JDEConnectorService;
 import com.acqua.atina.jdeconnectorservice.exception.JDESingleException;
   
@@ -816,17 +817,23 @@ public class JDEXMLRequestDriver {
                 // Add new Data Selection 
 
                 String sqlSentence = (String) inputValues.get("DATA_SELECTION");
+                
+                TransformSQSentenceLtoXMLSentece converter = new TransformSQSentenceLtoXMLSentece();
+                
+                String xmlSelection = converter.convertWhereSQLtoXML(sqlSentence);
 
-                if(!sqlSentence.isEmpty())
+                if(!xmlSelection.isEmpty())
                 {
-
+                     
                     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
                     factory.setNamespaceAware(true);
 
                     DocumentBuilder builder = factory.newDocumentBuilder();
+                    
+                    String sqlWhere = "<?xml version=\"1.0\" encoding=\"utf-8\"?><ROOT>" + xmlSelection + "</ROOT>";
 
-                    Document doc2 = builder.parse(new ByteArrayInputStream(sqlSentence.getBytes(Charset.forName("UTF-8"))));
+                    Document doc2 = builder.parse(new ByteArrayInputStream(sqlWhere.getBytes(Charset.forName("UTF-8"))));
 
                     Node clauses = doc2.getElementsByTagName("ROOT")
                             .item(0);
@@ -1096,7 +1103,7 @@ public class JDEXMLRequestDriver {
 
             logger.error(
                     "transaction() error: "
-                    + e.getMessage());
+                    + e.getMessage(), e);
 
             throw new JDESingleException(e.getMessage(), e);
 

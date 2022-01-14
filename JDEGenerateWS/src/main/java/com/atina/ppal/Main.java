@@ -114,7 +114,7 @@ public class Main {
          
          
          inputValue.put("JOBQUEUE", "");
-         inputValue.put("DATA_SELECTION", "");
+         inputValue.put("DATA_SELECTION", "F76A09.KCO = '00001' AND F76A09.DCT = 'FA'");
          inputValue.put("PROCESSING_OPTIONS", pos);
          inputValue.put("REPORT_INTERCONNECT", ris);
          
